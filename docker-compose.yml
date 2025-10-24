@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  # n8n - Orquestador principal
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: bmc-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=bmc2024secure
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=America/Montevideo
+      - N8N_METRICS=true
+      - N8N_LOG_LEVEL=info
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n_workflows:/home/node/.n8n/workflows
+      - ./n8n_integration.py:/app/n8n_integration.py
+    networks:
+      - bmc-network
+
+  # Sistema Python - Motor de cotización
+  bmc-python:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: bmc-python
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+      - MONGODB_URI=${MONGODB_URI}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_SHEET_ID=${GOOGLE_SHEET_ID}
+      - GOOGLE_SERVICE_ACCOUNT_EMAIL=${GOOGLE_SERVICE_ACCOUNT_EMAIL}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+    volumes:
+      - ./:/app
+      - python_cache:/root/.cache
+    networks:
+      - bmc-network
+    depends_on:
+      - mongodb
+
+  # MongoDB - Base de datos
+  mongodb:
+    image: mongo:7.0
+    container_name: bmc-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=bmc2024secure
+      - MONGO_INITDB_DATABASE=bmc_quotes
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongodb-init.js:/docker-entrypoint-initdb.d/mongodb-init.js:ro
+    networks:
+      - bmc-network
+
+  # Dashboard Next.js - Frontend
+  bmc-dashboard:
+    build:
+      context: ./Dashboard-bmc/proyecto-cotizacion-whatsapp/05_dashboard_ui
+      dockerfile: Dockerfile
+    container_name: bmc-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://admin:bmc2024secure@mongodb:27017/bmc_quotes?authSource=admin
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_SHEET_ID=${GOOGLE_SHEET_ID}
+      - GOOGLE_SERVICE_ACCOUNT_EMAIL=${GOOGLE_SERVICE_ACCOUNT_EMAIL}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - N8N_BASE_URL=http://n8n:5678
+      - N8N_API_KEY=${N8N_API_KEY}
+    volumes:
+      - ./Dashboard-bmc/proyecto-cotizacion-whatsapp/05_dashboard_ui:/app
+    networks:
+      - bmc-network
+    depends_on:
+      - n8n
+      - mongodb
+
+  # Redis - Cache y sesiones
+  redis:
+    image: redis:7.2-alpine
+    container_name: bmc-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - bmc-network
+
+  # Nginx - Proxy reverso
+  nginx:
+    image: nginx:alpine
+    container_name: bmc-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - bmc-network
+    depends_on:
+      - bmc-dashboard
+      - n8n
+
+volumes:
+  n8n_data:
+  mongodb_data:
+  redis_data:
+  python_cache:
+
+networks:
+  bmc-network:
+    driver: bridge

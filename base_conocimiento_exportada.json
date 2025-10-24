@@ -1,0 +1,135 @@
+{
+  "interacciones": [
+    {
+      "id": "ia_20251024035137",
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Hola, necesito información sobre Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024035138",
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024035139",
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Perfecto, me parece bien el precio. ¿Incluye instalación?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024035140",
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Excelente, procedo con la compra",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    }
+  ],
+  "patrones_venta": [],
+  "conocimiento_productos": {
+    "isodec": {
+      "producto_id": "isodec",
+      "nombre": "Isodec",
+      "caracteristicas_base": {
+        "tipo": "Panel aislante térmico",
+        "nucleo": "EPS",
+        "conductividad_termica": "0.035 W/mK",
+        "densidad": "15-20 kg/m³"
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {},
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [],
+      "fecha_ultima_actualizacion": "2025-10-24 03:51:37.943487"
+    }
+  },
+  "metricas_evolucion": {
+    "fecha_actualizacion": "2025-10-24T03:51:40.957810",
+    "interacciones_hoy": 4,
+    "interacciones_semana": 4,
+    "ventas_hoy": 0,
+    "ventas_semana": 0,
+    "satisfaccion_promedio": 0,
+    "total_interacciones": 4,
+    "total_patrones": 0,
+    "total_insights": 4
+  },
+  "insights_automaticos": [
+    {
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": []
+    }
+  ],
+  "fecha_exportacion": "2025-10-24T03:51:41.961267"
+}

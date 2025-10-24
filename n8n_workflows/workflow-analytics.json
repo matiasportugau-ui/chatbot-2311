@@ -1,0 +1,240 @@
+{
+  "name": "BMC Analytics Diario",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "cronExpression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-schedule",
+      "name": "Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Obtener insights de la base de conocimiento\nreturn {\n  json: {\n    action: \"obtener_insights\"\n  }\n};"
+      },
+      "id": "get-insights",
+      "name": "Get Insights",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [460, 200]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Obtener análisis de conversiones\nreturn {\n  json: {\n    action: \"analisis_conversiones\"\n  }\n};"
+      },
+      "id": "get-conversions",
+      "name": "Get Conversions",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "command": "python3 n8n_integration.py",
+        "options": {
+          "cwd": "/app"
+        }
+      },
+      "id": "execute-insights",
+      "name": "Execute Insights",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "command": "python3 n8n_integration.py",
+        "options": {
+          "cwd": "/app"
+        }
+      },
+      "id": "execute-conversions",
+      "name": "Execute Conversions",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Combinar insights y análisis de conversiones\nconst insights = $('Execute Insights').item.json.data;\nconst conversions = $('Execute Conversions').item.json.data;\n\n// Generar reporte diario\nconst reporte = {\n  fecha: new Date().toLocaleDateString('es-UY'),\n  timestamp: new Date().toISOString(),\n  insights: {\n    total_interacciones: insights.total_interacciones || 0,\n    patrones_exitosos: insights.patrones_exitosos || [],\n    productos_populares: insights.productos_populares || [],\n    tendencias: insights.tendencias || []\n  },\n  conversiones: {\n    tasa_conversion: conversions.tasa_conversion || 0,\n    cotizaciones_generadas: conversions.cotizaciones_generadas || 0,\n    ventas_confirmadas: conversions.ventas_confirmadas || 0,\n    clientes_nuevos: conversions.clientes_nuevos || 0,\n    clientes_recurrentes: conversions.clientes_recurrentes || 0\n  },\n  resumen: {\n    total_cotizaciones: (conversions.cotizaciones_generadas || 0),\n    total_ventas: (conversions.ventas_confirmadas || 0),\n    tasa_conversion_porcentaje: ((conversions.tasa_conversion || 0) * 100).toFixed(2),\n    producto_mas_popular: insights.productos_populares && insights.productos_populares.length > 0 \n      ? insights.productos_populares[0].nombre \n      : 'N/A'\n  }\n};\n\nreturn { json: reporte };"
+      },
+      "id": "generate-report",
+      "name": "Generate Report",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@bmc-construcciones.com",
+        "toEmail": "admin@bmc-construcciones.com",
+        "subject": "=BMC Reporte Diario - {{ $json.fecha }}",
+        "message": "=🏗️ *REPORTE DIARIO BMC CONSTRUCCIONES*\\n\\n📅 *Fecha:* {{ $json.fecha }}\\n⏰ *Generado:* {{ $json.timestamp }}\\n\\n📊 *RESUMEN EJECUTIVO*\\n• Total Cotizaciones: {{ $json.resumen.total_cotizaciones }}\\n• Total Ventas: {{ $json.resumen.total_ventas }}\\n• Tasa de Conversión: {{ $json.resumen.tasa_conversion_porcentaje }}%\\n• Producto Más Popular: {{ $json.resumen.producto_mas_popular }}\\n\\n🧠 *INSIGHTS DE IA*\\n• Interacciones Totales: {{ $json.insights.total_interacciones }}\\n• Patrones Exitosos: {{ $json.insights.patrones_exitosos.length }}\\n• Tendencias Identificadas: {{ $json.insights.tendencias.length }}\\n\\n💼 *ANÁLISIS DE CONVERSIONES*\\n• Clientes Nuevos: {{ $json.conversiones.clientes_nuevos }}\\n• Clientes Recurrentes: {{ $json.conversiones.clientes_recurrentes }}\\n• Cotizaciones Generadas: {{ $json.conversiones.cotizaciones_generadas }}\\n• Ventas Confirmadas: {{ $json.conversiones.ventas_confirmadas }}\\n\\n📈 *PRODUCTOS POPULARES*\\n{{ $json.insights.productos_populares.map(p => `• ${p.nombre}: ${p.count} consultas`).join('\\n') }}\\n\\n🎯 *PRÓXIMOS PASOS*\\n• Revisar patrones de éxito identificados\\n• Optimizar productos más consultados\\n• Seguimiento a clientes con alta probabilidad de conversión\\n\\n---\\n*Generado automáticamente por el Sistema BMC de Cotización Inteligente*",
+        "options": {
+          "messageFormat": "text"
+        }
+      },
+      "id": "send-email-report",
+      "name": "Send Email Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": "1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0",
+        "sheetName": "Dashboard",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "A": "={{ $json.fecha }}",
+            "B": "={{ $json.resumen.total_cotizaciones }}",
+            "C": "={{ $json.resumen.total_ventas }}",
+            "D": "={{ $json.resumen.tasa_conversion_porcentaje }}",
+            "E": "={{ $json.insights.total_interacciones }}",
+            "F": "={{ $json.conversiones.clientes_nuevos }}",
+            "G": "={{ $json.conversiones.clientes_recurrentes }}",
+            "H": "={{ $json.resumen.producto_mas_popular }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "update-dashboard-sheet",
+      "name": "Update Dashboard Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "reportes_diarios",
+        "document": "={{ $json }}"
+      },
+      "id": "save-report-mongodb",
+      "name": "Save Report MongoDB",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    }
+  ],
+  "connections": {
+    "Daily Schedule": {
+      "main": [
+        [
+          {
+            "node": "Get Insights",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Conversions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Insights": {
+      "main": [
+        [
+          {
+            "node": "Execute Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Conversions": {
+      "main": [
+        [
+          {
+            "node": "Execute Conversions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Insights": {
+      "main": [
+        [
+          {
+            "node": "Generate Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Conversions": {
+      "main": [
+        [
+          {
+            "node": "Generate Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Report": {
+      "main": [
+        [
+          {
+            "node": "Send Email Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Dashboard Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Report": {
+      "main": [
+        [
+          {
+            "node": "Save Report MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Dashboard Sheet": {
+      "main": [
+        [
+          {
+            "node": "Save Report MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1",
+  "id": "bmc-analytics-workflow",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {}
+}

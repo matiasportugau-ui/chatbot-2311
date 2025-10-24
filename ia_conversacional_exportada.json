@@ -1,0 +1,74 @@
+{
+  "patrones_respuesta": {
+    "saludo": [
+      "¡Hola! Soy tu asistente de cotizaciones de BMC Uruguay. ¿En qué puedo ayudarte?",
+      "¡Buenos días! Estoy aquí para ayudarte con tus consultas de aislamiento térmico.",
+      "¡Hola! ¿Te interesa cotizar algún producto de aislamiento térmico?"
+    ],
+    "despedida": [
+      "¡Gracias por contactar BMC Uruguay! Que tengas un excelente día.",
+      "Ha sido un placer ayudarte. ¡Hasta la próxima!",
+      "Espero haber sido de ayuda. ¡Que tengas un gran día!"
+    ],
+    "consulta_producto": [
+      "Te ayudo con información sobre nuestros productos de aislamiento térmico.",
+      "Tenemos varios productos disponibles. ¿Cuál te interesa conocer?",
+      "Perfecto, te explico las características de nuestros productos."
+    ],
+    "cotizacion": [
+      "¡Excelente! Vamos a crear tu cotización paso a paso.",
+      "Perfecto, necesito algunos datos para darte el precio exacto.",
+      "Genial, te ayudo a cotizar el producto que necesitas."
+    ]
+  },
+  "entidades_reconocidas": {
+    "productos": [
+      "isodec",
+      "poliestireno",
+      "lana de roca",
+      "lana_roca"
+    ],
+    "espesores": [
+      "50mm",
+      "75mm",
+      "100mm",
+      "125mm",
+      "150mm"
+    ],
+    "colores": [
+      "blanco",
+      "gris",
+      "personalizado"
+    ],
+    "aplicaciones": [
+      "casa",
+      "edificio",
+      "comercial",
+      "industrial",
+      "residencial"
+    ],
+    "objeciones": [
+      "caro",
+      "costoso",
+      "no estoy seguro",
+      "necesito pensarlo"
+    ],
+    "intenciones": [
+      "cotizar",
+      "precio",
+      "informacion",
+      "caracteristicas",
+      "instalacion"
+    ]
+  },
+  "conversaciones_activas": {
+    "cliente_demo_demo_20251024035137": {
+      "cliente_id": "cliente_demo",
+      "sesion_id": "demo_20251024035137",
+      "estado_cotizacion": "inicial",
+      "timestamp_inicio": "2025-10-24T03:51:37.944201",
+      "timestamp_ultima_actividad": "2025-10-24T03:51:40.957717"
+    }
+  },
+  "fecha_exportacion": "2025-10-24T03:51:41.962717"
+}

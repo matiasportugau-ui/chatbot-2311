@@ -1,0 +1,194 @@
+{
+  "productos": {
+    "isodec": {
+      "codigo": "isodec",
+      "nombre": "Isodec",
+      "descripcion": "Panel aislante térmico con núcleo de EPS",
+      "espesores_disponibles": {
+        "50mm": {
+          "precio_base": 120.00,
+          "factor_espesor": 0.8
+        },
+        "75mm": {
+          "precio_base": 135.00,
+          "factor_espesor": 0.9
+        },
+        "100mm": {
+          "precio_base": 150.00,
+          "factor_espesor": 1.0
+        },
+        "125mm": {
+          "precio_base": 165.00,
+          "factor_espesor": 1.1
+        },
+        "150mm": {
+          "precio_base": 180.00,
+          "factor_espesor": 1.2
+        }
+      },
+      "rellenos_disponibles": {
+        "EPS": {
+          "precio_base": 0.00,
+          "factor_relleno": 1.0
+        },
+        "Poliuretano": {
+          "precio_base": 25.00,
+          "factor_relleno": 1.15
+        },
+        "Lana de roca": {
+          "precio_base": 30.00,
+          "factor_relleno": 1.2
+        }
+      },
+      "colores_disponibles": {
+        "Blanco": {
+          "precio_base": 0.00,
+          "factor_color": 1.0
+        },
+        "Gris": {
+          "precio_base": 5.00,
+          "factor_color": 1.05
+        },
+        "Personalizado": {
+          "precio_base": 15.00,
+          "factor_color": 1.15
+        }
+      },
+      "terminaciones": {
+        "Gotero": {
+          "precio_metro_lineal": 8.00,
+          "factor_terminacion": 1.05
+        },
+        "Hormigón": {
+          "precio_metro_lineal": 12.00,
+          "factor_terminacion": 1.1
+        },
+        "Aluminio": {
+          "precio_metro_lineal": 15.00,
+          "factor_terminacion": 1.15
+        }
+      },
+      "servicios": {
+        "anclajes": {
+          "incluido": {
+            "precio_metro_cuadrado": 0.00,
+            "factor_servicio": 1.0
+          },
+          "no_incluido": {
+            "precio_metro_cuadrado": -5.00,
+            "factor_servicio": 0.95
+          }
+        },
+        "traslado": {
+          "incluido": {
+            "precio_metro_cuadrado": 0.00,
+            "factor_servicio": 1.0
+          },
+          "no_incluido": {
+            "precio_metro_cuadrado": -10.00,
+            "factor_servicio": 0.9
+          }
+        }
+      },
+      "link_web": "https://bmcuruguay.com.uy/productos/isodec",
+      "imagen": "https://bmcuruguay.com.uy/images/isodec.jpg",
+      "especificaciones_tecnicas": {
+        "conductividad_termica": "0.035 W/mK",
+        "densidad": "15-20 kg/m³",
+        "resistencia_compresion": "100 kPa",
+        "absorcion_agua": "< 1%",
+        "clase_fuego": "B2"
+      }
+    },
+    "poliestireno": {
+      "codigo": "poliestireno",
+      "nombre": "Poliestireno Expandido",
+      "descripcion": "Aislante térmico de poliestireno expandido",
+      "espesores_disponibles": {
+        "25mm": {
+          "precio_base": 80.00,
+          "factor_espesor": 0.7
+        },
+        "50mm": {
+          "precio_base": 100.00,
+          "factor_espesor": 0.8
+        },
+        "75mm": {
+          "precio_base": 120.00,
+          "factor_espesor": 0.9
+        },
+        "100mm": {
+          "precio_base": 140.00,
+          "factor_espesor": 1.0
+        }
+      },
+      "link_web": "https://bmcuruguay.com.uy/productos/poliestireno",
+      "imagen": "https://bmcuruguay.com.uy/images/poliestireno.jpg"
+    },
+    "lana_roca": {
+      "codigo": "lana_roca",
+      "nombre": "Lana de Roca",
+      "descripcion": "Aislante térmico y acústico de lana de roca",
+      "espesores_disponibles": {
+        "50mm": {
+          "precio_base": 110.00,
+          "factor_espesor": 0.8
+        },
+        "75mm": {
+          "precio_base": 130.00,
+          "factor_espesor": 0.9
+        },
+        "100mm": {
+          "precio_base": 150.00,
+          "factor_espesor": 1.0
+        }
+      },
+      "link_web": "https://bmcuruguay.com.uy/productos/lana-roca",
+      "imagen": "https://bmcuruguay.com.uy/images/lana-roca.jpg"
+    }
+  },
+  "configuracion": {
+    "moneda": "UYU",
+    "iva_porcentaje": 22,
+    "descuento_volumen": {
+      "min_metros_cuadrados": 100,
+      "porcentaje_descuento": 5
+    },
+    "descuento_cliente_frecuente": {
+      "min_cotizaciones": 3,
+      "porcentaje_descuento": 3
+    }
+  },
+  "zonas_entrega": {
+    "montevideo": {
+      "nombre": "Montevideo",
+      "costo_traslado": 0.00,
+      "factor_zona": 1.0
+    },
+    "interior": {
+      "nombre": "Interior del país",
+      "costo_traslado": 15.00,
+      "factor_zona": 1.1
+    },
+    "punta_del_este": {
+      "nombre": "Punta del Este",
+      "costo_traslado": 20.00,
+      "factor_zona": 1.15
+    }
+  },
+  "estados_cotizacion": [
+    "Pendiente",
+    "Asignado", 
+    "Enviado",
+    "Listo",
+    "Confirmado",
+    "Rechazado"
+  ],
+  "asignaciones": [
+    "MA",
+    "MO", 
+    "RA",
+    "SPRT",
+    "Ref."
+  ]
+}
