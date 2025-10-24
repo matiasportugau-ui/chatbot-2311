@@ -92,33 +92,70 @@ Te puedo ayudar con:
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/chat', {
+      // Usar el motor de cotización integrado con base de conocimiento evolutiva
+      const response = await fetch('/api/integrated-quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: inputMessage,
-          sessionId,
-          userPhone
+          action: 'process',
+          consulta: inputMessage,
+          userPhone,
+          userName: 'Cliente'
         })
       })
 
       const data = await response.json()
       
-      if (data.success) {
+      if (data.success && data.data?.respuesta) {
+        const respuesta = data.data.respuesta
+        
         const assistantMessage: Message = {
           id: `assistant_${Date.now()}`,
           role: 'assistant',
-          content: data.data.response.mensaje,
+          content: respuesta.mensaje,
           timestamp: new Date(),
           metadata: {
-            tipo: data.data.response.tipo,
-            cotizacion: data.data.response.cotizacion,
-            productos_sugeridos: data.data.response.productos_sugeridos,
-            preguntas_frecuentes: data.data.response.preguntas_frecuentes
+            tipo: respuesta.tipo,
+            cotizacion: respuesta.cotizacion,
+            productos_sugeridos: respuesta.recomendaciones || [],
+            preguntas_frecuentes: []
           }
         }
 
         setMessages(prev => [...prev, assistantMessage])
+        
+        // Mostrar información adicional si es cotización
+        if (respuesta.tipo === 'cotizacion' && respuesta.cotizacion) {
+          const cotizacionMessage: Message = {
+            id: `quote_${Date.now()}`,
+            role: 'system',
+            content: `💰 Cotización generada con confianza: ${(respuesta.confianza * 100).toFixed(1)}%`,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, cotizacionMessage])
+        }
+        
+        // Mostrar patrones aplicados si hay
+        if (respuesta.patrones_aplicados && respuesta.patrones_aplicados.length > 0) {
+          const patronesMessage: Message = {
+            id: `patterns_${Date.now()}`,
+            role: 'system',
+            content: `🧠 Patrones aplicados: ${respuesta.patrones_aplicados.join(', ')}`,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, patronesMessage])
+        }
+        
+        // Mostrar conocimiento utilizado
+        if (respuesta.conocimiento_utilizado && respuesta.conocimiento_utilizado.length > 0) {
+          const conocimientoMessage: Message = {
+            id: `knowledge_${Date.now()}`,
+            role: 'system',
+            content: `📚 Conocimiento utilizado: ${respuesta.conocimiento_utilizado.join(', ')}`,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, conocimientoMessage])
+        }
         
         // Actualizar tokens de contexto
         setContextTokens(prev => Math.min(maxContextTokens, prev + inputMessage.length / 4))

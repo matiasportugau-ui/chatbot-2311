@@ -4,13 +4,15 @@ Sistema completo de cotización automática para BMC Construcciones que integra 
 
 ## 🚀 Características Principales
 
-- **🤖 Motor de IA** - Parser inteligente de consultas con OpenAI
-- **📊 Base de Conocimiento** - Productos BMC (Isodec, Isoroof, Isopanel, etc.)
+- **🤖 Motor de IA Integrado** - Parser inteligente con base de conocimiento evolutiva
+- **🧠 Base de Conocimiento Dinámica** - Aprende y evoluciona de cada interacción
+- **📊 Análisis de Patrones** - Identifica patrones de venta exitosos automáticamente
+- **🎯 Personalización Inteligente** - Respuestas adaptadas al perfil del cliente
 - **📱 WhatsApp Business** - Integración completa con webhooks
 - **📋 Google Sheets** - Sincronización automática de cotizaciones
 - **🗄️ MongoDB** - Persistencia de datos y contexto
-- **💬 Chat Inteligente** - Interfaz de chat con motor de cotización
-- **📈 Dashboard** - Gestión visual y métricas en tiempo real
+- **💬 Chat Inteligente** - Interfaz de chat con motor de cotización integrado
+- **📈 Dashboard Integrado** - Métricas del sistema evolutivo en tiempo real
 
 ## 🛠️ Tecnologías
 
@@ -66,11 +68,31 @@ WHATSAPP_PHONE_NUMBER_ID=...
 WHATSAPP_VERIFY_TOKEN=bmc_whatsapp_verify_2024
 ```
 
-### 5. Ejecutar Sistema
+### 5. Configurar Integración
+
+```bash
+# Ejecutar script de configuración de integración
+./setup-integration.sh
+
+# O configurar manualmente
+./setup-credentials.sh
+```
+
+### 6. Ejecutar Sistema
 
 ```bash
 npm run dev
 # Navegar a http://localhost:3000
+```
+
+### 7. Probar Integración
+
+```bash
+# Ejecutar tests de integración
+node test-integration.js
+
+# O probar manualmente en el dashboard
+# Ir a pestaña "Sistema Integrado"
 ```
 
 ## 🧠 Motor de Cotización
@@ -195,6 +217,52 @@ POST /api/whatsapp/webhook
 - **products** - Base de conocimiento de productos
 - **analytics** - Métricas y analytics
 
+## 🧠 Sistema Integrado con Base de Conocimiento Evolutiva
+
+### Características del Sistema Integrado
+
+1. **Aprendizaje Automático**
+   - Aprende de cada interacción con clientes
+   - Identifica patrones de venta exitosos
+   - Evoluciona respuestas basadas en experiencias previas
+
+2. **Análisis de Patrones**
+   - Patrones de venta identificados automáticamente
+   - Productos más consultados por zona
+   - Horarios pico de actividad
+   - Perfiles de clientes con alta conversión
+
+3. **Personalización Inteligente**
+   - Respuestas adaptadas al perfil del cliente
+   - Recomendaciones basadas en historial
+   - Manejo inteligente de objeciones
+   - Seguimiento personalizado
+
+### API del Sistema Integrado
+
+```typescript
+// Procesar consulta con IA integrada
+POST /api/integrated-quote
+{
+  "action": "process",
+  "consulta": "Necesito cotizar Isodec 100mm para galpón de 50m2",
+  "userPhone": "+59891234567",
+  "userName": "Cliente"
+}
+
+// Obtener métricas del sistema
+POST /api/integrated-quote
+{
+  "action": "metrics"
+}
+
+// Actualizar base de conocimiento
+POST /api/integrated-quote
+{
+  "action": "update_knowledge"
+}
+```
+
 ## 📈 Dashboard de Gestión
 
 ### Pestañas Disponibles
@@ -202,8 +270,9 @@ POST /api/whatsapp/webhook
 1. **Cotizaciones** - Gestión de cotizaciones en tiempo real
 2. **Context Management** - Gestión de contexto de conversaciones
 3. **Live Chat** - Chat inteligente con motor de cotización
-4. **Analytics** - Métricas y estadísticas
-5. **Settings** - Configuración del sistema
+4. **Sistema Integrado** - Métricas del sistema evolutivo
+5. **Analytics** - Métricas y estadísticas
+6. **Settings** - Configuración del sistema
 
 ### Métricas en Tiempo Real
 

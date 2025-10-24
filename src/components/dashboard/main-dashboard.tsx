@@ -23,6 +23,7 @@ import {
   RefreshCw,
   Sun,
   Moon
+  Zap
 } from 'lucide-react'
 
 // Import all dashboard components
@@ -44,6 +45,7 @@ import { ContextManagement } from './context-management'
 import { ChatInterface } from '../chat/chat-interface'
 import { BMCChatInterface } from '../chat/bmc-chat-interface'
 import { QuotesManager } from './quotes-manager'
+import { IntegratedSystemMetrics } from './integrated-system-metrics'
 import { Header } from './header'
 import { Sidebar } from './sidebar'
 import { Footer } from './footer'
@@ -64,6 +66,7 @@ export function MainDashboard({ className }: MainDashboardProps) {
     { id: 'health', label: 'System Health', icon: Shield },
     { id: 'context', label: 'Context Management', icon: Database },
     { id: 'chat', label: 'Live Chat', icon: MessageSquare },
+    { id: 'integrated', label: 'Sistema Integrado', icon: Zap },
     { id: 'trends', label: 'Trends', icon: Target },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'insights', label: 'AI Insights', icon: Database },
@@ -173,6 +176,8 @@ export function MainDashboard({ className }: MainDashboardProps) {
         return <ContextManagement />
       case 'chat':
         return <BMCChatInterface userPhone="+59891234567" />
+      case 'integrated':
+        return <IntegratedSystemMetrics />
       case 'trends':
         return <TrendAnalysis trends={[
           {
