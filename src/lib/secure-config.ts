@@ -1,0 +1,120 @@
+import { credentialsManager } from './credentials-manager'
+
+// Configuración centralizada y segura del sistema BMC
+export class SecureConfig {
+  private static instance: SecureConfig
+  private isInitialized = false
+
+  private constructor() {}
+
+  static getInstance(): SecureConfig {
+    if (!SecureConfig.instance) {
+      SecureConfig.instance = new SecureConfig()
+    }
+    return SecureConfig.instance
+  }
+
+  // Inicializar configuración segura
+  async initialize(credentialsPath?: string): Promise<void> {
+    if (this.isInitialized) return
+
+    try {
+      await credentialsManager.loadCredentials(credentialsPath)
+      this.isInitialized = true
+      console.log('🔐 Configuración segura inicializada')
+    } catch (error) {
+      console.error('❌ Error inicializando configuración segura:', error)
+      throw error
+    }
+  }
+
+  // Obtener configuración de OpenAI
+  getOpenAIConfig() {
+    const config = credentialsManager.getOpenAI()
+    return {
+      apiKey: config.api_key,
+      model: config.model,
+      maxTokens: config.max_tokens,
+      temperature: config.temperature
+    }
+  }
+
+  // Obtener configuración de Google Sheets
+  getGoogleSheetsConfig() {
+    const config = credentialsManager.getGoogleSheets()
+    return {
+      sheetId: config.sheet_id,
+      serviceAccountEmail: config.service_account_email,
+      privateKey: config.private_key,
+      scopes: config.scopes
+    }
+  }
+
+  // Obtener configuración de MongoDB
+  getMongoDBConfig() {
+    const config = credentialsManager.getMongoDB()
+    return {
+      uri: config.uri,
+      database: config.database,
+      collections: config.collections
+    }
+  }
+
+  // Obtener configuración de WhatsApp
+  getWhatsAppConfig() {
+    const config = credentialsManager.getWhatsApp()
+    return {
+      accessToken: config.access_token,
+      phoneNumberId: config.phone_number_id,
+      verifyToken: config.verify_token,
+      webhookUrl: config.webhook_url
+    }
+  }
+
+  // Obtener configuración de n8n
+  getN8NConfig() {
+    const config = credentialsManager.getN8N()
+    return {
+      webhookUrl: config.webhook_url,
+      apiKey: config.api_key,
+      baseUrl: config.base_url
+    }
+  }
+
+  // Obtener configuración del sistema
+  getSystemConfig() {
+    const config = credentialsManager.getSystem()
+    return {
+      environment: config.environment,
+      maxContextTokens: config.max_context_tokens,
+      maxMessagesPerSession: config.max_messages_per_session,
+      inactivityTimeoutMinutes: config.inactivity_timeout_minutes,
+      defaultZone: config.default_zone,
+      encryptionKey: config.encryption_key
+    }
+  }
+
+  // Validar todas las credenciales
+  validateAllCredentials() {
+    return credentialsManager.validateCredentials()
+  }
+
+  // Obtener resumen de configuración (sin datos sensibles)
+  getConfigSummary() {
+    return credentialsManager.getCredentialsSummary()
+  }
+
+  // Verificar si está inicializado
+  isReady(): boolean {
+    return this.isInitialized
+  }
+}
+
+// Instancia global
+export const secureConfig = SecureConfig.getInstance()
+
+// Función de conveniencia para inicializar
+export async function initializeSecureConfig(credentialsPath?: string): Promise<SecureConfig> {
+  await secureConfig.initialize(credentialsPath)
+  return secureConfig
+}
