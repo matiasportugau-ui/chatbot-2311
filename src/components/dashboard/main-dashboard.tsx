@@ -22,7 +22,7 @@ import {
   Filter,
   RefreshCw,
   Sun,
-  Moon
+  Moon,
   Zap
 } from 'lucide-react'
 
