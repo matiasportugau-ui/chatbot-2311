@@ -23,7 +23,8 @@ import {
   RefreshCw,
   Sun,
   Moon,
-  Zap
+  Zap,
+  FileText
 } from 'lucide-react'
 
 // Import all dashboard components
