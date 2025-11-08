@@ -9,6 +9,7 @@ import time
 import re
 from decimal import Decimal
 from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
+from utils_cotizaciones import obtener_datos_faltantes, formatear_mensaje_faltantes, construir_contexto_validacion
 
 
 class AgenteInteractivo:
@@ -81,7 +82,7 @@ class AgenteInteractivo:
         return ("¡Perfecto! 🎯 Vamos a crear tu cotización.\n\n"
                 "Te voy a hacer algunas preguntas para darte el precio exacto:\n\n"
                 "**PASO 1 - DATOS PERSONALES**\n"
-                "¿Cuál es tu nombre?")
+                "¿Cuál es tu nombre y apellido?")
     
     def responder_consulta_producto(self, mensaje):
         """Responde consultas sobre productos"""
@@ -150,8 +151,8 @@ class AgenteInteractivo:
     
     def procesar_datos_cotizacion(self, mensaje):
         """Procesa los datos de cotización paso a paso"""
-        if self.paso_actual == 1:  # Nombre
-            return self.procesar_nombre(mensaje)
+        if self.paso_actual == 1:  # Nombre y Apellido
+            return self.procesar_nombre_apellido(mensaje)
         elif self.paso_actual == 2:  # Teléfono
             return self.procesar_telefono(mensaje)
         elif self.paso_actual == 3:  # Dirección
@@ -169,13 +170,23 @@ class AgenteInteractivo:
         else:
             return self.finalizar_cotizacion()
     
-    def procesar_nombre(self, mensaje):
-        """Procesa el nombre del cliente"""
-        self.datos_cliente['nombre'] = mensaje.strip()
-        self.paso_actual = 2
-        return (f"¡Hola {self.datos_cliente['nombre']}! 👋\n\n"
-                "**PASO 2 - CONTACTO**\n"
-                "¿Cuál es tu número de teléfono?")
+    def procesar_nombre_apellido(self, mensaje):
+        """Procesa el nombre y apellido del cliente"""
+        # Intentar extraer nombre y apellido
+        mensaje_limpio = mensaje.strip()
+        partes = mensaje_limpio.split()
+        
+        if len(partes) >= 2:
+            self.datos_cliente['nombre'] = partes[0]
+            self.datos_cliente['apellido'] = " ".join(partes[1:])
+            self.paso_actual = 2
+            return (f"¡Hola {self.datos_cliente['nombre']} {self.datos_cliente['apellido']}! 👋\n\n"
+                    "**PASO 2 - CONTACTO**\n"
+                    "¿Cuál es tu número de teléfono?")
+        else:
+            # Solo tiene un nombre, pedir apellido
+            self.datos_cliente['nombre'] = mensaje_limpio
+            return "¿Y cuál es tu apellido?"
     
     def procesar_telefono(self, mensaje):
         """Procesa el teléfono del cliente"""
@@ -301,9 +312,30 @@ class AgenteInteractivo:
     def finalizar_cotizacion(self):
         """Finaliza la cotización y muestra el resultado"""
         try:
+            # Construir contexto de validación con los datos capturados
+            contexto_validacion = construir_contexto_validacion(
+                self.datos_cliente,
+                self.datos_especificaciones
+            )
+            
+            # Validar que todos los datos obligatorios estén presentes
+            datos_faltantes = obtener_datos_faltantes(contexto_validacion)
+            
+            if datos_faltantes:
+                # Hay datos faltantes, solicitar al usuario
+                mensaje = formatear_mensaje_faltantes(datos_faltantes)
+                return f"❌ {mensaje}"
+            
+            # Todos los datos están completos, crear cotización
+            # Combinar nombre y apellido para el campo nombre del cliente
+            nombre_completo = self.datos_cliente.get('nombre', 'Cliente')
+            apellido = self.datos_cliente.get('apellido', '')
+            if apellido:
+                nombre_completo = f"{nombre_completo} {apellido}"
+            
             # Crear cliente
             self.cliente_actual = Cliente(
-                nombre=self.datos_cliente['nombre'],
+                nombre=nombre_completo,
                 telefono=self.datos_cliente['telefono'],
                 direccion=self.datos_cliente['direccion'],
                 zona=self.datos_cliente['direccion']
