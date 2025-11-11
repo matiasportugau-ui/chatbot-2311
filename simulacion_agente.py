@@ -8,6 +8,7 @@ Demuestra cómo un agente usaría el sistema en una conversación real
 import time
 from decimal import Decimal
 from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
+from utils_cotizaciones import obtener_datos_faltantes, formatear_mensaje_faltantes, construir_contexto_validacion
 
 
 class AgenteCotizaciones:
@@ -19,6 +20,8 @@ class AgenteCotizaciones:
         self.conversacion_activa = False
         self.cliente_actual = None
         self.especificaciones_actuales = None
+        self.datos_cliente = {}
+        self.datos_especificaciones = {}
     
     def cargar_configuracion_inicial(self):
         """Carga la configuración inicial del sistema"""
@@ -151,18 +154,28 @@ class AgenteCotizaciones:
         """Procesa datos del cliente"""
         # Simular extracción de datos del mensaje
         nombre = "Cliente"  # En un sistema real, se extraería del mensaje
+        apellido = "Ejemplo"
         telefono = "099123456"
         direccion = "Montevideo"
         
+        # Guardar datos para validación posterior
+        self.datos_cliente = {
+            "nombre": nombre,
+            "apellido": apellido,
+            "telefono": telefono,
+            "direccion": direccion,
+            "zona": "Montevideo"
+        }
+        
         self.cliente_actual = Cliente(
-            nombre=nombre,
+            nombre=f"{nombre} {apellido}",
             telefono=telefono,
             direccion=direccion,
             zona="Montevideo"
         )
         
         return ("✅ **Datos del cliente registrados**\n\n"
-                f"👤 Nombre: {nombre}\n"
+                f"👤 Nombre: {nombre} {apellido}\n"
                 f"📞 Teléfono: {telefono}\n"
                 f"📍 Dirección: {direccion}\n\n"
                 "Ahora necesito las especificaciones del producto:\n"
@@ -179,6 +192,15 @@ class AgenteCotizaciones:
         largo = Decimal('10.0')
         ancho = Decimal('5.0')
         color = "Blanco"
+        
+        # Guardar datos para validación posterior
+        self.datos_especificaciones = {
+            "producto": producto,
+            "espesor": espesor,
+            "largo": largo,
+            "ancho": ancho,
+            "color": color
+        }
         
         self.especificaciones_actuales = EspecificacionCotizacion(
             producto=producto,
@@ -207,6 +229,21 @@ class AgenteCotizaciones:
     def finalizar_cotizacion(self):
         """Finaliza la cotización y muestra el resultado"""
         try:
+            # Construir contexto de validación
+            contexto_validacion = construir_contexto_validacion(
+                self.datos_cliente,
+                self.datos_especificaciones
+            )
+            
+            # Validar que todos los datos obligatorios estén presentes
+            datos_faltantes = obtener_datos_faltantes(contexto_validacion)
+            
+            if datos_faltantes:
+                # Hay datos faltantes, solicitar al usuario
+                mensaje = formatear_mensaje_faltantes(datos_faltantes)
+                return f"❌ {mensaje}"
+            
+            # Todos los datos están completos, crear cotización
             # Crear cotización
             cotizacion = self.sistema.crear_cotizacion(
                 cliente=self.cliente_actual,
@@ -240,6 +277,8 @@ class AgenteCotizaciones:
             self.conversacion_activa = False
             self.cliente_actual = None
             self.especificaciones_actuales = None
+            self.datos_cliente = {}
+            self.datos_especificaciones = {}
             
             return respuesta
             
