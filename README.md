@@ -14,15 +14,109 @@ Sistema completo para la gestión de cotizaciones de productos de aislamiento t�
 - **Exportación de datos** en formato JSON
 - **Reportes detallados** en HTML y PDF
 - **Sistema modular** con componentes independientes
+- **Validación inteligente de datos** - El bot solicita automáticamente información faltante
+
+## Validación Inteligente de Datos (Bot)
+
+El sistema incluye validación centralizada que garantiza que toda la información requerida esté completa antes de generar una cotización. El bot conversacional detecta automáticamente datos faltantes y los solicita al cliente de manera natural y amigable.
+
+### Campos Obligatorios
+
+Para generar una cotización, el sistema requiere los siguientes datos mínimos:
+
+| Campo | Descripción | Ejemplo |
+|-------|-------------|---------|
+| **nombre** | Nombre del cliente | Juan |
+| **apellido** | Apellido del cliente | Pérez |
+| **telefono** | Teléfono de contacto | 099123456 |
+| **producto** | Tipo de producto | isodec, poliestireno, lana_roca |
+| **espesor** | Espesor del producto | 50mm, 75mm, 100mm, 125mm, 150mm |
+| **largo** | Largo en metros | 10 |
+| **ancho** | Ancho en metros | 5 |
+
+### Comportamiento del Bot
+
+**Solicitud Automática de Datos:**
+- El bot detecta automáticamente qué datos faltan
+- Solicita la información de forma clara y específica
+- Adapta el mensaje según la cantidad de datos faltantes
+- No genera cotización hasta tener todos los datos requeridos
+
+**Ejemplos de Mensajes del Bot:**
+
+Cuando falta un solo dato:
+```
+Bot: "Para poder cotizar necesito que me indiques qué producto te interesa 
+(Isodec, Poliestireno o Lana de Roca). ¿Cuál te interesa?"
+```
+
+Cuando faltan varios datos:
+```
+Bot: "Para poder cotizar necesito los siguientes datos: tu apellido, 
+el espesor que necesitas (50mm, 75mm, 100mm, 125mm o 150mm) y las dimensiones 
+(largo x ancho en metros, por ejemplo: 10m x 5m). ¿Podrías indicarme esa información?"
+```
+
+Cuando faltan las dimensiones:
+```
+Bot: "Para poder cotizar necesito las dimensiones (largo x ancho en metros, 
+por ejemplo: 10m x 5m). ¿Cuáles son las dimensiones?"
+```
+
+### Flujo de Validación
+
+1. **Cliente inicia conversación** - El bot saluda y ofrece ayuda
+2. **Cliente solicita cotización** - El bot explica qué datos necesita
+3. **Cliente proporciona información** - El bot extrae los datos del mensaje
+4. **Validación automática** - El sistema verifica si faltan datos obligatorios
+5. **Solicitud de datos faltantes** - Si falta algo, el bot lo solicita específicamente
+6. **Generación de cotización** - Solo cuando todos los datos están completos
+
+### Ventajas del Sistema de Validación
+
+✅ **Cotizaciones completas:** Garantiza que ninguna cotización se genere sin información crítica  
+✅ **Experiencia natural:** El bot solicita datos de forma conversacional y amigable  
+✅ **Mensajes contextuales:** Los mensajes se adaptan a qué específicamente falta  
+✅ **Mantenibilidad:** La lógica de validación está centralizada en `utils_cotizaciones.py`  
+✅ **Extensible:** Fácil agregar nuevos campos obligatorios en el futuro
+
+### Uso en el Código
+
+```python
+from utils_cotizaciones import obtener_datos_faltantes, formatear_mensaje_faltantes
+
+# Construir contexto con datos actuales
+contexto = {
+    "nombre": "Juan",
+    "apellido": "",  # Faltante
+    "telefono": "099123456",
+    "producto": "isodec",
+    "espesor": "100mm",
+    "largo": 10,
+    "ancho": 5
+}
+
+# Detectar datos faltantes
+faltantes = obtener_datos_faltantes(contexto)  
+# Resultado: ['apellido']
+
+# Generar mensaje amigable
+mensaje = formatear_mensaje_faltantes(faltantes)
+# Resultado: "Para poder cotizar necesito tu apellido. ¿Cómo te llamas?"
+```
 
 ## Estructura del Sistema
 
 ```
 sistema-cotizaciones-bmc/
 ├── sistema_cotizaciones.py      # Lógica principal del sistema
+├── utils_cotizaciones.py         # Utilidades de validación centralizada
 ├── importar_datos_planilla.py   # Importador desde Google Sheets
 ├── generador_plantillas.py      # Generador de plantillas
 ├── mapeador_productos_web.py    # Mapeador de productos web
+├── ia_conversacional_integrada.py # IA conversacional con validación
+├── chat_interactivo.py          # Chat interactivo con validación
+├── simulacion_agente.py         # Simulación de agente con validación
 ├── main.py                      # Sistema interactivo completo
 ├── demo.py                      # Demostración del sistema
 ├── ejecutar_sistema.py          # Script de ejecución principal

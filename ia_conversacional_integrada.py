@@ -16,6 +16,7 @@ import random
 from base_conocimiento_dinamica import BaseConocimientoDinamica, InteraccionCliente
 from motor_analisis_conversiones import MotorAnalisisConversiones
 from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
+from utils_cotizaciones import obtener_datos_faltantes, formatear_mensaje_faltantes, construir_contexto_validacion
 
 # OpenAI integration
 try:
@@ -259,6 +260,12 @@ class IAConversacionalIntegrada:
         if telefono:
             entidades["telefono"] = telefono
         
+        # Extraer nombre y apellido
+        nombre_apellido = self._extraer_nombre_apellido(mensaje)
+        if nombre_apellido:
+            entidades["nombre"] = nombre_apellido["nombre"]
+            entidades["apellido"] = nombre_apellido["apellido"]
+        
         return entidades
     
     def _extraer_dimensiones(self, mensaje: str) -> Optional[Dict[str, float]]:
@@ -288,6 +295,41 @@ class IAConversacionalIntegrada:
         match = re.search(patron, mensaje)
         if match:
             return match.group(0).replace(' ', '')
+        return None
+    
+    def _extraer_nombre_apellido(self, mensaje: str) -> Optional[Dict[str, str]]:
+        """Extrae nombre y apellido del mensaje"""
+        # Buscar patrones comunes de presentación
+        # Ejemplos: "Me llamo Juan Perez", "Soy Maria Rodriguez", "Juan Perez"
+        
+        # Patrón: "me llamo/soy + nombre apellido"
+        patron_presentacion = r'(?:me llamo|soy|mi nombre es)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)+)'
+        match = re.search(patron_presentacion, mensaje, re.IGNORECASE)
+        
+        if match:
+            nombre_completo = match.group(1).strip()
+            partes = nombre_completo.split()
+            if len(partes) >= 2:
+                return {
+                    "nombre": partes[0],
+                    "apellido": " ".join(partes[1:])
+                }
+        
+        # Patrón: dos palabras capitalizadas consecutivas (sin palabras clave antes)
+        # Solo si no hay otras palabras clave en el mensaje
+        mensaje_limpio = mensaje.strip()
+        palabras_clave = ["producto", "isodec", "poliestireno", "lana", "metro", "espesor", "precio"]
+        
+        if not any(palabra in mensaje.lower() for palabra in palabras_clave):
+            patron_nombre_simple = r'^([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*)$'
+            match = re.match(patron_nombre_simple, mensaje_limpio)
+            
+            if match:
+                return {
+                    "nombre": match.group(1),
+                    "apellido": match.group(2)
+                }
+        
         return None
     
     def _generar_respuesta_inteligente(self, mensaje: str, intencion: str, entidades: Dict[str, Any], contexto: ContextoConversacion) -> RespuestaIA:
@@ -357,17 +399,28 @@ class IAConversacionalIntegrada:
             contexto.estado_cotizacion = "recopilando_datos"
             mensaje = ("¡Perfecto! Vamos a crear tu cotización paso a paso.\n\n"
                       "Necesito algunos datos:\n"
-                      "1️⃣ ¿Cuál es tu nombre?\n"
-                      "2️⃣ ¿Qué producto te interesa? (Isodec, Poliestireno, Lana de Roca)\n"
-                      "3️⃣ ¿Cuáles son las dimensiones? (largo x ancho en metros)\n"
-                      "4️⃣ ¿Qué espesor necesitas? (50mm, 75mm, 100mm, 125mm, 150mm)")
+                      "1️⃣ ¿Cuál es tu nombre y apellido?\n"
+                      "2️⃣ ¿Cuál es tu teléfono?\n"
+                      "3️⃣ ¿Qué producto te interesa? (Isodec, Poliestireno, Lana de Roca)\n"
+                      "4️⃣ ¿Cuáles son las dimensiones? (largo x ancho en metros)\n"
+                      "5️⃣ ¿Qué espesor necesitas? (50mm, 75mm, 100mm, 125mm, 150mm)")
             
             return self._crear_respuesta(
                 mensaje, "pregunta", 0.9, ["sistema_cotizaciones"]
             )
         
         elif contexto.estado_cotizacion == "recopilando_datos":
-            # Procesar datos de cotización
+            # Actualizar datos del cliente con entidades extraídas
+            if "nombre" in entidades:
+                contexto.datos_cliente["nombre"] = entidades["nombre"]
+            
+            if "apellido" in entidades:
+                contexto.datos_cliente["apellido"] = entidades["apellido"]
+            
+            if "telefono" in entidades:
+                contexto.datos_cliente["telefono"] = entidades["telefono"]
+            
+            # Actualizar datos del producto con entidades extraídas
             if "productos" in entidades:
                 contexto.datos_producto["producto"] = entidades["productos"][0]
             
@@ -378,33 +431,36 @@ class IAConversacionalIntegrada:
             if "espesores" in entidades:
                 contexto.datos_producto["espesor"] = entidades["espesores"][0]
             
-            # Verificar si tenemos datos suficientes
-            if (contexto.datos_producto.get("producto") and 
-                contexto.datos_producto.get("largo") and 
-                contexto.datos_producto.get("ancho")):
-                
-                # Crear cotización
-                cotizacion = self._crear_cotizacion(contexto)
-                if cotizacion:
-                    contexto.estado_cotizacion = "cotizacion_completada"
-                    mensaje = self._formatear_cotizacion(cotizacion)
-                    return self._crear_respuesta(
-                        mensaje, "cotizacion", 0.95, ["sistema_cotizaciones"]
-                    )
-            
-            # Solicitar datos faltantes
-            datos_faltantes = []
-            if not contexto.datos_producto.get("producto"):
-                datos_faltantes.append("producto")
-            if not contexto.datos_producto.get("largo") or not contexto.datos_producto.get("ancho"):
-                datos_faltantes.append("dimensiones")
-            if not contexto.datos_producto.get("espesor"):
-                datos_faltantes.append("espesor")
-            
-            mensaje = f"Necesito que me proporciones: {', '.join(datos_faltantes)}"
-            return self._crear_respuesta(
-                mensaje, "pregunta", 0.8, ["sistema_cotizaciones"]
+            # Construir contexto de validación unificado
+            contexto_validacion = construir_contexto_validacion(
+                contexto.datos_cliente,
+                contexto.datos_producto
             )
+            
+            # Usar validación centralizada para verificar datos faltantes
+            datos_faltantes = obtener_datos_faltantes(contexto_validacion)
+            
+            if datos_faltantes:
+                # Hay datos faltantes, solicitar al cliente
+                mensaje = formatear_mensaje_faltantes(datos_faltantes)
+                return self._crear_respuesta(
+                    mensaje, "pregunta", 0.8, ["sistema_cotizaciones"]
+                )
+            
+            # Todos los datos están completos, crear cotización
+            cotizacion = self._crear_cotizacion(contexto)
+            if cotizacion:
+                contexto.estado_cotizacion = "cotizacion_completada"
+                mensaje = self._formatear_cotizacion(cotizacion)
+                return self._crear_respuesta(
+                    mensaje, "cotizacion", 0.95, ["sistema_cotizaciones"]
+                )
+            else:
+                # Error al crear cotización
+                return self._crear_respuesta(
+                    "Hubo un error al generar la cotización. ¿Podrías verificar los datos?",
+                    "pregunta", 0.5, ["sistema_cotizaciones"]
+                )
         
         return self._crear_respuesta(
             "¿En qué más puedo ayudarte?", "pregunta", 0.7, ["general"]
@@ -514,9 +570,15 @@ class IAConversacionalIntegrada:
     def _crear_cotizacion(self, contexto: ContextoConversacion):
         """Crea una cotización basada en los datos del contexto"""
         try:
+            # Combinar nombre y apellido para el campo nombre del cliente
+            nombre_completo = contexto.datos_cliente.get("nombre", "Cliente")
+            apellido = contexto.datos_cliente.get("apellido", "")
+            if apellido:
+                nombre_completo = f"{nombre_completo} {apellido}"
+            
             # Crear cliente
             cliente = Cliente(
-                nombre=contexto.datos_cliente.get("nombre", "Cliente"),
+                nombre=nombre_completo,
                 telefono=contexto.datos_cliente.get("telefono", ""),
                 direccion=contexto.datos_cliente.get("direccion", ""),
                 zona=contexto.datos_cliente.get("zona", "")
