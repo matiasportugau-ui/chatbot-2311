@@ -3,15 +3,16 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleSheetsClient } from '@/lib/google-sheets'
 
-
 export async function GET(request: NextRequest) {
   try {
+    const sheetsClient = new GoogleSheetsClient()
+    
     // Leer todas las cotizaciones de todas las pestañas
     const [adminData, enviadosData, confirmadosData, stats] = await Promise.all([
-      const sheetsClient = new GoogleSheetsClient(); sheetsClient.readAdminTab(),
-      const sheetsClient = new GoogleSheetsClient(); sheetsClient.readEnviadosTab(),
-      const sheetsClient = new GoogleSheetsClient(); sheetsClient.readConfirmadoTab(),
-      const sheetsClient = new GoogleSheetsClient(); sheetsClient.getStats()
+      sheetsClient.readAdminTab(),
+      sheetsClient.readEnviadosTab(),
+      sheetsClient.readConfirmadoTab(),
+      sheetsClient.getStats()
     ])
     
     return NextResponse.json({
@@ -20,12 +21,11 @@ export async function GET(request: NextRequest) {
         pendientes: adminData,
         enviados: enviadosData,
         confirmados: confirmadosData,
-        stats: stats
-      },
-      timestamp: new Date().toISOString()
+        stats
+      }
     })
   } catch (error) {
-    console.error('Error in sheets sync GET:', error)
+    console.error('Error in sheets sync:', error)
     return NextResponse.json({ 
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error' 
@@ -35,47 +35,48 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const sheetsClient = new GoogleSheetsClient()
     const body = await request.json()
     const { action, data } = body
     
     switch (action) {
       case 'add_quote':
-        await const sheetsClient = new GoogleSheetsClient(); sheetsClient.addQuoteToAdmin(data)
+        await sheetsClient.addQuoteToAdmin(data)
         return NextResponse.json({ 
           success: true, 
           message: 'Quote added to Admin tab successfully' 
         })
         
       case 'move_to_enviados':
-        await const sheetsClient = new GoogleSheetsClient(); sheetsClient.moveToEnviados(data.rowNumber, data.additionalData)
+        await sheetsClient.moveToEnviados(data.rowNumber, data.additionalData)
         return NextResponse.json({ 
           success: true, 
           message: 'Quote moved to Enviados tab successfully' 
         })
         
       case 'move_to_confirmado':
-        await const sheetsClient = new GoogleSheetsClient(); sheetsClient.moveToConfirmado(data.rowNumber)
+        await sheetsClient.moveToConfirmado(data.rowNumber)
         return NextResponse.json({ 
           success: true, 
           message: 'Quote moved to Confirmado tab successfully' 
         })
         
       case 'update_status':
-        await const sheetsClient = new GoogleSheetsClient(); sheetsClient.updateCellValue(data.sheetName, data.row, data.column, data.status)
+        await sheetsClient.updateCellValue(data.sheetName, data.row, data.column, data.status)
         return NextResponse.json({ 
           success: true, 
           message: 'Status updated successfully' 
         })
         
       case 'find_by_phone':
-        const phoneResults = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.findByPhone(data.phone)
+        const phoneResults = await sheetsClient.findByPhone(data.phone)
         return NextResponse.json({ 
           success: true, 
           data: phoneResults 
         })
         
       case 'get_stats':
-        const stats = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.getStats()
+        const stats = await sheetsClient.getStats()
         return NextResponse.json({ 
           success: true, 
           data: stats 
