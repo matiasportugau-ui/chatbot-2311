@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleSheetsEnhancedClient } from '@/lib/google-sheets-enhanced'
 import { initializeBMCSystem } from '@/lib/initialize-system'
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in enhanced-sync GET:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in enhanced-sync POST:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -111,10 +113,10 @@ export async function POST(request: NextRequest) {
 async function getAllData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
     const [adminData, enviadosData, confirmadosData, statistics] = await Promise.all([
-      sheetsClient.readAdminTab(),
-      sheetsClient.readEnviadosTab(),
-      sheetsClient.readConfirmadoTab(),
-      sheetsClient.getStatistics()
+      const sheetsClient = new GoogleSheetsClient(); sheetsClient.readAdminTab(),
+      const sheetsClient = new GoogleSheetsClient(); sheetsClient.readEnviadosTab(),
+      const sheetsClient = new GoogleSheetsClient(); sheetsClient.readConfirmadoTab(),
+      const sheetsClient = new GoogleSheetsClient(); sheetsClient.getStatistics()
     ])
     
     return NextResponse.json({
@@ -137,7 +139,7 @@ async function getAllData(sheetsClient: GoogleSheetsEnhancedClient) {
  */
 async function getAdminData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
-    const adminData = await sheetsClient.readAdminTab()
+    const adminData = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.readAdminTab()
     
     return NextResponse.json({
       success: true,
@@ -157,7 +159,7 @@ async function getAdminData(sheetsClient: GoogleSheetsEnhancedClient) {
  */
 async function getEnviadosData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
-    const enviadosData = await sheetsClient.readEnviadosTab()
+    const enviadosData = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.readEnviadosTab()
     
     return NextResponse.json({
       success: true,
@@ -177,7 +179,7 @@ async function getEnviadosData(sheetsClient: GoogleSheetsEnhancedClient) {
  */
 async function getConfirmadosData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
-    const confirmadosData = await sheetsClient.readConfirmadoTab()
+    const confirmadosData = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.readConfirmadoTab()
     
     return NextResponse.json({
       success: true,
@@ -197,7 +199,7 @@ async function getConfirmadosData(sheetsClient: GoogleSheetsEnhancedClient) {
  */
 async function getStatistics(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
-    const statistics = await sheetsClient.getStatistics()
+    const statistics = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.getStatistics()
     
     return NextResponse.json({
       success: true,
@@ -216,7 +218,7 @@ async function getStatistics(sheetsClient: GoogleSheetsEnhancedClient) {
  */
 async function searchByPhone(sheetsClient: GoogleSheetsEnhancedClient, phone: string) {
   try {
-    const results = await sheetsClient.findByPhone(phone)
+    const results = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.findByPhone(phone)
     
     return NextResponse.json({
       success: true,
@@ -237,7 +239,7 @@ async function searchByPhone(sheetsClient: GoogleSheetsEnhancedClient, phone: st
  */
 async function searchByArg(sheetsClient: GoogleSheetsEnhancedClient, arg: string) {
   try {
-    const results = await sheetsClient.findByArg(arg)
+    const results = await const sheetsClient = new GoogleSheetsClient(); sheetsClient.findByArg(arg)
     
     return NextResponse.json({
       success: true,
@@ -260,10 +262,10 @@ async function addQuote(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
   try {
     // Generar código Arg si no se proporciona
     if (!data.arg) {
-      data.arg = sheetsClient.generateArgCode(data.telefono, data.origen || 'WA')
+      data.arg = const sheetsClient = new GoogleSheetsClient(); sheetsClient.generateArgCode(data.telefono, data.origen || 'WA')
     }
     
-    await sheetsClient.addQuoteToAdmin(data)
+    await const sheetsClient = new GoogleSheetsClient(); sheetsClient.addQuoteToAdmin(data)
     
     return NextResponse.json({
       success: true,
@@ -283,7 +285,7 @@ async function addQuote(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
  */
 async function moveToEnviados(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
   try {
-    await sheetsClient.moveToEnviados(data.rowNumber, data.additionalData)
+    await const sheetsClient = new GoogleSheetsClient(); sheetsClient.moveToEnviados(data.rowNumber, data.additionalData)
     
     return NextResponse.json({
       success: true,
@@ -303,7 +305,7 @@ async function moveToEnviados(sheetsClient: GoogleSheetsEnhancedClient, data: an
  */
 async function moveToConfirmado(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
   try {
-    await sheetsClient.moveToConfirmado(data.rowNumber, data.additionalData)
+    await const sheetsClient = new GoogleSheetsClient(); sheetsClient.moveToConfirmado(data.rowNumber, data.additionalData)
     
     return NextResponse.json({
       success: true,
@@ -323,7 +325,7 @@ async function moveToConfirmado(sheetsClient: GoogleSheetsEnhancedClient, data: 
  */
 async function updateStatus(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
   try {
-    await sheetsClient.updateCellValue(data.sheetName, data.row, 'B', data.status)
+    await const sheetsClient = new GoogleSheetsClient(); sheetsClient.updateCellValue(data.sheetName, data.row, 'B', data.status)
     
     return NextResponse.json({
       success: true,
@@ -345,7 +347,7 @@ async function updateStatus(sheetsClient: GoogleSheetsEnhancedClient, data: any)
  */
 async function updateCell(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
   try {
-    await sheetsClient.updateCellValue(data.sheetName, data.row, data.column, data.value)
+    await const sheetsClient = new GoogleSheetsClient(); sheetsClient.updateCellValue(data.sheetName, data.row, data.column, data.value)
     
     return NextResponse.json({
       success: true,

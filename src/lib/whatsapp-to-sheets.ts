@@ -100,7 +100,7 @@ Por favor, incluye en tu mensaje:
 
     return {
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       response: errorResponse
     }
   }

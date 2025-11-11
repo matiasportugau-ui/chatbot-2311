@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { parseQuoteConsulta, isValidQuoteRequest, extractContactInfo } from '@/lib/quote-parser'
 
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in parse-quote API:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -81,7 +83,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in parse-quote GET:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
