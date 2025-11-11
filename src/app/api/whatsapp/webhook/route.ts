@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { processAndRespondToWhatsApp, WhatsAppMessage } from '@/lib/whatsapp-to-sheets'
 
@@ -41,7 +43,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: 'ok' })
   } catch (error) {
     console.error('Error processing WhatsApp webhook:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   }
 }
 

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { quoteEngine } from '@/lib/quote-engine'
 import { parseQuoteConsulta } from '@/lib/quote-parser'
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in chat API:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
       data: {
         tipo: 'error',
         mensaje: 'Lo siento, hubo un problema procesando tu mensaje. Por favor, intenta de nuevo.'
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in chat GET:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }

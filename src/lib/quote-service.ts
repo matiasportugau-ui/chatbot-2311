@@ -19,16 +19,16 @@ export class QuoteService {
       }]
     }
     
-    const result = await collection.insertOne(quote)
-    return { ...quote, _id: result.insertedId.toString() }
+    const result = await collection.insertOne(quote as any)
+    return { ...quote, _id: result.insertedId.toString() } as Quote
   }
   
   async getQuoteById(id: string): Promise<Quote | null> {
     const db = await getDatabase()
     const collection = db.collection(this.collectionName)
     
-    const quote = await collection.findOne({ _id: id })
-    return quote as Quote | null
+    const quote = await collection.findOne({ _id: id } as any)
+    return quote as any as Quote | null
   }
   
   async getQuoteByArg(arg: string): Promise<Quote | null> {
@@ -36,7 +36,7 @@ export class QuoteService {
     const collection = db.collection(this.collectionName)
     
     const quote = await collection.findOne({ arg })
-    return quote as Quote | null
+    return quote as any as Quote | null
   }
   
   async getQuotesByPhone(phone: string): Promise<Quote[]> {
@@ -47,7 +47,7 @@ export class QuoteService {
       .sort({ createdAt: -1 })
       .toArray()
     
-    return quotes as Quote[]
+    return quotes as any as Quote[]
   }
   
   async updateQuoteStatus(arg: string, newStatus: Quote['estado'], user?: string): Promise<boolean> {
@@ -60,7 +60,7 @@ export class QuoteService {
     const oldStatus = quote.estado
     
     const result = await collection.updateOne(
-      { arg },
+      { arg } as any,
       {
         $set: {
           estado: newStatus,
@@ -73,8 +73,8 @@ export class QuoteService {
             oldValue: oldStatus,
             newValue: newStatus,
             user
-          }
-        }
+          } as any
+        } as any
       }
     )
     
@@ -97,8 +97,8 @@ export class QuoteService {
             timestamp: new Date(),
             action: 'parsed_data_update',
             newValue: parsedData
-          }
-        }
+          } as any
+        } as any
       }
     )
     
@@ -113,7 +113,7 @@ export class QuoteService {
       .sort({ createdAt: -1 })
       .toArray()
     
-    return quotes as Quote[]
+    return quotes as any as Quote[]
   }
   
   async getAllQuotes(limit: number = 100, skip: number = 0): Promise<Quote[]> {
@@ -126,7 +126,7 @@ export class QuoteService {
       .limit(limit)
       .toArray()
     
-    return quotes as Quote[]
+    return quotes as any as Quote[]
   }
   
   async getStats(): Promise<QuoteStats> {
@@ -205,7 +205,7 @@ export class QuoteService {
       .limit(50)
       .toArray()
     
-    return quotes as Quote[]
+    return quotes as any as Quote[]
   }
   
   async deleteQuote(arg: string): Promise<boolean> {

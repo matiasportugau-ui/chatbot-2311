@@ -62,13 +62,13 @@ export default function BMCChatPage() {
           </h3>
           <div className="space-y-2 text-xs">
             <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
-              <strong>Cotización:</strong> "Necesito cotizar Isodec 100mm para galpón de 50m2"
+              <strong>Cotización:</strong> &quot;Necesito cotizar Isodec 100mm para galpón de 50m2&quot;
             </div>
             <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded">
-              <strong>Información:</strong> "¿Qué es Isoroof y para qué se usa?"
+              <strong>Información:</strong> &quot;¿Qué es Isoroof y para qué se usa?&quot;
             </div>
             <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded">
-              <strong>Pregunta:</strong> "¿Cuánto tiempo tarda la entrega?"
+              <strong>Pregunta:</strong> &quot;¿Cuánto tiempo tarda la entrega?&quot;
             </div>
           </div>
           

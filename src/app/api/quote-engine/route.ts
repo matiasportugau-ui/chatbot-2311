@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { quoteEngine } from '@/lib/quote-engine'
 
@@ -34,7 +36,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in quote-engine API:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
       data: {
         tipo: 'error',
         mensaje: 'Error interno del sistema. Por favor, intenta de nuevo.'
@@ -70,7 +72,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in quote-engine GET:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
