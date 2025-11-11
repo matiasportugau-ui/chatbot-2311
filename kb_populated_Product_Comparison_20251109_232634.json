@@ -1,0 +1,63 @@
+{
+  "session_id": "sim_20251109232429_f34b399d",
+  "phone": "+59898765432",
+  "started_at": "2025-11-09T23:24:29.722177",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:24:29.722177",
+      "user_message": "Necesito comparar Isodec y Poliestireno",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232429_f34b399d",
+        "timestamp": "2025-11-09T23:24:29.717953"
+      },
+      "session_id": "sim_20251109232429_f34b399d"
+    },
+    {
+      "timestamp": "2025-11-09T23:25:01.221822",
+      "user_message": "¿Cuál es mejor para aislamiento térmico?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232429_f34b399d",
+        "timestamp": "2025-11-09T23:25:01.216549"
+      },
+      "session_id": "sim_20251109232429_f34b399d"
+    },
+    {
+      "timestamp": "2025-11-09T23:25:32.208433",
+      "user_message": "¿Y para precio?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232429_f34b399d",
+        "timestamp": "2025-11-09T23:25:32.202318"
+      },
+      "session_id": "sim_20251109232429_f34b399d"
+    },
+    {
+      "timestamp": "2025-11-09T23:26:03.944851",
+      "user_message": "Perfecto, gracias",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232429_f34b399d",
+        "timestamp": "2025-11-09T23:26:03.927306"
+      },
+      "session_id": "sim_20251109232429_f34b399d"
+    }
+  ]
+}

@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
-import { initializeBMCSystem } from '@/lib/initialize-system'
+import { initializeSimpleSystem, getSystemStatus } from '@/lib/simple-initialize'
 
 /**
- * Health Check Endpoint
+ * Health Check Endpoint Simplificado
  * Verifica el estado de todos los servicios del sistema BMC
  */
 export async function GET() {
   try {
-    const result = await initializeBMCSystem()
+    const result = await initializeSimpleSystem()
     
     const services = {
       openai: {
@@ -39,6 +39,7 @@ export async function GET() {
       environment: process.env.NODE_ENV || 'development',
       services,
       initialization: result,
+      systemStatus: getSystemStatus(),
       message: allCriticalServicesReady 
         ? 'All critical services are configured and ready'
         : 'Some services need configuration'

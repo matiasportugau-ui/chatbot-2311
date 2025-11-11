@@ -1,45 +1,44 @@
 import { MongoClient, Db } from 'mongodb'
 
-let client: MongoClient
-let db: Db
+let client: MongoClient | null = null
+let db: Db | null = null
 
-export async function connectToDatabase() {
-  if (client && db) {
-    return { client, db }
+export async function connectDB(): Promise<Db> {
+  if (db) {
+    return db
   }
 
-  if (!process.env.MONGODB_URI) {
-    throw new Error('MONGODB_URI is not defined in environment variables')
-  }
-
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/bmc-cotizaciones'
+  
   try {
-    client = new MongoClient(process.env.MONGODB_URI, {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    })
-
+    client = new MongoClient(uri)
     await client.connect()
-    db = client.db('whatsapp_quotes')
-    
-    console.log('Connected to MongoDB successfully')
-    return { client, db }
+    db = client.db('bmc-cotizaciones')
+    console.log('✅ MongoDB conectado exitosamente')
+    return db
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error)
+    console.error('❌ Error conectando a MongoDB:', error)
     throw error
   }
 }
 
-export async function getDatabase() {
+export async function disconnectDB(): Promise<void> {
+  if (client) {
+    await client.close()
+    client = null
+    db = null
+    console.log('🔌 MongoDB desconectado')
+  }
+}
+
+export function getDB(): Db {
   if (!db) {
-    await connectToDatabase()
+    throw new Error('MongoDB no está conectado. Llama a connectDB() primero.')
   }
   return db
 }
 
-export async function closeConnection() {
-  if (client) {
-    await client.close()
-    console.log('MongoDB connection closed')
-  }
+// Alias para compatibilidad
+export function getDatabase(): Db {
+  return getDB()
 }

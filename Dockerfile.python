@@ -24,5 +24,5 @@ USER bmc
 # Exponer puerto para API (si es necesario)
 EXPOSE 8000
 
-# Comando por defecto
-CMD ["python", "sistema_final_integrado.py"]
+# Comando por defecto - ejecutar FastAPI server
+CMD ["python", "api_server.py"]

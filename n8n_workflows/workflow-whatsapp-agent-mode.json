@@ -1,0 +1,630 @@
+{
+  "name": "BMC WhatsApp Agent Mode Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "webhook/whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-verify",
+      "name": "Webhook Verify (GET)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "bmc-whatsapp-verify"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook/whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-message",
+      "name": "Webhook Message (POST)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 500],
+      "webhookId": "bmc-whatsapp-message"
+    },
+    {
+      "parameters": {
+        "functionCode": "// WhatsApp Webhook Verification (GET)\n// Meta sends: ?hub.mode=subscribe&hub.challenge=CHALLENGE&hub.verify_token=TOKEN\n// In n8n, query params are in $json.query\nconst query = $json.query || $input.item.json.query || {};\nconst verifyToken = $env.WHATSAPP_VERIFY_TOKEN || process.env.WHATSAPP_VERIFY_TOKEN || 'your_verify_token';\n\nif (query['hub.mode'] === 'subscribe' && query['hub.verify_token'] === verifyToken) {\n  return {\n    json: {\n      challenge: query['hub.challenge'],\n      verified: true\n    }\n  };\n}\n\nreturn {\n  json: {\n    verified: false,\n    error: 'Invalid verification token',\n    challenge: null\n  }\n};"
+      },
+      "id": "verify-webhook",
+      "name": "Verify Webhook",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.challenge || 'Verification failed' }}",
+        "options": {}
+      },
+      "id": "respond-verify",
+      "name": "Respond Verification",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Verify X-Hub-Signature-256\nconst crypto = require('crypto');\n// In n8n webhook, body is in $json.body, headers in $json.headers\nconst rawBody = $json.body || $input.item.json.body || $input.item.json;\nconst bodyString = typeof rawBody === 'string' ? rawBody : JSON.stringify(rawBody);\nconst headers = $json.headers || $input.item.json.headers || {};\nconst signature = headers['x-hub-signature-256'] || headers['X-Hub-Signature-256'] || '';\n\nconst appSecret = $env.WHATSAPP_APP_SECRET || process.env.WHATSAPP_APP_SECRET || '';\n\nif (!signature || !appSecret) {\n  return {\n    json: {\n      verified: false,\n      error: 'Missing signature or app secret',\n      proceed: false,\n      body: bodyString\n    }\n  };\n}\n\n// Calculate expected signature\nconst expectedSignature = 'sha256=' + crypto\n  .createHmac('sha256', appSecret)\n  .update(bodyString)\n  .digest('hex');\n\n// Compare signatures (constant-time comparison)\nlet isValid = false;\ntry {\n  isValid = crypto.timingSafeEqual(\n    Buffer.from(signature),\n    Buffer.from(expectedSignature)\n  );\n} catch (e) {\n  isValid = false;\n}\n\n// Also check timestamp (reject if >5 minutes old)\nconst timestamp = parseInt(headers['x-hub-timestamp'] || headers['X-Hub-Timestamp'] || '0');\nconst now = Math.floor(Date.now() / 1000);\nconst timeDiff = Math.abs(now - timestamp);\nconst isRecent = timestamp === 0 || timeDiff < 300; // 5 minutes (or no timestamp)\n\nreturn {\n  json: {\n    verified: isValid && isRecent,\n    error: !isValid ? 'Invalid signature' : (!isRecent ? 'Request too old' : null),\n    proceed: isValid && isRecent,\n    timestamp: timestamp,\n    timeDiff: timeDiff,\n    body: bodyString\n  }\n};"
+      },
+      "id": "verify-signature",
+      "name": "Verify Signature",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [680, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-verified",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-signature",
+      "name": "Signature Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [900, 500]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract WhatsApp message data\n// In n8n webhook, body is in $json.body for POST requests\n// Also preserve the verified body from previous node\nconst body = $json.body || $input.item.json.body || $input.item.json;\n\n// If body is a string, parse it\nlet parsedBody = body;\nif (typeof body === 'string') {\n  try {\n    parsedBody = JSON.parse(body);\n  } catch (e) {\n    return {\n      json: {\n        error: \"Invalid JSON in webhook body\",\n        success: false,\n        proceed: false\n      }\n    };\n  }\n}\n\n// Verify WhatsApp webhook structure\nif (!parsedBody.entry || !parsedBody.entry[0] || !parsedBody.entry[0].changes) {\n  return {\n    json: {\n      error: \"Invalid WhatsApp webhook structure\",\n      success: false,\n      proceed: false,\n      body: parsedBody\n    }\n  };\n}\n\nconst change = parsedBody.entry[0].changes[0];\nconst value = change.value;\n\n// Only process messages (not status updates)\nif (!value.messages || value.messages.length === 0) {\n  return {\n    json: {\n      error: \"No messages in webhook\",\n      success: false,\n      proceed: false,\n      isStatusUpdate: true\n    }\n  };\n}\n\nconst message = value.messages[0];\nconst contact = value.contacts ? value.contacts[0] : null;\nconst metadata = value.metadata || {};\n\n// Generate session ID (consistent per phone number)\nconst phoneNumber = message.from;\nconst timestamp = message.timestamp;\nconst sessionId = `wa_${phoneNumber}_${Math.floor(timestamp / 86400)}`; // Daily session\n\nreturn {\n  json: {\n    success: true,\n    proceed: true,\n    mensaje: message.text?.body || message.body?.text || '',\n    telefono: phoneNumber,\n    sesionId: sessionId,\n    messageId: message.id,\n    timestamp: timestamp,\n    contactName: contact?.profile?.name || 'Usuario',\n    source: 'whatsapp',\n    messageType: message.type,\n    metadata: {\n      phoneNumberId: metadata.phone_number_id,\n      displayPhoneNumber: metadata.display_phone_number\n    }\n  }\n};"
+      },
+      "id": "extract-message",
+      "name": "Extract Message Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1120, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "can-proceed",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-extract",
+      "name": "Extraction OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 500]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "={{ $env.PY_CHAT_SERVICE_URL || 'http://localhost:8000' }}/chat/process",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Request-Source",
+              "value": "n8n-whatsapp"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"mensaje\": \"{{ $json.mensaje }}\",\n  \"telefono\": \"{{ $json.telefono }}\",\n  \"sesionId\": \"{{ $json.sesionId }}\"\n}",
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "maxRetries": 2,
+            "retryOnStatusCodes": "500,502,503,504"
+          }
+        }
+      },
+      "id": "call-python-api",
+      "name": "Call Python LLM API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-cotizacion",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "cotizacion",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "is-informacion",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "informacion",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "is-pregunta",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "pregunta",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "is-seguimiento",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "seguimiento",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "route-by-type",
+      "name": "Route by Response Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1780, 500],
+      "fallbackOutput": "default"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "whatsapp_transcripts",
+        "fields": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $('Extract Message Data').item.json.sesionId }}",
+            "phoneNumber": "={{ $('Extract Message Data').item.json.telefono }}",
+            "messageId": "={{ $('Extract Message Data').item.json.messageId }}",
+            "contactName": "={{ $('Extract Message Data').item.json.contactName }}",
+            "userMessage": "={{ $('Extract Message Data').item.json.mensaje }}",
+            "botResponse": "={{ $json.mensaje }}",
+            "responseType": "={{ $json.tipo }}",
+            "confidence": "={{ $json.confianza }}",
+            "needsData": "={{ $json.necesita_datos }}",
+            "actions": "={{ $json.acciones }}",
+            "timestamp": "={{ new Date($('Extract Message Data').item.json.timestamp * 1000).toISOString() }}",
+            "processedAt": "={{ $now.toISO() }}",
+            "source": "whatsapp",
+            "metadata": "={{ $('Extract Message Data').item.json.metadata }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "persist-mongodb",
+      "name": "Persist to MongoDB",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Format response message for WhatsApp\nconst data = $json;\nconst originalData = $('Extract Message Data').item.json;\n\nlet responseText = data.mensaje || 'Lo siento, no pude procesar tu mensaje.';\n\n// Add formatting based on type\nif (data.tipo === 'cotizacion' && data.cotizacion) {\n  const cotizacion = data.cotizacion;\n  responseText = `🏗️ *COTIZACIÓN BMC*\\n\\n`;\n  responseText += `📋 *Código:* ${cotizacion.codigo || 'N/A'}\\n`;\n  responseText += `🏠 *Producto:* ${cotizacion.producto || 'N/A'}\\n`;\n  if (cotizacion.descripcion) {\n    responseText += `📐 *Descripción:* ${cotizacion.descripcion}\\n`;\n  }\n  if (cotizacion.total) {\n    responseText += `💰 *Precio Total:* $${cotizacion.total.toLocaleString('es-UY')}\\n`;\n  }\n  if (cotizacion.precio_m2) {\n    responseText += `📊 *Precio por m²:* $${cotizacion.precio_m2.toLocaleString('es-UY')}\\n\\n`;\n  }\n  \n  if (cotizacion.recomendaciones && cotizacion.recomendaciones.length > 0) {\n    responseText += `💡 *Recomendaciones:*\\n`;\n    cotizacion.recomendaciones.forEach(rec => {\n      responseText += `• ${rec}\\n`;\n    });\n    responseText += `\\n`;\n  }\n  \n  if (data.proximos_pasos && data.proximos_pasos.length > 0) {\n    responseText += `📞 *Próximos pasos:*\\n`;\n    data.proximos_pasos.forEach(paso => {\n      responseText += `• ${paso}\\n`;\n    });\n  }\n}\n\nreturn {\n  json: {\n    to: originalData.telefono,\n    message: responseText,\n    type: 'text',\n    sessionId: originalData.sesionId,\n    messageId: originalData.messageId\n  }\n};"
+      },
+      "id": "format-response",
+      "name": "Format WhatsApp Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [2000, 600]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.to }}\",\n  \"type\": \"{{ $json.type }}\",\n  \"text\": {\n    \"body\": \"{{ $json.message }}\"\n  }\n}",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "maxRetries": 3,
+            "retryOnStatusCodes": "429,500,502,503,504"
+          }
+        }
+      },
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 600]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "whatsapp_transcripts",
+        "updateKey": "messageId",
+        "updateValue": "={{ $('Extract Message Data').item.json.messageId }}",
+        "fields": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "whatsappResponseId": "={{ $json.messages?.[0]?.id }}",
+            "sentAt": "={{ $now.toISO() }}",
+            "sentSuccessfully": true
+          }
+        },
+        "options": {}
+      },
+      "id": "update-transcript",
+      "name": "Update Transcript (Sent)",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [2440, 600]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"WhatsApp message processed successfully\", \"sessionId\": $('Extract Message Data').item.json.sesionId } }}"
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2660, 600]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Error handling - log to DLQ collection\nconst error = $input.item.json.error || $input.item.json;\nconst originalData = $('Extract Message Data')?.item?.json || {};\n\nreturn {\n  json: {\n    error: error.message || error.toString(),\n    stack: error.stack,\n    sessionId: originalData.sesionId || 'unknown',\n    phoneNumber: originalData.telefono || 'unknown',\n    messageId: originalData.messageId || 'unknown',\n    timestamp: $now.toISO(),\n    source: 'whatsapp_webhook',\n    retryable: error.statusCode >= 500 || error.code === 'ECONNRESET'\n  }\n};"
+      },
+      "id": "format-error",
+      "name": "Format Error",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1780, 700]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "whatsapp_dlq",
+        "fields": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "error": "={{ $json.error }}",
+            "stack": "={{ $json.stack }}",
+            "sessionId": "={{ $json.sessionId }}",
+            "phoneNumber": "={{ $json.phoneNumber }}",
+            "messageId": "={{ $json.messageId }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "source": "={{ $json.source }}",
+            "retryable": "={{ $json.retryable }}",
+            "retryCount": 0
+          }
+        },
+        "options": {}
+      },
+      "id": "save-dlq",
+      "name": "Save to DLQ",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [2000, 700]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"error\": \"Internal server error\", \"sessionId\": $json.sessionId } }}"
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2220, 700]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"error\": \"Invalid webhook signature or structure\" } }}"
+      },
+      "id": "respond-invalid",
+      "name": "Respond Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 700]
+    }
+  ],
+  "connections": {
+    "Webhook Verify (GET)": {
+      "main": [
+        [
+          {
+            "node": "Verify Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Message (POST)": {
+      "main": [
+        [
+          {
+            "node": "Verify Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond Verification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Signature": {
+      "main": [
+        [
+          {
+            "node": "Signature Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature Valid?": {
+      "main": [
+        [
+          {
+            "node": "Extract Message Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Message Data": {
+      "main": [
+        [
+          {
+            "node": "Extraction OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraction OK?": {
+      "main": [
+        [
+          {
+            "node": "Call Python LLM API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Python LLM API": {
+      "main": [
+        [
+          {
+            "node": "Route by Response Type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Response Type": {
+      "main": [
+        [
+          {
+            "node": "Persist to MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist to MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist to MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist to MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist to MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist to MongoDB": {
+      "main": [
+        [
+          {
+            "node": "Format WhatsApp Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format WhatsApp Response": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Update Transcript (Sent)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Transcript (Sent)": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error": {
+      "main": [
+        [
+          {
+            "node": "Save to DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to DLQ": {
+      "main": [
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "id": "bmc-whatsapp-agent-workflow",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "tags": []
+}
+

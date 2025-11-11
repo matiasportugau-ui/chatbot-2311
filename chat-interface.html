@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Superchapita - BMC Uruguay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700&family=Trirong:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main chat container */
+        .chat-container {
+            width: 400px;
+            max-width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Chat Header - BMC Style */
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #E3F2FD;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #2196F3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .profile-icon.bot {
+            background-color: #2196F3;
+        }
+
+        .profile-icon.user {
+            background-color: #007aff;
+        }
+
+        .chat-title {
+            font-family: 'Trirong', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn, .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #888;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+        }
+
+        .close-btn {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Messages Area */
+        .chat-messages {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            max-width: 100%;
+        }
+
+        .message-wrapper.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message-icon.bot {
+            background-color: #2196F3;
+        }
+
+        .message-icon.user {
+            background-color: #007aff;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message-content {
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Bot Message */
+        .bot-message {
+            background-color: #e5e5ea;
+            color: #000;
+            border-bottom-left-radius: 4px;
+        }
+
+        .bot-message .timestamp {
+            text-align: left;
+        }
+
+        /* User Message */
+        .user-message {
+            background-color: #007aff;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .user-message .timestamp {
+            text-align: right;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Quick Action Buttons */
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 8px;
+        }
+
+        .quick-action-btn {
+            background-color: #BBDEFB;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: #1976D2;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: 'Red Hat Display', sans-serif;
+        }
+
+        .quick-action-btn:hover {
+            background-color: #90CAF9;
+        }
+
+        /* Loading Indicator */
+        .loading-indicator {
+            display: inline-flex;
+            gap: 4px;
+            padding: 8px;
+        }
+
+        .loading-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #666;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Input Area */
+        .chat-input-area {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-top: 1px solid #ddd;
+            background-color: #ffffff;
+            gap: 8px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 8px 12px;
+        }
+
+        .mic-icon {
+            color: #888;
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-family: 'Red Hat Display', sans-serif;
+            background: transparent;
+        }
+
+        .chat-input::placeholder {
+            color: #999;
+        }
+
+        .send-btn {
+            background: #FF6B35;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            background: #E55A2B;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Paper airplane icon */
+        .send-icon {
+            transform: rotate(-45deg);
+            display: inline-block;
+        }
+
+        /* Error Message */
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Welcome message */
+        .welcome-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="profile-icon bot">S</div>
+                <span class="chat-title">Chat with Superchapita</span>
+            </div>
+            <div class="header-right">
+                <button class="menu-btn" aria-label="Menu">⋯</button>
+                <button class="close-btn" aria-label="Close chat" id="closeBtn">&times;</button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="messageArea">
+            <div class="welcome-message">
+                👋 ¡Hola! Soy Superchapita, tu asistente virtual de BMC Uruguay. ¿En qué puedo ayudarte?
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <span class="mic-icon">🎤</span>
+                <input 
+                    type="text" 
+                    id="messageInput"
+                    class="chat-input" 
+                    placeholder="Ask Superchapita anything about roofing...."
+                    autocomplete="off"
+                />
+            </div>
+            <button type="button" class="send-btn" id="sendButton" aria-label="Send message">
+                <span class="send-icon">✈</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = 'http://localhost:8000/chat/process';
+        const DEFAULT_PHONE = '+59891234567';
+
+        // State
+        let sessionId = null;
+        let isLoading = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            sessionId = getSessionId();
+            setupEventListeners();
+        });
+
+        // Session Management
+        function getSessionId() {
+            let id = localStorage.getItem('bmc_chat_session_id');
+            if (!id) {
+                id = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('bmc_chat_session_id', id);
+            }
+            return id;
+        }
+
+        function clearSession() {
+            sessionId = null;
+            localStorage.removeItem('bmc_chat_session_id');
+            sessionId = getSessionId();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            const sendButton = document.getElementById('sendButton');
+            const messageInput = document.getElementById('messageInput');
+            const closeBtn = document.getElementById('closeBtn');
+
+            sendButton.addEventListener('click', handleSendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                if (confirm('¿Deseas cerrar el chat?')) {
+                    clearSession();
+                    document.getElementById('messageArea').innerHTML = '<div class="welcome-message">👋 ¡Hola! Soy Superchapita, tu asistente virtual de BMC Uruguay. ¿En qué puedo ayudarte?</div>';
+                }
+            });
+        }
+
+        // Send Message
+        async function handleSendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || isLoading) return;
+
+            // Clear input
+            input.value = '';
+            
+            // Display user message
+            displayMessage(message, 'user');
+
+            // Show loading
+            showLoading();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        mensaje: message,
+                        telefono: DEFAULT_PHONE,
+                        sesionId: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Update session ID if provided
+                if (data.sesion_id) {
+                    sessionId = data.sesion_id;
+                    localStorage.setItem('bmc_chat_session_id', sessionId);
+                }
+
+                // Hide loading
+                hideLoading();
+
+                // Display bot response
+                displayMessage(data.mensaje || 'No response received', 'bot');
+
+                // Display quick actions if available
+                if (data.acciones && data.acciones.length > 0) {
+                    displayQuickActions(data.acciones);
+                }
+
+                // Log for debugging
+                console.log('Bot response:', data);
+
+            } catch (error) {
+                hideLoading();
+                displayError(`Error: ${error.message}. Please make sure the API server is running at ${API_URL}`);
+                console.error('Error sending message:', error);
+            }
+        }
+
+        // Display Message
+        function displayMessage(text, sender) {
+            const messageArea = document.getElementById('messageArea');
+            
+            // Remove welcome message if present
+            const welcomeMsg = messageArea.querySelector('.welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.remove();
+            }
+
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message-wrapper ${sender}`;
+
+            const icon = document.createElement('div');
+            icon.className = `message-icon ${sender}`;
+            icon.textContent = sender === 'bot' ? 'S' : 'U';
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+
+            const content = document.createElement('p');
+            content.className = 'message-content';
+            content.textContent = text;
+
+            const timestamp = document.createElement('span');
+            timestamp.className = 'timestamp';
+            timestamp.textContent = formatTimestamp(new Date());
+
+            messageDiv.appendChild(content);
+            messageDiv.appendChild(timestamp);
+            messageWrapper.appendChild(icon);
+            messageWrapper.appendChild(messageDiv);
+
+            messageArea.appendChild(messageWrapper);
+            scrollToBottom();
+        }
+
+        // Display Quick Actions
+        function displayQuickActions(actions) {
+            const messageArea = document.getElementById('messageArea');
+            const lastMessage = messageArea.lastElementChild;
+            
+            if (!lastMessage || !lastMessage.classList.contains('message-wrapper')) {
+                return;
+            }
+
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action-btn';
+                button.textContent = action;
+                button.addEventListener('click', () => {
+                    document.getElementById('messageInput').value = action;
+                    handleSendMessage();
+                });
+                quickActionsDiv.appendChild(button);
+            });
+
+            // Find the message div in the last wrapper
+            const messageDiv = lastMessage.querySelector('.message');
+            if (messageDiv) {
+                messageDiv.appendChild(quickActionsDiv);
+            }
+        }
+
+        // Display Error
+        function displayError(message) {
+            const messageArea = document.getElementById('messageArea');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            messageArea.appendChild(errorDiv);
+            scrollToBottom();
+        }
+
+        // Loading Indicator
+        function showLoading() {
+            isLoading = true;
+            const messageArea = document.getElementById('messageArea');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message-wrapper bot';
+            loadingDiv.id = 'loadingIndicator';
+
+            const icon = document.createElement('div');
+            icon.className = 'message-icon bot';
+            icon.textContent = 'S';
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.innerHTML = '<div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>';
+
+            loadingDiv.appendChild(icon);
+            loadingDiv.appendChild(messageDiv);
+            messageArea.appendChild(loadingDiv);
+            scrollToBottom();
+        }
+
+        function hideLoading() {
+            isLoading = false;
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+        }
+
+        // Format Timestamp
+        function formatTimestamp(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // Scroll to Bottom
+        function scrollToBottom() {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }
+    </script>
+</body>
+</html>
+

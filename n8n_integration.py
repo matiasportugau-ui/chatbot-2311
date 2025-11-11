@@ -57,6 +57,22 @@ def procesar_mensaje(data: Dict[str, Any]) -> Dict[str, Any]:
             sesion_id=sesion_id
         )
         
+        # Convertir respuesta a formato compatible
+        if isinstance(respuesta, dict):
+            # Ya está en formato correcto
+            pass
+        else:
+            # Convertir RespuestaIA a dict
+            respuesta = {
+                "mensaje": respuesta.mensaje,
+                "tipo": respuesta.tipo_respuesta,
+                "acciones": respuesta.acciones_sugeridas,
+                "confianza": respuesta.confianza,
+                "necesita_datos": [],
+                "sesion_id": sesion_id,
+                "timestamp": respuesta.timestamp.isoformat()
+            }
+        
         return {
             "success": True,
             "data": respuesta,

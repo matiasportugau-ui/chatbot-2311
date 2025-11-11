@@ -16,13 +16,55 @@ services:
       - N8N_PROTOCOL=http
       - WEBHOOK_URL=http://localhost:5678/
       - GENERIC_TIMEZONE=America/Montevideo
+      - PY_CHAT_SERVICE_URL=http://chat-api:8000
     volumes:
       - n8n_data:/home/node/.n8n
+    networks:
+      - bmc-network
+    depends_on:
+      - chat-api
+      - mongodb
+
+  chat-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: bmc-chat-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - MONGODB_URI=mongodb://mongodb:27017/bmc_chat
+      - PORT=8000
+      - HOST=0.0.0.0
+    volumes:
+      - ./:/app
+      - chat_data:/app/data
+    networks:
+      - bmc-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:7.0
+    container_name: bmc-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=bmc_chat
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongodb-init.js:/docker-entrypoint-initdb.d/mongodb-init.js:ro
     networks:
       - bmc-network
 
 volumes:
   n8n_data:
+  chat_data:
+  mongodb_data:
 
 networks:
   bmc-network:

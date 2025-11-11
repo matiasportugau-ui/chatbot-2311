@@ -1,0 +1,470 @@
+{
+  "stats": {
+    "total_scenarios": 13,
+    "total_messages": 57,
+    "successful": 57,
+    "failed": 0,
+    "conversations_created": 13
+  },
+  "scenarios": [
+    {
+      "scenario_name": "Isodec Information",
+      "phone": "+59891234567",
+      "messages_sent": 5,
+      "messages_successful": 5,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hola",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Qué es Isodec?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Qué espesores tienen?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Cuál es el precio?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Gracias por la información",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Product Comparison",
+      "phone": "+59898765432",
+      "messages_sent": 4,
+      "messages_successful": 4,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Necesito comparar Isodec y Poliestireno",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Cuál es mejor para aislamiento térmico?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Y para precio?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Perfecto, gracias",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Lana de Roca Info",
+      "phone": "+59891111111",
+      "messages_sent": 4,
+      "messages_successful": 4,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Información sobre lana de roca",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Es resistente al fuego?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Qué espesores tienen?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Cuál es el precio por m²?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Empty Message",
+      "phone": "+59891234567",
+      "messages_sent": 0,
+      "messages_successful": 0,
+      "messages_failed": 0,
+      "responses": []
+    },
+    {
+      "scenario_name": "Unclear Request",
+      "phone": "+59891234567",
+      "messages_sent": 2,
+      "messages_successful": 2,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hola, necesito algo",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "No sé qué quiero",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Invalid Dimensions",
+      "phone": "+59891234567",
+      "messages_sent": 4,
+      "messages_successful": 4,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Quiero cotizar Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "0 metros x 0 metros",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "10x5 metros",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "100mm",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Non-existent Product",
+      "phone": "+59891234567",
+      "messages_sent": 3,
+      "messages_successful": 3,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Quiero cotizar producto XYZ",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "No existe ese producto",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Ok, entonces Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Mixed Language",
+      "phone": "+59891234567",
+      "messages_sent": 3,
+      "messages_successful": 3,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hello, I need a quote",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Hola, quiero cotizar Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "10x5 metros",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Multi-turn Conversation",
+      "phone": "+59891234567",
+      "messages_sent": 11,
+      "messages_successful": 11,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hola",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Estoy buscando material de aislamiento",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Para mi casa nueva",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Qué me recomiendan?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Me interesa Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Cuánto cuesta?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Ok, quiero cotizar",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "10 metros x 5 metros",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "100mm",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Blanco",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Perfecto, gracias",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Conversation with Objections",
+      "phone": "+59898765432",
+      "messages_sent": 6,
+      "messages_successful": 6,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hola, quiero cotizar Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "10x5 metros, 100mm, blanco",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Es muy caro",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Hay descuentos?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Ok, entiendo. ¿Puedo pagar en cuotas?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Gracias, lo pensaré",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Complete Quote Request Flow",
+      "phone": "+59891234567",
+      "messages_sent": 6,
+      "messages_successful": 6,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hola, necesito información sobre Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Quiero cotizar para mi casa",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "10 metros por 5 metros",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "100mm de espesor",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Blanco",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Perfecto, me parece bien el precio",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Quick Quote Request",
+      "phone": "+59898765432",
+      "messages_sent": 1,
+      "messages_successful": 1,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Quiero cotizar Isodec 10x5 100mm blanco",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario_name": "Quote with Questions",
+      "phone": "+59891111111",
+      "messages_sent": 8,
+      "messages_successful": 8,
+      "messages_failed": 0,
+      "responses": [
+        {
+          "message": "Hola",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Necesito cotizar para un proyecto",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Qué productos tienen disponibles?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Me interesa Isodec",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "¿Cuál es la diferencia entre 75mm y 100mm?",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Ok, quiero 100mm entonces",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "10 metros x 5 metros",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        },
+        {
+          "message": "Blanco",
+          "response": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+          "type": "informativa",
+          "confidence": 0.8
+        }
+      ]
+    }
+  ],
+  "timestamp": "2025-11-09T23:51:29.758412"
+}

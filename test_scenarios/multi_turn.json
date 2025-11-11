@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Multi-turn Conversation",
+    "phone": "+59891234567",
+    "messages": [
+      "Hola",
+      "Estoy buscando material de aislamiento",
+      "Para mi casa nueva",
+      "¿Qué me recomiendan?",
+      "Me interesa Isodec",
+      "¿Cuánto cuesta?",
+      "Ok, quiero cotizar",
+      "10 metros x 5 metros",
+      "100mm",
+      "Blanco",
+      "Perfecto, gracias"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Long multi-turn conversation with recommendations"
+  },
+  {
+    "name": "Conversation with Objections",
+    "phone": "+59898765432",
+    "messages": [
+      "Hola, quiero cotizar Isodec",
+      "10x5 metros, 100mm, blanco",
+      "Es muy caro",
+      "¿Hay descuentos?",
+      "Ok, entiendo. ¿Puedo pagar en cuotas?",
+      "Gracias, lo pensaré"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Conversation handling price objections"
+  }
+]
+

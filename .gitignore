@@ -76,3 +76,9 @@ temp/
 *.tmp
 *.bak
 
+node_modules
+
+# Next.js
+.next/
+out/
+build/

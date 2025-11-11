@@ -127,3 +127,5 @@ async function startMVPSystem() {
 
 // Ejecutar sistema MVP
 startMVPSystem().catch(console.error);
+
+

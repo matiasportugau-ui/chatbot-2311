@@ -1,0 +1,25 @@
+# 🔐 Variables de Entorno para Vercel
+# Copia estas variables en Vercel Dashboard → Settings → Environment Variables
+
+# OpenAI API
+OPENAI_API_KEY=sk-proj-...
+
+# Google Sheets API
+GOOGLE_SHEET_ID=1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0
+GOOGLE_SERVICE_ACCOUNT_EMAIL=bmc-sheets-service@proyecto.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+
+# MongoDB Atlas
+MONGODB_URI=mongodb+srv://bmcadmin:password@cluster.mongodb.net/
+
+# URLs
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://tu-app.vercel.app
+
+# WhatsApp Business API (Opcional)
+WHATSAPP_ACCESS_TOKEN=pendiente
+WHATSAPP_PHONE_NUMBER_ID=pendiente
+WHATSAPP_VERIFY_TOKEN=bmc_whatsapp_verify_2024
+
+# N8N Integration (Opcional)
+N8N_WEBHOOK_URL=https://tu-n8n.vercel.app/webhook/whatsapp-message

@@ -8,6 +8,7 @@ Sistema de IA que aprende y evoluciona constantemente
 import json
 import datetime
 import re
+import os
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 from decimal import Decimal
@@ -15,6 +16,14 @@ import random
 from base_conocimiento_dinamica import BaseConocimientoDinamica, InteraccionCliente
 from motor_analisis_conversiones import MotorAnalisisConversiones
 from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
+
+# OpenAI integration
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    print("Warning: OpenAI package not installed. Using pattern matching only.")
 
 
 @dataclass
@@ -56,6 +65,27 @@ class IAConversacionalIntegrada:
         self.conversaciones_activas = {}
         self.patrones_respuesta = {}
         self.entidades_reconocidas = {}
+        
+        # OpenAI configuration
+        self.use_ai = False
+        self.openai_client = None
+        self.openai_model = os.getenv('OPENAI_MODEL', 'gpt-4o-mini')
+        
+        if OPENAI_AVAILABLE:
+            api_key = os.getenv('OPENAI_API_KEY')
+            if api_key:
+                try:
+                    self.openai_client = OpenAI(api_key=api_key)
+                    self.use_ai = True
+                    print("✅ OpenAI integration enabled")
+                except Exception as e:
+                    print(f"⚠️ Error initializing OpenAI: {e}")
+                    self.use_ai = False
+            else:
+                print("⚠️ OPENAI_API_KEY not set, using pattern matching only")
+        else:
+            print("⚠️ OpenAI package not available, using pattern matching only")
+        
         self.cargar_configuracion_inicial()
     
     def cargar_configuracion_inicial(self):
@@ -169,8 +199,8 @@ class IAConversacionalIntegrada:
             "saludo": ["hola", "buenos", "buenas", "hi", "hello"],
             "despedida": ["gracias", "chau", "adios", "bye", "hasta luego"],
             "cotizacion": ["cotizar", "precio", "costo", "cuanto", "presupuesto"],
-            "informacion": ["informacion", "caracteristicas", "especificaciones", "que es"],
-            "producto": ["isodec", "poliestireno", "lana", "producto"],
+            "informacion": ["informacion", "información", "caracteristicas", "especificaciones", "que es", "necesito", "sobre", "acerca", "techos", "techo", "aislamiento"],
+            "producto": ["isodec", "poliestireno", "lana", "producto", "productos"],
             "instalacion": ["instalar", "instalacion", "montaje", "colocacion"],
             "servicio": ["servicio", "garantia", "soporte", "atención"],
             "objecion": ["caro", "costoso", "no estoy seguro", "dudar"]
@@ -262,28 +292,46 @@ class IAConversacionalIntegrada:
     
     def _generar_respuesta_inteligente(self, mensaje: str, intencion: str, entidades: Dict[str, Any], contexto: ContextoConversacion) -> RespuestaIA:
         """Genera respuesta inteligente basada en el análisis"""
-        # Buscar en base de conocimiento
+        # Primero, intentar generar respuesta basada en intención detectada
+        # Solo usar base de conocimiento si no hay intención clara o si la intención es "general"
+        
+        # Respuestas genéricas que debemos ignorar de la base de conocimiento
+        respuestas_genericas = [
+            "gracias por tu consulta",
+            "te ayudo con la información",
+            "puedo ayudarte con"
+        ]
+        
+        # Si hay una intención específica detectada, usarla primero
+        if intencion != "general":
+            if intencion == "saludo":
+                return self._manejar_saludo(contexto)
+            elif intencion == "despedida":
+                return self._manejar_despedida(contexto)
+            elif intencion == "cotizacion":
+                return self._manejar_cotizacion(entidades, contexto)
+            elif intencion == "informacion":
+                return self._manejar_informacion(entidades, contexto)
+            elif intencion == "producto":
+                return self._manejar_consulta_producto(entidades, contexto)
+            elif intencion == "objecion":
+                return self._manejar_objecion(mensaje, contexto)
+        
+        # Si intención es "general", buscar en base de conocimiento
+        # pero solo si la respuesta no es genérica
         respuesta_conocimiento = self.base_conocimiento.obtener_respuesta_inteligente(mensaje, contexto.datos_cliente)
         
         if respuesta_conocimiento and len(respuesta_conocimiento) > 50:
-            # Usar respuesta de la base de conocimiento
-            return self._crear_respuesta(respuesta_conocimiento, "informativa", 0.8, ["base_conocimiento"])
+            # Verificar si la respuesta es genérica
+            respuesta_lower = respuesta_conocimiento.lower()
+            es_generica = any(generica in respuesta_lower for generica in respuestas_genericas)
+            
+            if not es_generica:
+                # Usar respuesta de la base de conocimiento si no es genérica
+                return self._crear_respuesta(respuesta_conocimiento, "informativa", 0.8, ["base_conocimiento"])
         
-        # Generar respuesta basada en intención
-        if intencion == "saludo":
-            return self._manejar_saludo(contexto)
-        elif intencion == "despedida":
-            return self._manejar_despedida(contexto)
-        elif intencion == "cotizacion":
-            return self._manejar_cotizacion(entidades, contexto)
-        elif intencion == "informacion":
-            return self._manejar_informacion(entidades, contexto)
-        elif intencion == "producto":
-            return self._manejar_consulta_producto(entidades, contexto)
-        elif intencion == "objecion":
-            return self._manejar_objecion(mensaje, contexto)
-        else:
-            return self._manejar_consulta_general(mensaje, contexto)
+        # Si llegamos aquí, usar respuesta general
+        return self._manejar_consulta_general(mensaje, contexto)
     
     def _manejar_saludo(self, contexto: ContextoConversacion) -> RespuestaIA:
         """Maneja saludos del cliente"""
@@ -558,6 +606,206 @@ class IAConversacionalIntegrada:
             
             if respuesta.mensaje not in self.patrones_respuesta[tipo_respuesta]:
                 self.patrones_respuesta[tipo_respuesta].append(respuesta.mensaje)
+    
+    def procesar_mensaje_usuario(self, mensaje: str, telefono_cliente: str, sesion_id: str = None) -> Dict[str, Any]:
+        """
+        Procesa mensaje del usuario con workflow híbrido inteligente:
+        - Pattern matching para intenciones simples (saludos, despedidas)
+        - OpenAI para intenciones complejas (cotizaciones, consultas técnicas)
+        Retorna diccionario compatible con API
+        """
+        if not sesion_id:
+            sesion_id = f"sesion_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+        
+        # Análisis rápido de intención (sin procesar completamente)
+        intencion_rapida = self._analizar_intencion(mensaje)
+        
+        # Intenciones simples que no requieren IA
+        intenciones_simples = ["saludo", "despedida"]
+        
+        # Si es intención simple, usar pattern matching (más rápido y eficiente)
+        if intencion_rapida in intenciones_simples:
+            return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
+        
+        # Para intenciones complejas, usar OpenAI si está disponible
+        if self.use_ai and self.openai_client:
+            try:
+                return self._procesar_con_openai(mensaje, telefono_cliente, sesion_id)
+            except Exception as e:
+                print(f"⚠️ Error con OpenAI, usando pattern matching: {e}")
+                # Fallback a pattern matching
+                return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
+        else:
+            # Si no hay IA, usar pattern matching
+            return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
+    
+    def _procesar_con_openai(self, mensaje: str, telefono_cliente: str, sesion_id: str) -> Dict[str, Any]:
+        """Procesa mensaje usando OpenAI"""
+        # Obtener contexto
+        contexto = self._obtener_contexto_conversacion(telefono_cliente, sesion_id)
+        
+        # Obtener historial reciente
+        historial = contexto.mensajes_intercambiados[-5:] if len(contexto.mensajes_intercambiados) > 5 else contexto.mensajes_intercambiados
+        
+        # Obtener información de productos y precios para enriquecer el contexto
+        info_productos = self._obtener_info_productos_para_prompt()
+        estado_cotizacion = self._obtener_estado_cotizacion_para_prompt(contexto)
+        
+        # Construir historial de conversación para OpenAI
+        messages = [
+            {
+                "role": "system",
+                "content": f"""Eres Superchapita, un asistente experto en ventas de productos de construcción de BMC Uruguay.
+Tu trabajo es ayudar a los clientes con:
+1. Información sobre productos de aislamiento térmico (Isodec, Poliestireno, Lana de Roca)
+2. Cotizaciones personalizadas
+3. Consultas técnicas
+4. Seguimiento de pedidos
+
+{info_productos}
+
+{estado_cotizacion}
+
+Responde de forma natural, conversacional y profesional en español de Uruguay.
+Si el cliente solicita una cotización, pide los datos necesarios: producto, dimensiones (largo x ancho), espesor, color.
+Sé conciso pero completo. Usa emojis moderadamente.
+
+IMPORTANTE: Debes responder SIEMPRE en formato JSON con esta estructura exacta:
+{{
+  "mensaje": "tu respuesta al cliente aquí",
+  "tipo": "cotizacion|informacion|pregunta|seguimiento|general",
+  "acciones": ["accion1", "accion2"],
+  "confianza": 0.95,
+  "necesita_datos": ["dato1", "dato2"]
+}}
+
+El campo "tipo" debe ser uno de: cotizacion, informacion, pregunta, seguimiento, general.
+El campo "confianza" debe ser un número entre 0.0 y 1.0.
+El campo "necesita_datos" debe ser una lista de datos que faltan para completar una cotización (ej: ["producto", "dimensiones", "espesor"])."""
+            }
+        ]
+        
+        # Agregar historial
+        for msg in historial:
+            if msg["tipo"] == "cliente":
+                messages.append({"role": "user", "content": msg["mensaje"]})
+            else:
+                messages.append({"role": "assistant", "content": msg["mensaje"]})
+        
+        # Agregar mensaje actual
+        messages.append({"role": "user", "content": mensaje})
+        
+        # Llamar a OpenAI
+        response = self.openai_client.chat.completions.create(
+            model=self.openai_model,
+            messages=messages,
+            temperature=0.7,
+            response_format={"type": "json_object"}
+        )
+        
+        # Parsear respuesta
+        resultado = json.loads(response.choices[0].message.content)
+        
+        # Actualizar contexto
+        self._actualizar_contexto(contexto, mensaje)
+        contexto.mensajes_intercambiados.append({
+            "tipo": "ia",
+            "mensaje": resultado.get("mensaje", ""),
+            "timestamp": datetime.datetime.now().isoformat()
+        })
+        
+        # Crear respuesta estructurada
+        respuesta_ia = self._crear_respuesta(
+            resultado.get("mensaje", ""),
+            resultado.get("tipo", "general"),
+            float(resultado.get("confianza", 0.8)),
+            ["openai"]
+        )
+        
+        # Registrar interacción
+        self._registrar_interaccion(mensaje, respuesta_ia, contexto)
+        
+        # Retornar formato API
+        return {
+            "mensaje": resultado.get("mensaje", ""),
+            "tipo": resultado.get("tipo", "general"),
+            "acciones": resultado.get("acciones", []),
+            "confianza": float(resultado.get("confianza", 0.8)),
+            "necesita_datos": resultado.get("necesita_datos", []),
+            "sesion_id": sesion_id,
+            "timestamp": datetime.datetime.now().isoformat()
+        }
+    
+    def _obtener_info_productos_para_prompt(self) -> str:
+        """Obtiene información de productos para enriquecer el prompt de OpenAI"""
+        productos_info = []
+        
+        # Obtener precios actuales
+        precios = {
+            "isodec": self.sistema_cotizaciones.obtener_precio_producto("isodec"),
+            "poliestireno": self.sistema_cotizaciones.obtener_precio_producto("poliestireno"),
+            "lana_roca": self.sistema_cotizaciones.obtener_precio_producto("lana_roca")
+        }
+        
+        productos_info.append("PRODUCTOS DISPONIBLES:")
+        productos_info.append("1. ISODEC - Panel aislante con núcleo EPS")
+        productos_info.append(f"   Precio base: ${precios.get('isodec', 150):.2f} por m²")
+        productos_info.append("   Características: Excelente aislamiento térmico, fácil instalación")
+        
+        productos_info.append("2. POLIESTIRENO - Aislante básico")
+        productos_info.append(f"   Precio base: ${precios.get('poliestireno', 120):.2f} por m²")
+        productos_info.append("   Características: Aislante económico y eficiente")
+        
+        productos_info.append("3. LANA DE ROCA - Aislante térmico y acústico")
+        productos_info.append(f"   Precio base: ${precios.get('lana_roca', 140):.2f} por m²")
+        productos_info.append("   Características: Aislamiento térmico y acústico superior")
+        
+        productos_info.append("\nESPESORES DISPONIBLES: 50mm, 75mm, 100mm, 125mm, 150mm")
+        productos_info.append("COLORES DISPONIBLES: Blanco, Gris, Beige")
+        
+        return "\n".join(productos_info)
+    
+    def _obtener_estado_cotizacion_para_prompt(self, contexto: ContextoConversacion) -> str:
+        """Obtiene el estado actual de cotización para enriquecer el prompt"""
+        if contexto.estado_cotizacion == "inicial":
+            return ""
+        
+        estado_info = [f"ESTADO ACTUAL DE LA COTIZACIÓN: {contexto.estado_cotizacion.upper()}"]
+        
+        if contexto.datos_cliente:
+            estado_info.append(f"Datos del cliente: {json.dumps(contexto.datos_cliente, ensure_ascii=False)}")
+        
+        if contexto.datos_producto:
+            estado_info.append(f"Datos del producto: {json.dumps(contexto.datos_producto, ensure_ascii=False)}")
+        
+        if contexto.estado_cotizacion == "recopilando_datos":
+            datos_faltantes = []
+            if not contexto.datos_producto.get("producto"):
+                datos_faltantes.append("producto")
+            if not contexto.datos_producto.get("largo") or not contexto.datos_producto.get("ancho"):
+                datos_faltantes.append("dimensiones")
+            if not contexto.datos_producto.get("espesor"):
+                datos_faltantes.append("espesor")
+            
+            if datos_faltantes:
+                estado_info.append(f"DATOS FALTANTES: {', '.join(datos_faltantes)}")
+        
+        return "\n".join(estado_info) if len(estado_info) > 1 else ""
+    
+    def _procesar_mensaje_patrones(self, mensaje: str, telefono_cliente: str, sesion_id: str) -> Dict[str, Any]:
+        """Procesa mensaje usando pattern matching (fallback)"""
+        respuesta = self.procesar_mensaje(mensaje, telefono_cliente, sesion_id)
+        
+        # Convertir RespuestaIA a formato API
+        return {
+            "mensaje": respuesta.mensaje,
+            "tipo": respuesta.tipo_respuesta,
+            "acciones": respuesta.acciones_sugeridas,
+            "confianza": respuesta.confianza,
+            "necesita_datos": [],
+            "sesion_id": sesion_id,
+            "timestamp": respuesta.timestamp.isoformat()
+        }
     
     def exportar_conocimiento_ia(self, archivo: str):
         """Exporta todo el conocimiento de la IA"""
