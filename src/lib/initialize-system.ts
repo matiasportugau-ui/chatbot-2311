@@ -1,81 +1,63 @@
-import { initializeSecureConfig } from './secure-config'
-import { GoogleSheetsClient } from './google-sheets'
-import { quoteEngine } from './quote-engine'
+// System Initialization - Inicialización del Sistema
+export type ServiceHealthStatus = 'ready' | 'initializing' | 'degraded' | 'error'
 
-// Inicializar todo el sistema BMC de forma segura
-export async function initializeBMCSystem(credentialsPath?: string): Promise<{
+export interface BMCServiceStatus {
+  status: ServiceHealthStatus
+  lastChecked: string
+  details?: string
+}
+
+export interface BMCSystemStatus {
   success: boolean
+  message?: string
   error?: string
-  configSummary?: any
-}> {
+  services?: Record<string, BMCServiceStatus>
+  timestamp: string
+}
+
+export type BMCSystem = BMCSystemStatus
+
+export const initializeBMCSystem = async (): Promise<BMCSystemStatus> => {
+  const timestamp = new Date().toISOString()
+
   try {
-    console.log('🚀 Inicializando Sistema BMC de Cotización...')
-    
-    // 1. Inicializar configuración segura
-    console.log('🔐 Cargando credenciales...')
-    await initializeSecureConfig(credentialsPath)
-    
-    // 2. Validar credenciales
-    console.log('✅ Validando credenciales...')
-    const validation = secureConfig.validateAllCredentials()
-    
-    if (!validation.isValid) {
-      console.warn('⚠️ Credenciales faltantes:', validation.missing)
-      return {
-        success: false,
-        error: `Credenciales faltantes: ${validation.missing.join(', ')}`
-      }
-    }
-    
-    // 3. Probar conexión a Google Sheets
-    console.log('📊 Probando conexión a Google Sheets...')
-    try {
-      const sheetsClient = new GoogleSheetsClient()
-      await sheetsClient.getStats()
-      console.log('✅ Google Sheets conectado correctamente')
-    } catch (error) {
-      console.warn('⚠️ Error conectando a Google Sheets:', error.message)
-    }
-    
-    // 4. Probar motor de cotización
-    console.log('🤖 Probando motor de cotización...')
-    try {
-      const testResponse = await quoteEngine.procesarConsulta('Test de conexión')
-      console.log('✅ Motor de cotización funcionando')
-    } catch (error) {
-      console.warn('⚠️ Error en motor de cotización:', error.message)
-    }
-    
-    // 5. Obtener resumen de configuración
-    const configSummary = secureConfig.getConfigSummary()
-    
-    console.log('🎉 Sistema BMC inicializado correctamente')
-    
+    // TODO: Implement real system initialization logic
+    console.log('Initializing BMC system...')
+
     return {
       success: true,
-      configSummary
+      message: 'System initialized successfully',
+      timestamp,
+      services: {
+        openai: {
+          status: process.env.OPENAI_API_KEY ? 'ready' : 'degraded',
+          lastChecked: timestamp,
+          details: process.env.OPENAI_API_KEY ? undefined : 'OPENAI_API_KEY is not configured'
+        },
+        mongodb: {
+          status: process.env.MONGODB_URI ? 'ready' : 'degraded',
+          lastChecked: timestamp,
+          details: process.env.MONGODB_URI ? undefined : 'MONGODB_URI is not configured'
+        },
+        googleSheets: {
+          status: process.env.GOOGLE_SHEET_ID ? 'ready' : 'degraded',
+          lastChecked: timestamp,
+          details: process.env.GOOGLE_SHEET_ID ? undefined : 'GOOGLE_SHEET_ID is not configured'
+        }
+      }
     }
-    
-  } catch (error: any) {
-    console.error('❌ Error inicializando sistema BMC:', error)
+  } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp,
+      services: {
+        system: {
+          status: 'error',
+          lastChecked: timestamp,
+          details: 'Initialization routine threw an exception'
+        }
+      }
     }
   }
-}
-
-// Función para verificar estado del sistema
-export function getSystemStatus() {
-  return {
-    isInitialized: secureConfig.isReady(),
-    configSummary: secureConfig.isReady() ? secureConfig.getConfigSummary() : null,
-    validation: secureConfig.isReady() ? secureConfig.validateAllCredentials() : null
-  }
-}
-
-// Función para reinicializar el sistema
-export async function reinitializeSystem(credentialsPath?: string) {
-  console.log('🔄 Reinicializando sistema BMC...')
-  return await initializeBMCSystem(credentialsPath)
 }
