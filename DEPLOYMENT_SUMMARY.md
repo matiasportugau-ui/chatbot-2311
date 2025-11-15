@@ -474,6 +474,20 @@ vercel --prod --commit-sha <working-commit-hash>
 
 ### Common Issues & Solutions
 
+#### Root Directory Configuration Error
+**Symptoms:** Build error: "The specified Root Directory does not exist"
+**Error Message:** `The specified Root Directory "matprompts-projects/bmc-cotizacion-inteligente" does not exist. Please update your Project Settings.`
+**Solutions:**
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Select your project
+3. Go to **Settings** → **General**
+4. Find **Root Directory** setting
+5. **Clear the Root Directory field** (leave it empty) or set it to `.` if your project is at the repository root
+6. Click **Save**
+7. Redeploy the project
+
+**Note:** If your project files are at the repository root (not in a subdirectory), the Root Directory should be empty or set to `.`
+
 #### Build Fails
 **Symptoms:** Vercel build shows errors
 **Solutions:**
@@ -481,6 +495,7 @@ vercel --prod --commit-sha <working-commit-hash>
 2. Run locally: `npm run build`
 3. Fix TypeScript errors: `npm run type-check`
 4. Check environment variables are set correctly
+5. Verify Root Directory setting (see above)
 
 #### Environment Variables Missing
 **Symptoms:** App crashes or features don't work

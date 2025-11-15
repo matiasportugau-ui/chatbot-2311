@@ -278,8 +278,15 @@ This executes all phases sequentially and provides a complete summary:
 - Quota/limit exceeded
 - Critical configuration missing
 - Sensitive files in git
+- Vercel Root Directory misconfiguration
 
 **Action:** Exit with code 3, provide detailed error message
+
+**Root Directory Error Example:**
+If you see: `The specified Root Directory "matprompts-projects/bmc-cotizacion-inteligente" does not exist`
+- This requires manual fix in Vercel dashboard
+- Exit with code 3
+- Provide instructions: "Go to Vercel Dashboard → Settings → General → Clear Root Directory field"
 
 #### Category 4: Deployment Failures (Rollback)
 - Deployment succeeds but verification fails
