@@ -271,6 +271,7 @@ This document defines the decision logic and error handling procedures for autom
 - Critical configuration missing
 - Sensitive files in git
 - Complex merge conflicts
+- Vercel Root Directory misconfiguration
 
 **Handling:**
 1. Stop deployment immediately
@@ -285,6 +286,8 @@ This document defines the decision logic and error handling procedures for autom
 - Missing critical environment variables
 - `.env.production` tracked in git
 - Complex branch conflicts requiring manual resolution
+- **Vercel Root Directory error:** "The specified Root Directory does not exist"
+  - **Resolution:** Go to Vercel Dashboard → Settings → General → Clear Root Directory field
 
 ### Category 4: Deployment Failures (Rollback)
 
