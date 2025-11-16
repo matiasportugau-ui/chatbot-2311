@@ -1,0 +1,20 @@
+name: Deploy AI Agent
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar permisos de ejecución
+        run: chmod +x ./scripts/deploy-ai-agent.sh
+
+      - name: Ejecutar despliegue completo
+        run: ./scripts/deploy-ai-agent.sh --full-deployment --json
