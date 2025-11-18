@@ -61,7 +61,7 @@ export class GoogleSheetsClient {
       return this.parseAdminRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Admin tab:', error)
-      throw new Error(`Failed to read Admin tab: ${error.message}`)
+      throw new Error(`Failed to read Admin tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -75,7 +75,7 @@ export class GoogleSheetsClient {
       return this.parseAdminRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Enviados tab:', error)
-      throw new Error(`Failed to read Enviados tab: ${error.message}`)
+      throw new Error(`Failed to read Enviados tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -89,7 +89,7 @@ export class GoogleSheetsClient {
       return this.parseAdminRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Confirmado tab:', error)
-      throw new Error(`Failed to read Confirmado tab: ${error.message}`)
+      throw new Error(`Failed to read Confirmado tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -133,7 +133,7 @@ export class GoogleSheetsClient {
       })
     } catch (error) {
       console.error('Error adding quote to Admin:', error)
-      throw new Error(`Failed to add quote to Admin: ${error.message}`)
+      throw new Error(`Failed to add quote to Admin: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -147,7 +147,7 @@ export class GoogleSheetsClient {
       return response.data.values?.[0] || []
     } catch (error) {
       console.error(`Error reading specific row ${rowNumber} from ${sheetName}:`, error)
-      throw new Error(`Failed to read row ${rowNumber} from ${sheetName}: ${error.message}`)
+      throw new Error(`Failed to read row ${rowNumber} from ${sheetName}: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -169,7 +169,7 @@ export class GoogleSheetsClient {
       await this.updateCellValue('Admin.', rowNumber, 'B', 'Enviado')
     } catch (error) {
       console.error('Error moving to Enviados:', error)
-      throw new Error(`Failed to move to Enviados: ${error.message}`)
+      throw new Error(`Failed to move to Enviados: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -191,7 +191,7 @@ export class GoogleSheetsClient {
       await this.updateCellValue('Enviados', rowNumber, 'B', 'Confirmado')
     } catch (error) {
       console.error('Error moving to Confirmado:', error)
-      throw new Error(`Failed to move to Confirmado: ${error.message}`)
+      throw new Error(`Failed to move to Confirmado: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -206,7 +206,7 @@ export class GoogleSheetsClient {
       })
     } catch (error) {
       console.error(`Error updating cell ${column}${row} in ${sheetName}:`, error)
-      throw new Error(`Failed to update cell: ${error.message}`)
+      throw new Error(`Failed to update cell: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -230,7 +230,7 @@ export class GoogleSheetsClient {
       }
     } catch (error) {
       console.error('Error finding by phone:', error)
-      throw new Error(`Failed to find by phone: ${error.message}`)
+      throw new Error(`Failed to find by phone: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -256,7 +256,7 @@ export class GoogleSheetsClient {
       }
     } catch (error) {
       console.error('Error getting stats:', error)
-      throw new Error(`Failed to get stats: ${error.message}`)
+      throw new Error(`Failed to get stats: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   

@@ -83,3 +83,4 @@ node_modules
 .next/
 out/
 build/
+.env.local

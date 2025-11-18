@@ -33,6 +33,7 @@ interface Quote {
   parsed?: any
   createdAt: string
   updatedAt: string
+  rowNumber?: number
 }
 
 interface QuoteStats {

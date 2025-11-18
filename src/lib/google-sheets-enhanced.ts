@@ -87,7 +87,7 @@ export class GoogleSheetsEnhancedClient {
       return this.parseAdminRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Admin tab:', error)
-      throw new Error(`Error reading Admin tab: ${error.message}`)
+      throw new Error(`Error reading Admin tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -104,7 +104,7 @@ export class GoogleSheetsEnhancedClient {
       return this.parseEnviadosRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Enviados tab:', error)
-      throw new Error(`Error reading Enviados tab: ${error.message}`)
+      throw new Error(`Error reading Enviados tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -121,7 +121,7 @@ export class GoogleSheetsEnhancedClient {
       return this.parseEnviadosRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Confirmado tab:', error)
-      throw new Error(`Error reading Confirmado tab: ${error.message}`)
+      throw new Error(`Error reading Confirmado tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -151,7 +151,7 @@ export class GoogleSheetsEnhancedClient {
       console.log(`✅ Cotización agregada a Admin: ${quoteData.arg}`)
     } catch (error) {
       console.error('Error adding quote to Admin:', error)
-      throw new Error(`Error adding quote to Admin: ${error.message}`)
+      throw new Error(`Error adding quote to Admin: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -191,7 +191,7 @@ export class GoogleSheetsEnhancedClient {
       console.log(`✅ Cotización movida a Enviados: ${row.arg}`)
     } catch (error) {
       console.error('Error moving to Enviados:', error)
-      throw new Error(`Error moving to Enviados: ${error.message}`)
+      throw new Error(`Error moving to Enviados: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -232,7 +232,7 @@ export class GoogleSheetsEnhancedClient {
       console.log(`✅ Cotización movida a Confirmado: ${row.arg}`)
     } catch (error) {
       console.error('Error moving to Confirmado:', error)
-      throw new Error(`Error moving to Confirmado: ${error.message}`)
+      throw new Error(`Error moving to Confirmado: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -258,7 +258,7 @@ export class GoogleSheetsEnhancedClient {
       }
     } catch (error) {
       console.error('Error finding by phone:', error)
-      throw new Error(`Error finding by phone: ${error.message}`)
+      throw new Error(`Error finding by phone: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -284,7 +284,7 @@ export class GoogleSheetsEnhancedClient {
       }
     } catch (error) {
       console.error('Error finding by arg:', error)
-      throw new Error(`Error finding by arg: ${error.message}`)
+      throw new Error(`Error finding by arg: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -333,7 +333,7 @@ export class GoogleSheetsEnhancedClient {
       }
     } catch (error) {
       console.error('Error getting statistics:', error)
-      throw new Error(`Error getting statistics: ${error.message}`)
+      throw new Error(`Error getting statistics: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -350,7 +350,7 @@ export class GoogleSheetsEnhancedClient {
       })
     } catch (error) {
       console.error('Error updating cell value:', error)
-      throw new Error(`Error updating cell value: ${error.message}`)
+      throw new Error(`Error updating cell value: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   
@@ -393,7 +393,7 @@ export class GoogleSheetsEnhancedClient {
       }
     } catch (error) {
       console.error('Error reading specific row:', error)
-      throw new Error(`Error reading specific row: ${error.message}`)
+      throw new Error(`Error reading specific row: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { motorCotizacionIntegrado } from '@/lib/integrated-quote-engine'
 import { initializeBMCSystem } from '@/lib/initialize-system'
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in integrated-quote API:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -84,7 +86,7 @@ async function procesarConsulta(consulta: string, userPhone: string, userName?: 
     console.error('Error procesando consulta:', error)
     return NextResponse.json({ 
       error: 'Error procesando consulta', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -108,7 +110,7 @@ async function obtenerMetricas() {
     console.error('Error obteniendo métricas:', error)
     return NextResponse.json({ 
       error: 'Error obteniendo métricas', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -129,7 +131,7 @@ async function actualizarBaseConocimiento() {
     console.error('Error actualizando base de conocimiento:', error)
     return NextResponse.json({ 
       error: 'Error actualizando base de conocimiento', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -156,7 +158,7 @@ async function analizarPatrones() {
     console.error('Error analizando patrones:', error)
     return NextResponse.json({ 
       error: 'Error analizando patrones', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -216,7 +218,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in integrated-quote GET:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }

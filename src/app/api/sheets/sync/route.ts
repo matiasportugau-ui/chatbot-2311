@@ -1,10 +1,12 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleSheetsClient } from '@/lib/google-sheets'
 
-const sheetsClient = new GoogleSheetsClient()
-
 export async function GET(request: NextRequest) {
   try {
+    const sheetsClient = new GoogleSheetsClient()
+    
     // Leer todas las cotizaciones de todas las pestañas
     const [adminData, enviadosData, confirmadosData, stats] = await Promise.all([
       sheetsClient.readAdminTab(),
@@ -19,21 +21,21 @@ export async function GET(request: NextRequest) {
         pendientes: adminData,
         enviados: enviadosData,
         confirmados: confirmadosData,
-        stats: stats
-      },
-      timestamp: new Date().toISOString()
+        stats
+      }
     })
   } catch (error) {
-    console.error('Error in sheets sync GET:', error)
+    console.error('Error in sheets sync:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const sheetsClient = new GoogleSheetsClient()
     const body = await request.json()
     const { action, data } = body
     
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in sheets sync POST:', error)
     return NextResponse.json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
