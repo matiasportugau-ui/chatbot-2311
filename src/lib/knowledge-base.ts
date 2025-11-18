@@ -38,6 +38,47 @@ export const PRODUCTOS = {
   }
 }
 
+export const SERVICIOS_ADICIONALES = {
+  'instalacion': {
+    nombre: 'Instalación',
+    costo: 50,
+    unidad: 'servicio'
+  },
+  'transporte': {
+    nombre: 'Transporte',
+    costo: 30,
+    unidad: 'servicio'
+  },
+  'corte_medida': {
+    nombre: 'Corte a medida',
+    costo: 20,
+    unidad: 'servicio'
+  }
+}
+
+export const ZONAS_FLETE = {
+  'montevideo': {
+    nombre: 'Montevideo',
+    costo: 0,
+    dias: 1
+  },
+  'canelones': {
+    nombre: 'Canelones',
+    costo: 15,
+    dias: 2
+  },
+  'maldonado': {
+    nombre: 'Maldonado',
+    costo: 25,
+    dias: 2
+  },
+  'interior': {
+    nombre: 'Interior',
+    costo: 40,
+    dias: 3
+  }
+}
+
 export interface CotizacionRequest {
   producto: string
   dimensiones: {

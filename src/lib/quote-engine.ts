@@ -1,5 +1,50 @@
-import { KNOWLEDGE_BASE, generarCotizacion, buscarProductos } from './knowledge-base'
+import { PRODUCTOS, calculateFullQuote, buscarProducto, obtenerEspesoresDisponibles, obtenerPrecio } from './knowledge-base'
 import { parseQuoteConsulta } from './quote-parser'
+
+// Define a simple knowledge base structure
+const KNOWLEDGE_BASE = {
+  productos: PRODUCTOS,
+  buscarProducto,
+  obtenerEspesoresDisponibles,
+  obtenerPrecio
+}
+
+// Helper function to search for products
+function buscarProductos(consulta: string) {
+  const consultaLower = consulta.toLowerCase()
+  const results = []
+  
+  for (const [key, producto] of Object.entries(PRODUCTOS)) {
+    if (consultaLower.includes(key) || consultaLower.includes(producto.nombre.toLowerCase())) {
+      results.push({
+        id: key,
+        nombre: producto.nombre,
+        descripcion: producto.descripcion,
+        precios: producto.precios
+      })
+    }
+  }
+  
+  return results
+}
+
+// Helper function to generate quote
+function generarCotizacion(parsed: any, zona?: string) {
+  try {
+    return calculateFullQuote({
+      producto: parsed.producto || 'isodec',
+      dimensiones: {
+        ancho: parsed.ancho || 1,
+        largo: parsed.largo || 1,
+        espesor: parsed.espesor || 100
+      },
+      servicios: parsed.servicios || [],
+      cantidad: parsed.cantidad || 1
+    })
+  } catch (error) {
+    throw new Error('Error generando cotización: ' + (error instanceof Error ? error.message : String(error)))
+  }
+}
 
 export interface QuoteResponse {
   tipo: 'cotizacion' | 'informacion' | 'pregunta' | 'error'
@@ -121,31 +166,15 @@ export class QuoteEngine {
     
     // Construir mensaje de respuesta
     let mensaje = `🏗️ **COTIZACIÓN BMC** - Código: ${codigo}\n\n`
-    mensaje += `📋 **${cotizacion.descripcion}**\n\n`
+    mensaje += `📋 **${cotizacion.producto}**\n\n`
     mensaje += `💰 **Detalle de Precios:**\n`
-    mensaje += `• Producto: $${cotizacion.precio_base.toLocaleString()}\n`
+    mensaje += `• Producto: $${cotizacion.precioFinal.toLocaleString()}\n`
     
-    if (parsed.servicios?.instalacion) {
-      mensaje += `• Instalación: $${cotizacion.servicios.instalacion.toLocaleString()}\n`
+    if (parsed.servicios?.instalacion || parsed.servicios?.flete || parsed.servicios?.accesorios) {
+      mensaje += `• Servicios adicionales incluidos\n`
     }
     
-    if (parsed.servicios?.flete) {
-      mensaje += `• Flete (${zona}): $${cotizacion.servicios.flete.toLocaleString()}\n`
-    }
-    
-    if (parsed.servicios?.accesorios && cotizacion.servicios.accesorios > 0) {
-      mensaje += `• Accesorios: $${cotizacion.servicios.accesorios.toLocaleString()}\n`
-    }
-    
-    mensaje += `\n🎯 **TOTAL: $${cotizacion.total.toLocaleString()}**\n\n`
-    
-    if (cotizacion.recomendaciones.length > 0) {
-      mensaje += `💡 **Recomendaciones:**\n`
-      cotizacion.recomendaciones.forEach(rec => {
-        mensaje += `• ${rec}\n`
-      })
-      mensaje += `\n`
-    }
+    mensaje += `\n🎯 **TOTAL: $${cotizacion.precioFinal.toLocaleString()}**\n\n`
     
     mensaje += `📞 **Próximos pasos:**\n`
     mensaje += `• Confirmar dimensiones exactas\n`
@@ -157,12 +186,12 @@ export class QuoteEngine {
       tipo: 'cotizacion',
       mensaje,
       cotizacion: {
-        producto: cotizacion.producto.nombre,
-        descripcion: cotizacion.descripcion,
-        precio_base: cotizacion.precio_base,
-        servicios: cotizacion.servicios,
-        total: cotizacion.total,
-        recomendaciones: cotizacion.recomendaciones,
+        producto: cotizacion.producto,
+        descripcion: cotizacion.dimensiones,
+        precio_base: cotizacion.subtotal,
+        servicios: {},
+        total: cotizacion.precioFinal,
+        recomendaciones: [],
         codigo
       },
       proximos_pasos: [
@@ -201,24 +230,12 @@ Te puedo ayudar con información sobre nuestros productos principales:
     let mensaje = `📋 **${producto.nombre}**\n\n`
     mensaje += `${producto.descripcion}\n\n`
     
-    mensaje += `🔧 **Especificaciones:**\n`
-    if (producto.especificaciones.grosor) {
-      mensaje += `• Grosor: ${producto.especificaciones.grosor.join(', ')}mm\n`
-    }
-    if (producto.especificaciones.colores) {
-      mensaje += `• Colores: ${producto.especificaciones.colores.join(', ')}\n`
-    }
-    if (producto.especificaciones.dimensiones?.largo) {
-      mensaje += `• Largo: ${producto.especificaciones.dimensiones.largo.join(', ')}mm\n`
+    mensaje += `💰 **Precios disponibles:**\n`
+    for (const [espesor, precio] of Object.entries(producto.precios)) {
+      mensaje += `• ${espesor}: $${precio}/m²\n`
     }
     
-    mensaje += `\n🏗️ **Aplicaciones:**\n`
-    producto.aplicaciones.forEach(app => {
-      mensaje += `• ${app}\n`
-    })
-    
-    mensaje += `\n💰 **Precio estimado:** $${producto.precios.base}/m²\n\n`
-    mensaje += `¿Te interesa cotizar este producto? ¡Dime las dimensiones de tu proyecto! 📐`
+    mensaje += `\n¿Te interesa cotizar este producto? ¡Dime las dimensiones de tu proyecto! 📐`
     
     return {
       tipo: 'informacion',
@@ -226,8 +243,8 @@ Te puedo ayudar con información sobre nuestros productos principales:
       productos_sugeridos: productos.slice(1, 4).map(p => ({
         nombre: p.nombre,
         descripcion: p.descripcion,
-        precio_estimado: p.precios.base,
-        aplicaciones: p.aplicaciones
+        precio_estimado: 50,
+        aplicaciones: []
       }))
     }
   }
@@ -300,8 +317,8 @@ Puedes contactarnos directamente al 📞 [teléfono] o escribirnos de nuevo con 
     return productos.slice(0, 3).map(p => ({
       nombre: p.nombre,
       descripcion: p.descripcion,
-      precio_estimado: p.precios.base,
-      aplicaciones: p.aplicaciones
+      precio_estimado: 50,
+      aplicaciones: []
     }))
   }
   

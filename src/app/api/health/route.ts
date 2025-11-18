@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server'
 import { initializeSimpleSystem, getSystemStatus } from '@/lib/simple-initialize'
 

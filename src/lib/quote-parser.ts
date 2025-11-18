@@ -107,7 +107,11 @@ Responde SOLO con JSON válido siguiendo este esquema exacto:
       max_tokens: 1000
     })
     
-    const parsed = JSON.parse(completion.choices[0].message.content)
+    const content = completion.choices[0].message.content
+    if (!content) {
+      throw new Error('No se recibió respuesta de OpenAI')
+    }
+    const parsed = JSON.parse(content)
     
     // Validar estructura básica
     if (!parsed.producto || !parsed.servicios || !parsed.estado_info) {

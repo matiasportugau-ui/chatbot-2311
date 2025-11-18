@@ -221,7 +221,16 @@ Responde en formato JSON:
     
     // Si es cotización, calcular precios reales
     if (respuesta.tipo === 'cotizacion' && parsed.producto) {
-      const cotizacionReal = calculateFullQuote(parsed, this.detectarZonaPorTelefono(userPhone))
+      const cotizacionReal = calculateFullQuote({
+        producto: parsed.producto.tipo,
+        dimensiones: {
+          ancho: parsed.dimensiones?.ancho || 1,
+          largo: parsed.dimensiones?.largo || 1,
+          espesor: parseInt(parsed.producto.grosor || '100')
+        },
+        servicios: [],
+        cantidad: parsed.producto.cantidad || 1
+      })
       respuesta.cotizacion = cotizacionReal
     }
 
@@ -322,14 +331,13 @@ Responde en formato JSON:
     try {
       await this.quoteService.createQuote({
         arg: `INT-${Date.now()}`,
-        estado: 'Procesado',
+        estado: 'Listo',
         fecha: interaccion.timestamp.toISOString().split('T')[0],
         cliente: interaccion.nombre,
-        origen: 'IA_Integrada',
+        origen: 'WA',
         telefono: interaccion.telefono,
         direccion: 'Sistema IA',
-        consulta: interaccion.consulta,
-        parsedData: {} as ParsedQuote
+        consulta: interaccion.consulta
       })
     } catch (error) {
       console.error('Error guardando interacción:', error)

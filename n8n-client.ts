@@ -36,7 +36,7 @@ export interface ChatMessage {
 
 export interface WhatsAppMessage {
   from: string
-  name: string
+  name?: string
   text: string
   timestamp?: string
   messageId?: string
@@ -335,6 +335,3 @@ export async function getInsightsViaN8N(): Promise<N8NResponse> {
 export async function getConversionsViaN8N(): Promise<N8NResponse> {
   return n8nClient.getConversions()
 }
-
-// Exportar tipos para uso externo
-export type { N8NWebhookPayload, N8NResponse, ChatMessage, WhatsAppMessage, SheetRow }

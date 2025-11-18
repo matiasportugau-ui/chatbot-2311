@@ -14,7 +14,9 @@ import {
   BarChart3,
   Lightbulb,
   Database,
-  Zap
+  Zap,
+  MapPin,
+  Clock
 } from 'lucide-react'
 
 interface SystemMetrics {

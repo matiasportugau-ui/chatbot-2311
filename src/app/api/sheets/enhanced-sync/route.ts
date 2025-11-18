@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleSheetsEnhancedClient } from '@/lib/google-sheets-enhanced'
 import { initializeBMCSystem } from '@/lib/initialize-system'
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in enhanced-sync GET:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in enhanced-sync POST:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 })
   }
 }
@@ -260,7 +262,7 @@ async function addQuote(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
   try {
     // Generar código Arg si no se proporciona
     if (!data.arg) {
-      data.arg = sheetsClient.generateArgCode(data.telefono, data.origen || 'WA')
+      data.arg = await sheetsClient.generateArgCode(data.telefono, data.origen || 'WA')
     }
     
     await sheetsClient.addQuoteToAdmin(data)
