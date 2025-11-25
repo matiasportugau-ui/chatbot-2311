@@ -2,7 +2,10 @@
     "name": "BMC Chatbot Development",
     "image": "mcr.microsoft.com/devcontainers/python:3.11",
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "20"
+        }
     },
     "customizations": {
         "vscode": {
@@ -11,17 +14,39 @@
                 "ms-python.vscode-pylance",
                 "ms-python.debugpy",
                 "charliermarsh.ruff",
-                "esbenp.prettier-vscode"
+                "esbenp.prettier-vscode",
+                "dbaeumer.vscode-eslint",
+                "bradlc.vscode-tailwindcss"
             ],
             "settings": {
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
                 "python.formatting.provider": "none",
                 "editor.formatOnSave": true,
                 "editor.defaultFormatter": "charliermarsh.ruff",
-                "python.languageServer": "Pylance"
+                "python.languageServer": "Pylance",
+                "[javascript]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                },
+                "[typescript]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                },
+                "[typescriptreact]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                }
             }
         }
     },
-    "postCreateCommand": "pip install --upgrade pip && [ -f requirements.txt ] && pip install -r requirements.txt || echo 'No requirements.txt found'",
+    "postCreateCommand": "pip install --upgrade pip && [ -f requirements.txt ] && pip install -r requirements.txt || echo 'No requirements.txt found' && npm install",
+    "forwardPorts": [3000, 8000],
+    "portsAttributes": {
+        "3000": {
+            "label": "Next.js App",
+            "onAutoForward": "notify"
+        },
+        "8000": {
+            "label": "Python API",
+            "onAutoForward": "notify"
+        }
+    },
     "remoteUser": "vscode"
 }
