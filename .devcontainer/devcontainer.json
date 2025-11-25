@@ -1,0 +1,27 @@
+{
+    "name": "BMC Chatbot Development",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.debugpy",
+                "charliermarsh.ruff",
+                "esbenp.prettier-vscode"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.formatting.provider": "none",
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "charliermarsh.ruff",
+                "python.languageServer": "Pylance"
+            }
+        }
+    },
+    "postCreateCommand": "pip install --upgrade pip && [ -f requirements.txt ] && pip install -r requirements.txt || echo 'No requirements.txt found'",
+    "remoteUser": "vscode"
+}
