@@ -58,22 +58,36 @@ class CredentialsManager {
   // Cargar credenciales desde archivo JSON encriptado
   async loadCredentials(credentialsPath: string = './credentials.json'): Promise<void> {
     try {
-      // En desarrollo, cargar desde archivo local
+      let loadedFromFile = false
+
       if (process.env.NODE_ENV === 'development') {
-        const fs = await import('fs/promises')
-        const path = await import('path')
-        
-        const fullPath = path.resolve(process.cwd(), credentialsPath)
-        const encryptedData = await fs.readFile(fullPath, 'utf-8')
-        
-        // Desencriptar datos
-        const decryptedData = this.decrypt(encryptedData)
-        this.credentials = JSON.parse(decryptedData)
+        try {
+          const fs = await import('fs/promises')
+          const path = await import('path')
+
+          const fullPath = path.resolve(process.cwd(), credentialsPath)
+          const encryptedData = await fs.readFile(fullPath, 'utf-8')
+
+          // Desencriptar datos
+          const decryptedData = this.decrypt(encryptedData)
+          this.credentials = JSON.parse(decryptedData)
+          loadedFromFile = true
+        } catch (fileError: any) {
+          if (fileError?.code === 'ENOENT') {
+            console.warn('⚠️ credentials.json no encontrado, usando variables de entorno')
+            this.loadFromEnvironment()
+          } else {
+            throw fileError
+          }
+        }
       } else {
-        // En producción, cargar desde variables de entorno
         this.loadFromEnvironment()
       }
-      
+
+      if (!loadedFromFile && !this.credentials) {
+        this.loadFromEnvironment()
+      }
+
       this.isLoaded = true
       console.log('✅ Credenciales cargadas exitosamente')
     } catch (error) {

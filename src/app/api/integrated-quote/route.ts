@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server'
-import { motorCotizacionIntegrado } from '@/lib/integrated-quote-engine'
+import { getMotorCotizacionIntegrado } from '@/lib/integrated-quote-engine'
 import { initializeBMCSystem } from '@/lib/initialize-system'
 
 let systemInitialized = false
@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
  */
 async function procesarConsulta(consulta: string, userPhone: string, userName?: string) {
   try {
+    const motorCotizacionIntegrado = await getMotorCotizacionIntegrado()
     const respuesta = await motorCotizacionIntegrado.procesarConsulta(
       consulta, 
       userPhone, 
@@ -96,6 +97,7 @@ async function procesarConsulta(consulta: string, userPhone: string, userName?: 
  */
 async function obtenerMetricas() {
   try {
+    const motorCotizacionIntegrado = await getMotorCotizacionIntegrado()
     const metricas = await motorCotizacionIntegrado.obtenerMetricas()
     
     return NextResponse.json({
@@ -120,6 +122,7 @@ async function obtenerMetricas() {
  */
 async function actualizarBaseConocimiento() {
   try {
+    const motorCotizacionIntegrado = await getMotorCotizacionIntegrado()
     await motorCotizacionIntegrado.actualizarBaseConocimiento()
     
     return NextResponse.json({
@@ -142,6 +145,7 @@ async function actualizarBaseConocimiento() {
 async function analizarPatrones() {
   try {
     // Esta función podría implementar análisis más avanzados
+    const motorCotizacionIntegrado = await getMotorCotizacionIntegrado()
     const metricas = await motorCotizacionIntegrado.obtenerMetricas()
     
     return NextResponse.json({

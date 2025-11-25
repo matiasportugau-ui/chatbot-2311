@@ -6,7 +6,7 @@
  */
 
 import { OpenAI } from 'openai'
-import { secureConfig } from './secure-config'
+import { secureConfig, initializeSecureConfig } from './secure-config'
 import { connectDB } from './mongodb'
 import { QuoteService } from './quote-service'
 import { parseQuoteConsulta, ParsedQuote } from './quote-parser'
@@ -460,5 +460,16 @@ Responde en formato JSON:
   }
 }
 
-// Exportar instancia singleton
-export const motorCotizacionIntegrado = new MotorCotizacionIntegrado()
+let motorCotizacionIntegradoInstance: MotorCotizacionIntegrado | null = null
+
+export async function getMotorCotizacionIntegrado(): Promise<MotorCotizacionIntegrado> {
+  if (!secureConfig.isReady()) {
+    await initializeSecureConfig()
+  }
+
+  if (!motorCotizacionIntegradoInstance) {
+    motorCotizacionIntegradoInstance = new MotorCotizacionIntegrado()
+  }
+
+  return motorCotizacionIntegradoInstance
+}
