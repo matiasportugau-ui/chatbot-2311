@@ -5,14 +5,14 @@ Agent Workflows - Multi-step Workflow Execution Engine
 Defines and executes automated workflows with conditional branching
 """
 
-import os
+import ast
 import logging
-import json
-from datetime import datetime
-from typing import Dict, List, Any, Optional, Callable
-from dataclasses import dataclass, field, asdict
-from enum import Enum
+import operator
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Dict, List, Any, Optional
 
 from agent_coordinator import AgentCoordinator, TaskPriority, get_coordinator
 from agent_router import AgentRouter, get_router
@@ -83,6 +83,149 @@ class WorkflowExecution:
     completed_at: Optional[datetime] = None
     error: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+
+class _SafeConditionEvaluator(ast.NodeVisitor):
+    """Safely evaluate workflow condition expressions."""
+
+    _COMPARE_OPERATORS = {
+        ast.Eq: operator.eq,
+        ast.NotEq: operator.ne,
+        ast.Gt: operator.gt,
+        ast.GtE: operator.ge,
+        ast.Lt: operator.lt,
+        ast.LtE: operator.le,
+        ast.In: lambda left, right: left in right,
+        ast.NotIn: lambda left, right: left not in right,
+        ast.Is: operator.is_,
+        ast.IsNot: operator.is_not,
+    }
+
+    def __init__(self, context: Dict[str, Any]):
+        self.context = context
+
+    def evaluate(self, expression: str) -> Any:
+        """Parse and safely evaluate the provided expression."""
+        if not expression:
+            return True
+
+        try:
+            tree = ast.parse(expression, mode="eval")
+        except SyntaxError as exc:
+            raise ValueError("Invalid condition expression") from exc
+
+        return self.visit(tree.body)
+
+    def generic_visit(self, node):
+        raise ValueError(f"Unsupported expression: {type(node).__name__}")
+
+    def visit_BoolOp(self, node: ast.BoolOp) -> Any:
+        if isinstance(node.op, ast.And):
+            for value in node.values:
+                if not self.visit(value):
+                    return False
+            return True
+        if isinstance(node.op, ast.Or):
+            for value in node.values:
+                if self.visit(value):
+                    return True
+            return False
+        raise ValueError("Unsupported boolean operator")
+
+    def visit_UnaryOp(self, node: ast.UnaryOp) -> Any:
+        if isinstance(node.op, ast.Not):
+            return not self.visit(node.operand)
+        raise ValueError("Unsupported unary operator")
+
+    def visit_Compare(self, node: ast.Compare) -> Any:
+        left = self.visit(node.left)
+
+        for operator_node, comparator in zip(node.ops, node.comparators):
+            op_type = type(operator_node)
+            if op_type not in self._COMPARE_OPERATORS:
+                raise ValueError(f"Unsupported comparison operator: {op_type.__name__}")
+
+            right = self.visit(comparator)
+            if not self._COMPARE_OPERATORS[op_type](left, right):
+                return False
+            left = right
+
+        return True
+
+    def visit_Name(self, node: ast.Name) -> Any:
+        lowered = node.id.lower()
+        if lowered == "true":
+            return True
+        if lowered == "false":
+            return False
+        if lowered == "null":
+            return None
+        if node.id in self.context:
+            return self.context[node.id]
+        raise ValueError(f"Unknown identifier: {node.id}")
+
+    def visit_Constant(self, node: ast.Constant) -> Any:
+        return node.value
+
+    def visit_NameConstant(self, node: ast.NameConstant) -> Any:  # pragma: no cover
+        return node.value
+
+    def visit_Attribute(self, node: ast.Attribute) -> Any:
+        value = self.visit(node.value)
+        attr = node.attr
+
+        if attr.startswith("_"):
+            raise ValueError("Access to private attributes is not allowed")
+
+        if isinstance(value, dict):
+            return value.get(attr)
+
+        if hasattr(value, attr):
+            return getattr(value, attr)
+
+        raise AttributeError(f"Attribute {attr} not found in object {value}")
+
+    def visit_Subscript(self, node: ast.Subscript) -> Any:
+        target = self.visit(node.value)
+        index = self._evaluate_subscript_index(node.slice)
+
+        try:
+            return target[index]
+        except (TypeError, KeyError, IndexError) as exc:
+            raise ValueError("Invalid subscript access in condition expression") from exc
+
+    def visit_List(self, node: ast.List) -> Any:
+        return [self.visit(element) for element in node.elts]
+
+    def visit_Tuple(self, node: ast.Tuple) -> Any:
+        return tuple(self.visit(element) for element in node.elts)
+
+    def visit_Set(self, node: ast.Set) -> Any:
+        return {self.visit(element) for element in node.elts}
+
+    def visit_Dict(self, node: ast.Dict) -> Any:
+        return {
+            self.visit(key): self.visit(value)
+            for key, value in zip(node.keys, node.values)
+        }
+
+    def visit_Call(self, node: ast.Call) -> Any:
+        raise ValueError("Function calls are not allowed in condition expressions")
+
+    def visit_BinOp(self, node: ast.BinOp) -> Any:
+        raise ValueError("Binary operations are not allowed in condition expressions")
+
+    def visit_Lambda(self, node: ast.Lambda) -> Any:
+        raise ValueError("Lambda expressions are not allowed in condition expressions")
+
+    def _evaluate_subscript_index(self, node: ast.AST) -> Any:
+        if isinstance(node, ast.Constant):
+            return node.value
+        if isinstance(node, ast.Name):
+            return self.visit_Name(node)
+        if hasattr(ast, "Index") and isinstance(node, ast.Index):  # pragma: no cover
+            return self._evaluate_subscript_index(node.value)
+        raise ValueError("Only constant indexes are allowed in condition expressions")
 
 
 class WorkflowEngine:
@@ -398,10 +541,9 @@ class WorkflowEngine:
         if not step.condition:
             return True
         
-        # Simple condition evaluation (can be enhanced with full expression parser)
         try:
-            # Evaluate condition using workflow data
-            condition_result = eval(step.condition, {"workflow_data": execution.workflow_data})
+            evaluator = _SafeConditionEvaluator({"workflow_data": execution.workflow_data})
+            condition_result = evaluator.evaluate(step.condition)
             return bool(condition_result)
         except Exception as e:
             logger.error(f"Error evaluating condition: {e}")
