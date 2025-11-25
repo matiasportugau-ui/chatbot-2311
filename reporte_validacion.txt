@@ -1,0 +1,20 @@
+======================================================================
+REPORTE DE VALIDACIÓN
+======================================================================
+
+RESULTADOS:
+  ✅ carga_conocimiento: Exitoso
+  ✅ ia_conversacional: Exitoso
+  ✅ productos: Exitoso
+  ✅ uso_conocimiento: Exitoso
+
+ESTADÍSTICAS:
+  interacciones: 14
+  patrones: 1
+  productos: 1
+  patrones_respuesta: 4
+  productos_sistema: ['isodec', 'poliestireno', 'lana_roca']
+  respuestas_mejoradas: 3
+  total_preguntas_test: 3
+
+✅ VALIDACIÓN EXITOSA

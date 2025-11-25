@@ -1,0 +1,67 @@
+{
+  "agents": {
+    "default_agent_type": "sales",
+    "fallback_agent": null,
+    "max_concurrent_tasks": 10,
+    "task_timeout": 300
+  },
+  "routing": {
+    "default_agent_type": "sales",
+    "fallback_agent": null,
+    "intent_agent_mapping": {
+      "sales": "sales",
+      "support": "support",
+      "follow_up": "follow_up",
+      "quote": "sales",
+      "information": "sales",
+      "technical": "support",
+      "general": "sales"
+    },
+    "priority_mapping": {
+      "urgent": "URGENT",
+      "high": "HIGH",
+      "normal": "NORMAL",
+      "low": "LOW"
+    }
+  },
+  "scheduling": {
+    "default_interval": "1 hour",
+    "max_scheduled_tasks": 1000,
+    "cleanup_interval": "24 hours"
+  },
+  "monitoring": {
+    "monitoring_interval": 30,
+    "metrics_retention_hours": 24,
+    "thresholds": {
+      "error_rate": 0.1,
+      "response_time": 5.0,
+      "uptime": 0.95,
+      "task_failure": 5
+    },
+    "alert_levels": {
+      "info": "INFO",
+      "warning": "WARNING",
+      "error": "ERROR",
+      "critical": "CRITICAL"
+    }
+  },
+  "workflows": {
+    "max_concurrent_executions": 50,
+    "default_timeout": 300,
+    "max_retries": 3
+  },
+  "followup": {
+    "check_interval": 3600,
+    "enabled_channels": ["whatsapp", "email", "n8n"],
+    "ai_generation_enabled": true,
+    "followup_intervals": [24, 48, 72]
+  },
+  "proactive_actions": {
+    "quote_followups_enabled": true,
+    "abandoned_cart_recovery_enabled": true,
+    "product_recommendations_enabled": true,
+    "price_drop_notifications_enabled": false,
+    "seasonal_campaigns_enabled": true
+  }
+}
+
