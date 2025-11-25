@@ -127,6 +127,24 @@ sistema-cotizaciones-bmc/
 └── README.md                    # Documentación completa
 ```
 
+## Trabajo en la Nube (Codespaces / Cursor Cloud)
+
+1. **Sincroniza el repositorio:** verifica que tu rama local esté en GitHub (`git push origin <rama>`). Esto asegura que el workspace cloud arranque con la última versión.
+2. **Crea el workspace remoto:**
+   - **GitHub Codespaces:** en la página del repo haz clic en `Code → Create codespace on main`.
+   - **Cursor Cloud:** abre Cursor, selecciona `New Cloud Workspace` y pega la URL del repositorio.
+3. **Dev Container automático:** al iniciar, el archivo `.devcontainer/devcontainer.json` cargará el contenedor `python:3.11` con Node.js 20 y ejecutará `.devcontainer/post-create.sh` para instalar dependencias de Python (`requirements.txt`) y Node (`nextjs-app`).
+4. **Variables y secretos:** usa `SETUP_CREDENTIALS_GUIDE.md` y `SETUP_WHATSAPP.md` para cargar las API keys o tokens necesarios dentro del workspace (puedes usar los Secrets de GitHub/Cursor).
+5. **Ciclo local ↔ nube:** antes de cambiar de entorno haz `git pull` y al terminar en la nube confirma tus cambios (`git commit && git push`) para evitar divergencias.
+
+### Verificación rápida dentro del workspace
+
+- `python ejecutar_sistema.py` para validar el flujo principal.
+- `cd nextjs-app && npm run dev` para probar la UI en `http://localhost:3000`.
+- `python gestionar_servicios.py` o los scripts de `python-scripts/` según lo que necesites probar.
+
+Una vez que el workspace funcione, considera activar despliegues automáticos (por ejemplo GitHub Actions + Vercel) reutilizando los mismos comandos usados en el contenedor.
+
 ## Instalación
 
 ### Instalación Automática (Recomendada)
