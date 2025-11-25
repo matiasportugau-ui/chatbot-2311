@@ -1,4 +1,5 @@
 // System Initialization - Inicialización del Sistema
+import { initializeSecureConfig, secureConfig } from './secure-config'
 export type ServiceHealthStatus = 'ready' | 'initializing' | 'degraded' | 'error'
 
 export interface BMCServiceStatus {
@@ -23,6 +24,10 @@ export const initializeBMCSystem = async (): Promise<BMCSystemStatus> => {
   try {
     // TODO: Implement real system initialization logic
     console.log('Initializing BMC system...')
+
+    if (!secureConfig.isReady()) {
+      await initializeSecureConfig()
+    }
 
     return {
       success: true,
