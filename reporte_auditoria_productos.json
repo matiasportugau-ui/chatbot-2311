@@ -1,0 +1,18 @@
+{
+  "productos_en_sistema": [
+    "isodec"
+  ],
+  "productos_en_matriz_precios": [
+    "isodec",
+    "lana_roca",
+    "poliestireno"
+  ],
+  "productos_en_conocimiento": [
+    "isodec",
+    "lana_roca",
+    "poliestireno"
+  ],
+  "productos_en_escenarios": [],
+  "productos_faltantes": [],
+  "productos_adicionales": []
+}
