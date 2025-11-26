@@ -5,11 +5,26 @@ Chat Interactivo con Agente de Cotizaciones BMC Uruguay
 Permite conversar en tiempo real con el agente virtual
 """
 
-import time
+import os
 import re
 from decimal import Decimal
+
+# Cargar variables de entorno desde .env
+try:
+    from dotenv import load_dotenv
+    # Intentar cargar desde .env.local primero, luego .env
+    if os.path.exists('.env.local'):
+        load_dotenv('.env.local')
+    elif os.path.exists('.env'):
+        load_dotenv('.env')
+    else:
+        load_dotenv()  # Busca .env en la raíz
+except ImportError:
+    pass  # python-dotenv no es crítico, las variables pueden estar en el sistema
+
 from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
 from utils_cotizaciones import obtener_datos_faltantes, formatear_mensaje_faltantes, construir_contexto_validacion
+from integracion_google_sheets import IntegracionGoogleSheets
 
 
 class AgenteInteractivo:
@@ -24,6 +39,15 @@ class AgenteInteractivo:
         self.paso_actual = 0
         self.datos_cliente = {}
         self.datos_especificaciones = {}
+        
+        # Inicializar integración con Google Sheets (opcional, puede funcionar sin IA)
+        try:
+            self.google_sheets = IntegracionGoogleSheets(ia_conversacional=None)
+            # Intentar conectar
+            self.google_sheets.conectar_google_sheets()
+        except Exception as e:
+            print(f"⚠️  No se pudo inicializar Google Sheets: {e}")
+            self.google_sheets = None
     
     def cargar_configuracion(self):
         """Carga la configuración inicial"""
@@ -31,8 +55,8 @@ class AgenteInteractivo:
         self.sistema.actualizar_precio_producto("poliestireno", Decimal('120.00'))
         self.sistema.actualizar_precio_producto("lana_roca", Decimal('140.00'))
         
-        print("🤖 Agente de Cotizaciones BMC Uruguay iniciado")
-        print("📋 Sistema cargado y listo para atenderte")
+        print("[AGENTE] Agente de Cotizaciones BMC Uruguay iniciado")
+        print("[SISTEMA] Sistema cargado y listo para atenderte")
     
     def procesar_mensaje(self, mensaje: str):
         """Procesa el mensaje del usuario y responde"""
@@ -252,7 +276,7 @@ class AgenteInteractivo:
                             "• 150mm")
                 else:
                     return "❌ Las dimensiones deben ser números positivos"
-            except:
+            except (ValueError, TypeError):
                 return "❌ Por favor, ingresa las dimensiones en formato: largo x ancho (ej: 10 x 5)"
         else:
             return "❌ Por favor, ingresa las dimensiones en formato: largo x ancho (ej: 10 x 5)"
@@ -368,6 +392,33 @@ class AgenteInteractivo:
             # Calcular área
             area = self.datos_especificaciones['largo'] * self.datos_especificaciones['ancho']
             
+            # Intentar guardar en Google Sheets
+            mensaje_sheets = ""
+            if self.google_sheets:
+                try:
+                    # Construir consulta para Google Sheets (dentro del try para manejar errores)
+                    consulta_sheets = self.google_sheets.construir_consulta_cotizacion(
+                        self.datos_cliente,
+                        self.datos_especificaciones
+                    )
+                    
+                    datos_sheets = {
+                        'cliente': nombre_completo,
+                        'telefono': self.datos_cliente['telefono'],
+                        'direccion': self.datos_cliente['direccion'],
+                        'consulta': consulta_sheets,
+                        'origen': 'CH',  # CH = Chat Interactivo
+                        'estado': 'Pendiente'
+                    }
+                    resultado_sheets = self.google_sheets.guardar_cotizacion_en_sheets(datos_sheets)
+                    if resultado_sheets.get('exito'):
+                        codigo_arg = resultado_sheets.get('codigo_arg', '')
+                        mensaje_sheets = f"\n📊 **Guardado en Google Sheets:** Código {codigo_arg}"
+                    else:
+                        mensaje_sheets = "\n⚠️  No se pudo guardar en Google Sheets (modo simulado)"
+                except Exception as e:
+                    mensaje_sheets = f"\n⚠️  Error guardando en Google Sheets: {str(e)}"
+            
             respuesta = ("🎉 **¡COTIZACIÓN LISTA!**\n\n"
                         f"📋 **ID:** {cotizacion.id}\n"
                         f"👤 **Cliente:** {cotizacion.cliente.nombre}\n"
@@ -383,7 +434,8 @@ class AgenteInteractivo:
                         "• Material del producto\n"
                         "• Terminaciones\n"
                         "• Anclajes\n"
-                        "• Traslado\n\n"
+                        "• Traslado\n"
+                        f"{mensaje_sheets}\n\n"
                         "¿Te parece bien esta cotización? ¿Necesitas algún ajuste?")
             
             # Resetear para nueva cotización

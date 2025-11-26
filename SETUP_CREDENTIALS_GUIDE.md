@@ -184,7 +184,7 @@ Una vez configurado todo, verifica que tu archivo `.env.local` se vea así:
 
 ```bash
 # OpenAI API ✅
-OPENAI_API_KEY=sk-proj-uh-BsI8JYz3gCR...
+OPENAI_API_KEY=sk-proj-TU-KEY-AQUI
 
 # Google Sheets API ✅
 GOOGLE_SHEET_ID=1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0
