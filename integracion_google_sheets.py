@@ -7,10 +7,34 @@ Sincronización automática con Google Sheets "Administrador de Cotizaciones II"
 
 import json
 import datetime
+import os
 import gspread
 from google.oauth2.service_account import Credentials
 from typing import Dict, List, Any, Optional
 # import pandas as pd  # Comentado por problemas de espacio
+
+# Cargar variables de entorno desde .env
+try:
+    from dotenv import load_dotenv
+    # Intentar cargar desde .env.local primero, luego .env
+    env_cargado = False
+    if os.path.exists('.env.local'):
+        load_dotenv('.env.local', override=True)
+        env_cargado = True
+        print("[INFO] Variables de entorno cargadas desde .env.local")
+    elif os.path.exists('.env'):
+        load_dotenv('.env', override=True)
+        env_cargado = True
+        print("[INFO] Variables de entorno cargadas desde .env")
+    else:
+        # Intentar cargar sin especificar archivo (busca .env en la raíz)
+        result = load_dotenv()
+        if result:
+            env_cargado = True
+            print("[INFO] Variables de entorno cargadas desde archivo .env encontrado")
+except ImportError:
+    print("[WARNING] python-dotenv no instalado. Instala con: pip install python-dotenv")
+    print("[INFO] Las variables de entorno deben estar configuradas en el sistema")
 
 from ia_conversacional_integrada import IAConversacionalIntegrada
 from base_conocimiento_dinamica import InteraccionCliente
@@ -19,58 +43,102 @@ from base_conocimiento_dinamica import InteraccionCliente
 class IntegracionGoogleSheets:
     """Integración con Google Sheets"""
     
-    def __init__(self, ia_conversacional: IAConversacionalIntegrada):
+    def __init__(self, ia_conversacional: Optional[IAConversacionalIntegrada] = None):
         self.ia = ia_conversacional
-        self.sheet_id = "1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0"  # ID del sheet real
+        # Leer Sheet ID de variable de entorno o usar el por defecto
+        self.sheet_id = os.getenv('GOOGLE_SHEET_ID', '1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0')
         self.credenciales = None
         self.cliente_gspread = None
         self.hoja_principal = None
         self.hoja_enviados = None
         self.hoja_confirmados = None
+        self.conectado = False
         
         # Configurar credenciales
         self.configurar_credenciales()
     
     def configurar_credenciales(self):
-        """Configura las credenciales de Google Sheets"""
+        """Configura las credenciales de Google Sheets desde variables de entorno o archivo"""
         try:
-            # Crear credenciales (necesita archivo JSON de service account)
             scope = [
                 'https://www.googleapis.com/auth/spreadsheets',
                 'https://www.googleapis.com/auth/drive'
             ]
             
-            # En producción, usar archivo de credenciales real
-            # creds = Credentials.from_service_account_file('credenciales.json', scopes=scope)
+            # Intentar leer desde variables de entorno (producción)
+            service_account_email = os.getenv('GOOGLE_SERVICE_ACCOUNT_EMAIL')
+            private_key = os.getenv('GOOGLE_PRIVATE_KEY')
             
-            # Para demo, usar credenciales simuladas
-            print("⚠️  Usando credenciales simuladas para demo")
-            print("   En producción, configurar credenciales reales de Google Service Account")
+            if service_account_email and private_key:
+                # Usar credenciales desde variables de entorno
+                try:
+                    # Limpiar la clave privada (remover \n literales)
+                    private_key_clean = private_key.replace('\\n', '\n')
+                    
+                    creds_dict = {
+                        "type": "service_account",
+                        "project_id": service_account_email.split('@')[1].split('.')[0] if '@' in service_account_email else "bmc-project",
+                        "private_key_id": "",
+                        "private_key": private_key_clean,
+                        "client_email": service_account_email,
+                        "client_id": "",
+                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                        "token_uri": "https://oauth2.googleapis.com/token",
+                        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                        "client_x509_cert_url": ""
+                    }
+                    
+                    self.credenciales = Credentials.from_service_account_info(creds_dict, scopes=scope)
+                    print("[OK] Credenciales de Google Sheets configuradas desde variables de entorno")
+                    return
+                except Exception as e:
+                    print(f"[WARNING] Error usando credenciales de variables de entorno: {e}")
             
-            self.credenciales = None  # Simulado
-            self.cliente_gspread = None  # Simulado
+            # Intentar leer desde archivo JSON (desarrollo local)
+            archivos_credenciales = ['credenciales.json', 'google-credentials.json', 'service-account.json']
+            for archivo in archivos_credenciales:
+                if os.path.exists(archivo):
+                    try:
+                        self.credenciales = Credentials.from_service_account_file(archivo, scopes=scope)
+                        print(f"[OK] Credenciales de Google Sheets cargadas desde {archivo}")
+                        return
+                    except Exception as e:
+                        print(f"[WARNING] Error leyendo {archivo}: {e}")
+                        continue
+            
+            # Si no hay credenciales, usar modo simulado
+            print("[WARNING] No se encontraron credenciales de Google Sheets")
+            print("[INFO] Usando modo simulado. Para produccion:")
+            print("[INFO] 1. Configurar GOOGLE_SERVICE_ACCOUNT_EMAIL y GOOGLE_PRIVATE_KEY en variables de entorno")
+            print("[INFO] 2. O colocar archivo credenciales.json en la raiz del proyecto")
+            self.credenciales = None
             
         except Exception as e:
-            print(f"❌ Error configurando credenciales: {e}")
-            print("   Configurar credenciales reales para usar en producción")
+            print(f"[ERROR] Error configurando credenciales: {e}")
+            print("[INFO] Usando modo simulado")
+            self.credenciales = None
     
     def conectar_google_sheets(self):
         """Conecta con Google Sheets"""
         if not self.credenciales:
-            print("⚠️  Credenciales no configuradas, usando modo simulado")
+            print("[WARNING] Credenciales no configuradas, usando modo simulado")
+            self.conectado = False
             return False
         
         try:
             self.cliente_gspread = gspread.authorize(self.credenciales)
-            self.hoja_principal = self.cliente_gspread.open_by_key(self.sheet_id).worksheet("Admin.")
-            self.hoja_enviados = self.cliente_gspread.open_by_key(self.sheet_id).worksheet("Enviados")
-            self.hoja_confirmados = self.cliente_gspread.open_by_key(self.sheet_id).worksheet("Confirmado")
+            spreadsheet = self.cliente_gspread.open_by_key(self.sheet_id)
+            self.hoja_principal = spreadsheet.worksheet("Admin.")
+            self.hoja_enviados = spreadsheet.worksheet("Enviados")
+            self.hoja_confirmados = spreadsheet.worksheet("Confirmado")
             
-            print("✅ Conectado a Google Sheets exitosamente")
+            self.conectado = True
+            print("[OK] Conectado a Google Sheets exitosamente")
             return True
             
         except Exception as e:
-            print(f"❌ Error conectando a Google Sheets: {e}")
+            print(f"[ERROR] Error conectando a Google Sheets: {e}")
+            self.conectado = False
             return False
     
     def leer_cotizaciones_pendientes(self) -> List[Dict]:
@@ -88,11 +156,11 @@ class IntegracionGoogleSheets:
                 if fila.get('Estado', '').lower() in ['pendiente', 'adjunto', 'listo']
             ]
             
-            print(f"📊 Leídas {len(pendientes)} cotizaciones pendientes")
+            print(f"[INFO] Leidas {len(pendientes)} cotizaciones pendientes")
             return pendientes
             
         except Exception as e:
-            print(f"❌ Error leyendo cotizaciones: {e}")
+            print(f"[ERROR] Error leyendo cotizaciones: {e}")
             return []
     
     def simular_datos_cotizaciones(self) -> List[Dict]:
@@ -147,7 +215,7 @@ class IntegracionGoogleSheets:
             }
             
         except Exception as e:
-            print(f"❌ Error procesando consulta: {e}")
+            print(f"[ERROR] Error procesando consulta: {e}")
             return {"error": str(e)}
     
     def extraer_informacion_consulta(self, consulta: str) -> Dict[str, Any]:
@@ -245,20 +313,20 @@ class IntegracionGoogleSheets:
     
     def sincronizar_cotizaciones(self):
         """Sincroniza cotizaciones entre el sistema y Google Sheets"""
-        print("\n🔄 SINCRONIZANDO COTIZACIONES CON GOOGLE SHEETS")
+        print("\n[SYNC] SINCRONIZANDO COTIZACIONES CON GOOGLE SHEETS")
         print("=" * 60)
         
         # Leer cotizaciones pendientes
         cotizaciones = self.leer_cotizaciones_pendientes()
         
         if not cotizaciones:
-            print("No hay cotizaciones para sincronizar")
+            print("[INFO] No hay cotizaciones para sincronizar")
             return
         
-        print(f"📊 Procesando {len(cotizaciones)} cotizaciones...")
+        print(f"[INFO] Procesando {len(cotizaciones)} cotizaciones...")
         
         for i, cotizacion in enumerate(cotizaciones, 1):
-            print(f"\n📋 Cotización {i}: {cotizacion['Arg']}")
+            print(f"\n[INFO] Cotizacion {i}: {cotizacion['Arg']}")
             print(f"   Cliente: {cotizacion['Cliente']}")
             print(f"   Estado: {cotizacion['Estado']}")
             print(f"   Consulta: {cotizacion['Consulta']}")
@@ -267,13 +335,13 @@ class IntegracionGoogleSheets:
             resultado = self.procesar_consulta_cotizacion(cotizacion['Consulta'])
             
             if 'error' not in resultado:
-                print(f"   🤖 IA: {resultado['respuesta_ia']}")
-                print(f"   📊 Info extraída: {resultado['informacion_extraida']}")
+                print(f"   [IA] {resultado['respuesta_ia']}")
+                print(f"   [INFO] Info extraida: {resultado['informacion_extraida']}")
                 
                 # Registrar en base de conocimiento
                 self.registrar_cotizacion_sheets(cotizacion, resultado)
             else:
-                print(f"   ❌ Error: {resultado['error']}")
+                print(f"   [ERROR] Error: {resultado['error']}")
     
     def registrar_cotizacion_sheets(self, cotizacion: Dict, resultado: Dict):
         """Registra una cotización de Google Sheets en la base de conocimiento"""
@@ -298,14 +366,14 @@ class IntegracionGoogleSheets:
             )
             
             self.ia.base_conocimiento.registrar_interaccion(interaccion)
-            print(f"   ✅ Registrada en base de conocimiento")
+            print(f"   [OK] Registrada en base de conocimiento")
             
         except Exception as e:
-            print(f"   ❌ Error registrando: {e}")
+            print(f"   [ERROR] Error registrando: {e}")
     
     def generar_reporte_cotizaciones(self) -> Dict[str, Any]:
         """Genera un reporte de cotizaciones"""
-        print("\n📊 GENERANDO REPORTE DE COTIZACIONES")
+        print("\n[REPORT] GENERANDO REPORTE DE COTIZACIONES")
         print("=" * 50)
         
         # Leer cotizaciones
@@ -340,10 +408,10 @@ class IntegracionGoogleSheets:
         }
         
         # Mostrar resumen
-        print(f"📈 Total de cotizaciones: {total_cotizaciones}")
-        print(f"📊 Por estado: {por_estado}")
-        print(f"📱 Por origen: {por_origen}")
-        print(f"📍 Por zona: {por_zona}")
+        print(f"[INFO] Total de cotizaciones: {total_cotizaciones}")
+        print(f"[INFO] Por estado: {por_estado}")
+        print(f"[INFO] Por origen: {por_origen}")
+        print(f"[INFO] Por zona: {por_zona}")
         
         return reporte
     
@@ -355,17 +423,129 @@ class IntegracionGoogleSheets:
             with open(archivo, 'w', encoding='utf-8') as f:
                 json.dump(reporte, f, ensure_ascii=False, indent=2, default=str)
             
-            print(f"✅ Reporte exportado a {archivo}")
+            print(f"[OK] Reporte exportado a {archivo}")
             return True
             
         except Exception as e:
-            print(f"❌ Error exportando reporte: {e}")
+            print(f"[ERROR] Error exportando reporte: {e}")
             return False
+    
+    def generar_codigo_arg(self, telefono: str, origen: str = "CH") -> str:
+        """Genera un código Arg único para la cotización"""
+        # Formato: {origen}{día}{hora}{últimos4dígitos}
+        ahora = datetime.datetime.now()
+        dia = ahora.day
+        hora = ahora.hour
+        ultimos_4 = telefono[-4:] if len(telefono) >= 4 else telefono.zfill(4)
+        return f"{origen}{dia:02d}{hora:02d}{ultimos_4}"
+    
+    def guardar_cotizacion_en_sheets(self, cotizacion_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Guarda una cotización en la pestaña Admin. de Google Sheets
+        
+        Args:
+            cotizacion_data: Diccionario con los datos de la cotización
+                - cliente: nombre del cliente
+                - telefono: teléfono de contacto
+                - direccion: dirección o zona
+                - consulta: descripción de la consulta
+                - origen: origen de la cotización (CH=Chat, WA=WhatsApp, etc.)
+                - estado: estado inicial (default: "Pendiente")
+        
+        Returns:
+            Dict con resultado de la operación
+        """
+        if not self.conectado:
+            # Intentar conectar si no está conectado
+            if not self.conectar_google_sheets():
+                return {
+                    "exito": False,
+                    "error": "No se pudo conectar a Google Sheets. Verifica las credenciales.",
+                    "modo": "simulado"
+                }
+        
+        try:
+            # Preparar datos para la fila
+            codigo_arg = cotizacion_data.get('arg') or self.generar_codigo_arg(
+                cotizacion_data.get('telefono', '0000'),
+                cotizacion_data.get('origen', 'CH')
+            )
+            
+            estado = cotizacion_data.get('estado', 'Pendiente')
+            fecha = cotizacion_data.get('fecha') or datetime.datetime.now().strftime('%d-%m')
+            cliente = cotizacion_data.get('cliente', 'Cliente')
+            origen = cotizacion_data.get('origen', 'CH')
+            telefono = cotizacion_data.get('telefono', '')
+            direccion = cotizacion_data.get('direccion', '')
+            consulta = cotizacion_data.get('consulta', '')
+            
+            # Construir la fila según el formato del sheet
+            fila = [
+                codigo_arg,      # Columna A: Arg
+                estado,          # Columna B: Estado
+                fecha,           # Columna C: Fecha
+                cliente,         # Columna D: Cliente
+                origen,          # Columna E: Orig.
+                telefono,        # Columna F: Telefono-Contacto
+                direccion,       # Columna G: Direccion / Zona
+                consulta         # Columna H: Consulta
+            ]
+            
+            # Agregar la fila a la hoja Admin.
+            self.hoja_principal.append_row(fila)
+            
+            resultado = {
+                "exito": True,
+                "codigo_arg": codigo_arg,
+                "mensaje": f"✅ Cotización guardada en Google Sheets con código {codigo_arg}",
+                "fila_agregada": fila
+            }
+            
+            print(f"[OK] Cotizacion guardada en Google Sheets: {codigo_arg}")
+            return resultado
+            
+        except Exception as e:
+            error_msg = f"Error guardando cotizacion en Google Sheets: {str(e)}"
+            print(f"[ERROR] {error_msg}")
+            return {
+                "exito": False,
+                "error": error_msg,
+                "modo": "error"
+            }
+    
+    def construir_consulta_cotizacion(self, datos_cliente: Dict, datos_especificaciones: Dict) -> str:
+        """Construye una descripción de consulta a partir de los datos de la cotización"""
+        producto = datos_especificaciones.get('producto', '').upper()
+        espesor = datos_especificaciones.get('espesor', '')
+        largo = datos_especificaciones.get('largo', '')
+        ancho = datos_especificaciones.get('ancho', '')
+        color = datos_especificaciones.get('color', '')
+        terminacion = datos_especificaciones.get('terminacion', '')
+        
+        partes = []
+        if producto:
+            partes.append(producto)
+        if espesor:
+            partes.append(espesor)
+        if largo and ancho:
+            try:
+                area = float(largo) * float(ancho)
+                partes.append(f"{area} m²")
+            except (ValueError, TypeError):
+                # Si los valores no son numéricos válidos, omitir el área
+                pass
+        if color:
+            partes.append(f"color {color.lower()}")
+        if terminacion:
+            partes.append(f"terminación {terminacion.lower()}")
+        
+        consulta = " / ".join(partes) if partes else "Cotización de producto de aislamiento"
+        return consulta
 
 
 def main():
     """Función principal para ejecutar la integración Google Sheets"""
-    print("📊 INTEGRACIÓN GOOGLE SHEETS BMC URUGUAY")
+    print("[GOOGLE SHEETS] INTEGRACION GOOGLE SHEETS BMC URUGUAY")
     print("=" * 50)
     
     # Crear IA conversacional
@@ -386,7 +566,7 @@ def main():
     # Exportar reporte
     sheets.exportar_reporte()
     
-    print("\n✅ Integración Google Sheets completada")
+    print("\n[OK] Integracion Google Sheets completada")
     print("Para usar en producción:")
     print("1. Configurar credenciales de Google Service Account")
     print("2. Compartir el Sheet con el email del Service Account")
