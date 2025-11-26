@@ -127,6 +127,37 @@ sistema-cotizaciones-bmc/
 └── README.md                    # Documentación completa
 ```
 
+## 🚀 Hosting & Deployment
+
+### Quick Start (5 minutes)
+
+**Fastest way to host your chatbot:**
+
+1. See **[QUICK_START_HOSTING.md](./QUICK_START_HOSTING.md)** for a 5-minute deployment guide
+2. Or use the automated deployment script:
+   ```bash
+   ./scripts/deploy-ai-agent.sh --full-deployment --json
+   ```
+
+### Detailed Hosting Options
+
+For comprehensive hosting instructions, see:
+- **[HOSTING_GUIDE.md](./HOSTING_GUIDE.md)** - Complete hosting guide with all options
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Vercel-specific deployment guide
+
+**Available hosting options:**
+- ✅ **Vercel** (Recommended) - Free tier, automatic scaling
+- ✅ **Railway/Render** - For Python FastAPI backend
+- ✅ **Docker** - Full control, on-premise or cloud
+- ✅ **AWS/GCP/Azure** - Enterprise solutions
+
+### Pre-Deployment Checklist
+
+- [ ] Code committed to Git
+- [ ] `.env` files NOT committed (check `.gitignore`)
+- [ ] API keys ready (OpenAI, Google Sheets, MongoDB)
+- [ ] Build works locally: `npm run build` (frontend) or `python api_server.py` (backend)
+
 ## Trabajo en la Nube (Codespaces / Cursor Cloud)
 
 1. **Sincroniza el repositorio:** verifica que tu rama local esté en GitHub (`git push origin <rama>`). Esto asegura que el workspace cloud arranque con la última versión.
