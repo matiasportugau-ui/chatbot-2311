@@ -13,6 +13,7 @@ from dataclasses import dataclass, asdict
 from decimal import Decimal
 import statistics
 import re
+from pathlib import Path
 
 
 @dataclass
@@ -74,7 +75,11 @@ class BaseConocimientoDinamica:
         self.conocimiento_productos = {}
         self.metricas_evolucion = {}
         self.insights_automaticos = []
+        self.directorio_base = Path(__file__).resolve().parent
+        self.config_conocimiento = self._cargar_configuracion_conocimiento()
+        self.archivo_conocimiento_cargado = None
         self.cargar_conocimiento_inicial()
+        self.cargar_conocimiento_entrenado()
     
     def cargar_conocimiento_inicial(self):
         """Carga el conocimiento inicial del sistema"""
@@ -117,6 +122,161 @@ class BaseConocimientoDinamica:
                 fecha_ultima_actualizacion=datetime.datetime.now()
             )
         ]
+
+    def _cargar_configuracion_conocimiento(self) -> Dict[str, Any]:
+        """Carga la configuración de conocimiento desde archivo"""
+        config_default = {
+            "carga_conocimiento": {
+                "habilitada": True,
+                "archivos_prioridad": [
+                    "conocimiento_consolidado.json",
+                    "base_conocimiento_final.json",
+                    "conocimiento_completo.json",
+                    "base_conocimiento_exportada.json",
+                    "base_conocimiento_demo.json",
+                    "conocimiento_completo_demo.json"
+                ],
+                "cargar_primer_archivo_encontrado": True,
+                "intentar_mongodb": True,
+                "mongodb_uri": "mongodb://localhost:27017/bmc_chat"
+            },
+            "consolidacion": {
+                "habilitada": False,
+                "archivo_salida": "conocimiento_consolidado.json",
+                "evitar_duplicados": True,
+                "combinar_productos": True
+            },
+            "logging": {
+                "nivel": "INFO",
+                "mostrar_carga": True,
+                "mostrar_estadisticas": True
+            },
+            "validacion": {
+                "validar_al_cargar": True,
+                "verificar_integridad": True,
+                "advertencias_duplicados": True
+            }
+        }
+        
+        config_path = self.directorio_base / "config_conocimiento.json"
+        if not config_path.exists():
+            return config_default
+        
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return self._deep_merge_dicts(config_default, data)
+        except Exception as e:
+            print(f"⚠️  Error cargando config_conocimiento.json: {e}")
+            return config_default
+    
+    def _deep_merge_dicts(self, base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+        """Realiza un merge profundo entre dos diccionarios"""
+        resultado = dict(base)
+        for clave, valor in override.items():
+            if (
+                clave in resultado 
+                and isinstance(resultado[clave], dict) 
+                and isinstance(valor, dict)
+            ):
+                resultado[clave] = self._deep_merge_dicts(resultado[clave], valor)
+            else:
+                resultado[clave] = valor
+        return resultado
+    
+    def _resolver_ruta_archivo(self, archivo: str) -> Path:
+        """Resuelve la ruta absoluta de un archivo de conocimiento"""
+        if not archivo:
+            return self.directorio_base
+        ruta = Path(archivo)
+        if not ruta.is_absolute():
+            ruta = self.directorio_base / archivo
+        return ruta
+    
+    def cargar_conocimiento_entrenado(self) -> bool:
+        """Carga conocimiento entrenado desde archivos o MongoDB"""
+        config_carga = self.config_conocimiento.get("carga_conocimiento", {})
+        config_logging = self.config_conocimiento.get("logging", {})
+        if not config_carga.get("habilitada", True):
+            return False
+        
+        archivos_prioridad = config_carga.get("archivos_prioridad", [])
+        cargar_primer_archivo = config_carga.get("cargar_primer_archivo_encontrado", True)
+        conocimiento_cargado = False
+        
+        for archivo in archivos_prioridad:
+            ruta = self._resolver_ruta_archivo(archivo)
+            if ruta.exists():
+                try:
+                    self.importar_conocimiento(str(ruta))
+                    self.archivo_conocimiento_cargado = str(ruta)
+                    conocimiento_cargado = True
+                    if config_logging.get("mostrar_carga", True):
+                        print(f"✅ Conocimiento cargado desde: {ruta.name}")
+                    if cargar_primer_archivo:
+                        return True
+                except Exception as e:
+                    print(f"⚠️  Error cargando {ruta.name}: {e}")
+        
+        if not conocimiento_cargado and config_carga.get("intentar_mongodb", False):
+            return self._cargar_desde_mongodb(config_carga.get("mongodb_uri"))
+        
+        return conocimiento_cargado
+    
+    def _cargar_desde_mongodb(self, uri: Optional[str]) -> bool:
+        """Carga conocimiento desde MongoDB si está disponible"""
+        if not uri:
+            return False
+        
+        try:
+            from pymongo import MongoClient
+        except ImportError:
+            print("⚠️  pymongo no está instalado. Omitiendo carga desde MongoDB.")
+            return False
+        
+        client = None
+        try:
+            client = MongoClient(uri, serverSelectionTimeoutMS=3000)
+            client.admin.command("ping")
+            
+            db_name = uri.rsplit('/', 1)[-1] if '/' in uri else "bmc_chat"
+            db_name = db_name.split('?')[0] if db_name else "bmc_chat"
+            db = client.get_database(db_name or "bmc_chat")
+            coleccion = db.get_collection("kb_interactions")
+            
+            documentos = list(coleccion.find().limit(500))
+            if not documentos:
+                print("⚠️  No se encontraron interacciones en MongoDB.")
+                return False
+            
+            interacciones = []
+            for doc in documentos:
+                interacciones.append({
+                    "id": str(doc.get("_id")),
+                    "timestamp": doc.get("timestamp"),
+                    "cliente_id": doc.get("cliente_id", "desconocido"),
+                    "tipo_interaccion": doc.get("tipo_interaccion", "consulta"),
+                    "mensaje_cliente": doc.get("mensaje_cliente", ""),
+                    "respuesta_agente": doc.get("respuesta_agente", ""),
+                    "contexto": doc.get("contexto", {}),
+                    "resultado": doc.get("resultado", "pendiente"),
+                    "valor_cotizacion": doc.get("valor_cotizacion"),
+                    "valor_venta": doc.get("valor_venta"),
+                    "satisfaccion_cliente": doc.get("satisfaccion_cliente"),
+                    "lecciones_aprendidas": doc.get("lecciones_aprendidas", [])
+                })
+            
+            self._importar_interacciones(interacciones)
+            self.archivo_conocimiento_cargado = "mongodb"
+            print("✅ Conocimiento cargado desde MongoDB")
+            return True
+        
+        except Exception as e:
+            print(f"⚠️  Error cargando desde MongoDB: {e}")
+            return False
+        finally:
+            if client:
+                client.close()
     
     def registrar_interaccion(self, interaccion: InteraccionCliente):
         """Registra una nueva interacción"""
@@ -477,27 +637,244 @@ class BaseConocimientoDinamica:
         with open(archivo, 'r', encoding='utf-8') as f:
             conocimiento = json.load(f)
         
-        # Importar interacciones
-        for i in conocimiento.get('interacciones', []):
-            interaccion = InteraccionCliente(**i)
-            interaccion.timestamp = datetime.datetime.fromisoformat(i['timestamp'])
-            self.interacciones.append(interaccion)
+        self._importar_interacciones(conocimiento.get('interacciones', []))
+        self._importar_patrones(conocimiento.get('patrones_venta', []))
+        self._importar_productos(conocimiento.get('conocimiento_productos', {}))
         
-        # Importar patrones de venta
-        for p in conocimiento.get('patrones_venta', []):
-            patron = PatronVenta(**p)
-            patron.fecha_creacion = datetime.datetime.fromisoformat(p['fecha_creacion'])
-            patron.fecha_ultima_actualizacion = datetime.datetime.fromisoformat(p['fecha_ultima_actualizacion'])
-            self.patrones_venta.append(patron)
+        if conocimiento.get('metricas_evolucion'):
+            self._fusionar_metricas_evolucion(conocimiento['metricas_evolucion'])
+        if conocimiento.get('insights_automaticos'):
+            nuevos_insights = self._importar_insights(conocimiento['insights_automaticos'])
+            if nuevos_insights:
+                self.insights_automaticos.extend(nuevos_insights)
+    
+    def _importar_interacciones(self, interacciones: List[Dict[str, Any]]):
+        """Importa interacciones desde una lista de diccionarios"""
+        for datos in interacciones:
+            interaccion = self._crear_interaccion_desde_dict(datos)
+            if interaccion:
+                self.interacciones.append(interaccion)
+    
+    def _importar_patrones(self, patrones: List[Dict[str, Any]]):
+        """Importa patrones de venta desde una lista"""
+        config_consolidacion = self.config_conocimiento.get("consolidacion", {})
+        evitar_duplicados = config_consolidacion.get("evitar_duplicados", True)
         
-        # Importar conocimiento de productos
-        for k, v in conocimiento.get('conocimiento_productos', {}).items():
-            conocimiento_prod = ConocimientoProducto(**v)
-            conocimiento_prod.fecha_ultima_actualizacion = datetime.datetime.fromisoformat(v['fecha_ultima_actualizacion'])
-            self.conocimiento_productos[k] = conocimiento_prod
+        for datos in patrones:
+            patron = self._crear_patron_desde_dict(datos)
+            if patron:
+                if evitar_duplicados:
+                    # Buscar si ya existe un patrón con el mismo ID
+                    indice_existente = None
+                    for i, patron_existente in enumerate(self.patrones_venta):
+                        if patron_existente.id == patron.id:
+                            indice_existente = i
+                            break
+                    
+                    if indice_existente is not None:
+                        # Reemplazar el patrón existente con el nuevo (más actualizado)
+                        self.patrones_venta[indice_existente] = patron
+                    else:
+                        # No existe, agregar nuevo patrón
+                        self.patrones_venta.append(patron)
+                else:
+                    # Si no se evitan duplicados, simplemente agregar
+                    self.patrones_venta.append(patron)
+    
+    def _importar_productos(self, productos: Dict[str, Any]):
+        """Importa conocimiento de productos"""
+        for producto_id, datos in productos.items():
+            producto = self._crear_conocimiento_producto(producto_id, datos)
+            if producto:
+                self.conocimiento_productos[producto_id] = producto
+    
+    def _importar_insights(self, insights: List[Any]) -> List[Dict[str, Any]]:
+        """Convierte la lista de insights asegurando tipos consistentes"""
+        resultado = []
+        for insight in insights:
+            if isinstance(insight, dict):
+                insight_copia = dict(insight)
+                timestamp_valor = insight_copia.get("timestamp")
+                if timestamp_valor:
+                    try:
+                        insight_copia["timestamp"] = self._parse_datetime(timestamp_valor)
+                    except ValueError:
+                        print(f"⚠️  Insight descartado por timestamp inválido: {timestamp_valor}")
+                        continue
+                else:
+                    print("⚠️  Insight descartado por no incluir timestamp.")
+                    continue
+                resultado.append(insight_copia)
+            else:
+                print(f"⚠️  Insight no es un dict y se descartará: {insight}")
+        return resultado
+
+    def _fusionar_metricas_evolucion(self, nuevas_metricas: Dict[str, Any]):
+        """Mantiene las métricas más recientes al importar múltiples archivos"""
+        if not nuevas_metricas:
+            return
+        if not self.metricas_evolucion:
+            self.metricas_evolucion = nuevas_metricas
+            return
+
+        fecha_actual = self.metricas_evolucion.get("fecha_actualizacion")
+        fecha_nueva = nuevas_metricas.get("fecha_actualizacion")
+
+        try:
+            dt_actual = self._parse_datetime(fecha_actual) if fecha_actual else None
+        except ValueError:
+            dt_actual = None
+        try:
+            dt_nueva = self._parse_datetime(fecha_nueva) if fecha_nueva else None
+        except ValueError:
+            dt_nueva = None
+
+        if dt_nueva and (not dt_actual or dt_nueva > dt_actual):
+            self.metricas_evolucion = nuevas_metricas
+    
+    def _crear_interaccion_desde_dict(self, datos: Dict[str, Any]) -> Optional[InteraccionCliente]:
+        """Crea una interaccion a partir de un diccionario"""
+        if not isinstance(datos, dict):
+            return None
         
-        self.metricas_evolucion = conocimiento.get('metricas_evolucion', {})
-        self.insights_automaticos = conocimiento.get('insights_automaticos', [])
+        try:
+            timestamp = self._parse_datetime(datos.get("timestamp"))
+        except ValueError as e:
+            print(f"⚠️  Interacción descartada por timestamp inválido: {e}")
+            return None
+        valor_cotizacion = self._parse_decimal(datos.get("valor_cotizacion"))
+        valor_venta = self._parse_decimal(datos.get("valor_venta"))
+        
+        interaccion_id = datos.get("id") or self._generar_id_interaccion(
+            datos.get("mensaje_cliente", ""), timestamp
+        )
+        
+        try:
+            interaccion = InteraccionCliente(
+                id=interaccion_id,
+                timestamp=timestamp,
+                cliente_id=datos.get("cliente_id", "desconocido"),
+                tipo_interaccion=datos.get("tipo_interaccion", "consulta"),
+                mensaje_cliente=datos.get("mensaje_cliente", ""),
+                respuesta_agente=datos.get("respuesta_agente", ""),
+                contexto=self._normalizar_contexto(datos.get("contexto", {})),
+                resultado=datos.get("resultado", "pendiente"),
+                valor_cotizacion=valor_cotizacion,
+                valor_venta=valor_venta,
+                satisfaccion_cliente=datos.get("satisfaccion_cliente"),
+                lecciones_aprendidas=datos.get("lecciones_aprendidas") or []
+            )
+            return interaccion
+        except Exception as e:
+            print(f"⚠️  Error importando interacción: {e}")
+            return None
+    
+    def _crear_patron_desde_dict(self, datos: Dict[str, Any]) -> Optional[PatronVenta]:
+        """Crea un patrón de venta desde un diccionario"""
+        if not isinstance(datos, dict):
+            return None
+        
+        try:
+            try:
+                fecha_creacion = self._parse_datetime(datos.get("fecha_creacion"))
+                fecha_actualizacion = self._parse_datetime(datos.get("fecha_ultima_actualizacion"))
+            except ValueError as e:
+                print(f"⚠️  Patrón descartado por timestamp inválido: {e}")
+                return None
+            
+            patron = PatronVenta(
+                id=datos.get("id", f"patron_{len(self.patrones_venta) + 1}"),
+                nombre=datos.get("nombre", "Patrón identificado"),
+                descripcion=datos.get("descripcion", ""),
+                frecuencia=datos.get("frecuencia", 0),
+                tasa_exito=float(datos.get("tasa_exito", 0.0)),
+                factores_clave=datos.get("factores_clave", []),
+                productos_asociados=datos.get("productos_asociados", []),
+                perfil_cliente=datos.get("perfil_cliente", {}),
+                palabras_clave=datos.get("palabras_clave", []),
+                estrategia_recomendada=datos.get("estrategia_recomendada", ""),
+                fecha_creacion=fecha_creacion,
+                fecha_ultima_actualizacion=fecha_actualizacion
+            )
+            return patron
+        except Exception as e:
+            print(f"⚠️  Error importando patrón de venta: {e}")
+            return None
+    
+    def _crear_conocimiento_producto(self, producto_id: str, datos: Dict[str, Any]) -> Optional[ConocimientoProducto]:
+        """Crea un objeto ConocimientoProducto desde diccionario"""
+        if not isinstance(datos, dict):
+            return None
+        
+        try:
+            try:
+                fecha_actualizacion = self._parse_datetime(datos.get("fecha_ultima_actualizacion"))
+            except ValueError as e:
+                print(f"⚠️  Producto {producto_id} descartado por timestamp inválido: {e}")
+                return None
+            precios = {
+                k: self._parse_decimal(v) or Decimal('0')
+                for k, v in (datos.get("precios_competitivos", {}) or {}).items()
+            }
+            
+            conocimiento = ConocimientoProducto(
+                producto_id=producto_id,
+                nombre=datos.get("nombre", producto_id.title()),
+                caracteristicas_base=datos.get("caracteristicas_base", {}),
+                caracteristicas_aprendidas=datos.get("caracteristicas_aprendidas", {}),
+                objeciones_comunes=datos.get("objeciones_comunes", []),
+                respuestas_efectivas=datos.get("respuestas_efectivas", []),
+                casos_uso_exitosos=datos.get("casos_uso_exitosos", []),
+                precios_competitivos=precios,
+                tendencias_demanda=datos.get("tendencias_demanda", []),
+                recomendaciones_venta=datos.get("recomendaciones_venta", []),
+                fecha_ultima_actualizacion=fecha_actualizacion
+            )
+            return conocimiento
+        except Exception as e:
+            print(f"⚠️  Error importando conocimiento de producto {producto_id}: {e}")
+            return None
+    
+    def _parse_datetime(self, valor: Any) -> datetime.datetime:
+        """Convierte diferentes formatos de fecha a datetime"""
+        if isinstance(valor, datetime.datetime):
+            return valor
+        if isinstance(valor, str):
+            valor = valor.replace("Z", "")
+            formatos = (
+                "%Y-%m-%dT%H:%M:%S.%f",
+                "%Y-%m-%d %H:%M:%S.%f",
+                "%Y-%m-%dT%H:%M:%S",
+                "%Y-%m-%d %H:%M:%S",
+            )
+            for formato in formatos:
+                try:
+                    return datetime.datetime.strptime(valor, formato)
+                except ValueError:
+                    continue
+        raise ValueError(f"Formato de fecha inválido: {valor}")
+    
+    def _parse_decimal(self, valor: Any) -> Optional[Decimal]:
+        """Convierte un valor a Decimal"""
+        if valor is None or valor == "":
+            return None
+        if isinstance(valor, Decimal):
+            return valor
+        try:
+            return Decimal(str(valor))
+        except Exception:
+            return None
+    
+    def _normalizar_contexto(self, contexto: Any) -> Dict[str, Any]:
+        """Asegura que el contexto sea un diccionario"""
+        if isinstance(contexto, dict):
+            return contexto
+        return {}
+    
+    def _generar_id_interaccion(self, mensaje: str, timestamp: datetime.datetime) -> str:
+        """Genera un ID único para interacciones sin identificador"""
+        contenido = f"{mensaje}{timestamp.isoformat()}"
+        return hashlib.sha1(contenido.encode('utf-8')).hexdigest()
 
 
 def main():

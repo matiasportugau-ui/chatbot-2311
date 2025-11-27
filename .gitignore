@@ -84,3 +84,4 @@ node_modules
 out/
 build/
 .env.local
+.vercel

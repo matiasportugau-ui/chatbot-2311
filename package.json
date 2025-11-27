@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "test": "echo \"No tests configured yet\" && exit 0"
+    "test": "node test-mercado-libre.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
