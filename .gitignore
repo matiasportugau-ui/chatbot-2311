@@ -84,3 +84,7 @@ node_modules
 out/
 build/
 .env.local
+
+# Deployment
+deployment/
+*.zip
