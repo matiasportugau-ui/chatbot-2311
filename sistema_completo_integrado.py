@@ -1,337 +1,498 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Sistema Completo Integrado BMC Uruguay
-Sistema de cotizaciones con IA conversacional que aprende y evoluciona
+FastAPI application for BMC Quote System
+Ready for deployment on Railway, Render, or any Python hosting
 """
 
-import json
-import datetime
-import threading
-import time
-from typing import Dict, List, Any, Optional
-from decimal import Decimal
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any
+import os
+from dotenv import load_dotenv
+import logging
+from datetime import datetime
 
-from base_conocimiento_dinamica import BaseConocimientoDinamica
-from motor_analisis_conversiones import MotorAnalisisConversiones
-from ia_conversacional_integrada import IAConversacionalIntegrada
-from sistema_actualizacion_automatica import SistemaActualizacionAutomatica
-from sistema_cotizaciones import SistemaCotizacionesBMC
+# Load environment variables
+load_dotenv()
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-class SistemaCompletoIntegrado:
-    """Sistema completo que integra todos los componentes"""
+# Create FastAPI app
+app = FastAPI(
+    title="BMC Quote System API",
+    description="Intelligent quotation system for BMC Uruguay - Thermal insulation products",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv("ALLOWED_ORIGINS", "*").split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ============================================================================
+# MODELS
+# ============================================================================
+
+class QuoteRequest(BaseModel):
+    """Request model for creating a quote"""
+    customer_name: str = Field(..., description="Customer full name")
+    phone: str = Field(..., description="Customer phone number")
+    product: str = Field(..., description="Product type: isodec, poliestireno, lana_roca")
+    thickness: str = Field(..., description="Product thickness: 50mm, 75mm, 100mm, 125mm, 150mm")
+    length: float = Field(..., gt=0, description="Length in meters")
+    width: float = Field(..., gt=0, description="Width in meters")
+    address: Optional[str] = Field(None, description="Delivery address")
+    zone: Optional[str] = Field(None, description="Zone/area")
+    observations: Optional[str] = Field(None, description="Additional observations")
+
+class QuoteResponse(BaseModel):
+    """Response model for quote creation"""
+    quote_id: str
+    total: float
+    area: float
+    status: str
+    created_at: str
+
+class ChatMessage(BaseModel):
+    """Chat message model"""
+    message: str = Field(..., description="User message")
+    session_id: Optional[str] = Field(None, description="Session identifier")
+
+class ChatResponse(BaseModel):
+    """Chat response model"""
+    response: str
+    session_id: str
+    context: Optional[Dict[str, Any]] = None
+
+class WebhookVerification(BaseModel):
+    """WhatsApp webhook verification"""
+    hub_mode: str
+    hub_verify_token: str
+    hub_challenge: str
+
+# ============================================================================
+# STARTUP & SHUTDOWN
+# ============================================================================
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    logger.info("🚀 Starting BMC Quote System API...")
+    logger.info(f"   Environment: {os.getenv('ENVIRONMENT', 'production')}")
+    logger.info(f"   Port: {os.getenv('PORT', '8000')}")
+    logger.info(f"   OpenAI Model: {os.getenv('OPENAI_MODEL', 'gpt-4o-mini')}")
     
-    def __init__(self):
-        print("🚀 Iniciando Sistema Completo Integrado BMC Uruguay")
-        print("=" * 60)
-        
-        # Inicializar componentes
-        self.ia_conversacional = IAConversacionalIntegrada()
-        self.sistema_actualizacion = SistemaActualizacionAutomatica(self.ia_conversacional)
-        self.sistema_cotizaciones = self.ia_conversacional.sistema_cotizaciones
-        self.base_conocimiento = self.ia_conversacional.base_conocimiento
-        self.motor_analisis = self.ia_conversacional.motor_analisis
-        
-        # Estado del sistema
-        self.activo = False
-        self.metricas_sistema = {}
-        
-        print("✅ Sistema inicializado correctamente")
-        self._mostrar_estado_inicial()
+    # Test MongoDB connection
+    try:
+        mongodb_uri = os.getenv("MONGODB_URI")
+        if mongodb_uri:
+            from pymongo import MongoClient
+            client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)
+            client.server_info()
+            logger.info("✅ MongoDB connection successful")
+        else:
+            logger.warning("⚠️  MONGODB_URI not set - using in-memory storage")
+    except Exception as e:
+        logger.error(f"❌ MongoDB connection failed: {e}")
+        logger.warning("⚠️  Continuing with in-memory storage")
     
-    def _mostrar_estado_inicial(self):
-        """Muestra el estado inicial del sistema"""
-        print("\n📊 ESTADO INICIAL DEL SISTEMA")
-        print("-" * 40)
-        print(f"🤖 IA Conversacional: Activa")
-        print(f"📚 Base de Conocimiento: {len(self.base_conocimiento.interacciones)} interacciones")
-        print(f"📈 Patrones de Venta: {len(self.base_conocimiento.patrones_venta)} identificados")
-        print(f"💡 Insights Automáticos: {len(self.base_conocimiento.insights_automaticos)} generados")
-        print(f"🔄 Sistema de Actualización: Listo")
-    
-    def iniciar_sistema_completo(self):
-        """Inicia el sistema completo con todas las funcionalidades"""
-        print("\n🚀 INICIANDO SISTEMA COMPLETO")
-        print("=" * 50)
-        
-        try:
-            # Iniciar sistema de actualización automática
-            self.sistema_actualizacion.iniciar_sistema_actualizacion()
-            print("✅ Sistema de actualización automática iniciado")
-            
-            # Marcar sistema como activo
-            self.activo = True
-            
-            # Mostrar estado
-            self._mostrar_estado_sistema()
-            
-            print("\n🎉 SISTEMA COMPLETO ACTIVO")
-            print("El sistema ahora:")
-            print("• Aprende de cada interacción")
-            print("• Se actualiza automáticamente")
-            print("• Mejora sus respuestas constantemente")
-            print("• Analiza tendencias de ventas")
-            print("• Genera insights automáticos")
-            
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error iniciando sistema: {e}")
-            return False
-    
-    def detener_sistema_completo(self):
-        """Detiene el sistema completo"""
-        print("\n🛑 DETENIENDO SISTEMA COMPLETO")
-        print("=" * 50)
-        
-        try:
-            # Detener sistema de actualización
-            self.sistema_actualizacion.detener_sistema_actualizacion()
-            print("✅ Sistema de actualización detenido")
-            
-            # Marcar sistema como inactivo
-            self.activo = False
-            
-            print("✅ Sistema detenido correctamente")
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error deteniendo sistema: {e}")
-            return False
-    
-    def procesar_mensaje_cliente(self, mensaje: str, cliente_id: str, sesion_id: str = None) -> Dict[str, Any]:
-        """Procesa un mensaje del cliente y retorna respuesta completa"""
-        if not self.activo:
-            return {
-                "error": "Sistema no está activo",
-                "mensaje": "El sistema no está funcionando. Por favor, inicia el sistema primero."
-            }
-        
-        try:
-            # Procesar mensaje con IA
-            respuesta_ia = self.ia_conversacional.procesar_mensaje(mensaje, cliente_id, sesion_id)
-            
-            # Obtener métricas actuales
-            metricas = self._obtener_metricas_actuales()
-            
-            # Preparar respuesta completa
-            respuesta_completa = {
-                "mensaje": respuesta_ia.mensaje,
-                "tipo_respuesta": respuesta_ia.tipo_respuesta,
-                "confianza": respuesta_ia.confianza,
-                "fuentes_conocimiento": respuesta_ia.fuentes_conocimiento,
-                "metricas_sistema": metricas,
-                "timestamp": respuesta_ia.timestamp.isoformat(),
-                "sistema_activo": self.activo
-            }
-            
-            return respuesta_completa
-            
-        except Exception as e:
-            return {
-                "error": f"Error procesando mensaje: {e}",
-                "mensaje": "Lo siento, hubo un error procesando tu mensaje. Por favor, intenta de nuevo.",
-                "sistema_activo": self.activo
-            }
-    
-    def _obtener_metricas_actuales(self) -> Dict[str, Any]:
-        """Obtiene las métricas actuales del sistema"""
-        return {
-            "total_interacciones": len(self.base_conocimiento.interacciones),
-            "total_patrones_venta": len(self.base_conocimiento.patrones_venta),
-            "total_insights": len(self.base_conocimiento.insights_automaticos),
-            "conversaciones_activas": len(self.ia_conversacional.conversaciones_activas),
-            "satisfaccion_promedio": self._calcular_satisfaccion_promedio(),
-            "tasa_conversion": self._calcular_tasa_conversion(),
-            "ultima_actualizacion": datetime.datetime.now().isoformat()
+    logger.info("✅ BMC Quote System API started successfully")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown"""
+    logger.info("👋 Shutting down BMC Quote System API...")
+
+# ============================================================================
+# HEALTH & INFO ENDPOINTS
+# ============================================================================
+
+@app.get("/", tags=["Health"])
+async def root():
+    """Root endpoint - API information"""
+    return {
+        "service": "BMC Quote System API",
+        "version": "1.0.0",
+        "status": "online",
+        "description": "Intelligent quotation system for thermal insulation products",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/docs",
+            "chat": "/api/chat",
+            "quotes": "/api/quotes",
+            "whatsapp": "/api/whatsapp/webhook"
+        },
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "services": {
+            "api": "online",
+            "mongodb": "online" if os.getenv("MONGODB_URI") else "not_configured",
+            "openai": "configured" if os.getenv("OPENAI_API_KEY") else "not_configured"
         }
+    }
+
+# ============================================================================
+# CHAT ENDPOINTS
+# ============================================================================
+
+@app.post("/api/chat", response_model=ChatResponse, tags=["Chat"])
+async def chat(message: ChatMessage):
+    """
+    Process chat messages with AI assistant
     
-    def _calcular_satisfaccion_promedio(self) -> float:
-        """Calcula la satisfacción promedio de los clientes"""
-        satisfacciones = [
-            i.satisfaccion_cliente for i in self.base_conocimiento.interacciones
-            if i.satisfaccion_cliente
-        ]
-        return sum(satisfacciones) / len(satisfacciones) if satisfacciones else 0.0
-    
-    def _calcular_tasa_conversion(self) -> float:
-        """Calcula la tasa de conversión de cotizaciones a ventas"""
-        total_cotizaciones = len([
-            i for i in self.base_conocimiento.interacciones
-            if i.tipo_interaccion == "cotizacion"
-        ])
-        total_ventas = len([
-            i for i in self.base_conocimiento.interacciones
-            if i.tipo_interaccion == "venta"
-        ])
-        return total_ventas / total_cotizaciones if total_cotizaciones > 0 else 0.0
-    
-    def _mostrar_estado_sistema(self):
-        """Muestra el estado actual del sistema"""
-        print("\n📊 ESTADO ACTUAL DEL SISTEMA")
-        print("-" * 40)
-        metricas = self._obtener_metricas_actuales()
-        print(f"🔄 Sistema: {'Activo' if self.activo else 'Inactivo'}")
-        print(f"💬 Interacciones: {metricas['total_interacciones']}")
-        print(f"📈 Patrones de Venta: {metricas['total_patrones_venta']}")
-        print(f"💡 Insights: {metricas['total_insights']}")
-        print(f"🎯 Satisfacción Promedio: {metricas['satisfaccion_promedio']:.2f}/5")
-        print(f"📊 Tasa de Conversión: {metricas['tasa_conversion']:.2%}")
-    
-    def simular_conversacion_completa(self):
-        """Simula una conversación completa para demostrar el sistema"""
-        print("\n🎭 SIMULACIÓN DE CONVERSACIÓN COMPLETA")
-        print("=" * 50)
+    The AI assistant can:
+    - Answer product questions
+    - Create quotes conversationally
+    - Provide technical information
+    - Assist with product selection
+    """
+    try:
+        logger.info(f"Chat request: {message.message[:50]}...")
         
-        cliente_id = "cliente_demo"
-        sesion_id = f"demo_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
-        # Mensajes de simulación
-        mensajes_simulados = [
-            "Hola, necesito información sobre Isodec para mi casa",
-            "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
-            "Perfecto, me parece bien el precio. ¿Incluye instalación?",
-            "Excelente, procedo con la compra"
-        ]
-        
-        print(f"👤 Cliente: {cliente_id}")
-        print(f"🆔 Sesión: {sesion_id}")
-        print()
-        
-        for i, mensaje in enumerate(mensajes_simulados, 1):
-            print(f"📝 Mensaje {i}: {mensaje}")
-            
-            # Procesar mensaje
-            respuesta = self.procesar_mensaje_cliente(mensaje, cliente_id, sesion_id)
-            
-            if "error" in respuesta:
-                print(f"❌ Error: {respuesta['error']}")
-            else:
-                print(f"🤖 IA: {respuesta['mensaje']}")
-                print(f"   Confianza: {respuesta['confianza']:.2f}")
-                print(f"   Fuentes: {', '.join(respuesta['fuentes_conocimiento'])}")
-            
-            print()
-            time.sleep(1)  # Pausa para simular tiempo real
-        
-        # Mostrar métricas finales
-        print("📊 MÉTRICAS FINALES DE LA SIMULACIÓN")
-        print("-" * 40)
-        metricas = self._obtener_metricas_actuales()
-        for clave, valor in metricas.items():
-            print(f"{clave}: {valor}")
-    
-    def exportar_conocimiento_completo(self, archivo: str = "conocimiento_completo.json"):
-        """Exporta todo el conocimiento del sistema"""
-        print(f"\n💾 EXPORTANDO CONOCIMIENTO COMPLETO")
-        print("=" * 50)
-        
+        # Import chat processing
         try:
-            # Exportar base de conocimiento
-            self.base_conocimiento.exportar_conocimiento("base_conocimiento_exportada.json")
-            print("✅ Base de conocimiento exportada")
+            from ia_conversacional_integrada import procesar_mensaje_usuario
             
-            # Exportar análisis de conversiones
-            self.motor_analisis.exportar_analisis("analisis_conversiones_exportado.json")
-            print("✅ Análisis de conversiones exportado")
+            response_text = procesar_mensaje_usuario(
+                message.message,
+                message.session_id
+            )
             
-            # Exportar IA conversacional
-            self.ia_conversacional.exportar_conocimiento_ia("ia_conversacional_exportada.json")
-            print("✅ IA conversacional exportada")
+            return ChatResponse(
+                response=response_text,
+                session_id=message.session_id or "default"
+            )
             
-            # Exportar métricas del sistema
-            metricas_completas = {
-                "fecha_exportacion": datetime.datetime.now().isoformat(),
-                "sistema_activo": self.activo,
-                "metricas_actuales": self._obtener_metricas_actuales(),
-                "configuracion_actualizacion": self.sistema_actualizacion.configuracion,
-                "estado_sistema_actualizacion": self.sistema_actualizacion.obtener_estado_sistema()
+        except ImportError:
+            # Fallback response if IA module not available
+            logger.warning("IA conversacional module not available, using fallback")
+            return ChatResponse(
+                response="Hola! Soy el asistente de BMC Uruguay. ¿En qué puedo ayudarte?",
+                session_id=message.session_id or "default"
+            )
+        
+    except Exception as e:
+        logger.error(f"Error in chat endpoint: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error processing chat message: {str(e)}"
+        )
+
+# ============================================================================
+# QUOTE ENDPOINTS
+# ============================================================================
+
+@app.post("/api/quotes", response_model=QuoteResponse, tags=["Quotes"])
+async def create_quote(quote: QuoteRequest):
+    """
+    Create a new quote
+    
+    Calculates pricing based on:
+    - Product type
+    - Thickness
+    - Area (length × width)
+    - Additional specifications
+    """
+    try:
+        logger.info(f"Quote request for: {quote.customer_name} - {quote.product}")
+        
+        # Import quote system
+        from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
+        from decimal import Decimal
+        
+        # Initialize system
+        sistema = SistemaCotizacionesBMC()
+        
+        # Create customer
+        cliente = Cliente(
+            nombre=quote.customer_name,
+            telefono=quote.phone,
+            direccion=quote.address or "",
+            zona=quote.zone or ""
+        )
+        
+        # Create specifications
+        especificaciones = EspecificacionCotizacion(
+            producto=quote.product,
+            espesor=quote.thickness,
+            largo_metros=Decimal(str(quote.length)),
+            ancho_metros=Decimal(str(quote.width))
+        )
+        
+        # Create quote
+        cotizacion = sistema.crear_cotizacion(
+            cliente=cliente,
+            especificaciones=especificaciones,
+            observaciones=quote.observations or ""
+        )
+        
+        # Calculate area
+        area = float(quote.length * quote.width)
+        
+        logger.info(f"Quote created: {cotizacion.id} - Total: ${cotizacion.precio_total}")
+        
+        return QuoteResponse(
+            quote_id=cotizacion.id,
+            total=float(cotizacion.precio_total),
+            area=area,
+            status="created",
+            created_at=cotizacion.fecha.isoformat()
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating quote: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating quote: {str(e)}"
+        )
+
+@app.get("/api/quotes/{quote_id}", tags=["Quotes"])
+async def get_quote(quote_id: str):
+    """Get quote by ID"""
+    try:
+        from sistema_cotizaciones import SistemaCotizacionesBMC
+        
+        sistema = SistemaCotizacionesBMC()
+        
+        # Find quote
+        for cotizacion in sistema.cotizaciones:
+            if cotizacion.id == quote_id:
+                return {
+                    "quote_id": cotizacion.id,
+                    "customer": {
+                        "name": cotizacion.cliente.nombre,
+                        "phone": cotizacion.cliente.telefono
+                    },
+                    "product": {
+                        "type": cotizacion.especificaciones.producto,
+                        "thickness": cotizacion.especificaciones.espesor,
+                        "area": float(cotizacion.especificaciones.largo_metros * cotizacion.especificaciones.ancho_metros)
+                    },
+                    "total": float(cotizacion.precio_total),
+                    "status": cotizacion.estado,
+                    "created_at": cotizacion.fecha.isoformat()
+                }
+        
+        raise HTTPException(status_code=404, detail="Quote not found")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving quote: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# WHATSAPP WEBHOOK ENDPOINTS
+# ============================================================================
+
+@app.get("/api/whatsapp/webhook", tags=["WhatsApp"])
+async def whatsapp_webhook_verify(request: Request):
+    """
+    WhatsApp webhook verification endpoint
+    
+    Called by Meta to verify webhook ownership
+    """
+    try:
+        mode = request.query_params.get("hub.mode")
+        token = request.query_params.get("hub.verify_token")
+        challenge = request.query_params.get("hub.challenge")
+        
+        verify_token = os.getenv("WHATSAPP_VERIFY_TOKEN", "bmc_verify_token_2024")
+        
+        logger.info(f"WhatsApp verification attempt - Mode: {mode}, Token match: {token == verify_token}")
+        
+        if mode == "subscribe" and token == verify_token:
+            logger.info("✅ WhatsApp webhook verified successfully")
+            return Response(content=challenge, media_type="text/plain")
+        else:
+            logger.warning("❌ WhatsApp verification failed")
+            raise HTTPException(status_code=403, detail="Verification failed")
+            
+    except Exception as e:
+        logger.error(f"Error in WhatsApp verification: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/whatsapp/webhook", tags=["WhatsApp"])
+async def whatsapp_webhook(request: Request):
+    """
+    WhatsApp webhook endpoint for incoming messages
+    
+    Processes incoming WhatsApp messages and responds with AI
+    """
+    try:
+        data = await request.json()
+        logger.info(f"WhatsApp webhook received: {data}")
+        
+        # Extract message from WhatsApp payload
+        if "entry" in data:
+            for entry in data["entry"]:
+                if "changes" in entry:
+                    for change in entry["changes"]:
+                        if change.get("field") == "messages":
+                            value = change.get("value", {})
+                            messages = value.get("messages", [])
+                            
+                            for message in messages:
+                                # Process text message
+                                if message.get("type") == "text":
+                                    from_number = message.get("from")
+                                    text = message.get("text", {}).get("body", "")
+                                    
+                                    logger.info(f"Processing WhatsApp message from {from_number}: {text}")
+                                    
+                                    # Process with AI
+                                    try:
+                                        from ia_conversacional_integrada import procesar_mensaje_usuario
+                                        response_text = procesar_mensaje_usuario(text, from_number)
+                                        
+                                        # TODO: Send response back via WhatsApp API
+                                        # This requires WhatsApp Business API credentials
+                                        logger.info(f"Response generated: {response_text[:100]}...")
+                                        
+                                    except ImportError:
+                                        logger.warning("IA module not available for WhatsApp processing")
+        
+        return {"status": "received"}
+        
+    except Exception as e:
+        logger.error(f"Error processing WhatsApp webhook: {e}", exc_info=True)
+        # Return 200 to avoid webhook retries
+        return {"status": "error", "message": str(e)}
+
+# ============================================================================
+# PRODUCTS ENDPOINT
+# ============================================================================
+
+@app.get("/api/products", tags=["Products"])
+async def get_products():
+    """Get available products catalog"""
+    return {
+        "products": [
+            {
+                "id": "isodec",
+                "name": "Isodec",
+                "description": "Panel aislante térmico con núcleo de EPS",
+                "thicknesses": ["50mm", "75mm", "100mm", "125mm", "150mm"],
+                "features": [
+                    "Alta eficiencia térmica",
+                    "Fácil instalación",
+                    "Durabilidad garantizada"
+                ]
+            },
+            {
+                "id": "poliestireno",
+                "name": "Poliestireno Expandido",
+                "description": "Aislante térmico de poliestireno expandido",
+                "thicknesses": ["25mm", "50mm", "75mm", "100mm"],
+                "features": [
+                    "Excelente aislación",
+                    "Económico",
+                    "Versátil"
+                ]
+            },
+            {
+                "id": "lana_roca",
+                "name": "Lana de Roca",
+                "description": "Aislante térmico y acústico de lana de roca",
+                "thicknesses": ["50mm", "75mm", "100mm"],
+                "features": [
+                    "Aislación térmica y acústica",
+                    "Resistente al fuego",
+                    "No absorbe humedad"
+                ]
             }
-            
-            with open(archivo, 'w', encoding='utf-8') as f:
-                json.dump(metricas_completas, f, ensure_ascii=False, indent=2, default=str)
-            
-            print(f"✅ Conocimiento completo exportado a {archivo}")
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error exportando conocimiento: {e}")
-            return False
-    
-    def mostrar_insights_automaticos(self):
-        """Muestra los insights automáticos generados por el sistema"""
-        print("\n💡 INSIGHTS AUTOMÁTICOS DEL SISTEMA")
-        print("=" * 50)
-        
-        if not self.base_conocimiento.insights_automaticos:
-            print("No hay insights disponibles aún.")
-            return
-        
-        for i, insight in enumerate(self.base_conocimiento.insights_automaticos, 1):
-            print(f"\n{i}. {insight.get('descripcion', 'Sin descripción')}")
-            if 'recomendacion' in insight:
-                print(f"   💡 Recomendación: {insight['recomendacion']}")
-            if 'timestamp' in insight:
-                print(f"   📅 Fecha: {insight['timestamp']}")
-    
-    def mostrar_patrones_venta_exitosos(self):
-        """Muestra los patrones de venta exitosos identificados"""
-        print("\n📈 PATRONES DE VENTA EXITOSOS")
-        print("=" * 50)
-        
-        if not self.base_conocimiento.patrones_venta:
-            print("No hay patrones identificados aún.")
-            return
-        
-        for i, patron in enumerate(self.base_conocimiento.patrones_venta, 1):
-            print(f"\n{i}. {patron.nombre}")
-            print(f"   📊 Frecuencia: {patron.frecuencia}")
-            print(f"   🎯 Tasa de Éxito: {patron.tasa_exito:.2%}")
-            print(f"   🔑 Factores Clave: {', '.join(patron.factores_clave)}")
-            print(f"   📝 Estrategia: {patron.estrategia_recomendada}")
+        ]
+    }
 
+# ============================================================================
+# ADMIN ENDPOINTS (Protected - Add authentication in production)
+# ============================================================================
 
-def main():
-    """Función principal para ejecutar el sistema completo"""
-    print("🎯 SISTEMA COMPLETO INTEGRADO BMC URUGUAY")
-    print("Sistema de Cotizaciones con IA Conversacional que Aprende y Evoluciona")
-    print("=" * 80)
-    
-    # Crear sistema
-    sistema = SistemaCompletoIntegrado()
-    
-    # Iniciar sistema
-    if sistema.iniciar_sistema_completo():
-        print("\n🎉 Sistema iniciado exitosamente!")
+@app.get("/api/admin/stats", tags=["Admin"])
+async def get_stats():
+    """Get system statistics"""
+    # TODO: Add authentication
+    try:
+        from sistema_cotizaciones import SistemaCotizacionesBMC
+        sistema = SistemaCotizacionesBMC()
         
-        # Simular conversación
-        sistema.simular_conversacion_completa()
-        
-        # Mostrar insights
-        sistema.mostrar_insights_automaticos()
-        
-        # Mostrar patrones de venta
-        sistema.mostrar_patrones_venta_exitosos()
-        
-        # Exportar conocimiento
-        sistema.exportar_conocimiento_completo()
-        
-        print("\n✅ Sistema funcionando correctamente")
-        print("El sistema continuará aprendiendo y evolucionando automáticamente.")
-        
-        # Mantener sistema activo
-        try:
-            while True:
-                time.sleep(60)
-                print(f"⏰ Sistema activo - {datetime.datetime.now().strftime('%H:%M:%S')}")
-        except KeyboardInterrupt:
-            print("\n🛑 Deteniendo sistema...")
-            sistema.detener_sistema_completo()
-            print("✅ Sistema detenido correctamente")
-    else:
-        print("❌ No se pudo iniciar el sistema")
+        return {
+            "total_quotes": len(sistema.cotizaciones),
+            "total_products": len(sistema.productos),
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error getting stats: {e}")
+        return {"error": str(e)}
 
+# ============================================================================
+# ERROR HANDLERS
+# ============================================================================
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc: HTTPException):
+    """Custom 404 handler"""
+    return {
+        "error": "Not Found",
+        "message": "The requested endpoint does not exist",
+        "path": str(request.url),
+        "available_endpoints": [
+            "/",
+            "/health",
+            "/docs",
+            "/api/chat",
+            "/api/quotes",
+            "/api/products"
+        ]
+    }
+
+@app.exception_handler(500)
+async def internal_error_handler(request: Request, exc: Exception):
+    """Custom 500 handler"""
+    logger.error(f"Internal error: {exc}", exc_info=True)
+    return {
+        "error": "Internal Server Error",
+        "message": "An unexpected error occurred",
+        "details": str(exc) if os.getenv("DEBUG") else "Contact support"
+    }
+
+# ============================================================================
+# MAIN
+# ============================================================================
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    reload = os.getenv("DEBUG", "false").lower() == "true"
+    
+    logger.info(f"Starting server on {host}:{port}")
+    
+    uvicorn.run(
+        "sistema_completo_integrado:app",
+        host=host,
+        port=port,
+        reload=reload,
+        log_level="info"
+    )
