@@ -309,7 +309,7 @@ class EntityExtractor:
             re.compile(r'(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)'),  # 10x5
             re.compile(r'(\d+(?:\.\d+)?)\s*metros?\s*[x×]\s*(\d+(?:\.\d+)?)\s*metros?'),  # 10 metros x 5 metros
             re.compile(r'(\d+(?:\.\d+)?)\s*m\s*[x×]\s*(\d+(?:\.\d+)?)\s*m'),  # 10m x 5m
-            re.compile(r'(\d+(?:\.\d+)?)\s*m2'),  # 50m2
+            re.compile(r'(\d+(?:\.\d+)?)\s*m(?:2|²)'),  # 50m2, 50m²
             re.compile(r'(\d+(?:\.\d+)?)\s*metros?\s*cuadrados?'),  # 50 metros cuadrados
         ]
         
