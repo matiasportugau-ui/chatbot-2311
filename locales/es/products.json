@@ -1,0 +1,45 @@
+{
+  "title": "Productos",
+  "availableProducts": "Productos Disponibles",
+  "isodec": {
+    "name": "ISODEC",
+    "description": "Panel aislante térmico con núcleo EPS",
+    "features": [
+      "Excelente aislamiento térmico",
+      "Fácil instalación",
+      "Durabilidad superior"
+    ],
+    "thicknessOptions": "Espesores: 50mm, 75mm, 100mm, 125mm, 150mm",
+    "colorOptions": "Colores: Blanco, Gris, Personalizado",
+    "finishOptions": "Terminaciones: Gotero, Hormigón, Aluminio",
+    "basePrice": "Precio base: ${price}/m² (100mm, Blanco)",
+    "interested": "¿Te interesa cotizar Isodec?"
+  },
+  "poliestireno": {
+    "name": "POLIESTIRENO EXPANDIDO",
+    "description": "Aislante térmico básico",
+    "features": [
+      "Aislante térmico básico",
+      "Bajo costo",
+      "Fácil manipulación",
+      "Ideal para proyectos básicos"
+    ],
+    "basePrice": "Precio base: ${price}/m² (100mm)",
+    "interested": "¿Te interesa cotizar Poliestireno?"
+  },
+  "lanaRoca": {
+    "name": "LANA DE ROCA",
+    "description": "Aislante térmico y acústico",
+    "features": [
+      "Aislante térmico y acústico",
+      "Resistente al fuego",
+      "No tóxico",
+      "Excelente durabilidad"
+    ],
+    "basePrice": "Precio base: ${price}/m² (100mm)",
+    "interested": "¿Te interesa cotizar Lana de Roca?"
+  },
+  "productInfo": "Tenemos varios productos de aislamiento térmico:",
+  "productNotFound": "Producto no reconocido. ¿Podrías especificar cuál te interesa?",
+  "whichProduct": "¿Sobre qué producto específico te gustaría información?"
+}
