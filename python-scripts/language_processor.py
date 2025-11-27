@@ -370,15 +370,18 @@ class EntityExtractor:
             }
         
         # Extract color
+        color_found = False
         for color_id, keywords in self.colors.items():
+            if color_found:
+                break
             for keyword in keywords:
                 if keyword in text_lower:
                     entities['color'] = {
                         'value': color_id,
                         'confidence': 0.8
                     }
+                    color_found = True
                     break
-        
         # Extract phone
         phone_match = self.phone_pattern.search(text)
         if phone_match:
