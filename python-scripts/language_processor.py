@@ -165,13 +165,18 @@ class LanguageDetector:
         text_lower = text.lower()
         scores = defaultdict(float)
         
-        # Score based on common words
+        # Pre-tokenize text to ensure word-level matching and avoid substring matches
+        # (e.g., avoid counting "the" in "lathe" or "la" in "hola")
+        words = set(re.findall(r"\b\w+\b", text_lower, flags=re.UNICODE))
+        
+        # Score based on common words (word-level matches only)
         for lang, patterns in self.patterns.items():
             for word in patterns['common_words']:
-                if word in text_lower:
+                if word in words:
                     scores[lang] += 1
         
-        # Score based on common endings
+        # Score based on common endings (intentionally using substring matching
+        # since we're checking for word suffixes like "ción", "ing", etc.)
         for lang, patterns in self.patterns.items():
             for ending in patterns['common_endings']:
                 if ending in text_lower:
