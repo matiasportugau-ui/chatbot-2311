@@ -7,10 +7,8 @@ Shows how to integrate the centralized language module
 
 import json
 from language_processor import (
-    LanguageProcessor, 
     get_language_processor,
-    Intent,
-    Language
+    Intent
 )
 from ia_conversacional_integrada import IAConversacionalIntegrada
 from chat_interactivo import AgenteInteractivo
