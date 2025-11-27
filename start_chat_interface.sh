@@ -110,6 +110,17 @@ else
     echo -e "${GREEN}✅ All required dependencies installed${NC}"
 fi
 
+# Step 3b: Optional knowledge refresh
+if [[ "${CHAT_REFRESH_ON_START:-false}" == "true" ]]; then
+    echo ""
+    echo -e "${YELLOW}🔄 Refrescando conocimiento antes de iniciar la API (CHAT_REFRESH_ON_START=true)...${NC}"
+    if ! bash scripts/refresh_knowledge.sh; then
+        echo -e "${RED}❌ No se pudo refrescar el conocimiento automáticamente.${NC}"
+        echo "   Revisa los logs anteriores e inténtalo nuevamente."
+        exit 1
+    fi
+fi
+
 # Step 4: Check/Start API server
 echo ""
 echo -e "${YELLOW}📋 Checking API server...${NC}"

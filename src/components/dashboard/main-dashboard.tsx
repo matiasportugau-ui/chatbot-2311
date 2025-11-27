@@ -51,6 +51,8 @@ import { GoogleSheetsDashboard } from './google-sheets-dashboard'
 import { Header } from './header'
 import { Sidebar } from './sidebar'
 import { Footer } from './footer'
+import { MercadoLibreListings } from './mercado-libre-listings'
+import { MercadoLibreOrders } from './mercado-libre-orders'
 
 interface MainDashboardProps {
   className?: string
@@ -69,6 +71,7 @@ export function MainDashboard({ className }: MainDashboardProps) {
     { id: 'context', label: 'Context Management', icon: Database },
     { id: 'chat', label: 'Live Chat', icon: MessageSquare },
     { id: 'integrated', label: 'Sistema Integrado', icon: Zap },
+    { id: 'mercado-libre', label: 'Mercado Libre', icon: Globe },
     { id: 'sheets', label: 'Google Sheets', icon: FileText },
     { id: 'trends', label: 'Trends', icon: Target },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
@@ -181,6 +184,13 @@ export function MainDashboard({ className }: MainDashboardProps) {
         return <BMCChatInterface userPhone="+59891234567" />
       case 'integrated':
         return <IntegratedSystemMetrics />
+      case 'mercado-libre':
+        return (
+          <div className="space-y-6">
+            <MercadoLibreListings />
+            <MercadoLibreOrders />
+          </div>
+        )
       case 'sheets':
         return <GoogleSheetsDashboard />
       case 'trends':
@@ -278,18 +288,7 @@ export function MainDashboard({ className }: MainDashboardProps) {
       case 'export':
         return <ExportImport />
       case 'notifications':
-        return <Notifications notifications={[
-          {
-            id: '1',
-            type: 'success',
-            title: 'Quote Generated',
-            message: 'Quote #1234 has been successfully generated',
-            timestamp: '2024-12-19T10:30:00Z',
-            read: false,
-            category: 'system',
-            priority: 'low'
-          }
-        ]} />
+        return <Notifications />
       case 'search':
         return <SearchFilters 
           onSearch={(query) => console.log('Search:', query)}
