@@ -175,7 +175,8 @@ class LanguageDetector:
                 if word in words:
                     scores[lang] += 1
         
-        # Score based on common endings
+        # Score based on common endings (intentionally using substring matching
+        # since we're checking for word suffixes like "ción", "ing", etc.)
         for lang, patterns in self.patterns.items():
             for ending in patterns['common_endings']:
                 if ending in text_lower:
