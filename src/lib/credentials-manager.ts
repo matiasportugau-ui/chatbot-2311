@@ -34,6 +34,17 @@ interface Credentials {
     api_key: string
     base_url: string
   }
+  mercado_libre: {
+    app_id: string
+    client_secret: string
+    redirect_uri: string
+    seller_id: string
+    webhook_secret: string
+    auth_base_url: string
+    api_base_url: string
+    scopes: string[]
+    pkce_enabled: boolean
+  }
   system: {
     environment: string
     max_context_tokens: number
@@ -118,6 +129,19 @@ class CredentialsManager {
         api_key: process.env.N8N_API_KEY || '',
         base_url: process.env.N8N_BASE_URL || 'http://localhost:5678'
       },
+      mercado_libre: {
+        app_id: process.env.MERCADO_LIBRE_APP_ID || process.env.MELI_APP_ID || '',
+        client_secret: process.env.MERCADO_LIBRE_CLIENT_SECRET || process.env.MELI_CLIENT_SECRET || '',
+        redirect_uri: process.env.MERCADO_LIBRE_REDIRECT_URI || process.env.MELI_REDIRECT_URI || '',
+        seller_id: process.env.MERCADO_LIBRE_SELLER_ID || process.env.MELI_SELLER_ID || '',
+        webhook_secret: process.env.MERCADO_LIBRE_WEBHOOK_SECRET || '',
+        auth_base_url: process.env.MERCADO_LIBRE_AUTH_URL || 'https://auth.mercadolibre.com.ar',
+        api_base_url: process.env.MERCADO_LIBRE_API_URL || 'https://api.mercadolibre.com',
+        scopes: (process.env.MERCADO_LIBRE_SCOPES || 'offline_access read write')
+          .split(/[ ,]+/)
+          .filter(Boolean),
+        pkce_enabled: (process.env.MERCADO_LIBRE_PKCE_ENABLED || 'true').toLowerCase() !== 'false'
+      },
       system: {
         environment: process.env.NODE_ENV || 'development',
         max_context_tokens: parseInt(process.env.MAX_CONTEXT_TOKENS || '8000'),
@@ -155,6 +179,11 @@ class CredentialsManager {
     return this.credentials!.n8n
   }
 
+  getMercadoLibre() {
+    this.ensureLoaded()
+    return this.credentials!.mercado_libre
+  }
+
   getSystem() {
     this.ensureLoaded()
     return this.credentials!.system
@@ -181,6 +210,12 @@ class CredentialsManager {
     // Verificar WhatsApp (opcional)
     if (!creds.whatsapp.access_token) missing.push('WHATSAPP_ACCESS_TOKEN')
     if (!creds.whatsapp.phone_number_id) missing.push('WHATSAPP_PHONE_NUMBER_ID')
+
+    // Verificar Mercado Libre
+    if (!creds.mercado_libre.app_id) missing.push('MERCADO_LIBRE_APP_ID')
+    if (!creds.mercado_libre.client_secret) missing.push('MERCADO_LIBRE_CLIENT_SECRET')
+    if (!creds.mercado_libre.redirect_uri) missing.push('MERCADO_LIBRE_REDIRECT_URI')
+    if (!creds.mercado_libre.seller_id) missing.push('MERCADO_LIBRE_SELLER_ID')
 
     return {
       isValid: missing.length === 0,
@@ -231,6 +266,13 @@ class CredentialsManager {
       },
       whatsapp: {
         has_credentials: !!(this.credentials!.whatsapp.access_token && this.credentials!.whatsapp.phone_number_id)
+      },
+      mercado_libre: {
+        app_id: this.credentials!.mercado_libre.app_id,
+        has_secret: !!this.credentials!.mercado_libre.client_secret,
+        seller_id: this.credentials!.mercado_libre.seller_id,
+        pkce_enabled: this.credentials!.mercado_libre.pkce_enabled,
+        scopes: this.credentials!.mercado_libre.scopes
       },
       n8n: {
         webhook_url: this.credentials!.n8n.webhook_url,

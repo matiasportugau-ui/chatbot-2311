@@ -153,12 +153,18 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
    - Python 3.7 o superior
    - Conexión a internet (para dependencias opcionales)
 
-2. **Ejecutar instalador:**
+2. **Configurar entorno virtual del chatbot:**
+   ```bash
+   bash scripts/setup_chatbot_env.sh
+   ```
+   Este script crea `.venv`, instala `requirements.txt` y genera un `.env` basado en `env.example` para que completes tus credenciales (`OPENAI_API_KEY`, `MONGODB_URI`, etc.).
+
+3. **Ejecutar instalador:**
    ```bash
    python instalar.py
    ```
 
-3. **Ejecutar el sistema:**
+4. **Ejecutar el sistema:**
    ```bash
    python ejecutar_sistema.py
    ```
@@ -184,6 +190,54 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
    ```bash
    python ejecutar_sistema.py
    ```
+
+## Actualizar conocimiento entrenado
+
+Cada vez que recibas nuevos datos de conversaciones o quieras sincronizar el catálogo:
+
+1. (Opcional) Lanza manualmente los ingesters:
+   ```bash
+   source .venv/bin/activate
+   python python-scripts/fetch_shopify_products.py
+   python python-scripts/fetch_mercadolibre_questions.py  # requiere MELI_ACCESS_TOKEN/MELI_SELLER_ID
+   # o usa un CSV exportado:
+   # python python-scripts/fetch_mercadolibre_questions.py --csv-export data/mercadolibre/export.csv
+   ```
+   > Tip: Usa `python python-scripts/mercadolibre_oauth_helper.py` para generar y
+   > refrescar los tokens (`MELI_ACCESS_TOKEN`/`MELI_REFRESH_TOKEN`) directamente
+   > desde tu App ID y client secret.
+2. Ejecuta `bash scripts/refresh_knowledge.sh`. El script:
+   - Activa `.venv`
+   - Corre los ingesters anteriores automáticamente (controlables con `RUN_SHOPIFY_SYNC` y `RUN_MELI_SYNC`)
+   - Consolida todos los JSON de conocimiento
+   - Ejecuta `python validar_integracion.py`
+   - Registra el resultado en `logs/automation/ingestion_*.log`
+3. Si alguna validación falla, revisa los reportes en `reporte_validacion.json/.txt` antes de iniciar el chatbot.
+
+Consulta [DATA_INGESTION.md](DATA_INGESTION.md) para formatos, logs y consejos adicionales.
+
+## Levantar servicios del chatbot
+
+1. Activa el entorno: `source .venv/bin/activate`.
+2. Exporta las variables sensibles (`OPENAI_API_KEY`, opcional `CHAT_USE_FULL_IA=true`).
+3. Inicia la API: `python api_server.py` (carga el conocimiento consolidado al arrancar).
+4. En otra terminal puedes interactuar con el bot:
+   - `python simulate_chat_cli.py` para pruebas rápidas.
+   - `CHAT_USE_FULL_IA=true python chat_interactivo.py` para la versión completa.
+
+## Ejecución automatizada end-to-end
+
+Usa el wrapper `bash scripts/run_full_stack.sh` para ejecutar todo en un solo comando:
+
+1. Verifica/crea `.venv` (usa `scripts/setup_chatbot_env.sh` si falta).
+2. Consolida y valida el conocimiento (genera reportes en `logs/automation/`).
+3. Inicia `api_server.py` dejando el log en el mismo archivo.
+
+Detén la API con `CTRL+C`. Si necesitas lanzar el simulador, abre otra terminal y usa los comandos de la sección anterior mientras la API sigue corriendo.
+
+### Persistencia y monitoreo opcional
+
+Consulta `[MONITOREO_AUTOMATIZADO.md](MONITOREO_AUTOMATIZADO.md)` para habilitar MongoDB como fallback y programar tareas (cron, launchd o systemd) que ejecuten `scripts/refresh_knowledge.sh` o `scripts/run_full_stack.sh`.
 
 ## Uso del Sistema
 
@@ -220,6 +274,70 @@ El sistema genera reportes detallados que incluyen:
 - **Cotizaciones:** Exporta todas las cotizaciones a JSON
 - **Plantillas:** Exporta las plantillas de cotización
 - **Configuración:** Exporta la matriz de precios
+
+## Interfaz de Chat Local
+
+El sistema incluye una interfaz de chat HTML standalone para testing y entrenamiento local.
+
+### Inicio Rápido
+
+```bash
+# Iniciar todo el sistema (API + servidor HTTP)
+bash start_chat_interface.sh
+```
+
+Esto iniciará:
+- Servidor API FastAPI en `http://localhost:8000`
+- Servidor HTTP en `http://localhost:8080` (o puerto disponible)
+- Abrirá automáticamente el navegador
+
+### Características
+
+- ✅ **Interfaz completa**: Chat UI similar a producción
+- ✅ **Persistencia de sesión**: IDs de sesión en localStorage
+- ✅ **Historial de mensajes**: Últimos 100 mensajes guardados
+- ✅ **Reintentos automáticos**: Hasta 3 intentos en caso de error
+- ✅ **Indicador de conexión**: Estado visual de la conexión API
+- ✅ **Panel de configuración**: Personalizar URL API y teléfono
+- ✅ **Exportar conversaciones**: Descargar historial como JSON
+- ✅ **Notificaciones**: Alertas cuando el bot responde
+- ✅ **Accesibilidad**: Soporte completo para lectores de pantalla
+
+### Documentación Completa
+
+- **Guía de Usuario**: Ver `CHAT_INTERFACE_GUIDE.md`
+- **Guía de Desarrollador**: Ver `CHAT_INTERFACE_DEVELOPER.md`
+
+### Uso Básico
+
+1. **Iniciar el sistema:**
+   ```bash
+   bash start_chat_interface.sh
+   ```
+
+2. **Abrir en navegador:**
+   - El script abrirá automáticamente
+   - O navegar manualmente a `http://localhost:8080/chat-interface.html`
+
+3. **Enviar mensajes:**
+   - Escribe en el campo de entrada
+   - Presiona Enter o clic en el botón de enviar
+   - El bot responderá automáticamente
+
+4. **Configurar:**
+   - Clic en el menú (⋯) para acceder a configuración
+   - Cambiar URL API o teléfono por defecto
+   - Los cambios se guardan automáticamente
+
+### Testing y Entrenamiento
+
+La interfaz es ideal para:
+- **Testing local**: Probar respuestas del bot sin depender de WhatsApp
+- **Entrenamiento**: Generar datasets de conversaciones reales
+- **Desarrollo**: Iterar rápidamente en prompts y conocimiento
+- **Validación**: Verificar flujos de conversación completos
+
+Todos los mensajes y respuestas se guardan en localStorage y pueden exportarse para análisis.
 
 ## Productos Soportados
 

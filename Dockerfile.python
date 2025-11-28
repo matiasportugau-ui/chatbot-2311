@@ -24,5 +24,8 @@ USER bmc
 # Exponer puerto para API (si es necesario)
 EXPOSE 8000
 
-# Comando por defecto - ejecutar FastAPI server
-CMD ["python", "api_server.py"]
+# Variables para saltar la verificación de .venv dentro del contenedor
+ENV SKIP_VENV_CHECK=true
+
+# Comando por defecto - refrescar conocimiento y luego iniciar FastAPI
+CMD ["bash", "-c", "bash scripts/refresh_knowledge.sh && python api_server.py"]
