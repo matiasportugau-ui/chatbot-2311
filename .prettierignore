@@ -1,0 +1,49 @@
+# Dependencies
+node_modules
+.next
+out
+build
+dist
+
+# Generated files
+*.min.js
+*.min.css
+
+# Logs
+*.log
+logs
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+# Database
+*.db
+*.sqlite
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
