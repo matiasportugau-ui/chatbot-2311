@@ -24,19 +24,20 @@ El sistema incluye validación centralizada que garantiza que toda la informaci�
 
 Para generar una cotización, el sistema requiere los siguientes datos mínimos:
 
-| Campo | Descripción | Ejemplo |
-|-------|-------------|---------|
-| **nombre** | Nombre del cliente | Juan |
-| **apellido** | Apellido del cliente | Pérez |
-| **telefono** | Teléfono de contacto | 099123456 |
-| **producto** | Tipo de producto | isodec, poliestireno, lana_roca |
-| **espesor** | Espesor del producto | 50mm, 75mm, 100mm, 125mm, 150mm |
-| **largo** | Largo en metros | 10 |
-| **ancho** | Ancho en metros | 5 |
+| Campo        | Descripción          | Ejemplo                         |
+| ------------ | -------------------- | ------------------------------- |
+| **nombre**   | Nombre del cliente   | Juan                            |
+| **apellido** | Apellido del cliente | Pérez                           |
+| **telefono** | Teléfono de contacto | 099123456                       |
+| **producto** | Tipo de producto     | isodec, poliestireno, lana_roca |
+| **espesor**  | Espesor del producto | 50mm, 75mm, 100mm, 125mm, 150mm |
+| **largo**    | Largo en metros      | 10                              |
+| **ancho**    | Ancho en metros      | 5                               |
 
 ### Comportamiento del Bot
 
 **Solicitud Automática de Datos:**
+
 - El bot detecta automáticamente qué datos faltan
 - Solicita la información de forma clara y específica
 - Adapta el mensaje según la cantidad de datos faltantes
@@ -45,21 +46,24 @@ Para generar una cotización, el sistema requiere los siguientes datos mínimos:
 **Ejemplos de Mensajes del Bot:**
 
 Cuando falta un solo dato:
+
 ```
-Bot: "Para poder cotizar necesito que me indiques qué producto te interesa 
+Bot: "Para poder cotizar necesito que me indiques qué producto te interesa
 (Isodec, Poliestireno o Lana de Roca). ¿Cuál te interesa?"
 ```
 
 Cuando faltan varios datos:
+
 ```
-Bot: "Para poder cotizar necesito los siguientes datos: tu apellido, 
-el espesor que necesitas (50mm, 75mm, 100mm, 125mm o 150mm) y las dimensiones 
+Bot: "Para poder cotizar necesito los siguientes datos: tu apellido,
+el espesor que necesitas (50mm, 75mm, 100mm, 125mm o 150mm) y las dimensiones
 (largo x ancho en metros, por ejemplo: 10m x 5m). ¿Podrías indicarme esa información?"
 ```
 
 Cuando faltan las dimensiones:
+
 ```
-Bot: "Para poder cotizar necesito las dimensiones (largo x ancho en metros, 
+Bot: "Para poder cotizar necesito las dimensiones (largo x ancho en metros,
 por ejemplo: 10m x 5m). ¿Cuáles son las dimensiones?"
 ```
 
@@ -97,7 +101,7 @@ contexto = {
 }
 
 # Detectar datos faltantes
-faltantes = obtener_datos_faltantes(contexto)  
+faltantes = obtener_datos_faltantes(contexto)
 # Resultado: ['apellido']
 
 # Generar mensaje amigable
@@ -150,10 +154,12 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 ### Instalación Automática (Recomendada)
 
 1. **Requisitos del sistema:**
+
    - Python 3.7 o superior
    - Conexión a internet (para dependencias opcionales)
 
 2. **Ejecutar instalador:**
+
    ```bash
    python instalar.py
    ```
@@ -166,15 +172,18 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 ### Instalación Manual
 
 1. **Requisitos del sistema:**
+
    - Python 3.7 o superior
    - Módulos básicos: `json`, `datetime`, `decimal`, `csv`, `dataclasses`, `typing`
 
 2. **Dependencias opcionales (para funcionalidades avanzadas):**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Clonar o descargar el sistema:**
+
    ```bash
    git clone [url-del-repositorio]
    cd sistema-cotizaciones-bmc
@@ -184,6 +193,73 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
    ```bash
    python ejecutar_sistema.py
    ```
+
+## Unified Launcher (Recomendado)
+
+El sistema ahora incluye un launcher unificado que consolida todos los modos de ejecución, scripts de configuración y herramientas de desarrollo en un solo punto de entrada.
+
+### Inicio Rápido
+
+**Windows:**
+
+```batch
+launch.bat
+```
+
+**Linux/Mac:**
+
+```bash
+./launch.sh
+```
+
+**Directo con Python:**
+
+```bash
+python unified_launcher.py
+```
+
+### Características del Launcher Unificado
+
+- ✅ **Un solo comando** para acceder a todos los modos del sistema
+- ✅ **Configuración automática** de dependencias y entorno
+- ✅ **Multiplataforma** (Windows, Linux, Mac)
+- ✅ **Detección inteligente** de Python, Node.js, Docker
+- ✅ **Menú unificado** con todos los modos de ejecución
+- ✅ **Gestión de servicios** en segundo plano (API, MongoDB, Next.js)
+- ✅ **Herramientas de desarrollo** integradas
+
+### Modos de Ejecución Disponibles
+
+1. **Chatbot Interactivo** - Interfaz de conversación en tiempo real
+2. **Servidor API** - API REST FastAPI
+3. **Simulador de Chat** - Pruebas sin WhatsApp
+4. **Sistema Principal** - Menú completo del sistema
+5. **Sistema de Agentes** - Agentes automatizados
+6. **Dashboard Next.js** - Interfaz web (desarrollo/producción)
+7. **Stack Completo** - API + Dashboard juntos
+
+### Opciones de Línea de Comandos
+
+```bash
+# Mostrar menú interactivo
+python unified_launcher.py
+
+# Ejecutar modo específico
+python unified_launcher.py --mode chat
+python unified_launcher.py --mode api
+python unified_launcher.py --mode fullstack
+
+# Solo configuración
+python unified_launcher.py --setup-only
+
+# Saltar configuración
+python unified_launcher.py --skip-setup --mode chat
+
+# Modo producción
+python unified_launcher.py --production --mode fullstack
+```
+
+Para más información, consulta [UNIFIED_LAUNCHER.md](UNIFIED_LAUNCHER.md).
 
 ## Uso del Sistema
 
@@ -201,6 +277,7 @@ El sistema permite crear cotizaciones de forma interactiva:
 ### 2. Buscar Cotizaciones
 
 Opciones de búsqueda disponibles:
+
 - Por nombre del cliente
 - Por número de teléfono
 - Por rango de fechas
@@ -209,6 +286,7 @@ Opciones de búsqueda disponibles:
 ### 3. Generar Reportes
 
 El sistema genera reportes detallados que incluyen:
+
 - Información del cliente
 - Especificaciones técnicas del producto
 - Cálculos de dimensiones y precios
@@ -224,6 +302,7 @@ El sistema genera reportes detallados que incluyen:
 ## Productos Soportados
 
 ### Isodec
+
 - **Descripción:** Panel aislante térmico con núcleo de EPS
 - **Espesores:** 50mm, 75mm, 100mm, 125mm, 150mm
 - **Rellenos:** EPS, Poliuretano, Lana de roca
@@ -231,27 +310,32 @@ El sistema genera reportes detallados que incluyen:
 - **Terminaciones:** Gotero, Hormigón, Aluminio
 
 ### Poliestireno Expandido
+
 - **Descripción:** Aislante térmico de poliestireno expandido
 - **Espesores:** 25mm, 50mm, 75mm, 100mm
 
 ### Lana de Roca
+
 - **Descripción:** Aislante térmico y acústico de lana de roca
 - **Espesores:** 50mm, 75mm, 100mm
 
 ## Fórmulas de Cálculo
 
 ### Precio Base
+
 ```
 Precio base = Área (m²) × Precio por m²
 ```
 
 ### Factores de Ajuste
+
 - **Espesor:** 0.8 (50mm) a 1.2 (150mm)
 - **Color:** 1.0 (Blanco) a 1.15 (Personalizado)
 - **Terminaciones:** +5% (Gotero) a +15% (Aluminio)
 - **Servicios:** Incluidos o con descuento
 
 ### Precio Final
+
 ```
 Precio final = Precio base × Factor espesor × Factor color × Factor terminaciones × Factor servicios
 ```
@@ -267,37 +351,40 @@ El sistema puede importar datos desde la planilla "Administrador de Cotizaciones
 
 ### Campos Mapeados
 
-| Google Sheets | Sistema |
-|---------------|---------|
-| Cliente | cliente.nombre |
-| Telefono-Contacto | cliente.telefono |
-| Direccion / Zona | cliente.direccion |
-| Producto | especificaciones.producto |
-| Espesor | especificaciones.espesor |
-| Relleno | especificaciones.relleno |
-| Largo (M) | especificaciones.largo_metros |
-| Ancho (M) | especificaciones.ancho_metros |
-| Color | especificaciones.color |
-| TerminaFront | especificaciones.termina_front |
-| TerminaSup | especificaciones.termina_sup |
-| Termina Lat. 1 | especificaciones.termina_lat_1 |
-| Termina Lat. 2 | especificaciones.termina_lat_2 |
-| Anclajes a | especificaciones.anclajes |
-| Traslado | especificaciones.traslado |
+| Google Sheets     | Sistema                        |
+| ----------------- | ------------------------------ |
+| Cliente           | cliente.nombre                 |
+| Telefono-Contacto | cliente.telefono               |
+| Direccion / Zona  | cliente.direccion              |
+| Producto          | especificaciones.producto      |
+| Espesor           | especificaciones.espesor       |
+| Relleno           | especificaciones.relleno       |
+| Largo (M)         | especificaciones.largo_metros  |
+| Ancho (M)         | especificaciones.ancho_metros  |
+| Color             | especificaciones.color         |
+| TerminaFront      | especificaciones.termina_front |
+| TerminaSup        | especificaciones.termina_sup   |
+| Termina Lat. 1    | especificaciones.termina_lat_1 |
+| Termina Lat. 2    | especificaciones.termina_lat_2 |
+| Anclajes a        | especificaciones.anclajes      |
+| Traslado          | especificaciones.traslado      |
 
 ## Plantillas de Cotización
 
 ### 1. Isodec - Cotización Estándar
+
 - Para productos Isodec con especificaciones completas
 - Incluye todos los campos técnicos
 - Cálculo detallado de precios
 
 ### 2. Cotización Rápida
+
 - Para estimaciones rápidas
 - Campos mínimos requeridos
 - Precio estimado por m²
 
 ### 3. Cotización Detallada
+
 - Para cotizaciones completas
 - Desglose de costos
 - Incluye IVA y servicios
@@ -312,13 +399,13 @@ El sistema puede importar datos desde la planilla "Administrador de Cotizaciones
     "isodec": {
       "espesores_disponibles": {
         "100mm": {
-          "precio_base": 150.00,
+          "precio_base": 150.0,
           "factor_espesor": 1.0
         }
       },
       "colores_disponibles": {
         "Blanco": {
-          "precio_base": 0.00,
+          "precio_base": 0.0,
           "factor_color": 1.0
         }
       }
@@ -374,6 +461,7 @@ El sistema incluye enlaces directos a los productos en bmcuruguay.com.uy:
 ### Modificar Fórmulas de Cálculo
 
 Editar los métodos en `SistemaCotizacionesBMC`:
+
 - `_calcular_factor_espesor()`
 - `_calcular_factor_color()`
 - `_calcular_factor_terminaciones()`
@@ -383,14 +471,17 @@ Editar los métodos en `SistemaCotizacionesBMC`:
 ## Solución de Problemas
 
 ### Error: "Producto no encontrado"
+
 - Verificar que el producto esté en `matriz_precios.json`
 - Usar códigos exactos (isodec, poliestireno, lana_roca)
 
 ### Error: "Precio no calculado"
+
 - Verificar que el precio base esté configurado
 - Revisar las especificaciones del producto
 
 ### Error: "Archivo no encontrado"
+
 - Verificar que `matriz_precios.json` esté en el directorio
 - Verificar permisos de lectura/escritura
 

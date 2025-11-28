@@ -1,10 +1,24 @@
 @echo off
 REM Batch file to run the BMC chatbot on Windows
+REM 
+REM ⚠️  DEPRECATED: This script is deprecated.
+REM    Please use the unified launcher instead:
+REM    - launch.bat (recommended)
+REM    - python unified_launcher.py --mode chat
+REM 
+REM This script will continue to work but may be removed in future versions.
+REM
 chcp 65001 >nul
 echo.
 echo ========================================
-echo   BMC Chatbot Launcher
+echo   BMC Chatbot Launcher (DEPRECATED)
 echo ========================================
+echo.
+echo ⚠️  NOTICE: This launcher is deprecated.
+echo    Please use: launch.bat
+echo    Or: python unified_launcher.py --mode chat
+echo.
+timeout /t 3 /nobreak >nul
 echo.
 
 REM Refresh PATH to include Python from registry

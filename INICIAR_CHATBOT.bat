@@ -1,11 +1,24 @@
 @echo off
+REM ⚠️  DEPRECATED: This script is deprecated.
+REM    Please use the unified launcher instead:
+REM    - launch.bat (recommended)
+REM    - python unified_launcher.py --mode chat
+REM 
+REM This script will continue to work but may be removed in future versions.
+REM
 setlocal enabledelayedexpansion
 chcp 65001 >nul
-title BMC Chatbot - Launcher One-Click
+title BMC Chatbot - Launcher One-Click (DEPRECATED)
 
 echo ========================================
-echo   BMC Chatbot - Launcher One-Click
+echo   BMC Chatbot - Launcher One-Click (DEPRECATED)
 echo ========================================
+echo.
+echo ⚠️  NOTICE: This launcher is deprecated.
+echo    Please use: launch.bat
+echo    Or: python unified_launcher.py --mode chat
+echo.
+timeout /t 3 /nobreak >nul
 echo.
 
 set "PYTHON_CMD="

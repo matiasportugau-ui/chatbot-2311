@@ -2,12 +2,25 @@
 # -*- coding: utf-8 -*-
 # BMC Chatbot - Launcher for Linux/Codespaces
 # Equivalent to INICIAR_CHATBOT.bat for Linux environments
+#
+# ⚠️  DEPRECATED: This script is deprecated.
+#    Please use the unified launcher instead:
+#    - ./launch.sh (recommended)
+#    - python unified_launcher.py --mode chat
+#
+# This script will continue to work but may be removed in future versions.
 
 set -e
 
 echo "========================================"
-echo "  BMC Chatbot - Launcher One-Click"
+echo "  BMC Chatbot - Launcher One-Click (DEPRECATED)"
 echo "========================================"
+echo
+echo "⚠️  NOTICE: This launcher is deprecated."
+echo "   Please use: ./launch.sh"
+echo "   Or: python unified_launcher.py --mode chat"
+echo
+sleep 3
 echo
 
 # Function to find Python 3.11+
