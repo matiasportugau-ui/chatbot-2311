@@ -148,13 +148,16 @@ export async function POST(request: NextRequest) {
 
     // For Excel and CSV, return file directly as download
     if (format.toUpperCase() === 'EXCEL' || format.toUpperCase() === 'CSV') {
-      return new NextResponse(exportData as Buffer, {
-        status: 200,
-        headers: {
-          'Content-Type': contentType,
-          'Content-Disposition': `attachment; filename="${filename}"`,
-        },
-      })
+      return new NextResponse(
+        typeof exportData === 'string' ? exportData : Buffer.from(exportData),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Content-Disposition': `attachment; filename="${filename}"`,
+          },
+        }
+      )
     }
 
     // For JSON, return JSON response with data
@@ -198,7 +201,7 @@ function escapeCSVValue(value: any): string {
     stringValue.includes('"')
   ) {
     // Escape quotes by doubling them and wrap in quotes
-    return `"${stringValue.replaceAll('"', '""')}"`
+    return `"${stringValue.replace(/"/g, '""')}"`
   }
 
   return stringValue
