@@ -229,7 +229,7 @@ export async function GET(request: NextRequest) {
           timestamp: { $gte: startDate },
         })
         const averageRevenuePerQuote =
-          currentValue > 0 && quotesCount > 0
+          quotesCount > 0
             ? (currentValue / quotesCount).toFixed(2)
             : '0'
 

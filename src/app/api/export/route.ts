@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { connectDB } from '@/lib/mongodb'
 import { NextRequest, NextResponse } from 'next/server'
+import * as XLSX from 'xlsx'
 
 /**
  * Export API Endpoint
@@ -50,23 +51,25 @@ export async function POST(request: NextRequest) {
 
     // Fetch data based on type
     switch (type) {
-      case 'conversations':
+      case 'conversations': {
         const conversations = db.collection('conversations')
         data = await conversations.find(query).toArray()
         filename = `conversations_${
           new Date().toISOString().split('T')[0]
         }.${format.toLowerCase()}`
         break
+      }
 
-      case 'quotes':
+      case 'quotes': {
         const quotes = db.collection('quotes')
         data = await quotes.find(query).toArray()
         filename = `quotes_${
           new Date().toISOString().split('T')[0]
         }.${format.toLowerCase()}`
         break
+      }
 
-      case 'analytics':
+      case 'analytics': {
         // Export analytics summary
         const analyticsQuotes = db.collection('quotes')
         const analyticsConversations = db.collection('conversations')
@@ -88,6 +91,7 @@ export async function POST(request: NextRequest) {
           new Date().toISOString().split('T')[0]
         }.${format.toLowerCase()}`
         break
+      }
 
       default:
         return NextResponse.json(
@@ -104,43 +108,66 @@ export async function POST(request: NextRequest) {
     let contentType: string
 
     switch (format.toUpperCase()) {
-      case 'CSV':
+      case 'CSV': {
         exportData = convertToCSV(data)
         contentType = 'text/csv'
         break
+      }
 
-      case 'EXCEL':
-        // For Excel, we'd need a library like xlsx
-        // For now, return JSON and let client handle Excel conversion
-        exportData = JSON.stringify(data, null, 2)
-        contentType = 'application/json'
-        filename = filename.replace('.excel', '.json')
+      case 'EXCEL': {
+        // Generate Excel file using xlsx library
+        try {
+          const worksheet = XLSX.utils.json_to_sheet(data)
+          const workbook = XLSX.utils.book_new()
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Data')
+          const excelBuffer = XLSX.write(workbook, {
+            type: 'buffer',
+            bookType: 'xlsx',
+          })
+          exportData = excelBuffer
+          contentType =
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          filename = filename.replace(/\.(json|excel)$/i, '.xlsx')
+        } catch (excelError: any) {
+          console.error('Excel export error:', excelError)
+          // Fallback to JSON if Excel generation fails
+          exportData = JSON.stringify(data, null, 2)
+          contentType = 'application/json'
+          filename = filename.replace(/\.(excel|xlsx)$/i, '.json')
+        }
         break
+      }
 
       case 'JSON':
-      default:
+      default: {
         exportData = JSON.stringify(data, null, 2)
         contentType = 'application/json'
         break
+      }
     }
 
-    // Return download URL or data
-    // In a real implementation, you might want to:
-    // 1. Save file to storage (S3, local filesystem)
-    // 2. Return download URL
-    // 3. Or stream the file directly
+    // For Excel and CSV, return file directly as download
+    if (format.toUpperCase() === 'EXCEL' || format.toUpperCase() === 'CSV') {
+      return new NextResponse(
+        typeof exportData === 'string' ? exportData : Buffer.from(exportData),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Content-Disposition': `attachment; filename="${filename}"`,
+          },
+        }
+      )
+    }
 
+    // For JSON, return JSON response with data
     return NextResponse.json({
       success: true,
       data: {
         filename,
         format: format.toUpperCase(),
         recordCount: data.length,
-        downloadUrl: `/api/export/download/${filename}`, // Placeholder
-        // For small files, we can return data directly
-        ...(format.toUpperCase() === 'JSON' && {
-          content: JSON.parse(exportData as string),
-        }),
+        content: JSON.parse(exportData as string),
       },
     })
   } catch (error: any) {
@@ -155,35 +182,34 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function convertToCSV(data: any[]): string {
-  if (!data || data.length === 0) {
+function escapeCSVValue(value: any): string {
+  if (value === null || value === undefined) {
     return ''
   }
 
-  // Helper function to escape and quote CSV value only when necessary
-  function escapeCSVValue(value: any): string {
-    if (value === null || value === undefined) {
-      return ''
-    }
+  let stringValue: string
+  if (typeof value === 'object') {
+    stringValue = JSON.stringify(value)
+  } else {
+    stringValue = String(value)
+  }
 
-    let stringValue: string
-    if (typeof value === 'object') {
-      stringValue = JSON.stringify(value)
-    } else {
-      stringValue = String(value)
-    }
+  // Only quote if value contains comma, newline, or quote
+  if (
+    stringValue.includes(',') ||
+    stringValue.includes('\n') ||
+    stringValue.includes('"')
+  ) {
+    // Escape quotes by doubling them and wrap in quotes
+    return `"${stringValue.replace(/"/g, '""')}"`
+  }
 
-    // Only quote if value contains comma, newline, or quote
-    if (
-      stringValue.includes(',') ||
-      stringValue.includes('\n') ||
-      stringValue.includes('"')
-    ) {
-      // Escape quotes by doubling them and wrap in quotes
-      return `"${stringValue.replaceAll('"', '""')}"`
-    }
+  return stringValue
+}
 
-    return stringValue
+function convertToCSV(data: any[]): string {
+  if (!data || data.length === 0) {
+    return ''
   }
 
   // Get headers from first object
