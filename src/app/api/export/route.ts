@@ -180,7 +180,7 @@ function convertToCSV(data: any[]): string {
       stringValue.includes('"')
     ) {
       // Escape quotes by doubling them and wrap in quotes
-      return `"${stringValue.replaceAll('"', '""')}"`
+      return `"${stringValue.replace(/"/g, '""')}"`
     }
 
     return stringValue
