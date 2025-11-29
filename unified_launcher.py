@@ -210,6 +210,7 @@ class UnifiedLauncher:
         setup_steps = [
             ("Installing Python dependencies", self._install_python_deps),
             ("Configuring environment", self._configure_env),
+            ("Consolidating knowledge base", self._consolidate_knowledge),
             ("Managing services", self._manage_services),
             ("Installing Node.js dependencies", self._install_nodejs_deps),
             ("Verifying system", self._verify_system),
@@ -304,6 +305,47 @@ class UnifiedLauncher:
             return False
 
         return False
+
+    def _consolidate_knowledge(self) -> bool:
+        """Consolidate knowledge base files if they exist"""
+        consolidate_script = self.root_dir / "consolidar_conocimiento.py"
+        consolidated_file = self.root_dir / "conocimiento_consolidado.json"
+        
+        # Check if consolidation is needed
+        if consolidated_file.exists():
+            # Check if it's recent (less than 7 days old)
+            import time
+            file_age = time.time() - consolidated_file.stat().st_mtime
+            if file_age < 7 * 24 * 3600:  # 7 days
+                print_success("Consolidated knowledge file exists and is recent")
+                return True
+        
+        # Try to consolidate if script exists
+        if consolidate_script.exists():
+            try:
+                import importlib.util
+                
+                spec = importlib.util.spec_from_file_location(
+                    "consolidar_conocimiento", consolidate_script
+                )
+                if spec and spec.loader:
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                else:
+                    raise ImportError("Could not load consolidar_conocimiento module")
+                
+                # Check if ConsolidadorConocimiento class exists
+                if hasattr(module, "ConsolidadorConocimiento"):
+                    consolidador = module.ConsolidadorConocimiento()
+                    conocimiento = consolidador.consolidar_todos()
+                    consolidador.guardar(str(consolidated_file))
+                    print_success("Knowledge base consolidated successfully")
+                    return True
+            except Exception as e:
+                self.logger.warning(f"Could not consolidate knowledge: {e}")
+                print_warning("Knowledge consolidation skipped (not critical)")
+        
+        return True  # Not critical, system can work without consolidation
 
     def _manage_services(self) -> bool:
         """Manage optional services (MongoDB, etc.)"""
