@@ -24,6 +24,19 @@
             padding: 20px;
         }
 
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
         /* Main chat container */
         .chat-container {
             width: 400px;
@@ -32,10 +45,11 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0,  0, 0, 0.1);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         /* Chat Header - BMC Style */
@@ -344,18 +358,189 @@
             color: #666;
             font-size: 0.9rem;
         }
+
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .connection-status.connected {
+            color: #4caf50;
+        }
+
+        .connection-status.disconnected {
+            color: #f44336;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 250px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .settings-panel h3 {
+            margin: 0 0 12px 0;
+            font-size: 1rem;
+        }
+
+        .settings-item small {
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .settings-panel.open {
+            display: block;
+        }
+
+        .settings-item {
+            margin-bottom: 12px;
+        }
+
+        .settings-item label {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .settings-item input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .settings-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .settings-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .settings-btn.primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .settings-btn.secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .chat-header {
+                padding: 10px 12px;
+            }
+
+            .chat-title {
+                font-size: 1rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .chat-input:focus,
+        .send-btn:focus,
+        .quick-action-btn:focus,
+        .menu-btn:focus,
+        .close-btn:focus {
+            outline: 2px solid #2196F3;
+            outline-offset: 2px;
+        }
+
+        /* Retry button */
+        .retry-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .retry-btn:hover {
+            background: #E55A2B;
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
             <div class="header-left">
-                <div class="profile-icon bot">S</div>
+                <div class="profile-icon bot" aria-hidden="true">S</div>
                 <span class="chat-title">Chat with Superchapita</span>
             </div>
             <div class="header-right">
-                <button class="menu-btn" aria-label="Menu">⋯</button>
-                <button class="close-btn" aria-label="Close chat" id="closeBtn">&times;</button>
+                <div class="connection-status disconnected" id="connectionStatus" aria-live="polite">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span id="statusText">Disconnected</span>
+                </div>
+                <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">⋯</button>
+                <button class="close-btn" id="closeBtn" aria-label="Close chat">&times;</button>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel" role="dialog" aria-labelledby="settingsTitle" aria-hidden="true">
+            <h3 id="settingsTitle">Settings</h3>
+            <div class="settings-item">
+                <label for="apiUrlInput">API URL:</label>
+                <input type="text" id="apiUrlInput" value="http://localhost:8000/chat/process" aria-describedby="apiUrlDesc">
+                <small id="apiUrlDesc">Backend API endpoint</small>
+            </div>
+            <div class="settings-item">
+                <label for="phoneInput">Phone Number:</label>
+                <input type="text" id="phoneInput" value="+59891234567" aria-describedby="phoneDesc">
+                <small id="phoneDesc">Default phone for testing</small>
+            </div>
+            <div class="settings-actions">
+                <button class="settings-btn primary" id="saveSettings">Save</button>
+                <button class="settings-btn secondary" id="cancelSettings">Cancel</button>
             </div>
         </div>
 
@@ -374,7 +559,10 @@
                     class="chat-input" 
                     placeholder="Ask Superchapita anything about roofing...."
                     autocomplete="off"
+                    aria-label="Message input"
+                    aria-describedby="inputHelp"
                 />
+                <span id="inputHelp" class="sr-only">Type your message and press Enter to send</span>
             </div>
             <button type="button" class="send-btn" id="sendButton" aria-label="Send message">
                 <span class="send-icon">✈</span>
@@ -383,28 +571,98 @@
     </div>
 
     <script>
-        // Configuration
-        const API_URL = 'http://localhost:8000/chat/process';
-        const DEFAULT_PHONE = '+59891234567';
+        /**
+         * BMC Chat Interface - Enhanced Version
+         * Features: Retry logic, message persistence, connection status, settings, accessibility
+         */
+
+        // Configuration (can be overridden via settings)
+        let API_URL = localStorage.getItem('bmc_api_url') || 'http://localhost:8000/chat/process';
+        let DEFAULT_PHONE = localStorage.getItem('bmc_default_phone') || '+59891234567';
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 1000; // ms
+        const DEBOUNCE_DELAY = 300; // ms
 
         // State
         let sessionId = null;
         let isLoading = false;
+        let messageHistory = [];
+        let retryCount = 0;
+        let connectionCheckInterval = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             sessionId = getSessionId();
+            loadMessageHistory();
             setupEventListeners();
+            checkConnection();
+            startConnectionMonitoring();
+            loadSettings();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (connectionCheckInterval) {
+                clearInterval(connectionCheckInterval);
+            }
         });
 
         // Session Management
         function getSessionId() {
             let id = localStorage.getItem('bmc_chat_session_id');
             if (!id) {
-                id = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                // Use substring instead of deprecated substr
+                id = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
                 localStorage.setItem('bmc_chat_session_id', id);
             }
             return id;
+        }
+
+        // Message History Persistence
+        function saveMessageHistory() {
+            localStorage.setItem('bmc_message_history', JSON.stringify(messageHistory));
+        }
+
+        // Store original displayMessage before it gets wrapped for notifications
+        let originalDisplayMessage = null;
+
+        function loadMessageHistory() {
+            try {
+                const saved = localStorage.getItem('bmc_message_history');
+                if (saved) {
+                    messageHistory = JSON.parse(saved);
+                    // Restore messages to UI
+                    const messageArea = document.getElementById('messageArea');
+                    const welcomeMsg = messageArea.querySelector('.welcome-message');
+                    if (welcomeMsg) welcomeMsg.remove();
+                    
+                    // Use original function (if available) or current function to avoid notifications
+                    const restoreFunction = originalDisplayMessage || displayMessage;
+                    messageHistory.forEach(msg => {
+                        restoreFunction(msg.text, msg.sender, false);
+                        if (msg.actions && msg.actions.length > 0) {
+                            displayQuickActions(msg.actions);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading message history:', e);
+                messageHistory = [];
+            }
+        }
+
+        function addToHistory(text, sender, actions = []) {
+            messageHistory.push({
+                text,
+                sender,
+                actions,
+                timestamp: new Date().toISOString()
+            });
+            // Keep only last 100 messages
+            if (messageHistory.length > 100) {
+                messageHistory = messageHistory.slice(-100);
+            }
+            saveMessageHistory();
         }
 
         function clearSession() {
@@ -418,12 +676,23 @@
             const sendButton = document.getElementById('sendButton');
             const messageInput = document.getElementById('messageInput');
             const closeBtn = document.getElementById('closeBtn');
+            const menuBtn = document.getElementById('menuBtn');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const saveSettings = document.getElementById('saveSettings');
+            const cancelSettings = document.getElementById('cancelSettings');
 
-            sendButton.addEventListener('click', handleSendMessage);
+            const debouncedSend = debounce(() => {
+                handleSendMessage();
+            }, DEBOUNCE_DELAY);
+
+            sendButton.addEventListener('click', () => {
+                debouncedSend();
+            });
+
             messageInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    handleSendMessage();
+                    debouncedSend();
                 }
             });
 
@@ -431,25 +700,149 @@
                 if (confirm('¿Deseas cerrar el chat?')) {
                     clearSession();
                     document.getElementById('messageArea').innerHTML = '<div class="welcome-message">👋 ¡Hola! Soy Superchapita, tu asistente virtual de BMC Uruguay. ¿En qué puedo ayudarte?</div>';
+                    messageHistory = [];
+                    saveMessageHistory();
+                }
+            });
+
+            // Settings panel
+            menuBtn.addEventListener('click', () => {
+                const isOpen = settingsPanel.classList.contains('open');
+                settingsPanel.classList.toggle('open');
+                const newState = !isOpen; // Get the new state after toggle
+                menuBtn.setAttribute('aria-expanded', newState ? 'true' : 'false');
+                settingsPanel.setAttribute('aria-hidden', newState ? 'false' : 'true'); // aria-hidden is inverse of open state
+            });
+
+            saveSettings.addEventListener('click', () => {
+                API_URL = document.getElementById('apiUrlInput').value;
+                DEFAULT_PHONE = document.getElementById('phoneInput').value;
+                localStorage.setItem('bmc_api_url', API_URL);
+                localStorage.setItem('bmc_default_phone', DEFAULT_PHONE);
+                settingsPanel.classList.remove('open');
+                menuBtn.setAttribute('aria-expanded', 'false');
+                settingsPanel.setAttribute('aria-hidden', 'true');
+                checkConnection();
+            });
+
+            cancelSettings.addEventListener('click', () => {
+                loadSettings();
+                settingsPanel.classList.remove('open');
+                menuBtn.setAttribute('aria-expanded', 'false');
+                settingsPanel.setAttribute('aria-hidden', 'true');
+                menuBtn.setAttribute('aria-expanded', 'false');
+                settingsPanel.setAttribute('aria-hidden', 'true');
+            });
+
+            // Close settings on outside click
+            document.addEventListener('click', (e) => {
+                if (!settingsPanel.contains(e.target) && !menuBtn.contains(e.target)) {
+                    settingsPanel.classList.remove('open');
+                    menuBtn.setAttribute('aria-expanded', 'false');
+                    settingsPanel.setAttribute('aria-hidden', 'true');
                 }
             });
         }
 
-        // Send Message
-        async function handleSendMessage() {
+        // Debounce helper
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            document.getElementById('apiUrlInput').value = API_URL;
+            document.getElementById('phoneInput').value = DEFAULT_PHONE;
+        }
+
+        // Connection Monitoring
+        function getHealthEndpoint() {
+            try {
+                const apiUrl = new URL(API_URL, window.location.origin);
+                return `${apiUrl.origin}/health`;
+            } catch (error) {
+                console.warn('Invalid API_URL detected, falling back to default health endpoint.', error);
+                return 'http://localhost:8000/health';
+            }
+        }
+
+        function checkConnection() {
+            const healthEndpoint = getHealthEndpoint();
+            fetch(healthEndpoint, { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        updateConnectionStatus(true);
+                    } else {
+                        updateConnectionStatus(false);
+                    }
+                })
+                .catch(() => {
+                    updateConnectionStatus(false);
+                });
+        }
+
+        function startConnectionMonitoring() {
+            connectionCheckInterval = setInterval(checkConnection, 30000); // Check every 30s
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusEl = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            if (connected) {
+                statusEl.classList.remove('disconnected');
+                statusEl.classList.add('connected');
+                statusText.textContent = 'Connected';
+            } else {
+                statusEl.classList.remove('connected');
+                statusEl.classList.add('disconnected');
+                statusText.textContent = 'Disconnected';
+            }
+        }
+
+        // Send Message with Retry Logic
+        async function handleSendMessage(retryAttempt = 0, messageOverride = null, options = {}) {
+            const opts = {
+                skipUserRender: false,
+                skipHistory: false,
+                ...options
+            };
+            // By default, if we skip rendering we should also skip history entry
+            if (options.skipUserRender && options.skipHistory === undefined) {
+                opts.skipHistory = true;
+            }
+
             const input = document.getElementById('messageInput');
-            const message = input.value.trim();
+            const sourceText = messageOverride !== null ? messageOverride : input.value;
+            const message = sourceText.trim();
+            const isInternalRetry = retryAttempt > 0;
 
-            if (!message || isLoading) return;
+            if (!message || (isLoading && !isInternalRetry)) return;
 
-            // Clear input
-            input.value = '';
+            // Clear input only for fresh user submissions
+            if (messageOverride === null) {
+                input.value = '';
+            }
             
             // Display user message
-            displayMessage(message, 'user');
+            if (!opts.skipUserRender) {
+                displayMessage(message, 'user');
+            }
+            if (!opts.skipHistory) {
+                addToHistory(message, 'user');
+            }
 
             // Show loading
             showLoading();
+            isLoading = true;
+            updateSendButtonState(true);
 
             try {
                 const response = await fetch(API_URL, {
@@ -478,27 +871,60 @@
 
                 // Hide loading
                 hideLoading();
+                isLoading = false;
+                updateSendButtonState(false);
+                retryCount = 0;
 
                 // Display bot response
-                displayMessage(data.mensaje || 'No response received', 'bot');
+                const botMessage = data.mensaje || 'No response received';
+                displayMessage(botMessage, 'bot');
+                addToHistory(botMessage, 'bot', data.acciones || []);
 
                 // Display quick actions if available
                 if (data.acciones && data.acciones.length > 0) {
                     displayQuickActions(data.acciones);
                 }
 
+                // Update connection status
+                updateConnectionStatus(true);
+
                 // Log for debugging
                 console.log('Bot response:', data);
 
             } catch (error) {
                 hideLoading();
-                displayError(`Error: ${error.message}. Please make sure the API server is running at ${API_URL}`);
-                console.error('Error sending message:', error);
+
+                // Retry logic
+                if (retryAttempt < MAX_RETRIES) {
+                    // Keep isLoading true during retry to prevent duplicate sends
+                    isLoading = true;
+                    updateSendButtonState(true);
+                    retryCount = retryAttempt + 1;
+                    displayError(`Error: ${error.message}. Retrying... (${retryCount}/${MAX_RETRIES})`);
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * retryCount));
+                    return handleSendMessage(
+                        retryAttempt + 1,
+                        message,
+                        { skipUserRender: true, skipHistory: true }
+                    );
+                } else {
+                    // Max retries reached - only now set isLoading to false
+                    isLoading = false;
+                    updateSendButtonState(false);
+                    displayError(`Error: ${error.message}. Please make sure the API server is running at ${API_URL}`, true, message);
+                    updateConnectionStatus(false);
+                    console.error('Error sending message:', error);
+                }
             }
         }
 
+        function updateSendButtonState(disabled) {
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = disabled;
+        }
+
         // Display Message
-        function displayMessage(text, sender) {
+        function displayMessage(text, sender, scroll = true) {
             const messageArea = document.getElementById('messageArea');
             
             // Remove welcome message if present
@@ -509,21 +935,26 @@
 
             const messageWrapper = document.createElement('div');
             messageWrapper.className = `message-wrapper ${sender}`;
+            messageWrapper.setAttribute('role', 'log');
+            messageWrapper.setAttribute('aria-label', `${sender === 'bot' ? 'Bot' : 'User'} message`);
 
             const icon = document.createElement('div');
             icon.className = `message-icon ${sender}`;
             icon.textContent = sender === 'bot' ? 'S' : 'U';
+            icon.setAttribute('aria-hidden', 'true');
 
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
 
             const content = document.createElement('p');
             content.className = 'message-content';
+            // Basic XSS protection - escape HTML
             content.textContent = text;
 
             const timestamp = document.createElement('span');
             timestamp.className = 'timestamp';
             timestamp.textContent = formatTimestamp(new Date());
+            timestamp.setAttribute('aria-label', `Sent at ${formatTimestamp(new Date())}`);
 
             messageDiv.appendChild(content);
             messageDiv.appendChild(timestamp);
@@ -531,7 +962,15 @@
             messageWrapper.appendChild(messageDiv);
 
             messageArea.appendChild(messageWrapper);
-            scrollToBottom();
+            if (scroll) {
+                throttledScrollToBottom();
+            }
+        }
+
+        // Store original displayMessage immediately after definition to ensure it's available
+        // before any initialization code runs (for loadMessageHistory to use)
+        if (originalDisplayMessage === null) {
+            originalDisplayMessage = displayMessage;
         }
 
         // Display Quick Actions
@@ -565,18 +1004,43 @@
         }
 
         // Display Error
-        function displayError(message) {
+        function displayError(message, showRetry = false, retryPayload = null) {
             const messageArea = document.getElementById('messageArea');
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error-message';
+            errorDiv.setAttribute('role', 'alert');
             errorDiv.textContent = message;
+            
+            if (showRetry) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-btn';
+                retryBtn.textContent = 'Retry';
+                retryBtn.setAttribute('aria-label', 'Retry sending message');
+                retryBtn.addEventListener('click', () => {
+                    const payload = retryPayload !== null
+                        ? retryPayload
+                        : (messageHistory.filter(m => m.sender === 'user').pop() || {}).text;
+                    if (payload) {
+                        handleSendMessage(0, payload, {
+                            skipUserRender: true,
+                            skipHistory: true
+                        });
+                    }
+                    errorDiv.remove();
+                });
+                errorDiv.appendChild(retryBtn);
+            }
+            
             messageArea.appendChild(errorDiv);
-            scrollToBottom();
+            throttledScrollToBottom();
         }
 
         // Loading Indicator
         function showLoading() {
             isLoading = true;
+            if (document.getElementById('loadingIndicator')) {
+                return;
+            }
             const messageArea = document.getElementById('messageArea');
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message-wrapper bot';
@@ -593,15 +1057,13 @@
             loadingDiv.appendChild(icon);
             loadingDiv.appendChild(messageDiv);
             messageArea.appendChild(loadingDiv);
-            scrollToBottom();
+            throttledScrollToBottom();
         }
 
         function hideLoading() {
             isLoading = false;
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            if (loadingIndicator) {
-                loadingIndicator.remove();
-            }
+            const indicators = document.querySelectorAll('#loadingIndicator');
+            indicators.forEach(indicator => indicator.remove());
         }
 
         // Format Timestamp
@@ -611,11 +1073,96 @@
             return `${hours}:${minutes}`;
         }
 
-        // Scroll to Bottom
+        // Scroll to Bottom (optimized with requestAnimationFrame)
         function scrollToBottom() {
             const messageArea = document.getElementById('messageArea');
-            messageArea.scrollTop = messageArea.scrollHeight;
+            requestAnimationFrame(() => {
+                messageArea.scrollTop = messageArea.scrollHeight;
+            });
         }
+
+        // Throttle scroll events for better performance
+        let scrollTimeout;
+        function throttledScrollToBottom() {
+            if (scrollTimeout) return;
+            scrollTimeout = requestAnimationFrame(() => {
+                scrollToBottom();
+                scrollTimeout = null;
+            });
+        }
+
+        // Export/Import Functions
+        function exportConversation() {
+            const data = {
+                sessionId,
+                messages: messageHistory,
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bmc-chat-${sessionId}-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importConversation(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.messages && Array.isArray(data.messages)) {
+                        messageHistory = data.messages;
+                        saveMessageHistory();
+                        location.reload();
+                    }
+                } catch (err) {
+                    alert('Error importing conversation: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Browser Notifications
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function showNotification(message) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Superchapita', {
+                    body: message,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%232196F3"/><text x="50" y="65" font-size="40" text-anchor="middle" fill="white">S</text></svg>',
+                    tag: 'bmc-chat-notification'
+                });
+            }
+        }
+
+        // Request notification permission on load
+        if ('Notification' in window) {
+            requestNotificationPermission();
+        }
+
+        // Show notification when bot responds (if tab is not focused)
+        // originalDisplayMessage was already stored right after displayMessage definition
+        // This ensures it's available before DOMContentLoaded runs loadMessageHistory()
+        displayMessage = function(text, sender, scroll = true) {
+            originalDisplayMessage(text, sender, scroll);
+            // Only show notifications for new bot messages, not restored ones
+            // The loadMessageHistory function uses originalDisplayMessage directly
+            if (sender === 'bot' && document.hidden) {
+                showNotification(text.substring(0, 100));
+            }
+        };
+
+        // Add export functionality to menu (can be extended)
+        // For now, available via console: exportConversation()
     </script>
 </body>
 </html>
