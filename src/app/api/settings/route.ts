@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
+import { withRateLimit } from '@/lib/rate-limit'
 
 /**
  * Settings API Endpoint
@@ -9,12 +10,34 @@ import { connectDB } from '@/lib/mongodb'
  * POST /api/settings - Update settings
  * 
  * Settings are stored per user or system-wide
+ * Requires authentication for system-wide settings
  */
-export async function GET(request: NextRequest) {
+async function getSettingsHandler(request: NextRequest) {
   try {
+    // Check authentication for system settings
     const { searchParams } = new URL(request.url)
+    const scope = searchParams.get('scope') || 'user'
+    
+    if (scope === 'system') {
+      const token = request.headers.get('Authorization')
+      if (!token) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized - Authentication required for system settings' },
+          { status: 401 }
+        )
+      }
+      
+      const { validateToken, checkAdminRole } = await import('@/lib/auth')
+      const user = await validateToken(token)
+      if (!user || !checkAdminRole(user)) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden - Admin access required for system settings' },
+          { status: 403 }
+        )
+      }
+    }
+    
     const userId = searchParams.get('userId')
-    const scope = searchParams.get('scope') || 'user' // 'user' | 'system'
 
     const db = await connectDB()
     const settings = db.collection('settings')
@@ -62,10 +85,30 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postSettingsHandler(request: NextRequest) {
   try {
     const body = await request.json()
     const { userId, scope = 'user', settings: newSettings } = body
+    
+    // Check authentication for system settings
+    if (scope === 'system') {
+      const token = request.headers.get('Authorization')
+      if (!token) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized - Authentication required for system settings' },
+          { status: 401 }
+        )
+      }
+      
+      const { validateToken, checkAdminRole } = await import('@/lib/auth')
+      const user = await validateToken(token)
+      if (!user || !checkAdminRole(user)) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden - Admin access required for system settings' },
+          { status: 403 }
+        )
+      }
+    }
 
     if (!newSettings || typeof newSettings !== 'object') {
       return NextResponse.json(
@@ -163,5 +206,9 @@ function validateSettings(settings: any): { valid: boolean; errors: string[] } {
     errors
   }
 }
+
+// Export with rate limiting
+export const GET = withRateLimit(getSettingsHandler, 60, 15 * 60 * 1000) // 60 requests per 15 minutes
+export const POST = withRateLimit(postSettingsHandler, 30, 15 * 60 * 1000) // 30 requests per 15 minutes
 
 
