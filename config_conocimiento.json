@@ -2,6 +2,9 @@
   "carga_conocimiento": {
     "habilitada": true,
     "archivos_prioridad": [
+      "conocimiento_consolidado.json",
+      "conocimiento_mercadolibre.json",
+      "conocimiento_shopify.json",
       "base_conocimiento_final.json",
       "conocimiento_completo.json",
       "base_conocimiento_exportada.json",
@@ -29,4 +32,3 @@
     "advertencias_duplicados": true
   }
 }
-

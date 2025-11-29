@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -29,14 +31,70 @@ interface Notification {
   }
 }
 
+interface WebhookEvent {
+  _id?: string
+  topic?: string
+  resource?: string
+  receivedAt?: string
+}
+
 interface NotificationsProps {
-  notifications: Notification[]
   className?: string
 }
 
-export function Notifications({ notifications, className }: NotificationsProps) {
+const topicMapping: Record<string, { type: Notification['type']; priority: Notification['priority'] }> =
+  {
+    orders: { type: 'info', priority: 'medium' },
+    items: { type: 'success', priority: 'low' },
+    shipments: { type: 'warning', priority: 'high' }
+  }
+
+export function Notifications({ className }: NotificationsProps) {
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [filter, setFilter] = useState<'all' | 'unread' | 'system' | 'user' | 'ai' | 'performance'>('all')
   const [showSettings, setShowSettings] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const hydrateFromEvents = (events: WebhookEvent[]): Notification[] => {
+    return events.map((event) => {
+      const mapping = topicMapping[event.topic || ''] || { type: 'info', priority: 'low' }
+      return {
+        id: event._id?.toString() || `${event.topic}-${event.resource}-${event.receivedAt}`,
+        type: mapping.type,
+        title: `Evento ${event.topic || 'Mercado Libre'}`,
+        message: `Actualización en ${event.resource || 'recurso desconocido'}`,
+        timestamp: event.receivedAt || new Date().toISOString(),
+        read: false,
+        category: 'system',
+        priority: mapping.priority
+      }
+    })
+  }
+
+  const loadEvents = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await fetch('/api/mercado-libre/webhook?events=true')
+      if (!response.ok) {
+        throw new Error('No se pudieron obtener las notificaciones')
+      }
+      const data = await response.json()
+      const events = hydrateFromEvents(data.events || [])
+      setNotifications(events)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadEvents()
+    const interval = setInterval(loadEvents, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'all') return true
@@ -81,13 +139,11 @@ export function Notifications({ notifications, className }: NotificationsProps) 
   }
 
   const markAsRead = (id: string) => {
-    // Implement mark as read logic
-    console.log('Mark as read:', id)
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
   }
 
   const markAllAsRead = () => {
-    // Implement mark all as read logic
-    console.log('Mark all as read')
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }
 
   return (
@@ -122,7 +178,10 @@ export function Notifications({ notifications, className }: NotificationsProps) 
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {/* Filter */}
+          {error && (
+            <div className="rounded bg-red-50 text-red-700 px-4 py-2 text-sm">{error}</div>
+          )}
+
           <div className="flex items-center space-x-2">
             <Filter className="h-4 w-4" />
             <select
@@ -139,8 +198,11 @@ export function Notifications({ notifications, className }: NotificationsProps) 
             </select>
           </div>
 
-          {/* Notifications List */}
           <div className="space-y-3">
+            {loading && notifications.length === 0 && (
+              <div className="text-sm text-muted-foreground">Cargando notificaciones...</div>
+            )}
+
             {filteredNotifications.map((notification) => {
               const TypeIcon = typeIcons[notification.type]
               
@@ -207,7 +269,6 @@ export function Notifications({ notifications, className }: NotificationsProps) 
             })}
           </div>
 
-          {/* Settings Panel */}
           {showSettings && (
             <Card className="p-4">
               <div className="space-y-4">

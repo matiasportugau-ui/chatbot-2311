@@ -178,7 +178,18 @@ If using WhatsApp integration:
 2. Set webhook URL to: `https://your-app.vercel.app/api/whatsapp/webhook`
 3. Set verify token to match your `WHATSAPP_VERIFY_TOKEN`
 
-### 4. Custom Domain (Optional)
+### 4. Mercado Libre OAuth + Webhooks
+
+1. En Mercado Libre Developers registra tu aplicación y configura el `redirect_uri` exacto: `https://your-app.vercel.app/api/mercado-libre/auth/callback`.
+2. Carga en Vercel las variables:
+   - `MERCADO_LIBRE_APP_ID`, `MERCADO_LIBRE_CLIENT_SECRET`
+   - `MERCADO_LIBRE_REDIRECT_URI` (usa la URL de producción)
+   - `MERCADO_LIBRE_SELLER_ID`, `MERCADO_LIBRE_WEBHOOK_SECRET`
+3. Inicia el flujo desde el dashboard (`Mercado Libre` tab → “Conectar cuenta”) para generar el primer grant y persistirlo en MongoDB (`mercado_libre_grants`).
+4. Configura el webhook en Mercado Libre apuntando a `https://your-app.vercel.app/api/mercado-libre/webhook` y reutiliza el mismo secret para validar la firma `X-Hub-Signature`.
+5. Ejecuta `npm run test` (requiere el servidor en marcha) para comprobar que los endpoints `/auth/token`, `/listings/list`, `/orders/list` y `/webhook` responden correctamente antes de habilitar vendedores reales.
+
+### 5. Custom Domain (Optional)
 
 To use a custom domain:
 

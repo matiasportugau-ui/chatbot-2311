@@ -3,8 +3,8 @@
     {
       "tipo": "carga_conocimiento",
       "estado": "exitoso",
-      "archivo": "base_conocimiento_final.json",
-      "interacciones": 14,
+      "archivo": "/Users/matias/chatbot2511/chatbot-2311/conocimiento_consolidado.json",
+      "interacciones": 20,
       "patrones": 1,
       "productos": 1
     },
@@ -33,7 +33,7 @@
   "errores": [],
   "advertencias": [],
   "estadisticas": {
-    "interacciones": 14,
+    "interacciones": 20,
     "patrones": 1,
     "productos": 1,
     "patrones_respuesta": 4,

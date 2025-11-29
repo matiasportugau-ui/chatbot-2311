@@ -178,6 +178,39 @@ MONGODB_URI=mongodb+srv://bmcadmin:Tu-Password-Aqui@bmc-cotizaciones.abc123.mong
 
 ---
 
+## 🛒 PASO 4: Conectar Mercado Libre (5 minutos)
+
+El flujo OAuth usa la ruta `/api/mercado-libre/auth/callback`, por lo que la URL debe apuntar exactamente ahí.
+
+1. En `.env.local` agrega o completa estas variables:
+   ```bash
+   # Mercado Libre OAuth / API
+   MERCADO_LIBRE_APP_ID=tu-app-id
+   MERCADO_LIBRE_CLIENT_SECRET=tu-client-secret
+   MERCADO_LIBRE_SELLER_ID=tu-seller-id
+   MERCADO_LIBRE_REDIRECT_URI=http://localhost:3000/api/mercado-libre/auth/callback
+   # ⚠️ IMPORTANTE: MERCADO_LIBRE_AUTH_URL debe coincidir EXACTAMENTE con la región donde registraste la app
+   # Si registraste en Argentina: https://auth.mercadolibre.com.ar
+   # Si registraste en México: https://auth.mercadolibre.com.mx
+   # Si registraste en Uruguay: https://auth.mercadolibre.com.uy
+   # Si registraste en Brasil: https://auth.mercadolibre.com.br
+   # Si registraste en Chile: https://auth.mercadolibre.com.cl
+   # Si registraste en Colombia: https://auth.mercadolibre.com.co
+   # Si registraste en Perú: https://auth.mercadolibre.com.pe
+   MERCADO_LIBRE_AUTH_URL=https://auth.mercadolibre.com.uy  # ⚠️ CAMBIA ESTO según tu región
+   MERCADO_LIBRE_API_URL=https://api.mercadolibre.com
+   ```
+2. Si tienes un entorno desplegado (Vercel, servidor propio, etc.), crea una segunda entrada con tu dominio público:
+   ```
+   MERCADO_LIBRE_REDIRECT_URI=https://tu-dominio.com/api/mercado-libre/auth/callback
+   ```
+3. Ve al portal de desarrolladores de Mercado Libre **de tu región** (ej: https://developers.mercadolibre.com.ar/apps/ para Argentina, https://developers.mercadolibre.com.uy/apps/ para Uruguay), abre tu aplicación y en **Redirect URIs** pega exactamente la URL anterior (incluye protocolo + dominio + `/api/mercado-libre/auth/callback`). El portal rechazará URLs genéricas como `https://www.mercadopago.com`.
+4. Guarda y prueba desde el dashboard: el botón "Conectar Mercado Libre" iniciará el flujo, te enviará a Mercado Libre y volverá a `/dashboard?meli=connected` cuando acepte los permisos.
+
+> ⚠️ **CRÍTICO**: Si `MERCADO_LIBRE_AUTH_URL` no coincide con la región donde registraste la app, el flujo OAuth fallará con errores de autenticación. Verifica en developers.mercadolibre.com.[tu-región] cuál es la región correcta.
+
+---
+
 ## ✅ VERIFICACIÓN (2 minutos)
 
 Una vez configurado todo, verifica que tu archivo `.env.local` se vea así:
