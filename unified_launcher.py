@@ -210,6 +210,7 @@ class UnifiedLauncher:
         setup_steps = [
             ("Installing Python dependencies", self._install_python_deps),
             ("Configuring environment", self._configure_env),
+            ("Validating environment", self._validate_environment),
             ("Consolidating knowledge base", self._consolidate_knowledge),
             ("Managing services", self._manage_services),
             ("Installing Node.js dependencies", self._install_nodejs_deps),
@@ -229,6 +230,16 @@ class UnifiedLauncher:
 
         self.setup_complete = True
         print_success("Environment setup complete!")
+        
+        # Optional: Validate WhatsApp and import n8n workflows
+        if not self.skip_setup:
+            self._validate_whatsapp()
+            self._import_n8n_workflows()
+        
+        # Optional: Run integration tests
+        if self.dev:  # Only in dev mode to avoid slowing down production
+            self._run_integration_tests()
+        
         return True
 
     def _install_python_deps(self) -> bool:
@@ -406,6 +417,38 @@ class UnifiedLauncher:
 
         return True  # No package.json found, not an error
 
+    def _validate_environment(self) -> bool:
+        """Validate environment variables comprehensively"""
+        validator_script = self.root_dir / "scripts" / "validate_environment.py"
+        if not validator_script.exists():
+            print_warning("Environment validator not found, skipping validation")
+            return True  # Not critical
+        
+        try:
+            result = subprocess.run(
+                [self.python_cmd, str(validator_script)],
+                cwd=self.root_dir,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0:
+                print_success("Environment validation passed")
+                return True
+            else:
+                print_warning("Environment validation found issues")
+                # Show first few lines of output
+                if result.stdout:
+                    lines = result.stdout.split('\n')[:5]
+                    for line in lines:
+                        if line.strip():
+                            print_info(f"  {line}")
+                return True  # Continue anyway, user can fix later
+        except Exception as e:
+            self.logger.warning(f"Could not validate environment: {e}")
+            return True  # Not critical
+    
     def _verify_system(self) -> bool:
         """Verify system setup"""
         verify_script = self.root_dir / "verificar_sistema_completo.py"
@@ -431,6 +474,107 @@ class UnifiedLauncher:
             except Exception as e:
                 self.logger.warning(f"Could not verify system: {e}")
         return True
+    
+    def _validate_whatsapp(self) -> bool:
+        """Validate WhatsApp credentials if configured"""
+        whatsapp_validator = self.root_dir / "scripts" / "verify_whatsapp_credentials.py"
+        if not whatsapp_validator.exists():
+            return True  # Not critical
+        
+        # Check if WhatsApp is configured
+        env_file = self.root_dir / ".env"
+        if not env_file.exists():
+            return True
+        
+        try:
+            env_content = env_file.read_text()
+            has_whatsapp = any(
+                key in env_content and "your-" not in env_content.split(key)[1].split('\n')[0]
+                for key in ["WHATSAPP_ACCESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID"]
+            )
+            
+            if not has_whatsapp:
+                return True  # Not configured, skip
+            
+            print_info("Validating WhatsApp credentials...")
+            result = subprocess.run(
+                [self.python_cmd, str(whatsapp_validator)],
+                cwd=self.root_dir,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0:
+                print_success("WhatsApp credentials validated")
+            else:
+                print_warning("WhatsApp validation found issues (optional)")
+            
+            return True  # Not critical
+        except Exception as e:
+            self.logger.warning(f"Could not validate WhatsApp: {e}")
+            return True
+    
+    def _import_n8n_workflows(self) -> bool:
+        """Import n8n workflows if n8n is available"""
+        n8n_importer = self.root_dir / "scripts" / "import_n8n_workflow.py"
+        if not n8n_importer.exists():
+            return True  # Not critical
+        
+        # Check if n8n is running
+        try:
+            import requests
+            response = requests.get("http://localhost:5678/healthz", timeout=2)
+            if response.status_code != 200:
+                return True  # n8n not running, skip
+        except:
+            return True  # Can't check, skip
+        
+        print_info("n8n detected. Import workflows? (y/n, default: n):")
+        try:
+            response = input("  > ").strip().lower()
+            if response == 'y':
+                print_info("Importing n8n workflows...")
+                result = subprocess.run(
+                    [self.python_cmd, str(n8n_importer)],
+                    cwd=self.root_dir,
+                    capture_output=True,
+                    text=True,
+                    timeout=60
+                )
+                
+                if result.returncode == 0:
+                    print_success("n8n workflows imported")
+                else:
+                    print_warning("n8n workflow import had issues")
+        except (EOFError, KeyboardInterrupt):
+            print_info("Skipping n8n workflow import")
+        
+        return True  # Not critical
+    
+    def _run_integration_tests(self) -> bool:
+        """Run integration tests after setup"""
+        test_script = self.root_dir / "scripts" / "test_integration.py"
+        if not test_script.exists():
+            return True  # Not critical
+        
+        print_info("Running integration tests...")
+        try:
+            result = subprocess.run(
+                [self.python_cmd, str(test_script)],
+                cwd=self.root_dir,
+                timeout=120
+            )
+            
+            if result.returncode == 0:
+                print_success("Integration tests passed")
+                return True
+            else:
+                print_warning("Some integration tests failed (review output above)")
+                return True  # Continue anyway
+        except Exception as e:
+            self.logger.warning(f"Could not run integration tests: {e}")
+            return True  # Not critical
 
     def show_menu(self):
         """Show main menu"""
@@ -565,7 +709,7 @@ class UnifiedLauncher:
             except ImportError:
                 print_error(f"  {module} (missing)")
 
-        # Check environment
+        # Check environment with comprehensive validation
         print(f"\n{Colors.BOLD}Environment:{Colors.ENDC}")
         env_file = self.root_dir / ".env"
         if env_file.exists():
@@ -583,8 +727,29 @@ class UnifiedLauncher:
                 if has_mongo
                 else print_warning("  MONGODB_URI not configured")
             )
+            
+            # Run comprehensive validation
+            validator_script = self.root_dir / "scripts" / "validate_environment.py"
+            if validator_script.exists():
+                print_info("  Running comprehensive validation...")
+                try:
+                    result = subprocess.run(
+                        [self.python_cmd, str(validator_script)],
+                        cwd=self.root_dir,
+                        capture_output=True,
+                        text=True,
+                        timeout=30
+                    )
+                    if result.returncode == 0:
+                        print_success("  Environment validation: Passed")
+                    else:
+                        print_warning("  Environment validation: Issues found")
+                        print_info("    Run: python scripts/validate_environment.py for details")
+                except Exception:
+                    pass
         else:
             print_error("  .env file missing")
+            print_info("    Run: python scripts/setup_environment_wizard.py to create")
 
         # Check services
         print(f"\n{Colors.BOLD}Services:{Colors.ENDC}")
@@ -614,15 +779,72 @@ class UnifiedLauncher:
                 print_warning("  API Server: Not running")
         except ImportError:
             print_warning("  API Server: requests not installed")
+        
+        # Check n8n
+        try:
+            import requests
+            try:
+                response = requests.get("http://localhost:5678/healthz", timeout=2)
+                if response.status_code == 200:
+                    print_success("  n8n: Running")
+                else:
+                    print_warning("  n8n: Not responding")
+            except (requests.RequestException, ConnectionError):
+                print_warning("  n8n: Not running (optional)")
+        except ImportError:
+            pass
+        
+        # Check n8n
+        try:
+            import requests
+            try:
+                response = requests.get("http://localhost:5678/healthz", timeout=2)
+                if response.status_code == 200:
+                    print_success("  n8n: Running")
+                else:
+                    print_warning("  n8n: Not responding")
+            except (requests.RequestException, ConnectionError):
+                print_warning("  n8n: Not running (optional)")
+        except ImportError:
+            pass
 
     def _run_tests(self):
         """Run system tests"""
         print_header("Running Tests")
-        print_info("Test functionality coming soon")
-        # Future: Implement test runner using pytest
+        
+        test_script = self.root_dir / "scripts" / "test_integration.py"
+        if test_script.exists():
+            print_info("Running integration tests...")
+            try:
+                subprocess.run(
+                    [self.python_cmd, str(test_script)],
+                    cwd=self.root_dir
+                )
+            except Exception as e:
+                print_error(f"Error running tests: {e}")
+        else:
+            print_warning("Integration test script not found")
+            print_info("Test functionality coming soon")
 
     def _check_config(self):
         """Check configuration"""
+        print_header("Configuration Check")
+        
+        # Run comprehensive environment validation
+        validator_script = self.root_dir / "scripts" / "validate_environment.py"
+        if validator_script.exists():
+            print_info("Running environment validation...")
+            try:
+                subprocess.run(
+                    [self.python_cmd, str(validator_script)],
+                    cwd=self.root_dir
+                )
+            except Exception as e:
+                print_error(f"Error running validation: {e}")
+        else:
+            print_warning("Environment validator not found")
+        
+        # Also show status
         self._show_status()
 
     def _reset_setup(self):
