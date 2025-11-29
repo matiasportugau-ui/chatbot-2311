@@ -1,8 +1,37 @@
-# 🚀 One-Command Simulation Runner
+# 🚀 Quick Run Reference
 
-## Quick Start
+## ⭐ Recommended: Unified Launcher
 
-Run everything with a single command:
+For the best experience, use the **Unified Launcher**:
+
+**Windows:**
+```batch
+launch.bat
+```
+
+**Linux/Mac:**
+```bash
+./launch.sh
+```
+
+**Direct:**
+```bash
+python unified_launcher.py
+```
+
+The unified launcher provides:
+- ✅ Interactive menu with all modes
+- ✅ Automatic setup and dependency installation
+- ✅ Service management (API, MongoDB, Next.js)
+- ✅ Multiple execution modes
+
+See **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** for complete documentation.
+
+---
+
+## Alternative: Simulation Script
+
+For quick simulation testing, you can use:
 
 ```bash
 ./run_simulation.sh
@@ -200,11 +229,16 @@ After the simulator starts:
 
 ## See Also
 
+- **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** - ⭐ Complete unified launcher guide (recommended)
+- **[START_HERE.md](./START_HERE.md)** - Quick start guide
+- **[HOW_TO_RUN.md](./HOW_TO_RUN.md)** - Detailed running instructions
 - **TESTING_GUIDE.md** - Comprehensive testing guide
 - **README_SIMULATOR.md** - Simulator documentation
 - **start_simulator.sh** - Alternative start script (requires API running)
 
 ---
 
-**That's it! One command to rule them all!** 🎉
+**Quick Summary:**
+- **Best option:** Use `unified_launcher.py` for full system access
+- **Quick test:** Use `./run_simulation.sh` for simulation only
 

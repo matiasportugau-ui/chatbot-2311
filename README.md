@@ -216,7 +216,61 @@ Cada vez que recibas nuevos datos de conversaciones o quieras sincronizar el cat
 
 Consulta [DATA_INGESTION.md](DATA_INGESTION.md) para formatos, logs y consejos adicionales.
 
-## Levantar servicios del chatbot
+## 🚀 Iniciar el Sistema - Unified Launcher (Recomendado)
+
+La forma más fácil de iniciar el sistema es usando el **Unified Launcher**, que maneja automáticamente la instalación, configuración y ejecución.
+
+### Inicio Rápido
+
+**Windows:**
+```batch
+launch.bat
+```
+
+**Linux/Mac:**
+```bash
+./launch.sh
+```
+
+**Directo:**
+```bash
+python unified_launcher.py
+```
+
+### ¿Qué hace el Unified Launcher?
+
+- ✅ **Verifica requisitos** (Python 3.11+, Node.js opcional)
+- ✅ **Instala dependencias** automáticamente
+- ✅ **Configura entorno** (crea .env si falta)
+- ✅ **Menú interactivo** con todos los modos disponibles
+- ✅ **Gestión de servicios** (API, MongoDB, Next.js)
+
+### Modos Disponibles
+
+```bash
+# Chat interactivo
+python unified_launcher.py --mode chat
+
+# API Server
+python unified_launcher.py --mode api
+
+# Simulador
+python unified_launcher.py --mode simulator
+
+# Full Stack (API + Dashboard)
+python unified_launcher.py --mode fullstack
+
+# Solo setup (sin ejecutar)
+python unified_launcher.py --setup-only
+```
+
+Para documentación completa, ver **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)**
+
+---
+
+## Alternativa: Inicio Manual
+
+Si prefieres iniciar componentes manualmente:
 
 1. Activa el entorno: `source .venv/bin/activate`.
 2. Exporta las variables sensibles (`OPENAI_API_KEY`, opcional `CHAT_USE_FULL_IA=true`).
@@ -226,6 +280,15 @@ Consulta [DATA_INGESTION.md](DATA_INGESTION.md) para formatos, logs y consejos a
    - `CHAT_USE_FULL_IA=true python chat_interactivo.py` para la versión completa.
 
 ## Ejecución automatizada end-to-end
+
+### Opción 1: Unified Launcher (Recomendado)
+
+```bash
+# Inicia todo el sistema con un comando
+python unified_launcher.py --mode fullstack
+```
+
+### Opción 2: Script de ejecución completa
 
 Usa el wrapper `bash scripts/run_full_stack.sh` para ejecutar todo en un solo comando:
 
@@ -519,6 +582,21 @@ Para soporte técnico o consultas sobre el sistema:
 - **Email:** info@bmcuruguay.com.uy
 - **Web:** https://bmcuruguay.com.uy
 - **Teléfono:** +598 XX XXX XXX
+
+## 📚 Referencias Rápidas
+
+### Cheat Sheet CLI
+Para comandos rápidos de Git, Node.js, deployment y más, consulta:
+- **[CHEAT_SHEET_CLI.md](./CHEAT_SHEET_CLI.md)** - Guía completa de comandos CLI
+- **[CHEAT_SHEET_CLI.json](./CHEAT_SHEET_CLI.json)** - Versión JSON para referencia programática
+
+Incluye comandos para:
+- 🔀 Git & GitHub (ramas, commits, PRs)
+- 📦 Node.js & npm (desarrollo, build, testing)
+- 🤖 Chatbot (embeddings, health checks, métricas)
+- 🚀 Deployment (Vercel, Docker, PM2)
+- 📚 Documentación (generación, validación)
+- 🍎 Utilidades macOS
 
 ## Licencia
 

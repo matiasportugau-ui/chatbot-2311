@@ -12,13 +12,28 @@ Use this checklist to spin up every major component without manual guesswork.
   ```
 
 ### 2. Start Python Back-end + Simulator
+
+**Recommended: Unified Launcher (All-in-One)**
+```bash
+# Start everything together
+python unified_launcher.py --mode fullstack
+```
+
+**Or use menu:**
+```bash
+python unified_launcher.py
+# Then select option 'a' for Full Stack
+```
+
+**Alternative: Manual Setup**
 ```bash
 python -m venv .venv && source .venv/bin/activate      # optional but recommended
 pip install -r requirements.txt
 python api_server.py                                   # terminal 1
 python simulate_chat_cli.py                            # terminal 2 (interactive)
 ```
-> `run_simulation.sh` still wraps the same flow automatically on Linux/macOS; `INICIAR_CHATBOT.bat` does the Windows one-click setup.
+
+> **Note:** The unified launcher (`launch.bat` / `launch.sh`) handles all of this automatically. Legacy scripts (`run_simulation.sh`, `INICIAR_CHATBOT.bat`) still work but are deprecated.
 
 ### 3. Start the Next.js Dashboard/API Routes
 ```bash
@@ -28,10 +43,24 @@ python simulate_chat_cli.py                            # terminal 2 (interactive
 - API routes (`src/app/api/*`) now auto-initialize the secure configuration the first time they are hit.
 
 ### 4. Optional: Full Simulation Script
-For the combined experience (MongoDB + API + simulator), stick to the documented helper:
+
+**Recommended: Unified Launcher**
+```bash
+# Windows
+launch.bat
+
+# Linux/Mac
+./launch.sh
+
+# Or directly
+python unified_launcher.py --mode simulator
+```
+
+**Legacy: Simulation Script (Deprecated)**
 ```bash
 ./run_simulation.sh
 ```
+- ⚠️ **Note:** This script is deprecated. Use unified launcher instead.
 - Detects Docker/MongoDB, installs Python deps, configures env, verifies services, and launches `chat_interactivo.py`.
 
 ### 5. Health Checks

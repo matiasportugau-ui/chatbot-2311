@@ -1,8 +1,61 @@
 # 🚀 How to Run the Chatbot on Windows
 
-## Quick Start
+## ⭐ Recommended: Unified Launcher
 
-### Option 1: Use the Batch File (Easiest)
+The **Unified Launcher** is the easiest and most powerful way to run the system. It handles setup, dependencies, and provides access to all modes.
+
+### Quick Start
+
+**Double-click:**
+```batch
+launch.bat
+```
+
+**Or run in PowerShell:**
+```powershell
+.\launch.bat
+```
+
+**Or directly:**
+```powershell
+python unified_launcher.py
+```
+
+### What It Does
+
+- ✅ Checks prerequisites (Python 3.11+, Node.js)
+- ✅ Installs dependencies automatically
+- ✅ Configures environment (.env file)
+- ✅ Interactive menu with all execution modes
+- ✅ Manages services (API, MongoDB, Next.js)
+
+### Direct Mode Execution
+
+Run specific modes without the menu:
+
+```powershell
+# Interactive Chatbot
+python unified_launcher.py --mode chat
+
+# API Server
+python unified_launcher.py --mode api
+
+# Chat Simulator
+python unified_launcher.py --mode simulator
+
+# Full Stack (API + Dashboard)
+python unified_launcher.py --mode fullstack
+```
+
+For complete documentation, see **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)**
+
+---
+
+## Alternative Options
+
+### Option 1: Legacy Batch File (Deprecated)
+
+⚠️ **Note:** This script is deprecated. Use `launch.bat` instead.
 
 Double-click `run_chatbot.bat` or run in PowerShell:
 
@@ -10,7 +63,7 @@ Double-click `run_chatbot.bat` or run in PowerShell:
 .\run_chatbot.bat
 ```
 
-### Option 2: Use the PowerShell Script
+### Option 2: PowerShell Script
 
 ```powershell
 .\run_chatbot.ps1
@@ -95,16 +148,29 @@ Type `salir`, `exit`, `chau`, `adios`, or `bye` to exit.
 
 ## Alternative: Full System with API Server
 
-For the complete system with API server and enhanced features:
+### Recommended: Use Unified Launcher
 
-### Terminal 1 - Start API Server:
+```powershell
+# Start everything together
+python unified_launcher.py --mode fullstack
+```
+
+### Manual: Two Terminals
+
+**Terminal 1 - Start API Server:**
 ```powershell
 python api_server.py
 ```
 
-### Terminal 2 - Start Enhanced CLI:
+**Terminal 2 - Start Enhanced CLI:**
 ```powershell
 python simulate_chat_cli.py
+```
+
+Or use unified launcher:
+```powershell
+python unified_launcher.py --mode api      # Terminal 1
+python unified_launcher.py --mode simulator # Terminal 2
 ```
 
 ## Troubleshooting
@@ -179,7 +245,8 @@ Once the chatbot is running:
 4. Review the quote generation logic
 
 For more advanced features, see:
-- `START_HERE.md` - Full system guide
+- **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** - ⭐ Complete unified launcher guide
+- **[START_HERE.md](./START_HERE.md)** - Quick start guide
+- **[HOW_TO_RUN.md](./HOW_TO_RUN.md)** - Detailed run instructions
 - `README_SIMULATOR.md` - Simulator documentation
-- `HOW_TO_RUN.md` - Detailed run instructions
 

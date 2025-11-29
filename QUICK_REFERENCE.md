@@ -334,6 +334,7 @@ ROI: 1,200,000%
 - [Summary](./OPTIMIZATION_SUMMARY.md) - Executive summary
 - [Comparison](./COMPARISON_TABLE.md) - Visual guide
 - [Implementation](./IMPLEMENTATION_GUIDE_OPTIMIZATIONS.md) - Code guide
+- **[Cheat Sheet CLI](./CHEAT_SHEET_CLI.md)** - ⚡ Comandos rápidos para Git, Node.js, deployment
 
 ### External Resources
 - [Hugging Face](https://huggingface.co) - NLP models
@@ -341,6 +342,54 @@ ROI: 1,200,000%
 - [FastAPI](https://fastapi.tiangolo.com) - API framework
 
 ---
+
+## ⚡ Comandos CLI Rápidos
+
+### Unified Launcher (Recomendado)
+
+```bash
+# Inicio rápido
+launch.bat              # Windows
+./launch.sh             # Linux/Mac
+python unified_launcher.py  # Directo
+
+# Modos directos
+python unified_launcher.py --mode chat        # Chat interactivo
+python unified_launcher.py --mode api       # API Server
+python unified_launcher.py --mode simulator # Simulador
+python unified_launcher.py --mode fullstack # API + Dashboard
+python unified_launcher.py --mode agent     # Sistema de agentes
+python unified_launcher.py --mode system    # Sistema completo
+
+# Opciones
+python unified_launcher.py --setup-only    # Solo setup
+python unified_launcher.py --skip-setup    # Saltar setup
+python unified_launcher.py --production    # Modo producción
+python unified_launcher.py --dev           # Modo desarrollo
+```
+
+Para una referencia completa de comandos Git, Node.js, deployment y más, consulta:
+- **[CHEAT_SHEET_CLI.md](./CHEAT_SHEET_CLI.md)** - Guía completa con todos los comandos organizados por categoría
+- **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** - ⭐ Documentación completa del Unified Launcher
+
+**Comandos más usados:**
+```bash
+# Git
+git status -sb                    # Estado resumido
+git switch -c feature/nueva-func  # Nueva rama
+git commit -m "mensaje"           # Commit
+git push -u origin <RAMA>        # Push
+
+# Node.js
+npm run dev                       # Desarrollo
+npm run build                     # Build
+npm run lint                      # Linter
+npm run typecheck                 # TypeScript check
+
+# Deployment
+npm run deploy:preview            # Vercel preview
+npm run deploy:prod              # Vercel producción
+```
 
 ## 📝 Notes Section
 
