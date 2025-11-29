@@ -1,6 +1,29 @@
 # 🚀 Start Chatbot NOW
 
-## Quick Start (3 Steps)
+## ⭐ Fastest Way: Unified Launcher
+
+**Windows - Double-click:**
+```batch
+launch.bat
+```
+
+**Linux/Mac:**
+```bash
+./launch.sh
+```
+
+**Or directly:**
+```bash
+python unified_launcher.py --mode chat
+```
+
+That's it! The unified launcher handles everything automatically.
+
+For complete documentation, see **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)**
+
+---
+
+## Alternative: Manual Start (3 Steps)
 
 ### Step 1: Open Terminal
 - Press `Win + R`
@@ -18,7 +41,9 @@ cd "C:\Users\usuario\Clone repo coti inteligente\bmc-cotizacion-inteligente"
 python chat_interactivo.py
 ```
 
-## OR: Just Double-Click
+## OR: Legacy Batch File (Deprecated)
+
+⚠️ **Note:** `run_chatbot.bat` is deprecated. Use `launch.bat` instead.
 
 **Double-click `run_chatbot.bat`** in Windows Explorer - it will open automatically!
 

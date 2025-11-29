@@ -56,11 +56,14 @@ python unified_launcher.py
    - Simulates chat conversations
    - Tests chatbot logic without WhatsApp
    - Requires API server running
+   - Available via menu or `--mode simulator`
 
 4. **Enhanced CLI Simulator** (`simulate_chat_cli.py`)
 
    - Enhanced simulator with better formatting
    - Interactive CLI interface
+   - Available via menu (option 4)
+   - Note: Not available as direct `--mode` option, use menu or run directly
 
 5. **Main System Menu** (`main.py`)
 

@@ -1,32 +1,68 @@
 # 🚀 Quick Start - Run the Chatbot
 
-## Run in Your Own Terminal
+## ⭐ Recommended: Unified Launcher
 
-The chatbot needs an **interactive terminal** where you can type messages. Here's how:
+The **Unified Launcher** is the easiest way to run the chatbot. It handles everything automatically.
+
+### Quick Start (Windows)
+
+**Double-click:**
+```batch
+launch.bat
+```
+
+**Or in PowerShell:**
+```powershell
+.\launch.bat
+```
+
+**Or directly:**
+```powershell
+python unified_launcher.py --mode chat
+```
+
+### Quick Start (Linux/Mac)
+
+```bash
+./launch.sh
+```
+
+**Or directly:**
+```bash
+python unified_launcher.py --mode chat
+```
+
+The unified launcher will:
+- ✅ Check prerequisites
+- ✅ Install dependencies
+- ✅ Configure environment
+- ✅ Start the chatbot
+
+For complete documentation, see **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)**
+
+---
+
+## Alternative: Manual Execution
+
+If you prefer to run manually, the chatbot needs an **interactive terminal** where you can type messages.
 
 ### Step 1: Open a Terminal
 
-**Option A: PowerShell**
+**Windows - PowerShell:**
 - Press `Win + X`
 - Select "Windows PowerShell" or "Terminal"
-- Navigate to the project folder:
-  ```powershell
-  cd "C:\Users\usuario\Clone repo coti inteligente\bmc-cotizacion-inteligente"
-  ```
+- Navigate to the project folder
 
-**Option B: Command Prompt**
+**Windows - Command Prompt:**
 - Press `Win + R`
 - Type `cmd` and press Enter
-- Navigate to the project folder:
-  ```cmd
-  cd "C:\Users\usuario\Clone repo coti inteligente\bmc-cotizacion-inteligente"
-  ```
+- Navigate to the project folder
 
 ### Step 2: Run the Chatbot
 
-**Easiest way - Double-click:**
+**Legacy batch file (deprecated):**
 - Double-click `run_chatbot.bat` in Windows Explorer
-- A terminal window will open automatically
+- ⚠️ Note: Use `launch.bat` instead (unified launcher)
 
 **Or run manually:**
 

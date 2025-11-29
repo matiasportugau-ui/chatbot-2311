@@ -1,10 +1,60 @@
 # 🚀 Instalación y Ejecución del Chatbot BMC
 
-## Instalación Rápida
+## ⭐ Recomendado: Unified Launcher
 
-### Opción 1: Usar el Script Batch (Recomendado para Windows)
+El **Unified Launcher** es la forma más fácil y completa de ejecutar el sistema. Maneja automáticamente la instalación, configuración y ejecución.
 
-Simplemente ejecuta:
+### Inicio Rápido
+
+**Windows:**
+```batch
+launch.bat
+```
+
+**Linux/Mac:**
+```bash
+./launch.sh
+```
+
+**Directo:**
+```bash
+python unified_launcher.py
+```
+
+### ¿Qué hace el Unified Launcher?
+
+- ✅ Verifica requisitos (Python 3.11+, Node.js)
+- ✅ Instala dependencias automáticamente
+- ✅ Configura entorno (.env)
+- ✅ Menú interactivo con todos los modos
+- ✅ Gestión de servicios (API, MongoDB, Next.js)
+
+### Ejecución Directa de Modos
+
+```bash
+# Chat interactivo
+python unified_launcher.py --mode chat
+
+# API Server
+python unified_launcher.py --mode api
+
+# Simulador
+python unified_launcher.py --mode simulator
+
+# Full Stack (API + Dashboard)
+python unified_launcher.py --mode fullstack
+```
+
+Para documentación completa, ver **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)**
+
+---
+
+## Alternativas
+
+### Opción 1: Script Batch Legacy (Deprecado)
+
+⚠️ **Nota:** Este script está deprecado. Usa `launch.bat` en su lugar.
+
 ```batch
 run_chatbot.bat
 ```
