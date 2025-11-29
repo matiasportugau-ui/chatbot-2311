@@ -24,20 +24,19 @@ El sistema incluye validación centralizada que garantiza que toda la informaci�
 
 Para generar una cotización, el sistema requiere los siguientes datos mínimos:
 
-| Campo        | Descripción          | Ejemplo                         |
-| ------------ | -------------------- | ------------------------------- |
-| **nombre**   | Nombre del cliente   | Juan                            |
-| **apellido** | Apellido del cliente | Pérez                           |
-| **telefono** | Teléfono de contacto | 099123456                       |
-| **producto** | Tipo de producto     | isodec, poliestireno, lana_roca |
-| **espesor**  | Espesor del producto | 50mm, 75mm, 100mm, 125mm, 150mm |
-| **largo**    | Largo en metros      | 10                              |
-| **ancho**    | Ancho en metros      | 5                               |
+| Campo | Descripción | Ejemplo |
+|-------|-------------|---------|
+| **nombre** | Nombre del cliente | Juan |
+| **apellido** | Apellido del cliente | Pérez |
+| **telefono** | Teléfono de contacto | 099123456 |
+| **producto** | Tipo de producto | isodec, poliestireno, lana_roca |
+| **espesor** | Espesor del producto | 50mm, 75mm, 100mm, 125mm, 150mm |
+| **largo** | Largo en metros | 10 |
+| **ancho** | Ancho en metros | 5 |
 
 ### Comportamiento del Bot
 
 **Solicitud Automática de Datos:**
-
 - El bot detecta automáticamente qué datos faltan
 - Solicita la información de forma clara y específica
 - Adapta el mensaje según la cantidad de datos faltantes
@@ -46,24 +45,21 @@ Para generar una cotización, el sistema requiere los siguientes datos mínimos:
 **Ejemplos de Mensajes del Bot:**
 
 Cuando falta un solo dato:
-
 ```
-Bot: "Para poder cotizar necesito que me indiques qué producto te interesa
+Bot: "Para poder cotizar necesito que me indiques qué producto te interesa 
 (Isodec, Poliestireno o Lana de Roca). ¿Cuál te interesa?"
 ```
 
 Cuando faltan varios datos:
-
 ```
-Bot: "Para poder cotizar necesito los siguientes datos: tu apellido,
-el espesor que necesitas (50mm, 75mm, 100mm, 125mm o 150mm) y las dimensiones
+Bot: "Para poder cotizar necesito los siguientes datos: tu apellido, 
+el espesor que necesitas (50mm, 75mm, 100mm, 125mm o 150mm) y las dimensiones 
 (largo x ancho en metros, por ejemplo: 10m x 5m). ¿Podrías indicarme esa información?"
 ```
 
 Cuando faltan las dimensiones:
-
 ```
-Bot: "Para poder cotizar necesito las dimensiones (largo x ancho en metros,
+Bot: "Para poder cotizar necesito las dimensiones (largo x ancho en metros, 
 por ejemplo: 10m x 5m). ¿Cuáles son las dimensiones?"
 ```
 
@@ -101,7 +97,7 @@ contexto = {
 }
 
 # Detectar datos faltantes
-faltantes = obtener_datos_faltantes(contexto)
+faltantes = obtener_datos_faltantes(contexto)  
 # Resultado: ['apellido']
 
 # Generar mensaje amigable
@@ -154,17 +150,21 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 ### Instalación Automática (Recomendada)
 
 1. **Requisitos del sistema:**
-
    - Python 3.7 o superior
    - Conexión a internet (para dependencias opcionales)
 
-2. **Ejecutar instalador:**
+2. **Configurar entorno virtual del chatbot:**
+   ```bash
+   bash scripts/setup_chatbot_env.sh
+   ```
+   Este script crea `.venv`, instala `requirements.txt` y genera un `.env` basado en `env.example` para que completes tus credenciales (`OPENAI_API_KEY`, `MONGODB_URI`, etc.).
 
+3. **Ejecutar instalador:**
    ```bash
    python instalar.py
    ```
 
-3. **Ejecutar el sistema:**
+4. **Ejecutar el sistema:**
    ```bash
    python ejecutar_sistema.py
    ```
@@ -172,18 +172,15 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 ### Instalación Manual
 
 1. **Requisitos del sistema:**
-
    - Python 3.7 o superior
    - Módulos básicos: `json`, `datetime`, `decimal`, `csv`, `dataclasses`, `typing`
 
 2. **Dependencias opcionales (para funcionalidades avanzadas):**
-
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Clonar o descargar el sistema:**
-
    ```bash
    git clone [url-del-repositorio]
    cd sistema-cotizaciones-bmc
@@ -194,72 +191,53 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
    python ejecutar_sistema.py
    ```
 
-## Unified Launcher (Recomendado)
+## Actualizar conocimiento entrenado
 
-El sistema ahora incluye un launcher unificado que consolida todos los modos de ejecución, scripts de configuración y herramientas de desarrollo en un solo punto de entrada.
+Cada vez que recibas nuevos datos de conversaciones o quieras sincronizar el catálogo:
 
-### Inicio Rápido
+1. (Opcional) Lanza manualmente los ingesters:
+   ```bash
+   source .venv/bin/activate
+   python python-scripts/fetch_shopify_products.py
+   python python-scripts/fetch_mercadolibre_questions.py  # requiere MELI_ACCESS_TOKEN/MELI_SELLER_ID
+   # o usa un CSV exportado:
+   # python python-scripts/fetch_mercadolibre_questions.py --csv-export data/mercadolibre/export.csv
+   ```
+   > Tip: Usa `python python-scripts/mercadolibre_oauth_helper.py` para generar y
+   > refrescar los tokens (`MELI_ACCESS_TOKEN`/`MELI_REFRESH_TOKEN`) directamente
+   > desde tu App ID y client secret.
+2. Ejecuta `bash scripts/refresh_knowledge.sh`. El script:
+   - Activa `.venv`
+   - Corre los ingesters anteriores automáticamente (controlables con `RUN_SHOPIFY_SYNC` y `RUN_MELI_SYNC`)
+   - Consolida todos los JSON de conocimiento
+   - Ejecuta `python validar_integracion.py`
+   - Registra el resultado en `logs/automation/ingestion_*.log`
+3. Si alguna validación falla, revisa los reportes en `reporte_validacion.json/.txt` antes de iniciar el chatbot.
 
-**Windows:**
+Consulta [DATA_INGESTION.md](DATA_INGESTION.md) para formatos, logs y consejos adicionales.
 
-```batch
-launch.bat
-```
+## Levantar servicios del chatbot
 
-**Linux/Mac:**
+1. Activa el entorno: `source .venv/bin/activate`.
+2. Exporta las variables sensibles (`OPENAI_API_KEY`, opcional `CHAT_USE_FULL_IA=true`).
+3. Inicia la API: `python api_server.py` (carga el conocimiento consolidado al arrancar).
+4. En otra terminal puedes interactuar con el bot:
+   - `python simulate_chat_cli.py` para pruebas rápidas.
+   - `CHAT_USE_FULL_IA=true python chat_interactivo.py` para la versión completa.
 
-```bash
-./launch.sh
-```
+## Ejecución automatizada end-to-end
 
-**Directo con Python:**
+Usa el wrapper `bash scripts/run_full_stack.sh` para ejecutar todo en un solo comando:
 
-```bash
-python unified_launcher.py
-```
+1. Verifica/crea `.venv` (usa `scripts/setup_chatbot_env.sh` si falta).
+2. Consolida y valida el conocimiento (genera reportes en `logs/automation/`).
+3. Inicia `api_server.py` dejando el log en el mismo archivo.
 
-### Características del Launcher Unificado
+Detén la API con `CTRL+C`. Si necesitas lanzar el simulador, abre otra terminal y usa los comandos de la sección anterior mientras la API sigue corriendo.
 
-- ✅ **Un solo comando** para acceder a todos los modos del sistema
-- ✅ **Configuración automática** de dependencias y entorno
-- ✅ **Multiplataforma** (Windows, Linux, Mac)
-- ✅ **Detección inteligente** de Python, Node.js, Docker
-- ✅ **Menú unificado** con todos los modos de ejecución
-- ✅ **Gestión de servicios** en segundo plano (API, MongoDB, Next.js)
-- ✅ **Herramientas de desarrollo** integradas
+### Persistencia y monitoreo opcional
 
-### Modos de Ejecución Disponibles
-
-1. **Chatbot Interactivo** - Interfaz de conversación en tiempo real
-2. **Servidor API** - API REST FastAPI
-3. **Simulador de Chat** - Pruebas sin WhatsApp
-4. **Sistema Principal** - Menú completo del sistema
-5. **Sistema de Agentes** - Agentes automatizados
-6. **Dashboard Next.js** - Interfaz web (desarrollo/producción)
-7. **Stack Completo** - API + Dashboard juntos
-
-### Opciones de Línea de Comandos
-
-```bash
-# Mostrar menú interactivo
-python unified_launcher.py
-
-# Ejecutar modo específico
-python unified_launcher.py --mode chat
-python unified_launcher.py --mode api
-python unified_launcher.py --mode fullstack
-
-# Solo configuración
-python unified_launcher.py --setup-only
-
-# Saltar configuración
-python unified_launcher.py --skip-setup --mode chat
-
-# Modo producción
-python unified_launcher.py --production --mode fullstack
-```
-
-Para más información, consulta [UNIFIED_LAUNCHER.md](UNIFIED_LAUNCHER.md).
+Consulta `[MONITOREO_AUTOMATIZADO.md](MONITOREO_AUTOMATIZADO.md)` para habilitar MongoDB como fallback y programar tareas (cron, launchd o systemd) que ejecuten `scripts/refresh_knowledge.sh` o `scripts/run_full_stack.sh`.
 
 ## Uso del Sistema
 
@@ -277,7 +255,6 @@ El sistema permite crear cotizaciones de forma interactiva:
 ### 2. Buscar Cotizaciones
 
 Opciones de búsqueda disponibles:
-
 - Por nombre del cliente
 - Por número de teléfono
 - Por rango de fechas
@@ -286,7 +263,6 @@ Opciones de búsqueda disponibles:
 ### 3. Generar Reportes
 
 El sistema genera reportes detallados que incluyen:
-
 - Información del cliente
 - Especificaciones técnicas del producto
 - Cálculos de dimensiones y precios
@@ -299,10 +275,73 @@ El sistema genera reportes detallados que incluyen:
 - **Plantillas:** Exporta las plantillas de cotización
 - **Configuración:** Exporta la matriz de precios
 
+## Interfaz de Chat Local
+
+El sistema incluye una interfaz de chat HTML standalone para testing y entrenamiento local.
+
+### Inicio Rápido
+
+```bash
+# Iniciar todo el sistema (API + servidor HTTP)
+bash start_chat_interface.sh
+```
+
+Esto iniciará:
+- Servidor API FastAPI en `http://localhost:8000`
+- Servidor HTTP en `http://localhost:8080` (o puerto disponible)
+- Abrirá automáticamente el navegador
+
+### Características
+
+- ✅ **Interfaz completa**: Chat UI similar a producción
+- ✅ **Persistencia de sesión**: IDs de sesión en localStorage
+- ✅ **Historial de mensajes**: Últimos 100 mensajes guardados
+- ✅ **Reintentos automáticos**: Hasta 3 intentos en caso de error
+- ✅ **Indicador de conexión**: Estado visual de la conexión API
+- ✅ **Panel de configuración**: Personalizar URL API y teléfono
+- ✅ **Exportar conversaciones**: Descargar historial como JSON
+- ✅ **Notificaciones**: Alertas cuando el bot responde
+- ✅ **Accesibilidad**: Soporte completo para lectores de pantalla
+
+### Documentación Completa
+
+- **Guía de Usuario**: Ver `CHAT_INTERFACE_GUIDE.md`
+- **Guía de Desarrollador**: Ver `CHAT_INTERFACE_DEVELOPER.md`
+
+### Uso Básico
+
+1. **Iniciar el sistema:**
+   ```bash
+   bash start_chat_interface.sh
+   ```
+
+2. **Abrir en navegador:**
+   - El script abrirá automáticamente
+   - O navegar manualmente a `http://localhost:8080/chat-interface.html`
+
+3. **Enviar mensajes:**
+   - Escribe en el campo de entrada
+   - Presiona Enter o clic en el botón de enviar
+   - El bot responderá automáticamente
+
+4. **Configurar:**
+   - Clic en el menú (⋯) para acceder a configuración
+   - Cambiar URL API o teléfono por defecto
+   - Los cambios se guardan automáticamente
+
+### Testing y Entrenamiento
+
+La interfaz es ideal para:
+- **Testing local**: Probar respuestas del bot sin depender de WhatsApp
+- **Entrenamiento**: Generar datasets de conversaciones reales
+- **Desarrollo**: Iterar rápidamente en prompts y conocimiento
+- **Validación**: Verificar flujos de conversación completos
+
+Todos los mensajes y respuestas se guardan en localStorage y pueden exportarse para análisis.
+
 ## Productos Soportados
 
 ### Isodec
-
 - **Descripción:** Panel aislante térmico con núcleo de EPS
 - **Espesores:** 50mm, 75mm, 100mm, 125mm, 150mm
 - **Rellenos:** EPS, Poliuretano, Lana de roca
@@ -310,32 +349,27 @@ El sistema genera reportes detallados que incluyen:
 - **Terminaciones:** Gotero, Hormigón, Aluminio
 
 ### Poliestireno Expandido
-
 - **Descripción:** Aislante térmico de poliestireno expandido
 - **Espesores:** 25mm, 50mm, 75mm, 100mm
 
 ### Lana de Roca
-
 - **Descripción:** Aislante térmico y acústico de lana de roca
 - **Espesores:** 50mm, 75mm, 100mm
 
 ## Fórmulas de Cálculo
 
 ### Precio Base
-
 ```
 Precio base = Área (m²) × Precio por m²
 ```
 
 ### Factores de Ajuste
-
 - **Espesor:** 0.8 (50mm) a 1.2 (150mm)
 - **Color:** 1.0 (Blanco) a 1.15 (Personalizado)
 - **Terminaciones:** +5% (Gotero) a +15% (Aluminio)
 - **Servicios:** Incluidos o con descuento
 
 ### Precio Final
-
 ```
 Precio final = Precio base × Factor espesor × Factor color × Factor terminaciones × Factor servicios
 ```
@@ -351,40 +385,37 @@ El sistema puede importar datos desde la planilla "Administrador de Cotizaciones
 
 ### Campos Mapeados
 
-| Google Sheets     | Sistema                        |
-| ----------------- | ------------------------------ |
-| Cliente           | cliente.nombre                 |
-| Telefono-Contacto | cliente.telefono               |
-| Direccion / Zona  | cliente.direccion              |
-| Producto          | especificaciones.producto      |
-| Espesor           | especificaciones.espesor       |
-| Relleno           | especificaciones.relleno       |
-| Largo (M)         | especificaciones.largo_metros  |
-| Ancho (M)         | especificaciones.ancho_metros  |
-| Color             | especificaciones.color         |
-| TerminaFront      | especificaciones.termina_front |
-| TerminaSup        | especificaciones.termina_sup   |
-| Termina Lat. 1    | especificaciones.termina_lat_1 |
-| Termina Lat. 2    | especificaciones.termina_lat_2 |
-| Anclajes a        | especificaciones.anclajes      |
-| Traslado          | especificaciones.traslado      |
+| Google Sheets | Sistema |
+|---------------|---------|
+| Cliente | cliente.nombre |
+| Telefono-Contacto | cliente.telefono |
+| Direccion / Zona | cliente.direccion |
+| Producto | especificaciones.producto |
+| Espesor | especificaciones.espesor |
+| Relleno | especificaciones.relleno |
+| Largo (M) | especificaciones.largo_metros |
+| Ancho (M) | especificaciones.ancho_metros |
+| Color | especificaciones.color |
+| TerminaFront | especificaciones.termina_front |
+| TerminaSup | especificaciones.termina_sup |
+| Termina Lat. 1 | especificaciones.termina_lat_1 |
+| Termina Lat. 2 | especificaciones.termina_lat_2 |
+| Anclajes a | especificaciones.anclajes |
+| Traslado | especificaciones.traslado |
 
 ## Plantillas de Cotización
 
 ### 1. Isodec - Cotización Estándar
-
 - Para productos Isodec con especificaciones completas
 - Incluye todos los campos técnicos
 - Cálculo detallado de precios
 
 ### 2. Cotización Rápida
-
 - Para estimaciones rápidas
 - Campos mínimos requeridos
 - Precio estimado por m²
 
 ### 3. Cotización Detallada
-
 - Para cotizaciones completas
 - Desglose de costos
 - Incluye IVA y servicios
@@ -399,13 +430,13 @@ El sistema puede importar datos desde la planilla "Administrador de Cotizaciones
     "isodec": {
       "espesores_disponibles": {
         "100mm": {
-          "precio_base": 150.0,
+          "precio_base": 150.00,
           "factor_espesor": 1.0
         }
       },
       "colores_disponibles": {
         "Blanco": {
-          "precio_base": 0.0,
+          "precio_base": 0.00,
           "factor_color": 1.0
         }
       }
@@ -461,7 +492,6 @@ El sistema incluye enlaces directos a los productos en bmcuruguay.com.uy:
 ### Modificar Fórmulas de Cálculo
 
 Editar los métodos en `SistemaCotizacionesBMC`:
-
 - `_calcular_factor_espesor()`
 - `_calcular_factor_color()`
 - `_calcular_factor_terminaciones()`
@@ -471,17 +501,14 @@ Editar los métodos en `SistemaCotizacionesBMC`:
 ## Solución de Problemas
 
 ### Error: "Producto no encontrado"
-
 - Verificar que el producto esté en `matriz_precios.json`
 - Usar códigos exactos (isodec, poliestireno, lana_roca)
 
 ### Error: "Precio no calculado"
-
 - Verificar que el precio base esté configurado
 - Revisar las especificaciones del producto
 
 ### Error: "Archivo no encontrado"
-
 - Verificar que `matriz_precios.json` esté en el directorio
 - Verificar permisos de lectura/escritura
 

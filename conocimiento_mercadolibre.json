@@ -1,0 +1,47 @@
+{
+  "fuente": "mercadolibre_csv",
+  "descripcion": "Historial de preguntas/respuestas de Mercado Libre",
+  "fecha_exportacion": "2025-11-26T08:29:54.413579+00:00",
+  "interacciones": [
+    {
+      "id": "meli_1",
+      "timestamp": "2024-11-01T10:00:00",
+      "cliente_id": "mercadolibre_cliente",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "¿Tienen stock?",
+      "respuesta_agente": "Sí, disponible",
+      "contexto": {
+        "canal": "mercadolibre",
+        "item_id": "ITEM123",
+        "estado_pregunta": "ANSWERED",
+        "estado_respuesta": "UNANSWERED",
+        "seller_id": ""
+      },
+      "resultado": "respondido",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "meli_2",
+      "timestamp": "2024-11-02T09:30:00",
+      "cliente_id": "mercadolibre_cliente",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "Precio del de 8cm?",
+      "respuesta_agente": "",
+      "contexto": {
+        "canal": "mercadolibre",
+        "item_id": "ITEM456",
+        "estado_pregunta": "UNANSWERED",
+        "estado_respuesta": "UNANSWERED",
+        "seller_id": ""
+      },
+      "resultado": "pendiente",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    }
+  ]
+}

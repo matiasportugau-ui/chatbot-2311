@@ -81,6 +81,22 @@ export class SecureConfig {
     }
   }
 
+  // Obtener configuración de Mercado Libre
+  getMercadoLibreConfig() {
+    const config = credentialsManager.getMercadoLibre()
+    return {
+      appId: config.app_id,
+      clientSecret: config.client_secret,
+      redirectUri: config.redirect_uri,
+      sellerId: config.seller_id,
+      webhookSecret: config.webhook_secret,
+      authBaseUrl: config.auth_base_url,
+      apiBaseUrl: config.api_base_url,
+      scopes: config.scopes,
+      pkceEnabled: config.pkce_enabled
+    }
+  }
+
   // Obtener configuración del sistema
   getSystemConfig() {
     const config = credentialsManager.getSystem()

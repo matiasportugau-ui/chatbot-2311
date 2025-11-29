@@ -55,6 +55,25 @@ MONGODB_URI=mongodb+srv://bmcadmin:password@cluster.mongodb.net/
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://tu-app.vercel.app
 
+# Mercado Libre OAuth / API
+MERCADO_LIBRE_APP_ID=tu-app-id
+MERCADO_LIBRE_CLIENT_SECRET=tu-client-secret
+MERCADO_LIBRE_REDIRECT_URI=https://tu-app.vercel.app/api/mercado-libre/auth/callback
+MERCADO_LIBRE_SELLER_ID=tu-seller-id
+MERCADO_LIBRE_WEBHOOK_SECRET=
+# IMPORTANTE: MERCADO_LIBRE_AUTH_URL debe coincidir con la región donde registraste la app
+# Argentina: https://auth.mercadolibre.com.ar
+# México: https://auth.mercadolibre.com.mx
+# Uruguay: https://auth.mercadolibre.com.uy
+# Brasil: https://auth.mercadolibre.com.br
+# Chile: https://auth.mercadolibre.com.cl
+# Colombia: https://auth.mercadolibre.com.co
+# Perú: https://auth.mercadolibre.com.pe
+MERCADO_LIBRE_AUTH_URL=https://auth.mercadolibre.com.uy
+MERCADO_LIBRE_API_URL=https://api.mercadolibre.com
+MERCADO_LIBRE_SCOPES=offline_access read write
+MERCADO_LIBRE_PKCE_ENABLED=true
+
 # WhatsApp Business API (Opcional)
 WHATSAPP_ACCESS_TOKEN=pendiente
 WHATSAPP_PHONE_NUMBER_ID=pendiente
