@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic'
 
 import { connectDB } from '@/lib/mongodb'
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAuth } from '@/lib/auth'
+import { withRateLimit } from '@/lib/rate-limit'
 
 /**
  * Import API Endpoint
@@ -14,7 +16,7 @@ import { NextRequest, NextResponse } from 'next/server'
  * - type: 'conversations' | 'quotes' | 'products' (required)
  * - validateOnly: boolean (default: false) - if true, only validate without importing
  */
-export async function POST(request: NextRequest) {
+async function importHandler(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
@@ -284,3 +286,6 @@ function validateData(
     errors,
   }
 }
+
+// Export with authentication and rate limiting
+export const POST = withRateLimit(requireAuth(async (request: NextRequest) => importHandler(request)), 10, 15 * 60 * 1000)

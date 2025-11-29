@@ -3,6 +3,8 @@ export const dynamic = 'force-dynamic'
 import { connectDB } from '@/lib/mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import * as XLSX from 'xlsx'
+import { requireAuth } from '@/lib/auth'
+import { withRateLimit } from '@/lib/rate-limit'
 
 /**
  * Export API Endpoint
@@ -15,7 +17,7 @@ import * as XLSX from 'xlsx'
  * - format: 'CSV' | 'JSON' | 'Excel' (default: 'JSON')
  * - filters: object (optional) - date range, status, etc.
  */
-export async function POST(request: NextRequest) {
+async function exportHandler(request: NextRequest) {
   try {
     const body = await request.json()
     const { type, format = 'JSON', filters = {} } = body
@@ -225,3 +227,6 @@ function convertToCSV(data: any[]): string {
 
   return csvRows.join('\n')
 }
+
+// Export with authentication and rate limiting
+export const POST = withRateLimit(requireAuth(async (request: NextRequest) => exportHandler(request)), 20, 15 * 60 * 1000)

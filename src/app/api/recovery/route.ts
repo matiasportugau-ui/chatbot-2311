@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { promises as fs } from 'fs'
 import path from 'path'
+import { requireAdmin } from '@/lib/auth'
+import { withRateLimit } from '@/lib/rate-limit'
 
 /**
  * Data Recovery API Endpoint
@@ -41,7 +43,7 @@ interface RecoveryReport {
   }
 }
 
-export async function GET(request: NextRequest) {
+async function getRecoveryHandler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const action = searchParams.get('action') || 'scan' // 'scan' | 'restore' | 'backup'
@@ -243,7 +245,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postRecoveryHandler(request: NextRequest) {
   try {
     const body = await request.json()
     const { action, source, data } = body
@@ -368,3 +370,15 @@ async function restoreData(source: string, data: any[]) {
   }
 }
 
+
+// Export with admin authentication and rate limiting
+export const GET = withRateLimit(
+  requireAdmin(async (request: NextRequest) => getRecoveryHandler(request)),
+  10, // 10 requests per 15 minutes (admin only)
+  15 * 60 * 1000
+)
+export const POST = withRateLimit(
+  requireAdmin(async (request: NextRequest) => postRecoveryHandler(request)),
+  5, // 5 requests per 15 minutes (admin only, lower for write operations)
+  15 * 60 * 1000
+)
