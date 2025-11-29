@@ -9,7 +9,7 @@ RESULTADOS:
   ✅ uso_conocimiento: Exitoso
 
 ESTADÍSTICAS:
-  interacciones: 14
+  interacciones: 20
   patrones: 1
   productos: 1
   patrones_respuesta: 4

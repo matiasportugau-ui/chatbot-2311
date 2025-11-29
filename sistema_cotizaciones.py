@@ -95,6 +95,30 @@ class SistemaCotizacionesBMC:
                 terminaciones_disponibles=["Gotero", "Hormigón"],
                 anclajes_incluidos=True,
                 traslado_incluido=False
+            ),
+            "poliestireno": Producto(
+                codigo="poliestireno",
+                nombre="Poliestireno Expandido",
+                espesor="75mm",
+                relleno="EPS",
+                color="Blanco",
+                precio_base=Decimal('0'),
+                link_web="https://bmcuruguay.com.uy/productos/poliestireno",
+                terminaciones_disponibles=["Gotero"],
+                anclajes_incluidos=False,
+                traslado_incluido=False
+            ),
+            "lana_roca": Producto(
+                codigo="lana_roca",
+                nombre="Lana de Roca",
+                espesor="50mm",
+                relleno="Lana de roca",
+                color="Blanco",
+                precio_base=Decimal('0'),
+                link_web="https://bmcuruguay.com.uy/productos/lana-de-roca",
+                terminaciones_disponibles=["Hormigón", "Aluminio"],
+                anclajes_incluidos=False,
+                traslado_incluido=False
             )
         }
         
