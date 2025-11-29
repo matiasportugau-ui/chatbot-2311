@@ -32,3 +32,4 @@ export interface MercadoLibreOrderRecord {
   updatedAt: Date
 }
 
+

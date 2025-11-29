@@ -243,6 +243,45 @@ async def process_chat_message(request: ChatRequest):
             except Exception as e:
                 logger.warning(f"Failed to save context to shared service: {e}")
 
+        # CRITICAL: Save conversation directly to MongoDB conversations collection
+        try:
+            mongodb_uri = os.getenv("MONGODB_URI")
+            if mongodb_uri:
+                from pymongo import MongoClient
+                
+                client = MongoClient(
+                    mongodb_uri,
+                    serverSelectionTimeoutMS=5000,
+                    connectTimeoutMS=5000,
+                )
+                # Test connection
+                client.server_info()
+                
+                db = client.get_database()
+                conversations_col = db.conversations
+                
+                if conversations_col:
+                    conversations_col.insert_one(
+                        {
+                            "session_id": session_id or resultado.get("sesion_id", ""),
+                            "phone": request.telefono,
+                            "message": request.mensaje,
+                            "response": resultado.get("mensaje", ""),
+                            "response_type": resultado.get("tipo", ""),
+                            "confidence": resultado.get("confianza", 0.0),
+                            "intent": resultado.get("intencion", ""),
+                            "entities": resultado.get("entidades", {}),
+                            "timestamp": datetime.now(),
+                            "source": "api",
+                        }
+                    )
+                    logger.debug(
+                        f"Conversation saved to MongoDB for session {session_id}"
+                    )
+                client.close()
+        except Exception as e:
+            logger.warning(f"Could not save conversation to MongoDB: {e}")
+
         # Retornar respuesta
         return ChatResponse(**resultado)
 

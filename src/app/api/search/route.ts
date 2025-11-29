@@ -2,22 +2,32 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
+import { requireAuth } from '@/lib/auth'
+import { withRateLimit } from '@/lib/rate-limit'
+
+/**
+ * Sanitize regex query to prevent regex injection
+ */
+function sanitizeRegexQuery(query: string): string {
+  return query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
 
 /**
  * Search API Endpoint
  * POST /api/search
  * 
  * Full-text search across conversations, quotes, users, and products
+ * Requires authentication
  * 
  * Request body:
  * - query: string (required)
  * - type: 'all' | 'conversations' | 'quotes' | 'users' | 'products' (default: 'all')
- * - limit: number (default: 20)
+ * - limit: number (default: 20, max: 100)
  */
-export async function POST(request: NextRequest) {
+async function searchHandler(request: NextRequest) {
   try {
     const body = await request.json()
-    const { query, type = 'all', limit = 20 } = body
+    let { query, type = 'all', limit = 20 } = body
 
     if (!query || typeof query !== 'string') {
       return NextResponse.json(
@@ -26,21 +36,43 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate and limit limit parameter
+    limit = Math.min(Math.max(parseInt(String(limit)) || 20, 1), 100)
+
+    // Sanitize query for regex fallback
+    const sanitizedQuery = sanitizeRegexQuery(query)
+
     const db = await connectDB()
     const results: any[] = []
 
     // Search conversations
     if (type === 'all' || type === 'conversations') {
       const conversations = db.collection('conversations')
-      const conversationResults = await conversations.find({
-        $or: [
-          { user_phone: { $regex: query, $options: 'i' } },
-          { 'messages.content': { $regex: query, $options: 'i' } },
-          { intent: { $regex: query, $options: 'i' } }
-        ]
-      })
-        .limit(limit)
-        .toArray()
+      
+      // Try MongoDB full-text search first (requires text index)
+      let conversationResults: any[] = []
+      try {
+        conversationResults = await conversations
+          .find({ $text: { $search: query } })
+          .limit(limit)
+          .toArray()
+      } catch (textSearchError: any) {
+        // Fallback to sanitized regex if text index doesn't exist
+        if (textSearchError.message?.includes('text index') || 
+            textSearchError.message?.includes('no text index')) {
+          conversationResults = await conversations.find({
+            $or: [
+              { user_phone: { $regex: sanitizedQuery, $options: 'i' } },
+              { 'messages.content': { $regex: sanitizedQuery, $options: 'i' } },
+              { intent: { $regex: sanitizedQuery, $options: 'i' } }
+            ]
+          })
+            .limit(limit)
+            .toArray()
+        } else {
+          throw textSearchError
+        }
+      }
 
       results.push(...conversationResults.map(conv => ({
         type: 'conversation',
@@ -55,16 +87,32 @@ export async function POST(request: NextRequest) {
     // Search quotes
     if (type === 'all' || type === 'quotes') {
       const quotes = db.collection('quotes')
-      const quoteResults = await quotes.find({
-        $or: [
-          { cliente: { $regex: query, $options: 'i' } },
-          { telefono: { $regex: query, $options: 'i' } },
-          { consulta: { $regex: query, $options: 'i' } },
-          { direccion: { $regex: query, $options: 'i' } }
-        ]
-      })
-        .limit(limit)
-        .toArray()
+      
+      // Try MongoDB full-text search first
+      let quoteResults: any[] = []
+      try {
+        quoteResults = await quotes
+          .find({ $text: { $search: query } })
+          .limit(limit)
+          .toArray()
+      } catch (textSearchError: any) {
+        // Fallback to sanitized regex if text index doesn't exist
+        if (textSearchError.message?.includes('text index') || 
+            textSearchError.message?.includes('no text index')) {
+          quoteResults = await quotes.find({
+            $or: [
+              { cliente: { $regex: sanitizedQuery, $options: 'i' } },
+              { telefono: { $regex: sanitizedQuery, $options: 'i' } },
+              { consulta: { $regex: sanitizedQuery, $options: 'i' } },
+              { direccion: { $regex: sanitizedQuery, $options: 'i' } }
+            ]
+          })
+            .limit(limit)
+            .toArray()
+        } else {
+          throw textSearchError
+        }
+      }
 
       results.push(...quoteResults.map(quote => ({
         type: 'quote',
