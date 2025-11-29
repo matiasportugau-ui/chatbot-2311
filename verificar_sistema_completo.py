@@ -18,6 +18,7 @@ from typing import Dict, List
 ROOT = Path(__file__).parent.resolve()
 ENV_FILE = ROOT / ".env"
 KB_FILES = [
+    ROOT / "conocimiento_consolidado.json",  # Primary consolidated file
     ROOT / "base_conocimiento_final.json",
     ROOT / "conocimiento_completo.json",
     ROOT / "base_conocimiento_exportada.json",
