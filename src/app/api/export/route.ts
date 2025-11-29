@@ -148,16 +148,17 @@ export async function POST(request: NextRequest) {
 
     // For Excel and CSV, return file directly as download
     if (format.toUpperCase() === 'EXCEL' || format.toUpperCase() === 'CSV') {
-      return new NextResponse(
-        typeof exportData === 'string' ? exportData : Buffer.from(exportData),
-        {
-          status: 200,
-          headers: {
-            'Content-Type': contentType,
-            'Content-Disposition': `attachment; filename="${filename}"`,
-          },
-        }
-      )
+      // NextResponse accepts BodyInit which includes string and Buffer
+      // When exportData is already a Buffer (from Excel), pass it directly - no need for Buffer.from()
+      // When exportData is a string (from CSV), pass it directly
+      // Type assertion needed because TypeScript doesn't recognize Buffer as BodyInit in Next.js types
+      return new NextResponse(exportData as BodyInit, {
+        status: 200,
+        headers: {
+          'Content-Type': contentType,
+          'Content-Disposition': `attachment; filename="${filename}"`,
+        },
+      })
     }
 
     // For JSON, return JSON response with data
