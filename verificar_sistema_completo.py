@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Verifica el estado completo del entorno para ejecutar el chatbot BMC.
+Enhanced with comprehensive validation using environment validator.
 """
 
 import importlib.util
@@ -13,6 +14,14 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Dict, List
+
+# Import environment validator
+sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+try:
+    from validate_environment import EnvironmentValidator
+    VALIDATOR_AVAILABLE = True
+except ImportError:
+    VALIDATOR_AVAILABLE = False
 
 
 ROOT = Path(__file__).parent.resolve()
@@ -122,12 +131,34 @@ def check_mongodb() -> Dict[str, bool]:
     return status
 
 
+def validate_environment_comprehensive() -> Dict[str, Any]:
+    """Run comprehensive environment validation"""
+    if not VALIDATOR_AVAILABLE:
+        return {"available": False}
+    
+    try:
+        validator = EnvironmentValidator()
+        result = validator.validate_all()
+        return {
+            "available": True,
+            "valid": result["valid"],
+            "errors": len(result["errors"]),
+            "warnings": len(result["warnings"]),
+            "validations": len(result["validations"])
+        }
+    except Exception as e:
+        return {"available": True, "error": str(e)}
+
+
 def print_results():
     python_info = check_python_version()
     critical_modules = check_modules(CRITICAL_MODULES)
     optional_modules = check_modules(OPTIONAL_MODULES)
     env_info = check_env()
     kb_info = check_knowledge_files()
+    
+    # Comprehensive environment validation
+    env_validation = validate_environment_comprehensive()
 
     print(f"Python: {python_info['version']} ({python_info['executable']})")
     if not python_info["ok"]:
@@ -153,6 +184,17 @@ def print_results():
         print(f"  - OPENAI_API_KEY: {key_status}")
         print(f"  - OPENAI_MODEL: {env_info['OPENAI_MODEL'] or 'no definido'}")
         print(f"  - MONGODB_URI: {env_info['MONGODB_URI'] or 'no definido'}")
+        
+        # Show comprehensive validation results
+        if env_validation.get("available"):
+            if env_validation.get("error"):
+                print(f"  - Validación: Error - {env_validation['error']}")
+            else:
+                if env_validation.get("valid"):
+                    print(f"  - Validación: ✅ Válido ({env_validation['validations']} verificaciones)")
+                else:
+                    print(f"  - Validación: ❌ {env_validation['errors']} error(es), {env_validation['warnings']} advertencia(s)")
+                    print("    Ejecuta: python scripts/validate_environment.py para detalles")
     else:
         print("  [ADVERTENCIA] No existe archivo .env. Se creará durante la configuración.")
     print()
@@ -161,6 +203,33 @@ def print_results():
     for name, exists in kb_info.items():
         status = "OK" if exists else "No encontrado"
         print(f"  - {name}: {status}")
+    print()
+    
+    # Additional checks
+    print("Verificaciones adicionales:")
+    
+    # Check API server
+    try:
+        import requests
+        try:
+            response = requests.get("http://localhost:8000/health", timeout=2)
+            if response.status_code == 200:
+                print("  - API Server: ✅ Ejecutándose")
+            else:
+                print("  - API Server: ⚠️  No responde correctamente")
+        except:
+            print("  - API Server: ⏭️  No ejecutándose (opcional)")
+    except ImportError:
+        print("  - API Server: ⏭️  No verificado (requests no disponible)")
+    
+    # Check MongoDB
+    mongodb_status = check_mongodb()
+    if mongodb_status["socket_open"]:
+        print("  - MongoDB: ✅ Conectado")
+    elif mongodb_status["docker_available"]:
+        print("  - MongoDB: ⚠️  Docker disponible pero MongoDB no está corriendo")
+    else:
+        print("  - MongoDB: ⏭️  No disponible (opcional)")
     print()
 
 
