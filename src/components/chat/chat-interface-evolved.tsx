@@ -160,8 +160,11 @@ export function ChatInterfaceEvolved({
     }
   }
 
+  // Minimum messages required for reload (user + assistant)
+  const MIN_MESSAGES_FOR_RELOAD = 2
+
   const handleReload = async () => {
-    if (messages.length < 2) return
+    if (messages.length < MIN_MESSAGES_FOR_RELOAD) return
     
     // Get last user message
     const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')

@@ -18,6 +18,10 @@ interface UserInfo {
   [key: string]: any
 }
 
+// Constants
+const JWT_PARTS_COUNT = 3
+const MIN_API_TOKEN_LENGTH = 32
+
 /**
  * Validate token format
  */
@@ -25,13 +29,13 @@ function isValidTokenFormat(token: string): boolean {
   if (!token) return false
   
   const parts = token.split('.')
-  if (parts.length === 3) {
+  if (parts.length === JWT_PARTS_COUNT) {
     // Basic JWT structure check
     return true
   }
   
   // Allow simple API tokens
-  return token.length >= 32
+  return token.length >= MIN_API_TOKEN_LENGTH
 }
 
 /**
