@@ -1,0 +1,119 @@
+{
+  "session_id": "sim_20251109234720_812efafa",
+  "phone": "+59891111111",
+  "started_at": "2025-11-09T23:47:20.328442",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:47:20.328442",
+      "user_message": "Hola",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:47:20.327332"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:47:51.322701",
+      "user_message": "Necesito cotizar para un proyecto",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:47:51.320561"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:48:22.541312",
+      "user_message": "¿Qué productos tienen disponibles?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:48:22.532227"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:48:53.412827",
+      "user_message": "Me interesa Isodec",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:48:53.411594"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:49:24.481058",
+      "user_message": "¿Cuál es la diferencia entre 75mm y 100mm?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:49:24.477882"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:49:55.792288",
+      "user_message": "Ok, quiero 100mm entonces",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:49:55.779300"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:50:27.095073",
+      "user_message": "10 metros x 5 metros",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:50:27.079056"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    },
+    {
+      "timestamp": "2025-11-09T23:50:58.498677",
+      "user_message": "Blanco",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234720_812efafa",
+        "timestamp": "2025-11-09T23:50:58.475971"
+      },
+      "session_id": "sim_20251109234720_812efafa"
+    }
+  ]
+}
