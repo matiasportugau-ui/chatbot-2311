@@ -2,19 +2,53 @@
 
 Sistema completo para la gestión de cotizaciones de productos de aislamiento térmico, desarrollado específicamente para BMC Uruguay. Integra la lógica de cotización basada en plantillas, matriz de precios actualizable, y mapeo de productos con enlaces web.
 
+## 📊 Estado del Sistema
+
+| Componente | Estado | Descripción |
+|------------|--------|-------------|
+| **Backend Python** | ✅ Operativo | API FastAPI, IA conversacional, motor de cotizaciones |
+| **Frontend Next.js** | ✅ Operativo | Dashboard, chat UI, simulador web |
+| **Unified Launcher** | ✅ Operativo | Lanzador único para todos los modos |
+| **n8n Workflows** | ✅ Configurado | Integración WhatsApp, Google Sheets, Analytics |
+| **Base de Conocimiento** | ✅ Poblada | JSON consolidado con interacciones y productos |
+| **Integración WhatsApp** | ⚙️ Requiere configuración | Necesita tokens de Meta Business |
+| **Integración Google Sheets** | ⚙️ Requiere configuración | Necesita credenciales de servicio |
+| **MongoDB** | ⚙️ Opcional | Persistencia avanzada (fallback a JSON) |
+
+## 🛠️ Stack Tecnológico
+
+- **Backend:** Python 3.11+, FastAPI, OpenAI API
+- **Frontend:** Next.js 14, React, TypeScript, Tailwind CSS
+- **Automatización:** n8n, scripts Bash/Python
+- **Integraciones:** WhatsApp Business API, Google Sheets API, MercadoLibre API
+- **Base de Datos:** MongoDB (opcional), JSON (fallback)
+
 ## Características Principales
 
-- **Gestión completa de cotizaciones** con seguimiento de estados
+### 🤖 IA Conversacional
+- **Bot inteligente** con OpenAI para respuestas naturales
+- **Validación automática de datos** - Solicita información faltante
+- **Extracción de entidades** desde mensajes de texto libre
+- **Contexto de conversación** persistente por sesión
+
+### 💰 Cotizaciones
+- **Gestión completa** con seguimiento de estados
 - **Cálculo automático de precios** basado en especificaciones técnicas
-- **Integración con matriz de precios** actualizable desde bmcuruguay.com.uy
+- **Integración con matriz de precios** actualizable
 - **Plantillas personalizables** para diferentes tipos de cotizaciones
-- **Importación desde Google Sheets** del Administrador de Cotizaciones II
-- **Mapeo automático de productos** con enlaces web
-- **Búsqueda avanzada** por cliente, teléfono, fecha
-- **Exportación de datos** en formato JSON
+
+### 🔗 Integraciones
+- **WhatsApp Business API** para atención automatizada
+- **Google Sheets** para sincronización de datos
+- **MercadoLibre** para ingesta de preguntas/pedidos
+- **Shopify** para sincronización de productos
+- **n8n** para automatización de workflows
+
+### 📊 Dashboard y Reportes
+- **Dashboard Next.js** con métricas en tiempo real
 - **Reportes detallados** en HTML y PDF
-- **Sistema modular** con componentes independientes
-- **Validación inteligente de datos** - El bot solicita automáticamente información faltante
+- **Analytics** de conversaciones y conversiones
+- **Exportación de datos** en formato JSON
 
 ## Validación Inteligente de Datos (Bot)
 
@@ -108,23 +142,61 @@ mensaje = formatear_mensaje_faltantes(faltantes)
 ## Estructura del Sistema
 
 ```
-sistema-cotizaciones-bmc/
-├── sistema_cotizaciones.py      # Lógica principal del sistema
-├── utils_cotizaciones.py         # Utilidades de validación centralizada
-├── importar_datos_planilla.py   # Importador desde Google Sheets
-├── generador_plantillas.py      # Generador de plantillas
-├── mapeador_productos_web.py    # Mapeador de productos web
-├── ia_conversacional_integrada.py # IA conversacional con validación
-├── chat_interactivo.py          # Chat interactivo con validación
-├── simulacion_agente.py         # Simulación de agente con validación
-├── main.py                      # Sistema interactivo completo
-├── demo.py                      # Demostración del sistema
-├── ejecutar_sistema.py          # Script de ejecución principal
-├── instalar.py                  # Instalador del sistema
-├── config.py                    # Configuración centralizada
-├── matriz_precios.json          # Matriz de precios y productos
-├── requirements.txt             # Dependencias opcionales
-└── README.md                    # Documentación completa
+bmc-chatbot-system/
+├── 🚀 Lanzadores
+│   ├── unified_launcher.py       # Lanzador principal unificado
+│   ├── launch.sh                 # Wrapper Linux/Mac
+│   ├── launch.bat                # Wrapper Windows
+│   └── api_server.py             # Servidor API FastAPI
+│
+├── 🐍 Scripts Python (Raíz)
+│   ├── sistema_cotizaciones.py   # Lógica principal de cotizaciones
+│   ├── utils_cotizaciones.py     # Utilidades de validación
+│   ├── ia_conversacional_integrada.py  # IA conversacional
+│   ├── chat_interactivo.py       # Chat interactivo CLI
+│   ├── simulacion_agente.py      # Simulador de agente
+│   ├── main.py                   # Sistema interactivo completo
+│   ├── demo.py                   # Demostración del sistema
+│   └── validar_integracion.py    # Validación de integración
+│
+├── 📁 python-scripts/            # Scripts adicionales
+│   ├── fetch_shopify_products.py # Ingesta desde Shopify
+│   ├── fetch_mercadolibre_questions.py # Ingesta MercadoLibre
+│   ├── integracion_google_sheets.py    # Google Sheets API
+│   ├── n8n_integration.py        # Integración con n8n
+│   └── ...                       # Más scripts especializados
+│
+├── 📁 scripts/                   # Scripts de utilidad
+│   ├── setup_chatbot_env.sh      # Configuración del entorno
+│   ├── refresh_knowledge.sh      # Actualización de conocimiento
+│   ├── run_full_stack.sh         # Ejecución completa
+│   └── ...                       # Más scripts de automatización
+│
+├── 🌐 src/                       # Aplicación Next.js principal
+│   ├── app/                      # App Router (páginas y API)
+│   │   ├── api/                  # API routes (chat, quotes, etc.)
+│   │   ├── chat/                 # Página de chat
+│   │   └── simulator/            # Simulador web
+│   └── components/               # Componentes React
+│       ├── chat/                 # Componentes de chat
+│       └── dashboard/            # Dashboard y métricas
+│
+├── 📁 n8n_workflows/             # Workflows de n8n
+│   ├── workflow-chat.json        # Chat conversacional
+│   ├── workflow-whatsapp.json    # Integración WhatsApp
+│   └── workflow-sheets-sync.json # Sincronización Sheets
+│
+├── 📄 Configuración
+│   ├── requirements.txt          # Dependencias Python
+│   ├── matriz_precios.json       # Matriz de precios
+│   ├── env.example               # Variables de entorno ejemplo
+│   └── conocimiento_consolidado.json  # Base de conocimiento
+│
+└── 📚 Documentación
+    ├── README.md                 # Documentación principal
+    ├── UNIFIED_LAUNCHER.md       # Guía del lanzador
+    ├── DEPLOYMENT_GUIDE.md       # Guía de despliegue
+    └── ...                       # Más documentación
 ```
 
 ## Trabajo en la Nube (Codespaces / Cursor Cloud)
@@ -150,7 +222,7 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 ### Instalación Automática (Recomendada)
 
 1. **Requisitos del sistema:**
-   - Python 3.7 o superior
+   - Python 3.11 o superior
    - Conexión a internet (para dependencias opcionales)
 
 2. **Configurar entorno virtual del chatbot:**
@@ -172,7 +244,7 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 ### Instalación Manual
 
 1. **Requisitos del sistema:**
-   - Python 3.7 o superior
+   - Python 3.11 o superior
    - Módulos básicos: `json`, `datetime`, `decimal`, `csv`, `dataclasses`, `typing`
 
 2. **Dependencias opcionales (para funcionalidades avanzadas):**
@@ -583,20 +655,20 @@ Para soporte técnico o consultas sobre el sistema:
 - **Web:** https://bmcuruguay.com.uy
 - **Teléfono:** +598 XX XXX XXX
 
-## 📚 Referencias Rápidas
+## 📚 Documentación Adicional
 
-### Cheat Sheet CLI
-Para comandos rápidos de Git, Node.js, deployment y más, consulta:
-- **[CHEAT_SHEET_CLI.md](./CHEAT_SHEET_CLI.md)** - Guía completa de comandos CLI
-- **[CHEAT_SHEET_CLI.json](./CHEAT_SHEET_CLI.json)** - Versión JSON para referencia programática
+Para guías detalladas sobre funcionalidades específicas:
 
-Incluye comandos para:
-- 🔀 Git & GitHub (ramas, commits, PRs)
-- 📦 Node.js & npm (desarrollo, build, testing)
-- 🤖 Chatbot (embeddings, health checks, métricas)
-- 🚀 Deployment (Vercel, Docker, PM2)
-- 📚 Documentación (generación, validación)
-- 🍎 Utilidades macOS
+| Documento | Descripción |
+|-----------|-------------|
+| [UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md) | Sistema de lanzamiento unificado |
+| [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) | Guía de despliegue |
+| [SETUP_CREDENTIALS_GUIDE.md](./SETUP_CREDENTIALS_GUIDE.md) | Configuración de credenciales |
+| [SETUP_WHATSAPP.md](./SETUP_WHATSAPP.md) | Integración WhatsApp |
+| [N8N_WORKFLOW_GUIDE.md](./N8N_WORKFLOW_GUIDE.md) | Workflows de n8n |
+| [DATA_INGESTION.md](./DATA_INGESTION.md) | Ingesta de datos |
+| [CHAT_INTERFACE_GUIDE.md](./CHAT_INTERFACE_GUIDE.md) | Guía de interfaz de chat |
+| [MONITOREO_AUTOMATIZADO.md](./MONITOREO_AUTOMATIZADO.md) | Monitoreo y automatización |
 
 ## Licencia
 
@@ -604,6 +676,6 @@ Sistema desarrollado específicamente para BMC Uruguay. Todos los derechos reser
 
 ---
 
-**Versión:** 1.0  
-**Última actualización:** Diciembre 2024  
+**Versión:** 2.0  
+**Última actualización:** Diciembre 2025  
 **Desarrollado para:** BMC Uruguay
