@@ -1,20 +1,34 @@
 # Sistema de Cotizaciones BMC Uruguay
 
-Sistema completo para la gestión de cotizaciones de productos de aislamiento térmico, desarrollado específicamente para BMC Uruguay. Integra la lógica de cotización basada en plantillas, matriz de precios actualizable, y mapeo de productos con enlaces web.
+Sistema completo de chatbot conversacional para la gestión de cotizaciones de productos de aislamiento térmico, desarrollado específicamente para BMC Uruguay. Integra IA conversacional, gestión de cotizaciones, integración con WhatsApp, y un dashboard web moderno.
 
-## Características Principales
+## 🚀 Características Principales
 
+### Backend (Python/FastAPI)
+- **API REST completa** con FastAPI para procesamiento de mensajes y cotizaciones
+- **IA Conversacional Integrada** con OpenAI para interacciones naturales
 - **Gestión completa de cotizaciones** con seguimiento de estados
 - **Cálculo automático de precios** basado en especificaciones técnicas
 - **Integración con matriz de precios** actualizable desde bmcuruguay.com.uy
-- **Plantillas personalizables** para diferentes tipos de cotizaciones
-- **Importación desde Google Sheets** del Administrador de Cotizaciones II
-- **Mapeo automático de productos** con enlaces web
-- **Búsqueda avanzada** por cliente, teléfono, fecha
-- **Exportación de datos** en formato JSON
-- **Reportes detallados** en HTML y PDF
-- **Sistema modular** con componentes independientes
 - **Validación inteligente de datos** - El bot solicita automáticamente información faltante
+- **Integración con MongoDB** para persistencia de conversaciones
+- **Sincronización con Google Sheets** del Administrador de Cotizaciones II
+- **Integración con MercadoLibre** para sincronización de preguntas y productos
+- **Sincronización con Shopify** para catálogo de productos
+
+### Frontend (Next.js)
+- **Dashboard web moderno** con interfaz React/Next.js
+- **Chat interactivo** con UI similar a WhatsApp
+- **Simulador de conversaciones** para testing
+- **Visualización de cotizaciones** y análisis de datos
+- **Gestión de contexto compartido** entre sesiones
+
+### Infraestructura
+- **Unified Launcher** - Punto de entrada único para todos los modos del sistema
+- **Integración con n8n** para automatización de workflows
+- **Integración con WhatsApp** para comunicación con clientes
+- **Sistema de monitoreo** y logging automatizado
+- **Deployment en Vercel** con configuración optimizada
 
 ## Validación Inteligente de Datos (Bot)
 
@@ -109,86 +123,195 @@ mensaje = formatear_mensaje_faltantes(faltantes)
 
 ```
 sistema-cotizaciones-bmc/
-├── sistema_cotizaciones.py      # Lógica principal del sistema
-├── utils_cotizaciones.py         # Utilidades de validación centralizada
-├── importar_datos_planilla.py   # Importador desde Google Sheets
-├── generador_plantillas.py      # Generador de plantillas
-├── mapeador_productos_web.py    # Mapeador de productos web
+├── api_server.py                # Servidor FastAPI principal
+├── unified_launcher.py          # Launcher unificado (punto de entrada)
+├── sistema_cotizaciones.py     # Lógica principal del sistema de cotizaciones
+├── utils_cotizaciones.py        # Utilidades de validación centralizada
 ├── ia_conversacional_integrada.py # IA conversacional con validación
 ├── chat_interactivo.py          # Chat interactivo con validación
+├── simulate_chat_cli.py         # Simulador CLI mejorado
 ├── simulacion_agente.py         # Simulación de agente con validación
 ├── main.py                      # Sistema interactivo completo
-├── demo.py                      # Demostración del sistema
-├── ejecutar_sistema.py          # Script de ejecución principal
-├── instalar.py                  # Instalador del sistema
 ├── config.py                    # Configuración centralizada
 ├── matriz_precios.json          # Matriz de precios y productos
-├── requirements.txt             # Dependencias opcionales
-└── README.md                    # Documentación completa
+│
+├── python-scripts/              # Scripts Python organizados
+│   ├── sistema_cotizaciones.py
+│   ├── importar_datos_planilla.py
+│   ├── generador_plantillas.py
+│   ├── fetch_shopify_products.py
+│   ├── fetch_mercadolibre_questions.py
+│   └── ...
+│
+├── src/app/                     # Next.js Frontend (App Router)
+│   ├── api/                     # API Routes (Next.js)
+│   │   ├── chat/               # Endpoints de chat
+│   │   ├── quote-engine/       # Motor de cotizaciones
+│   │   ├── whatsapp/           # Webhooks de WhatsApp
+│   │   └── ...
+│   ├── chat/                   # Página de chat
+│   ├── simulator/              # Simulador web
+│   └── ...
+│
+├── nextjs-app/                  # Next.js App (legacy/alternativa)
+│   ├── package.json
+│   └── ...
+│
+├── scripts/                     # Scripts de automatización
+│   ├── setup_chatbot_env.sh
+│   ├── refresh_knowledge.sh
+│   ├── run_full_stack.sh
+│   └── ...
+│
+├── n8n_workflows/               # Workflows de n8n
+│   └── ...
+│
+├── .devcontainer/              # Configuración de Dev Container
+│   ├── devcontainer.json
+│   └── post-create.sh
+│
+├── requirements.txt             # Dependencias Python
+├── vercel.json                  # Configuración de Vercel
+└── README.md                    # Este archivo
 ```
 
-## Trabajo en la Nube (Codespaces / Cursor Cloud)
+## 🌐 Trabajo en la Nube (Codespaces / Cursor Cloud)
 
-1. **Sincroniza el repositorio:** verifica que tu rama local esté en GitHub (`git push origin <rama>`). Esto asegura que el workspace cloud arranque con la última versión.
+### Configuración Inicial
+
+1. **Sincroniza el repositorio:**
+   ```bash
+   git push origin <rama>
+   ```
+   Esto asegura que el workspace cloud arranque con la última versión.
+
 2. **Crea el workspace remoto:**
-   - **GitHub Codespaces:** en la página del repo haz clic en `Code → Create codespace on main`.
-   - **Cursor Cloud:** abre Cursor, selecciona `New Cloud Workspace` y pega la URL del repositorio.
-3. **Dev Container automático:** al iniciar, el archivo `.devcontainer/devcontainer.json` cargará el contenedor `python:3.11` con Node.js 20 y ejecutará `.devcontainer/post-create.sh` para instalar dependencias de Python (`requirements.txt`) y Node (`nextjs-app`).
-4. **Variables y secretos:** usa `SETUP_CREDENTIALS_GUIDE.md` y `SETUP_WHATSAPP.md` para cargar las API keys o tokens necesarios dentro del workspace (puedes usar los Secrets de GitHub/Cursor).
-5. **Ciclo local ↔ nube:** antes de cambiar de entorno haz `git pull` y al terminar en la nube confirma tus cambios (`git commit && git push`) para evitar divergencias.
+   - **GitHub Codespaces:** En la página del repo → `Code → Create codespace on main`
+   - **Cursor Cloud:** Abre Cursor → `New Cloud Workspace` → Pega la URL del repositorio
 
-### Verificación rápida dentro del workspace
+3. **Dev Container automático:**
+   Al iniciar, `.devcontainer/devcontainer.json` cargará:
+   - Contenedor `python:3.11` con Node.js 20
+   - Ejecutará `.devcontainer/post-create.sh` para instalar:
+     - Dependencias Python (`requirements.txt`)
+     - Dependencias Node.js (`nextjs-app`)
 
-- `python ejecutar_sistema.py` para validar el flujo principal.
-- `cd nextjs-app && npm run dev` para probar la UI en `http://localhost:3000`.
-- `python gestionar_servicios.py` o los scripts de `python-scripts/` según lo que necesites probar.
+4. **Variables y secretos:**
+   Usa estos archivos para configurar credenciales:
+   - `SETUP_CREDENTIALS_GUIDE.md` - Configuración general
+   - `SETUP_WHATSAPP.md` - Configuración de WhatsApp
+   
+   Puedes usar Secrets de GitHub/Cursor para almacenar API keys de forma segura.
 
-Una vez que el workspace funcione, considera activar despliegues automáticos (por ejemplo GitHub Actions + Vercel) reutilizando los mismos comandos usados en el contenedor.
+5. **Ciclo local ↔ nube:**
+   - Antes de cambiar de entorno: `git pull`
+   - Al terminar en la nube: `git commit && git push`
+
+### Verificación Rápida
+
+Dentro del workspace cloud:
+
+```bash
+# Validar flujo principal
+python unified_launcher.py --mode api
+
+# Probar UI
+cd nextjs-app && npm run dev
+# Accede en http://localhost:3000
+
+# Ejecutar scripts específicos
+python python-scripts/fetch_shopify_products.py
+```
+
+### Deployment Automático
+
+Una vez que el workspace funcione, considera activar:
+- **GitHub Actions** - CI/CD automático
+- **Vercel** - Deployment automático del frontend
+- Consulta `DEPLOYMENT_GUIDE.md` y `VERCEL_DEPLOY_GUIDE.md` para más detalles
 
 ## Instalación
 
 ### Instalación Automática (Recomendada)
 
-1. **Requisitos del sistema:**
-   - Python 3.7 o superior
-   - Conexión a internet (para dependencias opcionales)
-
-2. **Configurar entorno virtual del chatbot:**
-   ```bash
-   bash scripts/setup_chatbot_env.sh
-   ```
-   Este script crea `.venv`, instala `requirements.txt` y genera un `.env` basado en `env.example` para que completes tus credenciales (`OPENAI_API_KEY`, `MONGODB_URI`, etc.).
-
-3. **Ejecutar instalador:**
-   ```bash
-   python instalar.py
-   ```
-
-4. **Ejecutar el sistema:**
-   ```bash
-   python ejecutar_sistema.py
-   ```
-
-### Instalación Manual
+El **Unified Launcher** maneja automáticamente toda la instalación y configuración.
 
 1. **Requisitos del sistema:**
-   - Python 3.7 o superior
-   - Módulos básicos: `json`, `datetime`, `decimal`, `csv`, `dataclasses`, `typing`
+   - Python 3.11 o superior (recomendado)
+   - Node.js 18+ (opcional, para frontend Next.js)
+   - Git (para clonar el repositorio)
 
-2. **Dependencias opcionales (para funcionalidades avanzadas):**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Clonar o descargar el sistema:**
+2. **Clonar el repositorio:**
    ```bash
    git clone [url-del-repositorio]
    cd sistema-cotizaciones-bmc
    ```
 
-4. **Ejecutar el sistema:**
+3. **Ejecutar el Unified Launcher:**
+   
+   **Windows:**
+   ```batch
+   launch.bat
+   ```
+   
+   **Linux/Mac:**
    ```bash
-   python ejecutar_sistema.py
+   ./launch.sh
+   ```
+   
+   **O directamente:**
+   ```bash
+   python unified_launcher.py
+   ```
+
+   El launcher automáticamente:
+   - ✅ Verifica Python 3.11+
+   - ✅ Crea entorno virtual (`.venv`)
+   - ✅ Instala dependencias Python (`requirements.txt`)
+   - ✅ Configura Node.js (si está disponible)
+   - ✅ Crea archivo `.env` si no existe
+   - ✅ Muestra menú interactivo con todos los modos
+
+4. **Configurar variables de entorno:**
+   
+   Edita el archivo `.env` creado y agrega tus credenciales:
+   ```bash
+   OPENAI_API_KEY=tu_api_key_aqui
+   MONGODB_URI=tu_mongodb_uri_aqui
+   MELI_ACCESS_TOKEN=tu_token_meli  # Opcional
+   MELI_SELLER_ID=tu_seller_id      # Opcional
+   ```
+
+   Consulta `SETUP_CREDENTIALS_GUIDE.md` para más detalles.
+
+### Instalación Manual (Avanzada)
+
+Si prefieres instalar manualmente:
+
+1. **Configurar entorno virtual:**
+   ```bash
+   bash scripts/setup_chatbot_env.sh
+   source .venv/bin/activate  # Linux/Mac
+   # o
+   .venv\Scripts\activate     # Windows
+   ```
+
+2. **Instalar dependencias Python:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Instalar dependencias Node.js (opcional, para frontend):**
+   ```bash
+   cd nextjs-app
+   npm install
+   cd ..
+   ```
+
+4. **Configurar variables de entorno:**
+   ```bash
+   cp .env.example .env
+   # Editar .env con tus credenciales
    ```
 
 ## Actualizar conocimiento entrenado
@@ -216,11 +339,11 @@ Cada vez que recibas nuevos datos de conversaciones o quieras sincronizar el cat
 
 Consulta [DATA_INGESTION.md](DATA_INGESTION.md) para formatos, logs y consejos adicionales.
 
-## 🚀 Iniciar el Sistema - Unified Launcher (Recomendado)
+## 🚀 Iniciar el Sistema
 
-La forma más fácil de iniciar el sistema es usando el **Unified Launcher**, que maneja automáticamente la instalación, configuración y ejecución.
+### Opción 1: Unified Launcher (⭐ Recomendado)
 
-### Inicio Rápido
+El **Unified Launcher** es la forma más fácil de iniciar el sistema. Maneja automáticamente la instalación, configuración y ejecución.
 
 **Windows:**
 ```batch
@@ -237,15 +360,22 @@ launch.bat
 python unified_launcher.py
 ```
 
-### ¿Qué hace el Unified Launcher?
+#### Modos Disponibles
 
-- ✅ **Verifica requisitos** (Python 3.11+, Node.js opcional)
-- ✅ **Instala dependencias** automáticamente
-- ✅ **Configura entorno** (crea .env si falta)
-- ✅ **Menú interactivo** con todos los modos disponibles
-- ✅ **Gestión de servicios** (API, MongoDB, Next.js)
+El launcher ofrece un menú interactivo con estos modos:
 
-### Modos Disponibles
+1. **Interactive Chatbot** - Chat interactivo en terminal
+2. **API Server** - Servidor FastAPI (puerto 8000)
+3. **Chat Simulator** - Simulador de conversaciones
+4. **Enhanced CLI Simulator** - Simulador mejorado con formato
+5. **Main System Menu** - Menú del sistema completo
+6. **Automated Agent System** - Sistema de agentes automatizado
+7. **System Complete** - Sistema completo integrado
+8. **Next.js Dashboard (Dev)** - Dashboard de desarrollo
+9. **Next.js Dashboard (Production)** - Dashboard de producción
+10. **Full Stack** - API + Dashboard juntos
+
+#### Modos Directos (sin menú)
 
 ```bash
 # Chat interactivo
@@ -262,45 +392,64 @@ python unified_launcher.py --mode fullstack
 
 # Solo setup (sin ejecutar)
 python unified_launcher.py --setup-only
+
+# Skip setup (asume configurado)
+python unified_launcher.py --skip-setup --mode api
 ```
 
-Para documentación completa, ver **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)**
+Para documentación completa, ver **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** y **[HOW_TO_RUN.md](./HOW_TO_RUN.md)**
 
----
-
-## Alternativa: Inicio Manual
+### Opción 2: Inicio Manual
 
 Si prefieres iniciar componentes manualmente:
 
-1. Activa el entorno: `source .venv/bin/activate`.
-2. Exporta las variables sensibles (`OPENAI_API_KEY`, opcional `CHAT_USE_FULL_IA=true`).
-3. Inicia la API: `python api_server.py` (carga el conocimiento consolidado al arrancar).
-4. En otra terminal puedes interactuar con el bot:
-   - `python simulate_chat_cli.py` para pruebas rápidas.
-   - `CHAT_USE_FULL_IA=true python chat_interactivo.py` para la versión completa.
-
-## Ejecución automatizada end-to-end
-
-### Opción 1: Unified Launcher (Recomendado)
-
+**Terminal 1 - API Server:**
 ```bash
-# Inicia todo el sistema con un comando
-python unified_launcher.py --mode fullstack
+source .venv/bin/activate  # Linux/Mac
+# o .venv\Scripts\activate  # Windows
+python api_server.py
 ```
 
-### Opción 2: Script de ejecución completa
+**Terminal 2 - Chat Interactivo:**
+```bash
+source .venv/bin/activate
+python chat_interactivo.py
+```
 
-Usa el wrapper `bash scripts/run_full_stack.sh` para ejecutar todo en un solo comando:
+**Terminal 3 - Simulador CLI:**
+```bash
+source .venv/bin/activate
+python simulate_chat_cli.py
+```
 
-1. Verifica/crea `.venv` (usa `scripts/setup_chatbot_env.sh` si falta).
-2. Consolida y valida el conocimiento (genera reportes en `logs/automation/`).
-3. Inicia `api_server.py` dejando el log en el mismo archivo.
+**Terminal 4 - Next.js Frontend (opcional):**
+```bash
+cd nextjs-app
+npm run dev
+# O para producción:
+npm run build && npm start
+```
 
-Detén la API con `CTRL+C`. Si necesitas lanzar el simulador, abre otra terminal y usa los comandos de la sección anterior mientras la API sigue corriendo.
+### Opción 3: Script de Ejecución Completa
 
-### Persistencia y monitoreo opcional
+Usa el wrapper para ejecutar todo en un solo comando:
 
-Consulta `[MONITOREO_AUTOMATIZADO.md](MONITOREO_AUTOMATIZADO.md)` para habilitar MongoDB como fallback y programar tareas (cron, launchd o systemd) que ejecuten `scripts/refresh_knowledge.sh` o `scripts/run_full_stack.sh`.
+```bash
+bash scripts/run_full_stack.sh
+```
+
+Este script:
+- Verifica/crea `.venv`
+- Consolida y valida el conocimiento
+- Inicia `api_server.py` en background
+- Genera reportes en `logs/automation/`
+
+### Persistencia y Monitoreo
+
+Consulta **[MONITOREO_AUTOMATIZADO.md](./MONITOREO_AUTOMATIZADO.md)** para:
+- Habilitar MongoDB como fallback
+- Programar tareas automáticas (cron, launchd, systemd)
+- Configurar refresh automático del conocimiento
 
 ## Uso del Sistema
 
@@ -338,69 +487,56 @@ El sistema genera reportes detallados que incluyen:
 - **Plantillas:** Exporta las plantillas de cotización
 - **Configuración:** Exporta la matriz de precios
 
-## Interfaz de Chat Local
+## Interfaz Web (Next.js)
 
-El sistema incluye una interfaz de chat HTML standalone para testing y entrenamiento local.
+El sistema incluye un dashboard web completo desarrollado con Next.js.
 
-### Inicio Rápido
+### Iniciar Frontend
 
+**Desarrollo:**
 ```bash
-# Iniciar todo el sistema (API + servidor HTTP)
-bash start_chat_interface.sh
+cd nextjs-app
+npm run dev
+# Accede en http://localhost:3000
 ```
 
-Esto iniciará:
-- Servidor API FastAPI en `http://localhost:8000`
-- Servidor HTTP en `http://localhost:8080` (o puerto disponible)
-- Abrirá automáticamente el navegador
+**Producción:**
+```bash
+cd nextjs-app
+npm run build
+npm start
+```
 
-### Características
+O usa el Unified Launcher:
+```bash
+python unified_launcher.py --mode fullstack
+```
 
-- ✅ **Interfaz completa**: Chat UI similar a producción
-- ✅ **Persistencia de sesión**: IDs de sesión en localStorage
-- ✅ **Historial de mensajes**: Últimos 100 mensajes guardados
-- ✅ **Reintentos automáticos**: Hasta 3 intentos en caso de error
-- ✅ **Indicador de conexión**: Estado visual de la conexión API
-- ✅ **Panel de configuración**: Personalizar URL API y teléfono
-- ✅ **Exportar conversaciones**: Descargar historial como JSON
-- ✅ **Notificaciones**: Alertas cuando el bot responde
-- ✅ **Accesibilidad**: Soporte completo para lectores de pantalla
+### Páginas Disponibles
 
-### Documentación Completa
+- **`/chat`** - Interfaz de chat principal
+- **`/simulator`** - Simulador de conversaciones
+- **`/bmc-chat`** - Chat específico para BMC
+- **`/chat-evolved`** - Versión evolucionada del chat
+
+### API Endpoints (Next.js)
+
+El frontend expone varios endpoints en `/api`:
+
+- `/api/chat` - Procesamiento de mensajes
+- `/api/chat/stream` - Streaming de respuestas
+- `/api/quote-engine` - Motor de cotizaciones
+- `/api/whatsapp/webhook` - Webhook de WhatsApp
+- `/api/sheets/sync` - Sincronización con Google Sheets
+- `/api/health` - Health check
+- Y más...
+
+### Interfaz de Chat Local (Legacy)
+
+Para testing local con interfaz HTML standalone:
 
 - **Guía de Usuario**: Ver `CHAT_INTERFACE_GUIDE.md`
 - **Guía de Desarrollador**: Ver `CHAT_INTERFACE_DEVELOPER.md`
-
-### Uso Básico
-
-1. **Iniciar el sistema:**
-   ```bash
-   bash start_chat_interface.sh
-   ```
-
-2. **Abrir en navegador:**
-   - El script abrirá automáticamente
-   - O navegar manualmente a `http://localhost:8080/chat-interface.html`
-
-3. **Enviar mensajes:**
-   - Escribe en el campo de entrada
-   - Presiona Enter o clic en el botón de enviar
-   - El bot responderá automáticamente
-
-4. **Configurar:**
-   - Clic en el menú (⋯) para acceder a configuración
-   - Cambiar URL API o teléfono por defecto
-   - Los cambios se guardan automáticamente
-
-### Testing y Entrenamiento
-
-La interfaz es ideal para:
-- **Testing local**: Probar respuestas del bot sin depender de WhatsApp
-- **Entrenamiento**: Generar datasets de conversaciones reales
-- **Desarrollo**: Iterar rápidamente en prompts y conocimiento
-- **Validación**: Verificar flujos de conversación completos
-
-Todos los mensajes y respuestas se guardan en localStorage y pueden exportarse para análisis.
 
 ## Productos Soportados
 
@@ -537,43 +673,89 @@ El sistema incluye enlaces directos a los productos en bmcuruguay.com.uy:
 - [Poliestireno](https://bmcuruguay.com.uy/productos/poliestireno)
 - [Lana de Roca](https://bmcuruguay.com.uy/productos/lana-roca)
 
-## Desarrollo y Personalización
+## 🔧 Desarrollo y Personalización
 
 ### Agregar Nuevos Productos
 
 1. Editar `matriz_precios.json`
 2. Agregar el producto con sus especificaciones
 3. Actualizar el sistema con `actualizar_precio_producto()`
+4. Ejecutar `bash scripts/refresh_knowledge.sh` para actualizar el conocimiento
 
 ### Crear Nuevas Plantillas
 
-1. Usar `GeneradorPlantillas`
+1. Usar `generador_plantillas.py` o `python-scripts/generador_plantillas.py`
 2. Definir campos requeridos y opcionales
 3. Crear fórmulas de cálculo
 4. Generar templates HTML/PDF
 
 ### Modificar Fórmulas de Cálculo
 
-Editar los métodos en `SistemaCotizacionesBMC`:
+Editar los métodos en `SistemaCotizacionesBMC` (`sistema_cotizaciones.py`):
 - `_calcular_factor_espesor()`
 - `_calcular_factor_color()`
 - `_calcular_factor_terminaciones()`
 - `_calcular_factor_anclajes()`
 - `_calcular_factor_traslado()`
 
-## Solución de Problemas
+### Agregar Nuevos Endpoints API
 
-### Error: "Producto no encontrado"
+1. Editar `api_server.py` para endpoints FastAPI
+2. O agregar rutas en `src/app/api/` para Next.js API routes
+3. Documentar en OpenAPI/Swagger (FastAPI lo genera automáticamente)
+
+### Personalizar Frontend
+
+1. Editar componentes en `src/app/components/`
+2. Modificar páginas en `src/app/`
+3. Actualizar estilos en `src/app/globals.css`
+4. Consulta `CHAT_INTERFACE_DEVELOPER.md` para más detalles
+
+## 🔍 Solución de Problemas
+
+### Errores Comunes
+
+**Error: "Producto no encontrado"**
 - Verificar que el producto esté en `matriz_precios.json`
 - Usar códigos exactos (isodec, poliestireno, lana_roca)
+- Ejecutar `bash scripts/refresh_knowledge.sh` para actualizar conocimiento
 
-### Error: "Precio no calculado"
-- Verificar que el precio base esté configurado
+**Error: "Precio no calculado"**
+- Verificar que el precio base esté configurado en `matriz_precios.json`
 - Revisar las especificaciones del producto
+- Verificar logs en `logs/` para más detalles
 
-### Error: "Archivo no encontrado"
-- Verificar que `matriz_precios.json` esté en el directorio
+**Error: "Archivo no encontrado"**
+- Verificar que `matriz_precios.json` esté en el directorio raíz
 - Verificar permisos de lectura/escritura
+- Verificar que el entorno virtual esté activado
+
+**Error: "Module not found"**
+- Activar entorno virtual: `source .venv/bin/activate`
+- Instalar dependencias: `pip install -r requirements.txt`
+- Verificar que estás en el directorio correcto
+
+**Error: "API connection failed"**
+- Verificar que `api_server.py` esté corriendo
+- Verificar que el puerto 8000 esté disponible
+- Verificar variables de entorno en `.env`
+
+**Error: "OpenAI API key not found"**
+- Verificar que `OPENAI_API_KEY` esté en `.env`
+- Consulta `SETUP_CREDENTIALS_GUIDE.md` para configuración
+
+### Logs y Debugging
+
+- **Logs del launcher:** `logs/launcher.log`
+- **Logs de la API:** `logs/api_server.log`
+- **Logs de automatización:** `logs/automation/`
+- **Reportes de validación:** `reporte_validacion.json/.txt`
+
+### Obtener Ayuda
+
+- Consulta la documentación en los archivos `.md` del proyecto
+- Revisa `HOW_TO_RUN.md` para guías de ejecución
+- Consulta `TESTING_GUIDE.md` para guías de testing
 
 ## Contacto y Soporte
 
@@ -583,20 +765,38 @@ Para soporte técnico o consultas sobre el sistema:
 - **Web:** https://bmcuruguay.com.uy
 - **Teléfono:** +598 XX XXX XXX
 
-## 📚 Referencias Rápidas
+## 📚 Documentación Adicional
 
-### Cheat Sheet CLI
-Para comandos rápidos de Git, Node.js, deployment y más, consulta:
-- **[CHEAT_SHEET_CLI.md](./CHEAT_SHEET_CLI.md)** - Guía completa de comandos CLI
-- **[CHEAT_SHEET_CLI.json](./CHEAT_SHEET_CLI.json)** - Versión JSON para referencia programática
+### Guías Principales
 
-Incluye comandos para:
-- 🔀 Git & GitHub (ramas, commits, PRs)
-- 📦 Node.js & npm (desarrollo, build, testing)
-- 🤖 Chatbot (embeddings, health checks, métricas)
-- 🚀 Deployment (Vercel, Docker, PM2)
-- 📚 Documentación (generación, validación)
-- 🍎 Utilidades macOS
+- **[HOW_TO_RUN.md](./HOW_TO_RUN.md)** - Cómo ejecutar el sistema
+- **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** - Documentación completa del launcher
+- **[START_HERE.md](./START_HERE.md)** - Guía de inicio rápido
+- **[DATA_INGESTION.md](./DATA_INGESTION.md)** - Sincronización de conocimiento
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Guía de deployment
+- **[TESTING_GUIDE.md](./TESTING_GUIDE.md)** - Guía de testing
+
+### Configuración
+
+- **[SETUP_CREDENTIALS_GUIDE.md](./SETUP_CREDENTIALS_GUIDE.md)** - Configuración de credenciales
+- **[SETUP_WHATSAPP.md](./SETUP_WHATSAPP.md)** - Configuración de WhatsApp
+- **[MONITOREO_AUTOMATIZADO.md](./MONITOREO_AUTOMATIZADO.md)** - Monitoreo y automatización
+
+### Interfaces
+
+- **[CHAT_INTERFACE_GUIDE.md](./CHAT_INTERFACE_GUIDE.md)** - Guía de usuario del chat
+- **[CHAT_INTERFACE_DEVELOPER.md](./CHAT_INTERFACE_DEVELOPER.md)** - Guía de desarrollador
+
+### Integraciones
+
+- **[README_INTEGRACION_N8N.md](./README_INTEGRACION_N8N.md)** - Integración con n8n
+- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** - Guía de integraciones
+
+### Deployment
+
+- **[VERCEL_DEPLOY_GUIDE.md](./VERCEL_DEPLOY_GUIDE.md)** - Deployment en Vercel
+- **[RAILWAY_DEPLOYMENT_GUIDE.md](./RAILWAY_DEPLOYMENT_GUIDE.md)** - Deployment en Railway
+- **[CPANEL_HOSTING_GUIDE.md](./CPANEL_HOSTING_GUIDE.md)** - Hosting en cPanel
 
 ## Licencia
 
@@ -604,6 +804,32 @@ Sistema desarrollado específicamente para BMC Uruguay. Todos los derechos reser
 
 ---
 
-**Versión:** 1.0  
-**Última actualización:** Diciembre 2024  
+## 📊 Estado del Proyecto
+
+**Versión:** 2.0  
+**Última actualización:** Enero 2025  
 **Desarrollado para:** BMC Uruguay
+
+### Componentes Activos
+
+✅ **Backend FastAPI** - API REST completa y funcional  
+✅ **Frontend Next.js** - Dashboard web moderno  
+✅ **Unified Launcher** - Sistema de ejecución unificado  
+✅ **IA Conversacional** - Integración con OpenAI  
+✅ **Sistema de Cotizaciones** - Lógica de negocio completa  
+✅ **Integración WhatsApp** - Webhooks y comunicación  
+✅ **Integración n8n** - Automatización de workflows  
+✅ **MongoDB** - Persistencia de datos  
+✅ **Google Sheets** - Sincronización de datos  
+✅ **Shopify/MercadoLibre** - Sincronización de productos  
+
+### Próximos Pasos
+
+- Mejoras en la UI del dashboard
+- Optimización de performance
+- Expansión de integraciones
+- Mejoras en el sistema de monitoreo
+
+---
+
+**Desarrollado específicamente para BMC Uruguay. Todos los derechos reservados.**
