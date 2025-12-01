@@ -2,19 +2,64 @@
 
 Sistema completo para la gestión de cotizaciones de productos de aislamiento térmico, desarrollado específicamente para BMC Uruguay. Integra la lógica de cotización basada en plantillas, matriz de precios actualizable, y mapeo de productos con enlaces web.
 
+## Estado Actual (Diciembre 2025)
+
+El plan integral de comparación de ramas, modernización y documentación fue completado y auditado. A continuación se resume el estado real de cada frente (ver los archivos enlazados para la evidencia detallada):
+
+| Área | Estado | Detalles |
+|------|--------|----------|
+| Auditoría y plan de comparación | ✅ Completado (28-nov-2025) | `PLAN_IMPLEMENTATION_STATUS.md` y `DETAILED_BRANCH_COMPARISON.md` cubren 7/7 áreas de análisis y 5/5 entregables con 1 007 líneas de hallazgos. |
+| Backend Python + API FastAPI | ✅ Estable | `IMPLEMENTATION_SUMMARY.md` confirma OpenAI + pattern matching, `api_server.py`, `background_agent_followup.py`, Docker y pruebas e2e (`scripts/test-e2e-whatsapp.sh`). |
+| Launcher unificado y documentación | ✅ Adoptado | `DOCUMENTATION_UPDATE_SUMMARY.md` y `QUICK_ACCESS.md` posicionan `unified_launcher.py`, `launch.sh` y `launch.bat` como entrada principal en 11 guías. |
+| Next.js (dashboards y API routes) | ✅ Listo | `src/app/api/*` expone 12 endpoints nuevos y las páginas `chat`, `bmc-chat`, `chat-evolved` y `simulator` sirven como frontends y herramientas de QA. |
+| Workflows n8n + Integraciones | ✅ Exportables | JSON en `n8n_workflows/` orquestan WhatsApp, Google Sheets y MongoDB; `docker-compose.yml` prepara n8n/mongo/api. |
+| Observabilidad y automatizaciones | ✅ Incluidas | Logs estructurados, correlación de IDs y agentes de seguimiento (`background_agent_followup.py`) ya funcionan. |
+| Pendientes clave | ⚠️ Backlog | Fortalecer validación JSON de OpenAI, agregar rate limiting y monitoreo dedicado (ver “Known Limitations” en `IMPLEMENTATION_SUMMARY.md`). |
+
+## Arquitectura Unificada (Visión Rápida)
+
+1. **Entrada**: WhatsApp Business → Webhook Meta → Workflows n8n (`workflow-whatsapp-complete.json`) o la UI Next.js (`src/app/chat*` y `src/app/simulator`).
+2. **Orquestación**: n8n valida firmas, sincroniza Google Sheets y delega a los scripts Python (`n8n_integration.py`, `api_server.py`).
+3. **Motor conversacional**: `ia_conversacional_integrada.py` y `sistema_cotizaciones.py` combinan pattern matching con OpenAI.
+4. **Servicios de soporte**: MongoDB (persistencia), `background_agent_followup.py` (follow-up), scripts en `scripts/` y `python-scripts/` (ingestión, validaciones).
+5. **Frontends**: Next.js 14 (`src/`) brinda dashboards, analíticas y simuladores; `nextjs-app/` queda como UI legada.
+6. **Launcher**: `unified_launcher.py` automatiza setup, dependencias y modos (chat, API, full stack).
+
+```
+WhatsApp / Chat Web
+        │
+        ▼
+n8n Workflows  ──▶  MongoDB / Google Sheets
+        │
+        ▼
+FastAPI (`api_server.py`) + Motor de Cotizaciones
+        │
+        ├─▶ Background Agents / Scripts
+        ▼
+Next.js Dashboards & Simulator (`src/app/*`)
+```
+
+## Componentes Principales
+
+- **Motor conversacional Python (`ia_conversacional_integrada.py`, `sistema_cotizaciones.py`)**: lógica de conversación, validación y cálculo de cotizaciones.
+- **API & Automatizaciones (`api_server.py`, `scripts/`, `python-scripts/`)**: expone `/chat/process`, `/quote/create`, ingestores Shopify/MercadoLibre, refresh de conocimiento y health checks.
+- **Frontends Next.js (`src/` y `nextjs-app/`)**: dashboards operativos, simuladores, páginas de chat (`bmc-chat`, `chat`, `chat-evolved`, `simulator`) y 12 rutas API serverless.
+- **Workflows n8n (`n8n_workflows/*.json`)**: conectores WhatsApp, Google Sheets, Mercado Libre y pipelines de analítica.
+- **Launcher y utilidades (`unified_launcher.py`, `launch.sh`, `launch.bat`)**: entry point recomendado que instala dependencias, crea `.env`, levanta servicios y ofrece modos directos (`--mode api`, `--mode fullstack`, etc.).
+- **Datos y conocimiento (`data/`, `consolidar_conocimiento.py`, `kb_*.json`)**: catálogo de productos, plantillas y resultados de ingestión listos para actualizar.
+
 ## Características Principales
 
-- **Gestión completa de cotizaciones** con seguimiento de estados
-- **Cálculo automático de precios** basado en especificaciones técnicas
-- **Integración con matriz de precios** actualizable desde bmcuruguay.com.uy
-- **Plantillas personalizables** para diferentes tipos de cotizaciones
-- **Importación desde Google Sheets** del Administrador de Cotizaciones II
-- **Mapeo automático de productos** con enlaces web
-- **Búsqueda avanzada** por cliente, teléfono, fecha
-- **Exportación de datos** en formato JSON
-- **Reportes detallados** en HTML y PDF
-- **Sistema modular** con componentes independientes
-- **Validación inteligente de datos** - El bot solicita automáticamente información faltante
+- **Gestión completa de cotizaciones** con seguimiento de estados, reportes y exportación JSON/PDF.
+- **Cálculo automático de precios** basado en especificaciones técnicas y matriz dinámica.
+- **Paneles Next.js y simulador web** para QA, monitoreo y entrenamiento (`src/app/chat*`, `src/app/simulator`).
+- **Integración con matriz de precios** actualizable desde bmcuruguay.com.uy.
+- **Plantillas personalizables** y generador para diferentes tipos de cotizaciones.
+- **Importación y sincronización con Google Sheets** y workflows n8n (cotizaciones, analíticas, trends).
+- **Launcher unificado y scripts de automatización** para instalación, setup y despliegues rápidos.
+- **Mapeo automático de productos** con enlaces web y contexto enriquecido para OpenAI.
+- **Búsqueda avanzada y dashboards** por cliente, teléfono, fecha, estado o vendedor.
+- **Validación inteligente de datos / bot conversacional** que pide información faltante y documenta el flujo.
 
 ## Validación Inteligente de Datos (Bot)
 
@@ -108,23 +153,26 @@ mensaje = formatear_mensaje_faltantes(faltantes)
 ## Estructura del Sistema
 
 ```
-sistema-cotizaciones-bmc/
-├── sistema_cotizaciones.py      # Lógica principal del sistema
-├── utils_cotizaciones.py         # Utilidades de validación centralizada
-├── importar_datos_planilla.py   # Importador desde Google Sheets
-├── generador_plantillas.py      # Generador de plantillas
-├── mapeador_productos_web.py    # Mapeador de productos web
-├── ia_conversacional_integrada.py # IA conversacional con validación
-├── chat_interactivo.py          # Chat interactivo con validación
-├── simulacion_agente.py         # Simulación de agente con validación
-├── main.py                      # Sistema interactivo completo
-├── demo.py                      # Demostración del sistema
-├── ejecutar_sistema.py          # Script de ejecución principal
-├── instalar.py                  # Instalador del sistema
-├── config.py                    # Configuración centralizada
-├── matriz_precios.json          # Matriz de precios y productos
-├── requirements.txt             # Dependencias opcionales
-└── README.md                    # Documentación completa
+.
+├── unified_launcher.py / launch.sh / launch.bat   # Launcher principal (chat, API, full stack)
+├── api_server.py                                  # FastAPI (chat/process, quote/create, insights)
+├── ia_conversacional_integrada.py                 # Motor híbrido OpenAI + patrones
+├── sistema_cotizaciones.py / utils_cotizaciones.py# Lógica de cotizaciones y validación
+├── background_agent_followup.py                   # Seguimientos automáticos desde MongoDB
+├── scripts/                                       # Scripts shell (run_full_stack, refresh_knowledge, test-e2e-*)
+├── python-scripts/                                # Ingestores Shopify/MELI, populate_kb, helpers
+├── src/                                           # Next.js 14 (dashboards, simuladores, API routes)
+│   ├── app/
+│   │   ├── api/ (analytics, chat, context, quote-engine, whatsapp, etc.)
+│   │   ├── chat/, bmc-chat/, chat-evolved/, simulator/ (frontends)
+│   │   └── layout.tsx, globals.css
+│   ├── components/ (dashboard widgets, chat UIs, UI kit)
+│   └── models/, styles/
+├── nextjs-app/                                    # UI legada (mantener por compatibilidad)
+├── n8n_workflows/                                 # JSON de WhatsApp, Sheets, analytics, trends
+├── data/                                          # Matrices de precios, catálogos, reportes
+├── docs/*.md / guides/*.md                        # HOW_TO_RUN, START_HERE, QUICK_ACCESS, etc.
+└── kb_*.json / conocimiento_*.json                # Bases de conocimiento consolidadas
 ```
 
 ## Trabajo en la Nube (Codespaces / Cursor Cloud)
@@ -604,6 +652,6 @@ Sistema desarrollado específicamente para BMC Uruguay. Todos los derechos reser
 
 ---
 
-**Versión:** 1.0  
-**Última actualización:** Diciembre 2024  
+**Versión:** 1.1 (Plan completado)  
+**Última actualización:** Diciembre 2025  
 **Desarrollado para:** BMC Uruguay
