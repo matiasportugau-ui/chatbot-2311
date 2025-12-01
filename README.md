@@ -1,18 +1,24 @@
 # Sistema de Cotizaciones BMC Uruguay
 
-Sistema completo para la gestión de cotizaciones de productos de aislamiento térmico, desarrollado específicamente para BMC Uruguay. Integra la lógica de cotización basada en plantillas, matriz de precios actualizable, y mapeo de productos con enlaces web.
+Sistema completo full-stack para la gestión de cotizaciones de productos de aislamiento térmico, desarrollado específicamente para BMC Uruguay. Integra un backend Python (FastAPI) con un frontend Next.js moderno, proporcionando una experiencia conversacional completa para generar cotizaciones automáticas.
 
 ## Características Principales
 
+- **Sistema Conversacional Inteligente** - Chatbot con IA que guía a los clientes en la creación de cotizaciones
+- **Backend FastAPI** - API REST robusta para procesamiento de mensajes y cotizaciones
+- **Dashboard Next.js** - Interfaz web moderna con métricas, análisis y gestión de cotizaciones
 - **Gestión completa de cotizaciones** con seguimiento de estados
 - **Cálculo automático de precios** basado en especificaciones técnicas
 - **Integración con matriz de precios** actualizable desde bmcuruguay.com.uy
 - **Plantillas personalizables** para diferentes tipos de cotizaciones
-- **Importación desde Google Sheets** del Administrador de Cotizaciones II
+- **Integración con Google Sheets** - Sincronización bidireccional con planillas
+- **Integración con WhatsApp** - Respuestas automáticas vía WhatsApp Business API
+- **Integración con MercadoLibre** - Gestión de productos y preguntas
+- **Base de datos MongoDB** - Persistencia de conversaciones y cotizaciones
 - **Mapeo automático de productos** con enlaces web
 - **Búsqueda avanzada** por cliente, teléfono, fecha
-- **Exportación de datos** en formato JSON
-- **Reportes detallados** en HTML y PDF
+- **Exportación de datos** en formato JSON, CSV, XLSX
+- **Reportes detallados** con análisis y tendencias
 - **Sistema modular** con componentes independientes
 - **Validación inteligente de datos** - El bot solicita automáticamente información faltante
 
@@ -109,22 +115,50 @@ mensaje = formatear_mensaje_faltantes(faltantes)
 
 ```
 sistema-cotizaciones-bmc/
-├── sistema_cotizaciones.py      # Lógica principal del sistema
-├── utils_cotizaciones.py         # Utilidades de validación centralizada
-├── importar_datos_planilla.py   # Importador desde Google Sheets
-├── generador_plantillas.py      # Generador de plantillas
-├── mapeador_productos_web.py    # Mapeador de productos web
-├── ia_conversacional_integrada.py # IA conversacional con validación
-├── chat_interactivo.py          # Chat interactivo con validación
-├── simulacion_agente.py         # Simulación de agente con validación
-├── main.py                      # Sistema interactivo completo
-├── demo.py                      # Demostración del sistema
-├── ejecutar_sistema.py          # Script de ejecución principal
-├── instalar.py                  # Instalador del sistema
-├── config.py                    # Configuración centralizada
-├── matriz_precios.json          # Matriz de precios y productos
-├── requirements.txt             # Dependencias opcionales
-└── README.md                    # Documentación completa
+├── unified_launcher.py          # 🚀 Punto de entrada principal (recomendado)
+├── launch.sh / launch.bat       # Scripts de inicio rápido
+│
+├── api_server.py                # Servidor FastAPI (backend)
+├── python-scripts/              # Módulos Python principales
+│   ├── sistema_cotizaciones.py      # Lógica principal del sistema
+│   ├── ia_conversacional_integrada.py # IA conversacional con validación
+│   ├── chat_interactivo.py          # Chat interactivo con validación
+│   ├── simulacion_agente.py         # Simulación de agente
+│   ├── integracion_whatsapp.py      # Integración WhatsApp
+│   ├── integracion_google_sheets.py  # Integración Google Sheets
+│   ├── mercadolibre_store.py        # Integración MercadoLibre
+│   ├── config.py                    # Configuración centralizada
+│   └── ...                         # Otros módulos
+│
+├── src/app/                     # Aplicación Next.js (frontend)
+│   ├── api/                     # API Routes de Next.js
+│   │   ├── chat/               # Endpoints de chat
+│   │   ├── quote-engine/       # Motor de cotizaciones
+│   │   ├── whatsapp/           # Webhooks WhatsApp
+│   │   ├── sheets/             # Sincronización Google Sheets
+│   │   ├── mercado-libre/      # Integración MercadoLibre
+│   │   └── ...                 # Otros endpoints
+│   ├── chat/                    # Página de chat
+│   ├── simulator/               # Simulador de conversaciones
+│   ├── components/              # Componentes React
+│   └── ...
+│
+├── package.json                 # Dependencias Node.js
+├── requirements.txt             # Dependencias Python
+├── next.config.js              # Configuración Next.js
+│
+├── scripts/                    # Scripts de utilidad
+│   ├── setup_chatbot_env.sh   # Setup del entorno
+│   ├── refresh_knowledge.sh    # Actualizar conocimiento
+│   └── ...
+│
+├── data/                       # Datos y conocimiento
+│   └── *.json                  # Archivos de conocimiento consolidado
+│
+├── .devcontainer/              # Configuración Dev Container
+│   └── devcontainer.json       # Para Codespaces/Cursor Cloud
+│
+└── README.md                   # Esta documentación
 ```
 
 ## Trabajo en la Nube (Codespaces / Cursor Cloud)
@@ -147,48 +181,86 @@ Una vez que el workspace funcione, considera activar despliegues automáticos (p
 
 ## Instalación
 
+### Requisitos del Sistema
+
+- **Python 3.11+** (recomendado 3.11 o superior)
+- **Node.js 18+** (opcional, para el dashboard Next.js)
+- **MongoDB** (opcional, para persistencia de conversaciones)
+- **Docker** (opcional, para MongoDB local)
+
 ### Instalación Automática (Recomendada)
 
-1. **Requisitos del sistema:**
-   - Python 3.7 o superior
-   - Conexión a internet (para dependencias opcionales)
+El **Unified Launcher** maneja automáticamente la instalación y configuración:
 
-2. **Configurar entorno virtual del chatbot:**
-   ```bash
-   bash scripts/setup_chatbot_env.sh
-   ```
-   Este script crea `.venv`, instala `requirements.txt` y genera un `.env` basado en `env.example` para que completes tus credenciales (`OPENAI_API_KEY`, `MONGODB_URI`, etc.).
+**Windows:**
+```batch
+launch.bat
+```
 
-3. **Ejecutar instalador:**
-   ```bash
-   python instalar.py
-   ```
+**Linux/Mac:**
+```bash
+chmod +x launch.sh
+./launch.sh
+```
 
-4. **Ejecutar el sistema:**
-   ```bash
-   python ejecutar_sistema.py
-   ```
+**O directamente:**
+```bash
+python unified_launcher.py
+```
+
+El launcher:
+- ✅ Verifica requisitos (Python 3.11+, Node.js)
+- ✅ Crea entorno virtual (`.venv`)
+- ✅ Instala dependencias Python (`requirements.txt`)
+- ✅ Instala dependencias Node.js (`package.json`)
+- ✅ Configura archivo `.env` si no existe
+- ✅ Muestra menú interactivo con todos los modos
 
 ### Instalación Manual
 
-1. **Requisitos del sistema:**
-   - Python 3.7 o superior
-   - Módulos básicos: `json`, `datetime`, `decimal`, `csv`, `dataclasses`, `typing`
+Si prefieres instalar manualmente:
 
-2. **Dependencias opcionales (para funcionalidades avanzadas):**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Clonar o descargar el sistema:**
+1. **Clonar el repositorio:**
    ```bash
    git clone [url-del-repositorio]
    cd sistema-cotizaciones-bmc
    ```
 
-4. **Ejecutar el sistema:**
+2. **Configurar entorno Python:**
    ```bash
-   python ejecutar_sistema.py
+   # Crear entorno virtual
+   python -m venv .venv
+   
+   # Activar entorno (Linux/Mac)
+   source .venv/bin/activate
+   # O en Windows
+   .venv\Scripts\activate
+   
+   # Instalar dependencias
+   pip install -r requirements.txt
+   ```
+
+3. **Configurar entorno Node.js (para dashboard):**
+   ```bash
+   # Instalar dependencias
+   npm install
+   ```
+
+4. **Configurar variables de entorno:**
+   ```bash
+   # Copiar archivo de ejemplo
+   cp .env.example .env
+   
+   # Editar .env y agregar tus credenciales:
+   # - OPENAI_API_KEY
+   # - MONGODB_URI (opcional)
+   # - GOOGLE_SHEET_ID (opcional)
+   # - WHATSAPP_ACCESS_TOKEN (opcional)
+   ```
+
+5. **Verificar instalación:**
+   ```bash
+   python unified_launcher.py --setup-only
    ```
 
 ## Actualizar conocimiento entrenado
@@ -268,6 +340,35 @@ Para documentación completa, ver **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)
 
 ---
 
+## Dashboard Next.js
+
+El sistema incluye un dashboard web moderno construido con Next.js que proporciona:
+
+- **Interfaz de Chat** - Conversación en tiempo real con el bot
+- **Gestión de Cotizaciones** - Visualización y edición de cotizaciones
+- **Analytics y Métricas** - KPIs, tendencias y análisis de conversiones
+- **Simulador** - Prueba conversaciones sin WhatsApp
+- **Integración Google Sheets** - Sincronización visual de datos
+- **Gestión MercadoLibre** - Administración de productos y preguntas
+
+### Iniciar el Dashboard
+
+**Opción 1: Usando Unified Launcher**
+```bash
+python unified_launcher.py --mode fullstack
+```
+
+**Opción 2: Manualmente**
+```bash
+# Terminal 1: Iniciar API backend
+python api_server.py
+
+# Terminal 2: Iniciar dashboard Next.js
+npm run dev
+```
+
+El dashboard estará disponible en `http://localhost:3000`
+
 ## Alternativa: Inicio Manual
 
 Si prefieres iniciar componentes manualmente:
@@ -276,8 +377,8 @@ Si prefieres iniciar componentes manualmente:
 2. Exporta las variables sensibles (`OPENAI_API_KEY`, opcional `CHAT_USE_FULL_IA=true`).
 3. Inicia la API: `python api_server.py` (carga el conocimiento consolidado al arrancar).
 4. En otra terminal puedes interactuar con el bot:
-   - `python simulate_chat_cli.py` para pruebas rápidas.
-   - `CHAT_USE_FULL_IA=true python chat_interactivo.py` para la versión completa.
+   - `python python-scripts/simulate_chat_cli.py` para pruebas rápidas.
+   - `CHAT_USE_FULL_IA=true python python-scripts/chat_interactivo.py` para la versión completa.
 
 ## Ejecución automatizada end-to-end
 
@@ -437,14 +538,55 @@ Precio base = Área (m²) × Precio por m²
 Precio final = Precio base × Factor espesor × Factor color × Factor terminaciones × Factor servicios
 ```
 
+## Integraciones
+
+El sistema se integra con múltiples servicios externos para proporcionar una experiencia completa:
+
+### OpenAI
+- **Propósito:** Procesamiento de lenguaje natural y generación de respuestas conversacionales
+- **Configuración:** Requiere `OPENAI_API_KEY` en `.env`
+- **Uso:** Motor de IA del chatbot para entender y responder a los clientes
+
+### MongoDB
+- **Propósito:** Persistencia de conversaciones, cotizaciones y contexto compartido
+- **Configuración:** Requiere `MONGODB_URI` en `.env` (opcional)
+- **Uso:** Almacenar historial de conversaciones y cotizaciones
+
+### Google Sheets
+- **Propósito:** Sincronización bidireccional con planillas de gestión
+- **Configuración:** Requiere credenciales de Service Account y `GOOGLE_SHEET_ID`
+- **Uso:** Importar/exportar cotizaciones, sincronizar datos con planillas administrativas
+- **Documentación:** Ver `INTEGRACION_GOOGLE_SHEETS_MEJORADA.md`
+
+### WhatsApp Business API
+- **Propósito:** Respuestas automáticas vía WhatsApp
+- **Configuración:** Requiere `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`
+- **Uso:** El bot responde automáticamente a mensajes de WhatsApp
+- **Documentación:** Ver `SETUP_WHATSAPP.md`
+
+### MercadoLibre
+- **Propósito:** Gestión de productos y respuestas a preguntas
+- **Configuración:** Requiere OAuth tokens (`MERCADO_LIBRE_APP_ID`, `MERCADO_LIBRE_CLIENT_SECRET`)
+- **Uso:** Sincronizar productos, responder preguntas automáticamente
+- **Endpoints:** `/api/mercado-libre/*`
+
+### n8n (Opcional)
+- **Propósito:** Automatización de workflows y orquestación
+- **Configuración:** Requiere `N8N_WEBHOOK_URL`
+- **Uso:** Integración con workflows de n8n para automatizaciones avanzadas
+- **Documentación:** Ver `N8N_WORKFLOW_GUIDE.md`
+
 ## Integración con Google Sheets
 
-El sistema puede importar datos desde la planilla "Administrador de Cotizaciones II":
+El sistema puede importar y sincronizar datos con la planilla "Administrador de Cotizaciones II":
 
-1. **Exportar datos de Google Sheets** a CSV
-2. **Usar el importador** para procesar los datos
-3. **Mapear campos** entre la planilla y el sistema
-4. **Calcular precios** automáticamente
+### Sincronización Automática
+
+El sistema puede sincronizar automáticamente con Google Sheets usando la API:
+
+1. **Configurar credenciales** de Google Service Account
+2. **Especificar Sheet ID** en variables de entorno
+3. **Sincronización bidireccional** - Los cambios se reflejan en ambos lados
 
 ### Campos Mapeados
 
@@ -465,6 +607,13 @@ El sistema puede importar datos desde la planilla "Administrador de Cotizaciones
 | Termina Lat. 2 | especificaciones.termina_lat_2 |
 | Anclajes a | especificaciones.anclajes |
 | Traslado | especificaciones.traslado |
+
+### Uso desde el Dashboard
+
+El dashboard Next.js incluye una interfaz visual para:
+- Ver cotizaciones sincronizadas
+- Importar/exportar datos
+- Configurar sincronización automática
 
 ## Plantillas de Cotización
 
@@ -598,12 +747,45 @@ Incluye comandos para:
 - 📚 Documentación (generación, validación)
 - 🍎 Utilidades macOS
 
+## Deployment
+
+El sistema puede desplegarse en múltiples plataformas:
+
+### Vercel (Recomendado para Next.js)
+
+El dashboard Next.js puede desplegarse directamente en Vercel:
+
+1. Conectar repositorio a Vercel
+2. Configurar variables de entorno
+3. Deploy automático en cada push
+
+Ver **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** para instrucciones completas.
+
+### Railway / Otros Plataformas
+
+El backend Python (FastAPI) puede desplegarse en:
+- Railway
+- Heroku
+- AWS/GCP/Azure
+- Docker containers
+
+Ver **[RAILWAY_DEPLOYMENT_GUIDE.md](./RAILWAY_DEPLOYMENT_GUIDE.md)** para más opciones.
+
+## Documentación Adicional
+
+- **[START_HERE.md](./START_HERE.md)** - Guía de inicio rápido
+- **[HOW_TO_RUN.md](./HOW_TO_RUN.md)** - Instrucciones detalladas de ejecución
+- **[UNIFIED_LAUNCHER.md](./UNIFIED_LAUNCHER.md)** - Documentación completa del launcher
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Guía de deployment
+- **[SETUP_WHATSAPP.md](./SETUP_WHATSAPP.md)** - Configuración WhatsApp
+- **[N8N_WORKFLOW_GUIDE.md](./N8N_WORKFLOW_GUIDE.md)** - Integración n8n
+
 ## Licencia
 
 Sistema desarrollado específicamente para BMC Uruguay. Todos los derechos reservados.
 
 ---
 
-**Versión:** 1.0  
-**Última actualización:** Diciembre 2024  
+**Versión:** 2.0  
+**Última actualización:** Enero 2025  
 **Desarrollado para:** BMC Uruguay
