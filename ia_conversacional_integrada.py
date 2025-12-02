@@ -26,14 +26,20 @@ from utils_cotizaciones import (
     construir_contexto_validacion,
 )
 
-# OpenAI integration
+# Unified Model Integrator
+try:
+    from model_integrator import get_model_integrator
+    MODEL_INTEGRATOR_AVAILABLE = True
+except ImportError:
+    MODEL_INTEGRATOR_AVAILABLE = False
+    print("Warning: Model integrator not available. Using pattern matching only.")
+
+# OpenAI integration (fallback)
 try:
     from openai import OpenAI
-
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
-    print("Warning: OpenAI package not installed. Using pattern matching only.")
 
 
 @dataclass
@@ -95,25 +101,45 @@ class IAConversacionalIntegrada:
             self.use_shared_context = False
             print(f"Warning: Shared context service not available: {e}")
 
-        # OpenAI configuration
+        # Unified Model Integrator configuration
         self.use_ai = False
-        self.openai_client = None
+        self.model_integrator = None
+        self.openai_client = None  # Fallback
         self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-        if OPENAI_AVAILABLE:
+        # Try to initialize unified model integrator first
+        if MODEL_INTEGRATOR_AVAILABLE:
+            try:
+                self.model_integrator = get_model_integrator()
+                # Check if any models are available
+                available_models = self.model_integrator.list_available_models()
+                if available_models:
+                    self.use_ai = True
+                    print(f"✅ Model integrator enabled with {len(available_models)} models")
+                    for model in available_models:
+                        if model['enabled']:
+                            print(f"   - {model['provider']}: {model['model_name']}")
+                else:
+                    print("⚠️ No models configured in model integrator")
+            except Exception as e:
+                print(f"⚠️ Error initializing model integrator: {e}")
+                self.use_ai = False
+        
+        # Fallback to OpenAI if integrator not available
+        if not self.use_ai and OPENAI_AVAILABLE:
             api_key = os.getenv("OPENAI_API_KEY")
             if api_key:
                 try:
                     self.openai_client = OpenAI(api_key=api_key)
                     self.use_ai = True
-                    print("✅ OpenAI integration enabled")
+                    print("✅ OpenAI integration enabled (fallback mode)")
                 except Exception as e:
                     print(f"⚠️ Error initializing OpenAI: {e}")
                     self.use_ai = False
             else:
-                print("⚠️ OPENAI_API_KEY not set, using pattern matching only")
-        else:
-            print("⚠️ OpenAI package not available, using pattern matching only")
+                print("⚠️ No API keys configured, using pattern matching only")
+        elif not self.use_ai:
+            print("⚠️ No AI models available, using pattern matching only")
 
         self.cargar_configuracion_inicial()
 
@@ -875,13 +901,21 @@ class IAConversacionalIntegrada:
                 self.patrones_respuesta[tipo_respuesta].append(respuesta.mensaje)
 
     def procesar_mensaje_usuario(
-        self, mensaje: str, telefono_cliente: str, sesion_id: str = None
+        self, mensaje: str, telefono_cliente: str, sesion_id: str = None,
+        request_id: Optional[str] = None, client_request_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Procesa mensaje del usuario con workflow híbrido inteligente:
         - Pattern matching para intenciones simples (saludos, despedidas)
         - OpenAI para intenciones complejas (cotizaciones, consultas técnicas)
         Retorna diccionario compatible con API
+        
+        Args:
+            mensaje: Mensaje del usuario
+            telefono_cliente: Teléfono del cliente
+            sesion_id: ID de sesión (opcional)
+            request_id: Request ID para tracking (opcional)
+            client_request_id: Client request ID para tracking (opcional)
         """
         if not sesion_id:
             sesion_id = f"sesion_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
@@ -899,7 +933,10 @@ class IAConversacionalIntegrada:
         # Para intenciones complejas, usar OpenAI si está disponible
         if self.use_ai and self.openai_client:
             try:
-                return self._procesar_con_openai(mensaje, telefono_cliente, sesion_id)
+                return self._procesar_con_openai(
+                    mensaje, telefono_cliente, sesion_id,
+                    request_id=request_id, client_request_id=client_request_id
+                )
             except Exception as e:
                 print(f"⚠️ Error con OpenAI, usando pattern matching: {e}")
                 # Fallback a pattern matching
@@ -911,9 +948,10 @@ class IAConversacionalIntegrada:
             return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
 
     def _procesar_con_openai(
-        self, mensaje: str, telefono_cliente: str, sesion_id: str
+        self, mensaje: str, telefono_cliente: str, sesion_id: str,
+        request_id: Optional[str] = None, client_request_id: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Procesa mensaje usando OpenAI"""
+        """Procesa mensaje usando OpenAI con request tracking"""
         # Obtener contexto
         contexto = self._obtener_contexto_conversacion(telefono_cliente, sesion_id)
 
@@ -972,16 +1010,71 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
         # Agregar mensaje actual
         messages.append({"role": "user", "content": mensaje})
 
-        # Llamar a OpenAI
-        response = self.openai_client.chat.completions.create(
-            model=self.openai_model,
-            messages=messages,
-            temperature=0.7,
-            response_format={"type": "json_object"},
-        )
-
-        # Parsear respuesta
-        resultado = json.loads(response.choices[0].message.content)
+        # Use unified model integrator if available, otherwise fallback to OpenAI
+        if self.model_integrator:
+            # Convert messages to prompt format
+            system_prompt = None
+            user_prompt = mensaje
+            
+            # Extract system prompt if present
+            if messages and messages[0].get("role") == "system":
+                system_prompt = messages[0].get("content", "")
+                # Combine remaining messages into user prompt
+                user_messages = [msg.get("content", "") for msg in messages[1:] if msg.get("role") == "user"]
+                if user_messages:
+                    user_prompt = "\n".join(user_messages)
+            
+            # Generate response using model integrator
+            ai_response = self.model_integrator.generate(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.7,
+                max_tokens=2000,
+                client_request_id=client_request_id,
+            )
+            
+            if ai_response.get("success"):
+                content = ai_response.get("content", "")
+                # Try to parse as JSON
+                try:
+                    resultado = json.loads(content)
+                except json.JSONDecodeError:
+                    # If not JSON, wrap in expected format
+                    resultado = {
+                        "mensaje": content,
+                        "tipo": "general",
+                        "acciones": [],
+                        "confianza": 0.8,
+                        "necesita_datos": []
+                    }
+            else:
+                # Error in generation, use fallback
+                resultado = {
+                    "mensaje": "Lo siento, hubo un error procesando tu mensaje. ¿Puedes reformular tu pregunta?",
+                    "tipo": "general",
+                    "acciones": [],
+                    "confianza": 0.5,
+                    "necesita_datos": []
+                }
+        elif self.openai_client:
+            # Fallback to OpenAI
+            response = self.openai_client.chat.completions.create(
+                model=self.openai_model,
+                messages=messages,
+                temperature=0.7,
+                response_format={"type": "json_object"},
+            )
+            # Parsear respuesta
+            resultado = json.loads(response.choices[0].message.content)
+        else:
+            # No AI available
+            resultado = {
+                "mensaje": "Lo siento, el servicio de IA no está disponible en este momento.",
+                "tipo": "general",
+                "acciones": [],
+                "confianza": 0.0,
+                "necesita_datos": []
+            }
 
         # Actualizar contexto
         self._actualizar_contexto(contexto, mensaje)
@@ -994,11 +1087,12 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
         )
 
         # Crear respuesta estructurada
+        fuente = ["model_integrator"] if self.model_integrator else ["openai"]
         respuesta_ia = self._crear_respuesta(
             resultado.get("mensaje", ""),
             resultado.get("tipo", "general"),
             float(resultado.get("confianza", 0.8)),
-            ["openai"],
+            fuente,
         )
 
         # Registrar interacción

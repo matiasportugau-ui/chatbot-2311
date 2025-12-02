@@ -79,6 +79,21 @@ class FollowUpAgent:
     
     def generate_followup_message(self, conversation: Dict[str, Any]) -> str:
         """Generate appropriate follow-up message based on conversation context"""
+        # Generate request ID for agent action
+        try:
+            from utils.request_tracking import get_request_tracker, set_request_context
+            request_tracker = get_request_tracker()
+            if request_tracker:
+                request_metadata = request_tracker.create_request_metadata(
+                    provider="background_agent",
+                    endpoint="generate_followup_message"
+                )
+                set_request_context(
+                    request_metadata.request_id,
+                    request_metadata.client_request_id
+                )
+        except ImportError:
+            pass
         conv_type = conversation.get('type', 'general')
         last_message = conversation.get('message', '')
         

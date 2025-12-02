@@ -34,8 +34,11 @@ pytest-cov>=2.12.1
 # Para sistema de actualización automática
 schedule>=1.2.0
 
-# Para integración OpenAI
-openai>=1.0.0
+# Para integración de modelos de IA (OpenAI, Groq, Gemini, xAI/Grok)
+openai>=1.0.0  # Also used for xAI/Grok (OpenAI-compatible API)
+groq>=0.4.0
+google-genai>=0.2.0  # New recommended SDK for Gemini (2025)
+google-generativeai>=0.3.0  # Fallback for old SDK compatibility
 python-dotenv>=1.0.0
 
 # Para API FastAPI
@@ -51,3 +54,6 @@ gspread>=5.0.0
 google-auth>=2.0.0
 google-auth-oauthlib>=1.0.0
 google-auth-httplib2>=0.1.0
+
+# Para n8n API integration
+requests>=2.25.1

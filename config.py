@@ -201,6 +201,26 @@ EXPORTACION_CONFIG = {
     "directorio_exportacion": "exportaciones"
 }
 
+# Configuración de OpenAI API
+OPENAI_CONFIG = {
+    "organization_id": None,  # Se carga desde OPENAI_ORGANIZATION_ID
+    "project_id": None,  # Se carga desde OPENAI_PROJECT_ID
+    "enable_request_tracking": True,  # Se carga desde ENABLE_REQUEST_TRACKING
+    "log_level": "INFO",  # Se carga desde LOG_LEVEL
+    "request_tracking": {
+        "enabled": True,
+        "max_stored_requests": 10000,
+        "cleanup_interval_seconds": 3600
+    }
+}
+
+# Cargar configuración de OpenAI desde variables de entorno
+import os
+OPENAI_CONFIG["organization_id"] = os.getenv("OPENAI_ORGANIZATION_ID")
+OPENAI_CONFIG["project_id"] = os.getenv("OPENAI_PROJECT_ID")
+OPENAI_CONFIG["enable_request_tracking"] = os.getenv("ENABLE_REQUEST_TRACKING", "true").lower() == "true"
+OPENAI_CONFIG["log_level"] = os.getenv("LOG_LEVEL", "INFO")
+
 # Función para obtener configuración
 def obtener_configuracion(seccion: str = None):
     """
@@ -226,7 +246,8 @@ def obtener_configuracion(seccion: str = None):
         "plantillas": PLANTILLAS_CONFIG,
         "logging": LOGGING_CONFIG,
         "validacion": VALIDACION_CONFIG,
-        "exportacion": EXPORTACION_CONFIG
+        "exportacion": EXPORTACION_CONFIG,
+        "openai": OPENAI_CONFIG
     }
     
     if seccion:

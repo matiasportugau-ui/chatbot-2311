@@ -26,11 +26,34 @@ from sistema_cotizaciones import (
     EspecificacionCotizacion,
 )
 
+# Import request tracking utilities
+try:
+    from utils.request_tracking import get_request_tracker, set_request_context
+    from utils.structured_logger import get_structured_logger
+    from utils.rate_limit_monitor import get_rate_limit_monitor
+    UTILS_AVAILABLE = True
+except ImportError:
+    UTILS_AVAILABLE = False
+    def get_request_tracker():
+        return None
+    def set_request_context(*args, **kwargs):
+        pass
+    def get_structured_logger(*args, **kwargs):
+        return logging.getLogger(__name__)
+    def get_rate_limit_monitor():
+        return None
+
 # Configurar logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+# Initialize structured logger if available
+if UTILS_AVAILABLE:
+    structured_logger = get_structured_logger(__name__)
+else:
+    structured_logger = logger
 
 # Inicializar FastAPI
 app = FastAPI(
@@ -105,24 +128,56 @@ class QuoteResponse(BaseModel):
     fecha: str
 
 
-# Middleware para logging de requests con observabilidad
+# Middleware para logging de requests con observabilidad y request tracking
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    request_id = str(uuid.uuid4())
     start_time = datetime.now()
-
+    
+    # Extract client request ID if provided
+    client_request_id = request.headers.get("X-Client-Request-Id")
+    
+    # Initialize request tracking
+    request_tracker = get_request_tracker() if UTILS_AVAILABLE else None
+    request_metadata = None
+    
+    if request_tracker:
+        request_metadata = request_tracker.create_request_metadata(
+            client_request_id=client_request_id,
+            endpoint=request.url.path
+        )
+        request_id = request_metadata.request_id
+        # Set request context for structured logging
+        set_request_context(
+            request_metadata.request_id,
+            request_metadata.client_request_id
+        )
+    else:
+        # Fallback to UUID if tracking not available
+        request_id = str(uuid.uuid4())
+    
     # Log structured request
-    log_data = {
-        "request_id": request_id,
-        "method": request.method,
-        "path": request.url.path,
-        "timestamp": start_time.isoformat(),
-        "type": "request",
-    }
-    logger.info(f"Request: {json.dumps(log_data)}")
+    if UTILS_AVAILABLE:
+        structured_logger.info(
+            f"API Request: {request.method} {request.url.path}",
+            method=request.method,
+            path=request.url.path,
+            query_params=str(request.query_params),
+            client_request_id=client_request_id
+        )
+    else:
+        log_data = {
+            "request_id": request_id,
+            "method": request.method,
+            "path": request.url.path,
+            "timestamp": start_time.isoformat(),
+            "type": "request",
+        }
+        logger.info(f"Request: {json.dumps(log_data)}")
 
     # Agregar request_id al request state
     request.state.request_id = request_id
+    if client_request_id:
+        request.state.client_request_id = client_request_id
 
     try:
         # Procesar request
@@ -130,24 +185,55 @@ async def log_requests(request: Request, call_next):
 
         # Log structured response
         process_time = (datetime.now() - start_time).total_seconds()
-        response_data = {
-            "request_id": request_id,
-            "status_code": response.status_code,
-            "process_time": process_time,
-            "timestamp": datetime.now().isoformat(),
-            "type": "response",
-        }
-        logger.info(f"Response: {json.dumps(response_data)}")
+        
+        if UTILS_AVAILABLE:
+            structured_logger.info(
+                f"API Response: {request.method} {request.url.path} - {response.status_code}",
+                method=request.method,
+                path=request.url.path,
+                status_code=response.status_code,
+                process_time=process_time
+            )
+        else:
+            response_data = {
+                "request_id": request_id,
+                "status_code": response.status_code,
+                "process_time": process_time,
+                "timestamp": datetime.now().isoformat(),
+                "type": "response",
+            }
+            logger.info(f"Response: {json.dumps(response_data)}")
 
         # Agregar request_id al header
         response.headers["X-Request-ID"] = request_id
+        if client_request_id:
+            response.headers["X-Client-Request-ID"] = client_request_id
+        
+        # Update request tracking
+        if request_metadata and request_tracker:
+            request_tracker.update_request(
+                request_metadata.request_id,
+                status="completed",
+                response_time=process_time
+            )
 
         return response
     except Exception as e:
         # Log error
-        error_data = {
-            "request_id": request_id,
-            "error": str(e),
+        process_time = (datetime.now() - start_time).total_seconds()
+        
+        if UTILS_AVAILABLE:
+            structured_logger.error(
+                f"API Error: {request.method} {request.url.path} - {str(e)}",
+                method=request.method,
+                path=request.url.path,
+                error=str(e),
+                process_time=process_time
+            )
+        else:
+            error_data = {
+                "request_id": request_id,
+                "error": str(e),
             "timestamp": datetime.now().isoformat(),
             "type": "error",
         }
@@ -156,24 +242,136 @@ async def log_requests(request: Request, call_next):
 
 
 @app.get("/health")
+@app.get("/api/health")
 async def health_check():
-    """Health check endpoint"""
-    return {
+    """Health check endpoint with rate limit status"""
+    health_data = {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "service": "bmc-chat-api",
     }
+    
+    # Add rate limit status if available
+    if UTILS_AVAILABLE:
+        rate_limit_monitor = get_rate_limit_monitor()
+        if rate_limit_monitor:
+            all_limits = rate_limit_monitor.get_all_rate_limits()
+            health_data["rate_limits"] = all_limits
+            
+            # Check for warnings
+            warnings = []
+            for key in all_limits.keys():
+                provider = key.split(":")[0]
+                org = key.split(":")[1] if ":" in key else None
+                provider_warnings = rate_limit_monitor.check_warnings(provider, org if org != "default" else None)
+                warnings.extend(provider_warnings)
+            
+            if warnings:
+                health_data["warnings"] = warnings
+                health_data["status"] = "degraded"
+    
+    return health_data
+
+
+@app.get("/api/debug/request/{request_id}")
+async def get_request_debug(request_id: str):
+    """
+    Retrieve request details by ID for debugging.
+    
+    Args:
+        request_id: Request ID or client request ID
+        
+    Returns:
+        Request metadata and details
+    """
+    if not UTILS_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Request tracking not available"
+        )
+    
+    request_tracker = get_request_tracker()
+    if not request_tracker:
+        raise HTTPException(
+            status_code=503,
+            detail="Request tracker not initialized"
+        )
+    
+    request_metadata = request_tracker.get_request_dict(request_id)
+    
+    if not request_metadata:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Request {request_id} not found"
+        )
+    
+    return {
+        "request_id": request_id,
+        "metadata": request_metadata,
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+@app.get("/api/monitoring/rate-limits")
+async def get_rate_limits():
+    """
+    Get current rate limit status for all providers.
+    
+    Returns:
+        Rate limit information for all providers
+    """
+    if not UTILS_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Rate limit monitoring not available"
+        )
+    
+    rate_limit_monitor = get_rate_limit_monitor()
+    if not rate_limit_monitor:
+        raise HTTPException(
+            status_code=503,
+            detail="Rate limit monitor not initialized"
+        )
+    
+    all_limits = rate_limit_monitor.get_all_rate_limits()
+    
+    # Add warnings for each provider
+    result = {
+        "rate_limits": all_limits,
+        "warnings": {},
+        "timestamp": datetime.now().isoformat()
+    }
+    
+    for key in all_limits.keys():
+        provider = key.split(":")[0]
+        org = key.split(":")[1] if ":" in key and key.split(":")[1] != "default" else None
+        warnings = rate_limit_monitor.check_warnings(provider, org)
+        if warnings:
+            result["warnings"][key] = warnings
+    
+    return result
 
 
 @app.post("/chat/process", response_model=ChatResponse)
-async def process_chat_message(request: ChatRequest):
+async def process_chat_message(request: ChatRequest, http_request: Request):
     """
     Procesa un mensaje del cliente y retorna respuesta
     """
     try:
-        logger.info(
-            f"Processing message from {request.telefono}: {request.mensaje[:50]}..."
-        )
+        # Get request ID from middleware
+        request_id = getattr(http_request.state, 'request_id', None)
+        client_request_id = getattr(http_request.state, 'client_request_id', None)
+        
+        if UTILS_AVAILABLE:
+            structured_logger.info(
+                f"Processing message from {request.telefono}: {request.mensaje[:50]}...",
+                request_id=request_id,
+                client_request_id=client_request_id
+            )
+        else:
+            logger.info(
+                f"Processing message from {request.telefono}: {request.mensaje[:50]}..."
+            )
 
         # Get or create session using shared context service
         session_id = request.sesionId
@@ -183,7 +381,7 @@ async def process_chat_message(request: ChatRequest):
                 session_id = shared_context_service.create_session(
                     request.telefono,
                     request.mensaje,
-                    metadata={"agent_type": "fastapi", "source": "api"},
+                    metadata={"agent_type": "fastapi", "source": "api", "request_id": request_id},
                 )
             else:
                 # Validate existing session
@@ -193,14 +391,16 @@ async def process_chat_message(request: ChatRequest):
                     session_id = shared_context_service.create_session(
                         request.telefono,
                         request.mensaje,
-                        metadata={"agent_type": "fastapi", "source": "api"},
+                        metadata={"agent_type": "fastapi", "source": "api", "request_id": request_id},
                     )
 
-        # Procesar mensaje con IA
+        # Procesar mensaje con IA (pass request IDs if available)
         resultado = ia.procesar_mensaje_usuario(
             mensaje=request.mensaje,
             telefono_cliente=request.telefono,
             sesion_id=session_id or request.sesionId,
+            request_id=request_id,
+            client_request_id=client_request_id,
         )
 
         # Ensure session_id is in result

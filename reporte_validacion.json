@@ -3,7 +3,7 @@
     {
       "tipo": "carga_conocimiento",
       "estado": "exitoso",
-      "archivo": "/Users/matias/chatbot2511/chatbot-2311/conocimiento_consolidado.json",
+      "archivo": "/app/conocimiento_consolidado.json",
       "interacciones": 20,
       "patrones": 1,
       "productos": 1
@@ -12,7 +12,7 @@
       "tipo": "ia_conversacional",
       "estado": "exitoso",
       "patrones_respuesta": 4,
-      "respuesta_test": "¡Hola! Soy tu asistente de cotizaciones de BMC Uru..."
+      "respuesta_test": "¡Hola! ¿Te interesa cotizar algún producto de aisl..."
     },
     {
       "tipo": "productos",

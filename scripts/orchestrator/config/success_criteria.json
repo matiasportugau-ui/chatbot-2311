@@ -1,0 +1,80 @@
+{
+  "0": {
+    "required_outputs": [
+      "consolidation/discovery/repository_analysis.json",
+      "consolidation/discovery/workspace_analysis.json",
+      "consolidation/discovery/bmc_inventory.json",
+      "consolidation/discovery/integrations_status.json",
+      "consolidation/discovery/quotation_assessment.json",
+      "consolidation/discovery/production_gaps.json",
+      "consolidation/discovery/production_baseline.json"
+    ],
+    "validation_checks": [
+      {
+        "type": "file_exists",
+        "path": "consolidation/discovery/repository_analysis.json"
+      },
+      {
+        "type": "json_valid",
+        "path": "consolidation/discovery/bmc_inventory.json"
+      },
+      {
+        "type": "metric_threshold",
+        "file": "consolidation/discovery/bmc_inventory.json",
+        "metric": "components_found",
+        "min": 5
+      }
+    ]
+  },
+  "9": {
+    "required_outputs": [
+      "consolidation/security/webhook_validation.json",
+      "consolidation/security/n8n_validation.json",
+      "consolidation/security/secrets_migration.json",
+      "consolidation/security/rate_limiting.json",
+      "consolidation/security/cors_config.json",
+      "consolidation/security/auth_implementation.json",
+      "consolidation/security/security_audit_report.json"
+    ],
+    "validation_checks": [
+      {
+        "type": "file_exists",
+        "path": "consolidation/security/webhook_validation.json"
+      },
+      {
+        "type": "json_valid",
+        "path": "consolidation/security/security_audit_report.json"
+      },
+      {
+        "type": "metric_threshold",
+        "file": "consolidation/security/security_audit_report.json",
+        "metric": "p0_issues",
+        "max": 0
+      }
+    ]
+  },
+  "15": {
+    "required_outputs": [
+      "consolidation/validation/production_readiness_audit.json",
+      "consolidation/validation/stakeholder_signoff.json",
+      "consolidation/validation/deployment_log.json",
+      "consolidation/validation/post_deployment_report.json"
+    ],
+    "validation_checks": [
+      {
+        "type": "file_exists",
+        "path": "consolidation/validation/production_readiness_audit.json"
+      },
+      {
+        "type": "json_valid",
+        "path": "consolidation/validation/production_readiness_audit.json"
+      },
+      {
+        "type": "metric_threshold",
+        "file": "consolidation/validation/production_readiness_audit.json",
+        "metric": "all_checks_passed",
+        "exact": true
+      }
+    ]
+  }
+}

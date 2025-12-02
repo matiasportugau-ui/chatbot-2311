@@ -1,0 +1,163 @@
+# Cursor Ignore File
+# Files and directories excluded from Cursor's context indexing
+# This improves performance and reduces token usage
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+.conda/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+.next/
+out/
+.vercel/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment and secrets
+.env
+.env.local
+.env.production
+.env.*.local
+*.key
+*.pem
+*.cert
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+backups/
+*.bak
+*.backup
+restored/
+restored_from_backup/
+
+# Recovery files (temporary)
+recovery_*.py
+recovery_*.json
+recovery_*.txt
+recovery_*.md
+RecoveredChats.md
+recovered_chats.json
+
+# Test outputs
+coverage/
+.nyc_output/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Large data files (exclude most JSON, but whitelist important ones)
+*.json
+# Whitelist important configuration and knowledge files
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.js
+!netlify.toml
+!railway.json
+!render.yaml
+!lighthouse.config.js
+!matriz_precios.json
+!config_conocimiento.json
+!conocimiento_consolidado.json
+!conocimiento_completo.json
+!base_conocimiento_demo.json
+
+# Large knowledge base files (can be large, exclude but allow access when needed)
+# Uncomment if these files are too large:
+# conocimiento_*.json
+# base_conocimiento_*.json
+# ia_conversacional_*.json
+# analisis_conversaciones_*.json
+
+# Temporary and cache files
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# Docker volumes
+docker-data/
+mongodb_data/
+n8n_data/
+chat_data/
+
+# Agent reports (can be large)
+cursor-agent-reports/
+*.report.json
+
+# Large analysis files
+reporte_*.json
+reporte_*.txt
+metricas_*.json
+
+# Composer data (recovery artifacts)
+composer_*.json
+composer_*.md
+
+# Git files (already handled by Git, but exclude from Cursor context)
+.git/
+.gitignore
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Python specific
+*.so
+*.egg
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# TypeScript/JavaScript
+*.js.map
+*.d.ts.map
+
+# Coverage and testing
+.nyc_output
+coverage
+*.lcov
+
+# Misc
+*.orig
+*.rej
+
