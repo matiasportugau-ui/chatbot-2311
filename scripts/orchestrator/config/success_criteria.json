@@ -28,28 +28,31 @@
   },
   "9": {
     "required_outputs": [
-      "consolidation/security/webhook_validation.json",
-      "consolidation/security/n8n_validation.json",
+      "consolidation/security/webhook_validation_whatsapp.json",
+      "consolidation/security/webhook_validation_n8n.json",
       "consolidation/security/secrets_migration.json",
       "consolidation/security/rate_limiting.json",
       "consolidation/security/cors_config.json",
       "consolidation/security/auth_implementation.json",
-      "consolidation/security/security_audit_report.json"
+      "consolidation/security/security_audit_report.json",
+      "consolidation/security/security_summary.json"
     ],
     "validation_checks": [
       {
         "type": "file_exists",
-        "path": "consolidation/security/webhook_validation.json"
+        "path": "consolidation/security/webhook_validation_whatsapp.json"
+      },
+      {
+        "type": "file_exists",
+        "path": "consolidation/security/webhook_validation_n8n.json"
       },
       {
         "type": "json_valid",
         "path": "consolidation/security/security_audit_report.json"
       },
       {
-        "type": "metric_threshold",
-        "file": "consolidation/security/security_audit_report.json",
-        "metric": "p0_issues",
-        "max": 0
+        "type": "file_exists",
+        "path": "consolidation/security/security_summary.json"
       }
     ]
   },

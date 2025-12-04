@@ -416,9 +416,9 @@
       "caracteristicas_aprendidas": {},
       "objeciones_comunes": [],
       "respuestas_efectivas": [
+        "La instalación tarda entre 1-2 días dependiendo del tamaño...",
         "Entiendo tu preocupación. Te explico el valor a largo plazo...",
-        "Isodec es un panel aislante con núcleo EPS...",
-        "La instalación tarda entre 1-2 días dependiendo del tamaño..."
+        "Isodec es un panel aislante con núcleo EPS..."
       ],
       "casos_uso_exitosos": [],
       "precios_competitivos": {},
@@ -10159,9 +10159,816 @@
         "negocio:instalación"
       ],
       "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:43.911934",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:45.548316",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:46.574467",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:47.582581",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.589232",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 5,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590193",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590531",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.393968",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio",
+        "negocio:descuento"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.400721",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902855",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902910",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903001",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903346",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:43.911934",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:45.548316",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:46.574467",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:47.582581",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.589232",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 5,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590193",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590531",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.393968",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio",
+        "negocio:descuento"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.400721",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902855",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902910",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903001",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903346",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:43.911934",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:45.548316",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:46.574467",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:47.582581",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.589232",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 5,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590193",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590531",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.393968",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio",
+        "negocio:descuento"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.400721",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902855",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902910",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903001",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903346",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
     }
   ],
-  "fecha_consolidacion": "2025-12-01T23:35:13.394183",
+  "fecha_consolidacion": "2025-12-03T22:05:53.495038",
   "archivos_consolidados": [
     "base_conocimiento_demo.json",
     "base_conocimiento_exportada.json",

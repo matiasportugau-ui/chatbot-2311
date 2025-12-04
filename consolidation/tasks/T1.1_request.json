@@ -1,0 +1,55 @@
+{
+  "task_id": "T1.1",
+  "agent_type": "RepositoryAgent",
+  "agent_name": "RepositoryAgent",
+  "task_config": {
+    "type": "extract_pr_metadata",
+    "pr_data": {
+      "author": {
+        "id": "U_kgDODacm5g",
+        "is_bot": false,
+        "login": "matiasportugau-ui",
+        "name": ""
+      },
+      "baseRefName": "new-branch",
+      "body": "Create a comprehensive multi-agent deployment plan and instructions for the BMC Uruguay system to facilitate its production launch.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n## Summary by Sourcery\n\nAdd a comprehensive multi-agent deployment and orchestration playbook for the BMC Uruguay system, including roles, phases, timelines, and coordination workflows for taking the platform to production.\n\nDocumentation:\n- Introduce a detailed Agent Deployment Plan & Team Instructions document covering system overview, agent roles, phased rollout, workflows, risk management, and success metrics.\n- Add an Orchestrator Kickoff Guide that gives an hour-by-hour Day 1 plan and ongoing routines for the technical lead to run the deployment.\n- Provide a Deployment Package Summary that explains the documentation set, roles, phases, milestones, and how different stakeholders should use the materials.\n- Create an Agent Task Matrix with phase-by-phase, day-by-day tasks, checklists, and progress tracking structures for each agent role.\n- Add a Start Here deployment index to route orchestrators, agents, and stakeholders to the appropriate deployment documents.",
+      "createdAt": "2025-12-02T17:02:54Z",
+      "files": [
+        {
+          "path": "AGENT_DEPLOYMENT_PLAN_TEAM_INSTRUCTIONS.md",
+          "additions": 1405,
+          "deletions": 0
+        },
+        {
+          "path": "AGENT_TASK_MATRIX.md",
+          "additions": 433,
+          "deletions": 0
+        },
+        {
+          "path": "DEPLOYMENT_PACKAGE_SUMMARY.md",
+          "additions": 571,
+          "deletions": 0
+        },
+        {
+          "path": "ORCHESTRATOR_KICKOFF_GUIDE.md",
+          "additions": 857,
+          "deletions": 0
+        },
+        {
+          "path": "START_HERE_DEPLOYMENT.md",
+          "additions": 235,
+          "deletions": 0
+        }
+      ],
+      "headRefName": "cursor/plan-agent-deployment-and-team-instructions-claude-4.5-sonnet-thinking-56b8",
+      "labels": [],
+      "mergedAt": "2025-12-02T19:43:06Z",
+      "number": 35,
+      "state": "MERGED",
+      "title": "Plan agent deployment and team instructions",
+      "updatedAt": "2025-12-02T19:43:50Z"
+    }
+  },
+  "created_at": "2025-12-02T19:21:05.109257",
+  "status": "pending"
+}

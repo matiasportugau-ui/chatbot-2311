@@ -152,12 +152,60 @@ class MainOrchestrator:
     def _get_phase_executor(self, phase: int):
         """Get executor for a phase"""
         # Import executors dynamically
-        if phase == 0:
-            from .phase_executors.phase_0_executor import Phase0Executor
-            return Phase0Executor(phase, self.state_manager)
+        try:
+            if phase == 0:
+                from .phase_executors.phase_0_executor import Phase0Executor
+                return Phase0Executor(phase, self.state_manager)
+            elif phase == 1:
+                from .phase_executors.phase_1_executor import Phase1Executor
+                return Phase1Executor(phase, self.state_manager)
+            elif phase == 2:
+                from .phase_executors.phase_2_executor import Phase2Executor
+                return Phase2Executor(phase, self.state_manager)
+            elif phase == 3:
+                from .phase_executors.phase_3_executor import Phase3Executor
+                return Phase3Executor(phase, self.state_manager)
+            elif phase == 4:
+                from .phase_executors.phase_4_executor import Phase4Executor
+                return Phase4Executor(phase, self.state_manager)
+            elif phase == 5:
+                from .phase_executors.phase_5_executor import Phase5Executor
+                return Phase5Executor(phase, self.state_manager)
+            elif phase == 6:
+                from .phase_executors.phase_6_executor import Phase6Executor
+                return Phase6Executor(phase, self.state_manager)
+            elif phase == 7:
+                from .phase_executors.phase_7_executor import Phase7Executor
+                return Phase7Executor(phase, self.state_manager)
+            elif phase == 8:
+                from .phase_executors.phase_8_executor import Phase8Executor
+                return Phase8Executor(phase, self.state_manager)
+            elif phase == 9:
+                from .phase_executors.phase_9_executor import Phase9Executor
+                return Phase9Executor(phase, self.state_manager)
+            elif phase == 10:
+                from .phase_executors.phase_10_executor import Phase10Executor
+                return Phase10Executor(phase, self.state_manager)
+            elif phase == 11:
+                from .phase_executors.phase_11_executor import Phase11Executor
+                return Phase11Executor(phase, self.state_manager)
+            elif phase == 12:
+                from .phase_executors.phase_12_executor import Phase12Executor
+                return Phase12Executor(phase, self.state_manager)
+            elif phase == 13:
+                from .phase_executors.phase_13_executor import Phase13Executor
+                return Phase13Executor(phase, self.state_manager)
+            elif phase == 14:
+                from .phase_executors.phase_14_executor import Phase14Executor
+                return Phase14Executor(phase, self.state_manager)
+            elif phase == 15:
+                from .phase_executors.phase_15_executor import Phase15Executor
+                return Phase15Executor(phase, self.state_manager)
+        except ImportError as e:
+            self.log_info(f"Phase {phase} executor not available: {e}")
+            return None
         
-        # For other phases, would import respective executors
-        # For now, return None for phases without executors
+        # For phases without executors
         return None
     
     def log_info(self, message: str) -> None:

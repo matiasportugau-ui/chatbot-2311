@@ -1,0 +1,129 @@
+version: '3.8'
+
+# Production Docker Compose with secrets management
+# Usage: docker-compose -f docker-compose.prod.yml --env-file .env.production up
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: bmc-n8n-prod
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - N8N_HOST=${N8N_HOST:-localhost}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=${N8N_PROTOCOL:-https}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - GENERIC_TIMEZONE=America/Montevideo
+      - PY_CHAT_SERVICE_URL=http://chat-api:8000
+    secrets:
+      - n8n_auth_password
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - bmc-network
+    depends_on:
+      - chat-api
+      - mongodb
+      - qdrant
+
+  chat-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: bmc-chat-api-prod
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - MONGODB_URI=mongodb://mongodb:27017/bmc_chat
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_API_KEY_FILE=/run/secrets/qdrant_api_key
+      - PORT=8000
+      - HOST=0.0.0.0
+      - ENVIRONMENT=production
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - WHATSAPP_TOKEN_FILE=/run/secrets/whatsapp_token
+      - WHATSAPP_PHONE_ID_FILE=/run/secrets/whatsapp_phone_id
+      - WHATSAPP_WEBHOOK_SECRET_FILE=/run/secrets/whatsapp_webhook_secret
+    secrets:
+      - openai_api_key
+      - qdrant_api_key
+      - whatsapp_token
+      - whatsapp_phone_id
+      - whatsapp_webhook_secret
+    volumes:
+      - ./:/app
+      - chat_data:/app/data
+    networks:
+      - bmc-network
+    depends_on:
+      - mongodb
+      - qdrant
+
+  mongodb:
+    image: mongo:7.0
+    container_name: bmc-mongodb-prod
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=bmc_chat
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongodb-init.js:/docker-entrypoint-initdb.d/mongodb-init.js:ro
+    networks:
+      - bmc-network
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: bmc-qdrant-prod
+    restart: unless-stopped
+    ports:
+      - "6333:6333"  # REST API
+      - "6334:6334"  # gRPC
+    environment:
+      - QDRANT_API_KEY_FILE=/run/secrets/qdrant_api_key
+    secrets:
+      - qdrant_api_key
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - bmc-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+secrets:
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt
+  qdrant_api_key:
+    file: ./secrets/qdrant_api_key.txt
+  whatsapp_token:
+    file: ./secrets/whatsapp_token.txt
+  whatsapp_phone_id:
+    file: ./secrets/whatsapp_phone_id.txt
+  whatsapp_webhook_secret:
+    file: ./secrets/whatsapp_webhook_secret.txt
+  n8n_auth_password:
+    file: ./secrets/n8n_auth_password.txt
+
+volumes:
+  n8n_data:
+  chat_data:
+  mongodb_data:
+  qdrant_data:
+
+networks:
+  bmc-network:
+    driver: bridge
+

@@ -19,6 +19,16 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import uvicorn
 
+# Rate limiting
+try:
+    from slowapi import Limiter, _rate_limit_exceeded_handler
+    from slowapi.util import get_remote_address
+    from slowapi.errors import RateLimitExceeded
+    RATE_LIMITING_AVAILABLE = True
+except ImportError:
+    RATE_LIMITING_AVAILABLE = False
+    logger.warning("Rate limiting not available - slowapi not installed")
+
 from ia_conversacional_integrada import IAConversacionalIntegrada
 from sistema_cotizaciones import (
     SistemaCotizacionesBMC,
@@ -62,14 +72,43 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS middleware
+# CORS middleware - Configure allowed origins from environment
+# In production, specify exact domains. For development, allow localhost
+cors_origins = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8080,http://localhost:5678").split(",")
+# Remove wildcard in production - only allow specific origins
+if os.getenv("ENVIRONMENT") == "production":
+    # In production, only allow specific domains
+    cors_origins = [origin.strip() for origin in cors_origins if origin.strip() and origin != "*"]
+else:
+    # In development, allow localhost origins
+    cors_origins = [origin.strip() for origin in cors_origins if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, especificar dominios
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+# Initialize rate limiter if available
+if RATE_LIMITING_AVAILABLE:
+    limiter = Limiter(key_func=get_remote_address)
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    logger.info("Rate limiting enabled")
+else:
+    limiter = None
+
+# Helper function for conditional rate limiting
+def rate_limit(limit_str: str):
+    """Conditional rate limit decorator"""
+    def decorator(func):
+        if RATE_LIMITING_AVAILABLE and limiter:
+            return limiter.limit(limit_str)(func)
+        return func
+    return decorator
 
 # Inicializar IA conversacional
 ia = IAConversacionalIntegrada()
@@ -132,14 +171,14 @@ class QuoteResponse(BaseModel):
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     start_time = datetime.now()
-    
+
     # Extract client request ID if provided
     client_request_id = request.headers.get("X-Client-Request-Id")
-    
+
     # Initialize request tracking
     request_tracker = get_request_tracker() if UTILS_AVAILABLE else None
     request_metadata = None
-    
+
     if request_tracker:
         request_metadata = request_tracker.create_request_metadata(
             client_request_id=client_request_id,
@@ -154,7 +193,7 @@ async def log_requests(request: Request, call_next):
     else:
         # Fallback to UUID if tracking not available
         request_id = str(uuid.uuid4())
-    
+
     # Log structured request
     if UTILS_AVAILABLE:
         structured_logger.info(
@@ -185,7 +224,7 @@ async def log_requests(request: Request, call_next):
 
         # Log structured response
         process_time = (datetime.now() - start_time).total_seconds()
-        
+
         if UTILS_AVAILABLE:
             structured_logger.info(
                 f"API Response: {request.method} {request.url.path} - {response.status_code}",
@@ -208,7 +247,7 @@ async def log_requests(request: Request, call_next):
         response.headers["X-Request-ID"] = request_id
         if client_request_id:
             response.headers["X-Client-Request-ID"] = client_request_id
-        
+
         # Update request tracking
         if request_metadata and request_tracker:
             request_tracker.update_request(
@@ -221,7 +260,7 @@ async def log_requests(request: Request, call_next):
     except Exception as e:
         # Log error
         process_time = (datetime.now() - start_time).total_seconds()
-        
+
         if UTILS_AVAILABLE:
             structured_logger.error(
                 f"API Error: {request.method} {request.url.path} - {str(e)}",
@@ -250,14 +289,14 @@ async def health_check():
         "timestamp": datetime.now().isoformat(),
         "service": "bmc-chat-api",
     }
-    
+
     # Add rate limit status if available
     if UTILS_AVAILABLE:
         rate_limit_monitor = get_rate_limit_monitor()
         if rate_limit_monitor:
             all_limits = rate_limit_monitor.get_all_rate_limits()
             health_data["rate_limits"] = all_limits
-            
+
             # Check for warnings
             warnings = []
             for key in all_limits.keys():
@@ -265,11 +304,11 @@ async def health_check():
                 org = key.split(":")[1] if ":" in key else None
                 provider_warnings = rate_limit_monitor.check_warnings(provider, org if org != "default" else None)
                 warnings.extend(provider_warnings)
-            
+
             if warnings:
                 health_data["warnings"] = warnings
                 health_data["status"] = "degraded"
-    
+
     return health_data
 
 
@@ -277,10 +316,10 @@ async def health_check():
 async def get_request_debug(request_id: str):
     """
     Retrieve request details by ID for debugging.
-    
+
     Args:
         request_id: Request ID or client request ID
-        
+
     Returns:
         Request metadata and details
     """
@@ -289,22 +328,22 @@ async def get_request_debug(request_id: str):
             status_code=503,
             detail="Request tracking not available"
         )
-    
+
     request_tracker = get_request_tracker()
     if not request_tracker:
         raise HTTPException(
             status_code=503,
             detail="Request tracker not initialized"
         )
-    
+
     request_metadata = request_tracker.get_request_dict(request_id)
-    
+
     if not request_metadata:
         raise HTTPException(
             status_code=404,
             detail=f"Request {request_id} not found"
         )
-    
+
     return {
         "request_id": request_id,
         "metadata": request_metadata,
@@ -316,7 +355,7 @@ async def get_request_debug(request_id: str):
 async def get_rate_limits():
     """
     Get current rate limit status for all providers.
-    
+
     Returns:
         Rate limit information for all providers
     """
@@ -325,43 +364,48 @@ async def get_rate_limits():
             status_code=503,
             detail="Rate limit monitoring not available"
         )
-    
+
     rate_limit_monitor = get_rate_limit_monitor()
     if not rate_limit_monitor:
         raise HTTPException(
             status_code=503,
             detail="Rate limit monitor not initialized"
         )
-    
+
     all_limits = rate_limit_monitor.get_all_rate_limits()
-    
+
     # Add warnings for each provider
     result = {
         "rate_limits": all_limits,
         "warnings": {},
         "timestamp": datetime.now().isoformat()
     }
-    
+
     for key in all_limits.keys():
         provider = key.split(":")[0]
         org = key.split(":")[1] if ":" in key and key.split(":")[1] != "default" else None
         warnings = rate_limit_monitor.check_warnings(provider, org)
         if warnings:
             result["warnings"][key] = warnings
-    
+
     return result
 
 
 @app.post("/chat/process", response_model=ChatResponse)
-async def process_chat_message(request: ChatRequest, http_request: Request):
+@rate_limit("10/minute")
+async def process_chat_message(
+    request: ChatRequest,
+    http_request: Request
+):
     """
     Procesa un mensaje del cliente y retorna respuesta
+    Rate limit: 10 requests per minute
     """
     try:
         # Get request ID from middleware
         request_id = getattr(http_request.state, 'request_id', None)
         client_request_id = getattr(http_request.state, 'client_request_id', None)
-        
+
         if UTILS_AVAILABLE:
             structured_logger.info(
                 f"Processing message from {request.telefono}: {request.mensaje[:50]}...",
@@ -448,7 +492,7 @@ async def process_chat_message(request: ChatRequest, http_request: Request):
             mongodb_uri = os.getenv("MONGODB_URI")
             if mongodb_uri:
                 from pymongo import MongoClient
-                
+
                 client = MongoClient(
                     mongodb_uri,
                     serverSelectionTimeoutMS=5000,
@@ -456,10 +500,10 @@ async def process_chat_message(request: ChatRequest, http_request: Request):
                 )
                 # Test connection
                 client.server_info()
-                
+
                 db = client.get_database()
                 conversations_col = db.conversations
-                
+
                 if conversations_col:
                     conversations_col.insert_one(
                         {
@@ -493,9 +537,14 @@ async def process_chat_message(request: ChatRequest, http_request: Request):
 
 
 @app.post("/quote/create", response_model=QuoteResponse)
-async def create_quote(request: QuoteRequest):
+@rate_limit("5/minute")
+async def create_quote(
+    request: QuoteRequest,
+    http_request: Request
+):
     """
     Crea una nueva cotización
+    Rate limit: 5 requests per minute
     """
     try:
         logger.info(

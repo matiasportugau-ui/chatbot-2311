@@ -57,3 +57,6 @@ google-auth-httplib2>=0.1.0
 
 # Para n8n API integration
 requests>=2.25.1
+
+# Para rate limiting
+slowapi>=0.1.9

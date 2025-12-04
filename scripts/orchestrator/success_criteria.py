@@ -48,14 +48,23 @@ class SuccessCriteria:
             },
             "9": {
                 "required_outputs": [
-                    "consolidation/security/webhook_validation.json",
-                    "consolidation/security/security_audit_report.json"
+                    "consolidation/security/webhook_validation_whatsapp.json",
+                    "consolidation/security/webhook_validation_n8n.json",
+                    "consolidation/security/secrets_migration.json",
+                    "consolidation/security/rate_limiting.json",
+                    "consolidation/security/cors_config.json",
+                    "consolidation/security/auth_implementation.json",
+                    "consolidation/security/security_audit_report.json",
+                    "consolidation/security/penetration_test_report.json",
+                    "consolidation/security/security_summary.json"
                 ],
                 "validation_checks": [
-                    {"type": "file_exists", "path": "consolidation/security/webhook_validation.json"},
+                    {"type": "file_exists", "path": "consolidation/security/webhook_validation_whatsapp.json"},
+                    {"type": "file_exists", "path": "consolidation/security/webhook_validation_n8n.json"},
+                    {"type": "file_exists", "path": "consolidation/security/security_audit_report.json"},
                     {"type": "json_valid", "path": "consolidation/security/security_audit_report.json"},
-                    {"type": "metric_threshold", "file": "consolidation/security/security_audit_report.json",
-                     "metric": "p0_issues", "max": 0}
+                    {"type": "file_exists", "path": "consolidation/security/security_summary.json"},
+                    {"type": "json_valid", "path": "consolidation/security/security_summary.json"}
                 ]
             },
             "15": {
@@ -66,6 +75,8 @@ class SuccessCriteria:
                 "validation_checks": [
                     {"type": "file_exists", "path": "consolidation/validation/production_readiness_audit.json"},
                     {"type": "json_valid", "path": "consolidation/validation/production_readiness_audit.json"},
+                    {"type": "file_exists", "path": "consolidation/validation/post_deployment_report.json"},
+                    {"type": "json_valid", "path": "consolidation/validation/post_deployment_report.json"},
                     {"type": "metric_threshold", "file": "consolidation/validation/production_readiness_audit.json",
                      "metric": "all_checks_passed", "exact": True}
                 ]

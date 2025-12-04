@@ -1,0 +1,271 @@
+{
+  "timestamp": "2025-12-03T20:14:18.260354",
+  "project_root": "/Users/matias/chatbot2511/chatbot-2311",
+  "overall_status": "in_progress_early",
+  "checks": {
+    "directory_structure": {
+      "status": "ok",
+      "directories": {
+        "consolidation": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/consolidation"
+        },
+        "consolidation/reports": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/consolidation/reports"
+        },
+        "scripts/orchestrator": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/scripts/orchestrator"
+        },
+        "scripts/discovery": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/scripts/discovery"
+        },
+        "agents": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/agents"
+        }
+      },
+      "all_exist": true
+    },
+    "orchestrator": {
+      "status": "ok",
+      "available": true,
+      "can_resume": true,
+      "current_phase": 9,
+      "overall_status": "in_progress",
+      "state_file_exists": true
+    },
+    "phase_status": {
+      "status": "ok",
+      "phases": {
+        "0": {
+          "status": "completed",
+          "started_at": "2025-12-03T19:30:00.000000",
+          "completed_at": "2025-12-03T19:30:00.000000",
+          "approved": true
+        },
+        "1": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.156066",
+          "completed_at": "2025-12-03T23:01:25.129857",
+          "approved": true
+        },
+        "2": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.158245",
+          "completed_at": "2025-12-03T23:07:55.903972",
+          "approved": true
+        },
+        "3": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.160161",
+          "completed_at": "2025-12-03T23:08:15.827610",
+          "approved": true
+        },
+        "4": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.162073",
+          "completed_at": "2025-12-03T23:08:22.089990",
+          "approved": true
+        },
+        "5": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.169700",
+          "completed_at": "2025-12-03T23:08:22.313361",
+          "approved": true
+        },
+        "6": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.194113",
+          "completed_at": "2025-12-03T23:08:22.513626",
+          "approved": true
+        },
+        "7": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.198392",
+          "completed_at": "2025-12-03T23:08:22.797832",
+          "approved": true
+        },
+        "8": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.201068",
+          "completed_at": "2025-12-03T23:08:23.014546",
+          "approved": true
+        },
+        "9": {
+          "status": "completed",
+          "started_at": "2025-12-02T05:44:38.203575",
+          "completed_at": "2025-12-03T23:08:00.658846",
+          "approved": false
+        },
+        "10": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.206570",
+          "completed_at": "2025-12-02T20:19:33.159950",
+          "approved": true
+        },
+        "11": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.208103",
+          "completed_at": "2025-12-02T20:19:33.170611",
+          "approved": true
+        },
+        "12": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.209827",
+          "completed_at": "2025-12-02T20:19:33.178087",
+          "approved": true
+        },
+        "13": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.211071",
+          "completed_at": "2025-12-02T20:19:33.193218",
+          "approved": true
+        },
+        "14": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.211939",
+          "completed_at": "2025-12-02T20:19:33.211587",
+          "approved": true
+        },
+        "15": {
+          "status": "approved",
+          "started_at": "2025-12-02T05:44:38.212870",
+          "completed_at": "2025-12-02T20:19:33.255745",
+          "approved": true
+        }
+      },
+      "summary": {
+        "total": 16,
+        "completed": 2,
+        "in_progress": 0,
+        "pending": 0,
+        "progress_percent": 12
+      }
+    },
+    "components": {
+      "status": "ok",
+      "components": {
+        "api_server": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/api_server.py",
+          "size": 22660
+        },
+        "conversational_ai": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/ia_conversacional_integrada.py",
+          "size": 51619
+        },
+        "quotation_system": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/sistema_cotizaciones.py",
+          "size": 14837
+        },
+        "knowledge_base": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/base_conocimiento_dinamica.py",
+          "size": 40118
+        },
+        "whatsapp_integration": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/integracion_whatsapp.py",
+          "size": 12693
+        },
+        "n8n_integration": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/n8n_integration.py",
+          "size": 10562
+        },
+        "google_sheets": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/integracion_google_sheets.py",
+          "size": 23561
+        },
+        "docker_compose": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/docker-compose.yml",
+          "size": 1533
+        }
+      },
+      "all_exist": true
+    },
+    "integrations": {
+      "status": "partial",
+      "integrations": {
+        "whatsapp": {
+          "file_exists": true,
+          "status": "configured",
+          "config_required": [
+            "WHATSAPP_TOKEN",
+            "WHATSAPP_PHONE_ID"
+          ]
+        },
+        "n8n": {
+          "file_exists": true,
+          "status": "configured",
+          "config_required": [
+            "N8N_URL",
+            "N8N_API_KEY"
+          ]
+        },
+        "mongodb": {
+          "file_exists": true,
+          "status": "configured",
+          "config_required": [
+            "MONGODB_URI"
+          ]
+        },
+        "qdrant": {
+          "file_exists": false,
+          "status": "missing",
+          "config_required": [
+            "QDRANT_URL",
+            "QDRANT_API_KEY"
+          ]
+        }
+      }
+    },
+    "security": {
+      "status": "needs_review",
+      "items": {
+        "webhook_validation": {
+          "file_exists": true,
+          "status": "needs_review"
+        },
+        "secrets_management": {
+          "file_exists": true,
+          "status": "needs_review"
+        },
+        "cors_config": {
+          "file_exists": true,
+          "status": "needs_review"
+        }
+      },
+      "message": "Security items need manual review"
+    },
+    "documentation": {
+      "status": "ok",
+      "docs": {
+        "architecture_report": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/ARCHITECTURE_STATUS_REPORT.md"
+        },
+        "consolidation_plan": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/consolidation/PLAN_COMPLETO_REPOSITORIO_WORKSPACE.md"
+        },
+        "agent_architecture": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/AGENT_ARCHITECTURE.md"
+        },
+        "readme": {
+          "exists": true,
+          "path": "/Users/matias/chatbot2511/chatbot-2311/README.md"
+        }
+      },
+      "all_exist": true
+    }
+  }
+}
