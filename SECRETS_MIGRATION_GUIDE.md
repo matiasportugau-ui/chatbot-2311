@@ -132,3 +132,5 @@ docker-compose -f docker-compose.prod.yml config
 docker-compose -f docker-compose.prod.yml logs chat-api
 ```
 
+
+
