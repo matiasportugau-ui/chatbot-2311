@@ -56,7 +56,16 @@ google-auth-oauthlib>=1.0.0
 google-auth-httplib2>=0.1.0
 
 # Para n8n API integration
-requests>=2.25.1
+# requests ya está incluido arriba (línea 15)
 
 # Para rate limiting
 slowapi>=0.1.9
+
+# Para Vector Database (Qdrant)
+qdrant-client>=1.7.0
+
+# Para caching y sesiones (Redis)
+redis>=5.0.0
+
+# Para monitoreo de sistema
+psutil>=5.9.0
