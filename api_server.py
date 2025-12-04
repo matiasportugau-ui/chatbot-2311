@@ -13,7 +13,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 from decimal import Decimal
 
-from fastapi import FastAPI, HTTPException, Request, Header
+from fastapi import FastAPI, HTTPException, Request, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -25,6 +25,7 @@ from sistema_cotizaciones import (
     Cliente,
     EspecificacionCotizacion,
 )
+from utils.security.rate_limiting import RateLimiter, rate_limit
 
 # Configurar logging
 logging.basicConfig(
@@ -50,6 +51,13 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Rate limiting middleware
+rate_limiter = RateLimiter(
+    requests_per_minute=int(os.getenv("RATE_LIMIT_PER_MINUTE", "60")),
+    burst_size=int(os.getenv("RATE_LIMIT_BURST", "100"))
+)
+app.add_middleware(type(rate_limiter), requests_per_minute=rate_limiter.requests_per_minute, burst_size=rate_limiter.burst_size)
 
 # Inicializar IA conversacional
 ia = IAConversacionalIntegrada()

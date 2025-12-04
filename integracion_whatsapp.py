@@ -23,6 +23,40 @@ from utils.security.webhook_validation import WhatsAppWebhookValidator
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Simple in-memory rate limiting for Flask
+_flask_rate_limits = {}
+
+
+def check_flask_rate_limit(client_id: str, limit: int = 60, window: int = 60) -> bool:
+    """
+    Simple rate limiting for Flask endpoints.
+    
+    Args:
+        client_id: Client identifier (IP address)
+        limit: Maximum requests per window
+        window: Time window in seconds
+        
+    Returns:
+        bool: True if allowed, False if rate limited
+    """
+    current_time = time.time()
+    
+    if client_id not in _flask_rate_limits:
+        _flask_rate_limits[client_id] = []
+    
+    # Remove old entries
+    _flask_rate_limits[client_id] = [
+        t for t in _flask_rate_limits[client_id]
+        if current_time - t < window
+    ]
+    
+    # Check limit
+    if len(_flask_rate_limits[client_id]) >= limit:
+        return False
+    
+    _flask_rate_limits[client_id].append(current_time)
+    return True
+
 
 class IntegracionWhatsApp:
     """Integración con WhatsApp Business API"""
@@ -85,6 +119,12 @@ class IntegracionWhatsApp:
     def procesar_mensaje_whatsapp(self):
         """Procesa mensajes entrantes de WhatsApp"""
         try:
+            # Rate limiting - max 30 requests per minute per IP
+            client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+            if not check_flask_rate_limit(f"whatsapp:{client_ip}", limit=30, window=60):
+                logger.warning(f"Rate limit exceeded for WhatsApp webhook from {client_ip}")
+                return jsonify({"status": "error", "message": "Rate limit exceeded"}), 429
+            
             # Validate webhook signature if validator is configured
             if self.webhook_validator:
                 signature = request.headers.get('X-Hub-Signature-256', '')
