@@ -87,3 +87,7 @@ build/
 
 # Vercel
 .vercel/
+
+# Docker secrets directory
+secrets/
+*.secret

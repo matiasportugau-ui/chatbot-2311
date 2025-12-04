@@ -9,8 +9,8 @@ services:
       - "5678:5678"
     environment:
       - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=bmc2024
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-bmc2024}
       - N8N_HOST=localhost
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
@@ -39,6 +39,10 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/bmc_chat
       - PORT=8000
       - HOST=0.0.0.0
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - API_KEYS=${API_KEYS}
+      - WHATSAPP_WEBHOOK_SECRET=${WHATSAPP_WEBHOOK_SECRET}
     volumes:
       - ./:/app
       - chat_data:/app/data

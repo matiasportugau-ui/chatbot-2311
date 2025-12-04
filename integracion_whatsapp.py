@@ -8,6 +8,8 @@ Sistema de cotizaciones con integración WhatsApp Business API
 import json
 import datetime
 import requests
+import os
+import logging
 from typing import Dict, List, Any, Optional
 from flask import Flask, request, jsonify
 import threading
@@ -15,6 +17,11 @@ import time
 
 from ia_conversacional_integrada import IAConversacionalIntegrada
 from base_conocimiento_dinamica import InteraccionCliente
+from utils.security.webhook_validation import WhatsAppWebhookValidator
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class IntegracionWhatsApp:
@@ -26,10 +33,18 @@ class IntegracionWhatsApp:
         self.configurar_rutas()
         self.webhook_verificado = False
         
-        # Configuración WhatsApp
-        self.whatsapp_token = "TU_WHATSAPP_TOKEN"  # Reemplazar con token real
-        self.whatsapp_phone_id = "TU_PHONE_ID"     # Reemplazar con phone ID real
-        self.webhook_verify_token = "TU_VERIFY_TOKEN"  # Reemplazar con token de verificación
+        # Configuración WhatsApp desde variables de entorno
+        self.whatsapp_token = os.getenv("WHATSAPP_TOKEN", "TU_WHATSAPP_TOKEN")
+        self.whatsapp_phone_id = os.getenv("WHATSAPP_PHONE_ID", "TU_PHONE_ID")
+        self.webhook_verify_token = os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN", "TU_VERIFY_TOKEN")
+        self.webhook_secret = os.getenv("WHATSAPP_WEBHOOK_SECRET", "")
+        
+        # Initialize webhook validator
+        if self.webhook_secret:
+            self.webhook_validator = WhatsAppWebhookValidator(self.webhook_secret)
+        else:
+            logger.warning("WHATSAPP_WEBHOOK_SECRET not set - signature validation disabled")
+            self.webhook_validator = None
         
         # URL base de WhatsApp API
         self.whatsapp_api_url = f"https://graph.facebook.com/v18.0/{self.whatsapp_phone_id}/messages"
@@ -70,6 +85,15 @@ class IntegracionWhatsApp:
     def procesar_mensaje_whatsapp(self):
         """Procesa mensajes entrantes de WhatsApp"""
         try:
+            # Validate webhook signature if validator is configured
+            if self.webhook_validator:
+                signature = request.headers.get('X-Hub-Signature-256', '')
+                payload = request.get_data()
+                
+                if not self.webhook_validator.validate(payload, signature):
+                    logger.error("Invalid webhook signature")
+                    return jsonify({"status": "error", "message": "Invalid signature"}), 401
+            
             data = request.get_json()
             
             if not data or 'entry' not in data:
@@ -91,7 +115,7 @@ class IntegracionWhatsApp:
             return jsonify({"status": "ok"})
             
         except Exception as e:
-            print(f"❌ Error procesando mensaje WhatsApp: {e}")
+            logger.error(f"Error procesando mensaje WhatsApp: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
     
     def procesar_mensaje_individual(self, message: Dict, value: Dict):
