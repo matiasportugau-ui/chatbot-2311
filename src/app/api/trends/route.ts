@@ -1,7 +1,17 @@
 export const dynamic = 'force-dynamic'
 
 import { connectDB } from '@/lib/mongodb'
+<<<<<<< Updated upstream
 import { NextRequest, NextResponse } from 'next/server'
+=======
+import { withRateLimit } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+import {
+  successResponse,
+  errorResponse,
+} from '@/lib/api-response'
+>>>>>>> Stashed changes
 
 /**
  * Trends API Endpoint
@@ -90,18 +100,18 @@ export async function GET(request: NextRequest) {
                   period === 'day'
                     ? { $dateToString: { format: '%H:00', date: '$timestamp' } }
                     : period === 'week'
-                    ? {
-                        $dateToString: {
-                          format: '%Y-%m-%d',
-                          date: '$timestamp',
+                      ? {
+                          $dateToString: {
+                            format: '%Y-%m-%d',
+                            date: '$timestamp',
+                          },
+                        }
+                      : {
+                          $dateToString: {
+                            format: '%Y-%m-%d',
+                            date: '$timestamp',
+                          },
                         },
-                      }
-                    : {
-                        $dateToString: {
-                          format: '%Y-%m-%d',
-                          date: '$timestamp',
-                        },
-                      },
                 count: { $sum: 1 },
               },
             },
@@ -339,8 +349,8 @@ export async function GET(request: NextRequest) {
       previousValue > 0
         ? (change / previousValue) * 100
         : currentValue > 0
-        ? 100
-        : 0
+          ? 100
+          : 0
 
     const trend: 'up' | 'down' | 'stable' =
       changePercentage > 5 ? 'up' : changePercentage < -5 ? 'down' : 'stable'
@@ -350,35 +360,27 @@ export async function GET(request: NextRequest) {
       Math.max(0, 100 - Math.abs(changePercentage) / 2)
     )
 
-    return NextResponse.json({
-      success: true,
-      data: [
-        {
-          metric: type,
-          description: `${
-            type.charAt(0).toUpperCase() + type.slice(1)
-          } trends for ${period}`,
-          currentValue,
-          previousValue,
-          change,
-          changePercentage,
-          trend,
-          confidence,
-          data,
-          insights,
-          recommendations,
-        },
-      ],
-    })
-  } catch (error: any) {
-    console.error('Trends API Error:', error)
-    return NextResponse.json(
+    return successResponse([
       {
-        success: false,
-        error: error.message || 'Internal server error',
-        data: [],
+        metric: type,
+        description: `${
+          type.charAt(0).toUpperCase() + type.slice(1)
+        } trends for ${period}`,
+        currentValue,
+        previousValue,
+        change,
+        changePercentage,
+        trend,
+        confidence,
+        data,
+        insights,
+        recommendations,
       },
-      { status: 500 }
-    )
+    ])
+  } catch (error: unknown) {
+    console.error('Trends API Error:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }

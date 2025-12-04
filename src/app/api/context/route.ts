@@ -1,8 +1,19 @@
 export const dynamic = 'force-dynamic'
 
 import { getSharedContextService } from '@/lib/shared-context-service'
+<<<<<<< Updated upstream
 import { NextRequest, NextResponse } from 'next/server'
+=======
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 import { OpenAI } from 'openai'
+import {
+  successResponse,
+  errorResponse,
+  validationErrorResponse,
+  notFoundResponse,
+} from '@/lib/api-response'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -41,14 +52,15 @@ export async function POST(request: NextRequest) {
         return await compressContext(session_id)
 
       default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+        return validationErrorResponse(
+          ['Invalid action'],
+          'Invalid action parameter'
+        )
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Context API Error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
@@ -89,12 +101,12 @@ async function createSession(user_phone: string, initial_message: string) {
       )
     }
 
-    return NextResponse.json({
+    return successResponse({
       action: 'session_created',
       session_id,
       status: 'success',
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating session:', error)
     // Fallback to in-memory only
     const session_id = `sess_${Date.now()}_${Math.random()
@@ -112,7 +124,7 @@ async function createSession(user_phone: string, initial_message: string) {
     }
     sessions.set(session_id, session)
     messageHistory.set(session_id, [])
-    return NextResponse.json({
+    return successResponse({
       action: 'session_created',
       session_id,
       status: 'success',
@@ -129,7 +141,7 @@ async function addMessage(
 ) {
   const session = sessions.get(session_id)
   if (!session) {
-    return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    return notFoundResponse('Session')
   }
 
   // Map message_type to role for shared service
@@ -137,8 +149,8 @@ async function addMessage(
     message_type === 'user'
       ? 'user'
       : message_type === 'assistant'
-      ? 'assistant'
-      : 'system'
+        ? 'assistant'
+        : 'system'
 
   // Add message to shared service
   try {
@@ -181,7 +193,7 @@ async function addMessage(
 
   sessions.set(session_id, session)
 
-  return NextResponse.json({
+  return successResponse({
     action: 'message_added',
     session_id,
     success: true,
@@ -195,7 +207,7 @@ async function getContext(session_id: string, user_phone: string) {
     const sharedContext = await sharedService.getContext(session_id, user_phone)
     if (sharedContext) {
       // Convert shared context format to legacy format
-      return NextResponse.json({
+      return successResponse({
         session_id,
         user_phone,
         current_intent: sharedContext.intent || 'general',
@@ -207,19 +219,19 @@ async function getContext(session_id: string, user_phone: string) {
         last_activity: sharedContext.last_updated.toISOString(),
       })
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.warn('Failed to get context from shared service:', error)
   }
 
   // Fallback to in-memory
   const session = sessions.get(session_id)
   if (!session) {
-    return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    return notFoundResponse('Session')
   }
 
   const history = messageHistory.get(session_id) || []
 
-  return NextResponse.json({
+  return successResponse({
     session_id,
     user_phone,
     current_intent: session.current_intent,
@@ -235,7 +247,7 @@ async function getContext(session_id: string, user_phone: string) {
 async function compressContext(session_id: string) {
   const session = sessions.get(session_id)
   if (!session) {
-    return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    return notFoundResponse('Session')
   }
 
   const history = messageHistory.get(session_id) || []
@@ -277,19 +289,17 @@ async function compressContext(session_id: string) {
 
     sessions.set(session_id, session)
 
-    return NextResponse.json({
+    return successResponse({
       action: 'context_compressed',
       session_id,
       summary,
       new_token_count: session.token_count,
       success: true,
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error compressing context:', error)
-    return NextResponse.json(
-      { error: 'Failed to compress context' },
-      { status: 500 }
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse('Failed to compress context', 500, errorMessage)
   }
 }
 
@@ -300,7 +310,7 @@ export async function GET() {
     message_count: messageHistory.get(session.session_id)?.length || 0,
   }))
 
-  return NextResponse.json({
+  return successResponse({
     sessions: allSessions,
     total: allSessions.length,
     active: allSessions.filter(s => s.status === 'active').length,

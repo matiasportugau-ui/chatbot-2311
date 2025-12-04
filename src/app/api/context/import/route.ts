@@ -1,7 +1,19 @@
 export const dynamic = 'force-dynamic'
 
+<<<<<<< Updated upstream
 import { getSharedContextService } from '@/lib/shared-context-service'
 import { NextRequest, NextResponse } from 'next/server'
+=======
+import {
+  errorResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
+import { withRateLimit } from '@/lib/rate-limit'
+import { getSharedContextService } from '@/lib/shared-context-service'
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 
 /**
  * Context Import API
@@ -19,12 +31,9 @@ export async function POST(request: NextRequest) {
     const { sessionId, userPhone, context } = body
 
     if (!sessionId || !userPhone || !context) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'sessionId, userPhone, and context are required',
-        },
-        { status: 400 }
+      return validationErrorResponse(
+        ['sessionId, userPhone, and context are required'],
+        'Missing required fields'
       )
     }
 
@@ -37,22 +46,15 @@ export async function POST(request: NextRequest) {
     })
 
     if (!success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Failed to import context',
-        },
-        { status: 500 }
-      )
+      return errorResponse('Failed to import context', 500)
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Context imported successfully',
-      data: {
+    return successResponse(
+      {
         sessionId,
         userPhone,
       },
+<<<<<<< Updated upstream
     })
   } catch (error: any) {
     console.error('Context Import API Error:', error)
@@ -63,5 +65,14 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     )
+=======
+      'Context imported successfully'
+    )
+  } catch (error: unknown) {
+    console.error('Context Import API Error:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
+>>>>>>> Stashed changes
   }
 }

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Asistente interactivo para obtener y refrescar tokens OAuth de Mercado Libre.
 
@@ -25,10 +24,8 @@ import textwrap
 import urllib.parse
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
 
 import requests
-
 
 # IMPORTANTE: El valor por defecto es para Uruguay. Configura MERCADO_LIBRE_AUTH_URL según tu región:
 # Argentina: https://auth.mercadolibre.com.ar, México: https://auth.mercadolibre.com.mx, etc.
@@ -44,11 +41,11 @@ PKCE_ENABLED = os.getenv("MERCADO_LIBRE_PKCE_ENABLED", "true").lower() == "true"
 @dataclass
 class OAuthTokens:
     access_token: str
-    refresh_token: Optional[str]
+    refresh_token: str | None
     expires_in: int
-    user_id: Optional[str] = None
-    scope: Optional[str] = None
-    token_type: Optional[str] = None
+    user_id: str | None = None
+    scope: str | None = None
+    token_type: str | None = None
 
 
 class MercadoLibreOAuthHelper:
@@ -56,13 +53,13 @@ class MercadoLibreOAuthHelper:
 
     def __init__(
         self,
-        app_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
+        app_id: str | None = None,
+        client_secret: str | None = None,
         redirect_uri: str = DEFAULT_REDIRECT_URI,
         scopes: str = DEFAULT_SCOPES,
         auth_url: str = DEFAULT_AUTH_URL,
         api_url: str = DEFAULT_API_URL,
-        seller_id: Optional[str] = None,
+        seller_id: str | None = None,
         pkce_enabled: bool = PKCE_ENABLED,
     ) -> None:
         self.app_id = app_id or os.getenv("MERCADO_LIBRE_APP_ID")
@@ -74,8 +71,8 @@ class MercadoLibreOAuthHelper:
         self.token_endpoint = f"{self.api_url}/oauth/token"
         self.seller_id = seller_id or os.getenv("MERCADO_LIBRE_SELLER_ID")
         self.pkce_enabled = pkce_enabled
-        self._code_verifier: Optional[str] = None
-        self._last_state: Optional[str] = None
+        self._code_verifier: str | None = None
+        self._last_state: str | None = None
 
         if not self.app_id or not self.client_secret:
             raise RuntimeError(
@@ -136,7 +133,7 @@ class MercadoLibreOAuthHelper:
         data = response.json()
         return self._build_tokens(data)
 
-    def fetch_seller_id(self, access_token: str) -> Optional[str]:
+    def fetch_seller_id(self, access_token: str) -> str | None:
         """Usa el token recién generado para obtener el seller_id."""
         headers = {"Authorization": f"Bearer {access_token}"}
         response = requests.get(f"{self.api_url}/users/me", headers=headers, timeout=30)
@@ -146,9 +143,11 @@ class MercadoLibreOAuthHelper:
         return str(data.get("id") or self.seller_id or "")
 
     # ----------------------------------------------------------------- Helpers
-    def persist_tokens(self, tokens: OAuthTokens, env_path: Path, include_seller: bool = True) -> None:
+    def persist_tokens(
+        self, tokens: OAuthTokens, env_path: Path, include_seller: bool = True
+    ) -> None:
         """Actualiza el archivo .env con los tokens más recientes."""
-        updates: Dict[str, str] = {"MELI_ACCESS_TOKEN": tokens.access_token}
+        updates: dict[str, str] = {"MELI_ACCESS_TOKEN": tokens.access_token}
         if tokens.refresh_token:
             updates["MELI_REFRESH_TOKEN"] = tokens.refresh_token
         if include_seller:
@@ -187,7 +186,7 @@ class MercadoLibreOAuthHelper:
         env_path.write_text("\n".join(new_lines).strip() + "\n", encoding="utf-8")
 
     @staticmethod
-    def _build_tokens(data: Dict[str, object]) -> OAuthTokens:
+    def _build_tokens(data: dict[str, object]) -> OAuthTokens:
         access_token = data.get("access_token")
         if not access_token:
             raise RuntimeError(
@@ -313,7 +312,9 @@ def main() -> None:
             code = args.code or prompt_for_code(helper)
             tokens = helper.exchange_code(code)
     except requests.HTTPError as exc:
-        print(f"❌ Error HTTP durante la autenticación: {exc} → {exc.response.text}", file=sys.stderr)
+        print(
+            f"❌ Error HTTP durante la autenticación: {exc} → {exc.response.text}", file=sys.stderr
+        )
         sys.exit(1)
     except requests.RequestException as exc:
         print(f"❌ Error de red durante la autenticación: {exc}", file=sys.stderr)
@@ -336,4 +337,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

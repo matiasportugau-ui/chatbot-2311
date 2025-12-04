@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Gestiona servicios opcionales necesarios para el chatbot (p.ej., MongoDB).
 """
@@ -8,7 +7,6 @@ import shutil
 import socket
 import subprocess
 from time import sleep
-
 
 MONGO_CONTAINER = "bmc-mongodb"
 
@@ -38,7 +36,9 @@ def run_docker_command(args):
 
 
 def container_exists(name: str) -> bool:
-    ok, output = run_docker_command(["ps", "-a", "--filter", f"name={name}", "--format", "{{.Names}}"])
+    ok, output = run_docker_command(
+        ["ps", "-a", "--filter", f"name={name}", "--format", "{{.Names}}"]
+    )
     return ok and name in output.splitlines()
 
 
@@ -59,15 +59,17 @@ def start_container():
 
 def create_container():
     print("Creando contenedor MongoDB (mongo:7.0)...")
-    ok, output = run_docker_command([
-        "run",
-        "-d",
-        "--name",
-        MONGO_CONTAINER,
-        "-p",
-        "27017:27017",
-        "mongo:7.0",
-    ])
+    ok, output = run_docker_command(
+        [
+            "run",
+            "-d",
+            "--name",
+            MONGO_CONTAINER,
+            "-p",
+            "27017:27017",
+            "mongo:7.0",
+        ]
+    )
     if ok:
         print("Contenedor MongoDB creado e iniciado.")
     else:
@@ -112,4 +114,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Instala automáticamente todas las dependencias necesarias para el chatbot BMC.
 """
@@ -7,7 +6,6 @@ Instala automáticamente todas las dependencias necesarias para el chatbot BMC.
 import subprocess
 import sys
 from pathlib import Path
-
 
 REQ_FILE = Path("requirements.txt")
 
@@ -66,4 +64,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Almacenamiento ligero en SQLite para snapshots de preguntas de Mercado Libre.
 """
@@ -10,10 +9,10 @@ import argparse
 import hashlib
 import json
 import sqlite3
-from datetime import datetime, timezone
+from collections.abc import Iterable
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
-
+from typing import Any
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
@@ -55,11 +54,11 @@ class MercadoLibreStore:
         )
         self.conn.commit()
 
-    def store_snapshot(self, run_id: str, payload: Dict[str, Any]) -> None:
+    def store_snapshot(self, run_id: str, payload: dict[str, Any]) -> None:
         """Inserta/actualiza preguntas desde un snapshot crudo."""
         source_file = payload.get("metadata", {}).get("source_file", "")
         preguntas = payload.get("questions", [])
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         registros = 0
         with self.conn:
             for question in preguntas:
@@ -86,8 +85,8 @@ class MercadoLibreStore:
         print(f"💾 {registros} preguntas almacenadas en SQLite (run_id={run_id}).")
 
     def _prepare_record(
-        self, question: Dict[str, Any], run_id: str, source_file: str, imported_at: str
-    ) -> Tuple[Any, ...]:
+        self, question: dict[str, Any], run_id: str, source_file: str, imported_at: str
+    ) -> tuple[Any, ...]:
         payload_str = json.dumps(question, ensure_ascii=False)
         hash_value = hashlib.sha1(payload_str.encode("utf-8")).hexdigest()
         answer = question.get("answer") or {}
@@ -110,7 +109,7 @@ class MercadoLibreStore:
             imported_at,
         )
 
-    def list_snapshots(self) -> List[sqlite3.Row]:
+    def list_snapshots(self) -> list[sqlite3.Row]:
         query = """
         SELECT run_id,
                COUNT(*) AS total,
@@ -138,12 +137,14 @@ class MercadoLibreStore:
         payload = {
             "fuente": "mercadolibre_api",
             "descripcion": "Historial de preguntas/respuestas de Mercado Libre",
-            "fecha_exportacion": datetime.now(timezone.utc).isoformat(),
+            "fecha_exportacion": datetime.now(UTC).isoformat(),
             "interacciones": interacciones,
         }
         with output_path.open("w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=2)
-        print(f"📤 Snapshot {run_id} exportado a {output_path} ({len(interacciones)} interacciones).")
+        print(
+            f"📤 Snapshot {run_id} exportado a {output_path} ({len(interacciones)} interacciones)."
+        )
 
     def purge_old_runs(self, keep: int) -> None:
         """Conserva únicamente los últimos 'keep' snapshots."""
@@ -172,7 +173,7 @@ class MercadoLibreStore:
         return cur.fetchall()
 
     @staticmethod
-    def _row_to_interaccion(row: sqlite3.Row) -> Dict[str, Any]:
+    def _row_to_interaccion(row: sqlite3.Row) -> dict[str, Any]:
         question = json.loads(row["payload"])
         answer = question.get("answer") or {}
         resultado = "respondido" if answer.get("text") else "pendiente"
@@ -246,4 +247,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

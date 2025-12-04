@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Conversation Data Recovery Script
 Scans MongoDB, backup files, and exports to recover lost conversation data
 """
 
-import os
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any
+
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 
@@ -18,7 +18,7 @@ from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 class ConversationRecovery:
     """Recovery system for lost conversation data"""
 
-    def __init__(self, mongodb_uri: Optional[str] = None):
+    def __init__(self, mongodb_uri: str | None = None):
         self.mongodb_uri = mongodb_uri or os.getenv(
             "MONGODB_URI", "mongodb://localhost:27017/bmc-cotizaciones"
         )
@@ -64,7 +64,7 @@ class ConversationRecovery:
             print(f"❌ Error connecting to MongoDB: {e}")
             return False
 
-    def scan_mongodb(self) -> Dict[str, Any]:
+    def scan_mongodb(self) -> dict[str, Any]:
         """Scan MongoDB for conversation data"""
         if self.db is None:
             return {}
@@ -97,9 +97,7 @@ class ConversationRecovery:
                     }
 
                     self.recovery_report["mongodb"]["total_found"] += count
-                    self.recovery_report["mongodb"]["collections"][
-                        collection_name
-                    ] = count
+                    self.recovery_report["mongodb"]["collections"][collection_name] = count
 
                     # Update summary
                     if collection_name in ["conversations", "conversaciones"]:
@@ -115,7 +113,7 @@ class ConversationRecovery:
 
         return found_data
 
-    def scan_filesystem(self, root_dir: Optional[str] = None) -> List[Dict[str, Any]]:
+    def scan_filesystem(self, root_dir: str | None = None) -> list[dict[str, Any]]:
         """Scan filesystem for backup and export files"""
         if not root_dir:
             root_dir = os.getcwd()
@@ -153,7 +151,7 @@ class ConversationRecovery:
                     for file_path in search_dir.glob(pattern):
                         if file_path.is_file():
                             try:
-                                with open(file_path, "r", encoding="utf-8") as f:
+                                with open(file_path, encoding="utf-8") as f:
                                     data = json.load(f)
 
                                 # Extract conversations from various formats
@@ -165,13 +163,9 @@ class ConversationRecovery:
                                         data["conversations"], list
                                     ):
                                         conversations = data["conversations"]
-                                    elif "messages" in data and isinstance(
-                                        data["messages"], list
-                                    ):
+                                    elif "messages" in data and isinstance(data["messages"], list):
                                         conversations = [data]
-                                    elif "data" in data and isinstance(
-                                        data["data"], list
-                                    ):
+                                    elif "data" in data and isinstance(data["data"], list):
                                         conversations = data["data"]
                                     elif "interacciones" in data and isinstance(
                                         data["interacciones"], list
@@ -191,12 +185,12 @@ class ConversationRecovery:
                                         ),
                                     }
                                     found_files.append(file_info)
-                                    self.recovery_report["filesystem"][
-                                        "total_found"
-                                    ] += len(conversations)
-                                    self.recovery_report["summary"][
-                                        "total_conversations"
-                                    ] += len(conversations)
+                                    self.recovery_report["filesystem"]["total_found"] += len(
+                                        conversations
+                                    )
+                                    self.recovery_report["summary"]["total_conversations"] += len(
+                                        conversations
+                                    )
                                     print(
                                         f"  📁 Found: {file_path.name} ({len(conversations)} conversations)"
                                     )
@@ -210,7 +204,7 @@ class ConversationRecovery:
         self.recovery_report["filesystem"]["backups"] = found_files
         return found_files
 
-    def create_backup(self, output_dir: Optional[str] = None) -> str:
+    def create_backup(self, output_dir: str | None = None) -> str:
         """Create backup of current MongoDB data"""
         if self.db is None:
             print("❌ MongoDB not connected. Cannot create backup.")
@@ -257,13 +251,13 @@ class ConversationRecovery:
 
     def restore_from_file(
         self, file_path: str, target_collection: str = "conversations"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Restore conversations from a backup file"""
         if self.db is None:
             return {"success": False, "error": "MongoDB not connected"}
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 data = json.load(f)
 
             # Extract conversations
@@ -315,7 +309,7 @@ class ConversationRecovery:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    def generate_report(self) -> Dict[str, Any]:
+    def generate_report(self) -> dict[str, Any]:
         """Generate recovery report"""
         # Determine recovery status
         total_found = (
@@ -337,7 +331,7 @@ class ConversationRecovery:
 
         return self.recovery_report
 
-    def run_recovery(self, create_backup_first: bool = True) -> Dict[str, Any]:
+    def run_recovery(self, create_backup_first: bool = True) -> dict[str, Any]:
         """Run full recovery scan"""
         print("=" * 70)
         print("🔍 CONVERSATION DATA RECOVERY SYSTEM")
@@ -369,9 +363,7 @@ class ConversationRecovery:
         print("📋 RECOVERY SUMMARY")
         print("=" * 70)
         print(f"  MongoDB: {report['mongodb']['total_found']} documents found")
-        print(
-            f"  Filesystem: {report['filesystem']['total_found']} conversations found"
-        )
+        print(f"  Filesystem: {report['filesystem']['total_found']} conversations found")
         print(f"  Total Conversations: {report['summary']['total_conversations']}")
         print(f"  Total Quotes: {report['summary']['total_quotes']}")
         print(f"  Total Sessions: {report['summary']['total_sessions']}")
@@ -386,16 +378,14 @@ class ConversationRecovery:
 
         return report
 
-    def save_report(self, output_file: Optional[str] = None) -> str:
+    def save_report(self, output_file: str | None = None) -> str:
         """Save recovery report to file"""
         if not output_file:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_file = os.path.join(os.getcwd(), f"recovery_report_{timestamp}.json")
 
         with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(
-                self.recovery_report, f, ensure_ascii=False, indent=2, default=str
-            )
+            json.dump(self.recovery_report, f, ensure_ascii=False, indent=2, default=str)
 
         print(f"💾 Recovery report saved: {output_file}")
         return output_file

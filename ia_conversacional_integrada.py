@@ -1,29 +1,36 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 IA Conversacional Integrada BMC Uruguay
 Sistema de IA que aprende y evoluciona constantemente
 """
 
-import json
 import datetime
-import re
+import json
 import os
-from typing import Dict, List, Any, Optional, Tuple
-from dataclasses import dataclass, asdict
-from decimal import Decimal
 import random
+import re
+from dataclasses import dataclass
+from decimal import Decimal
+from typing import Any
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not available, will use system environment variables
 from base_conocimiento_dinamica import BaseConocimientoDinamica, InteraccionCliente
 from motor_analisis_conversiones import MotorAnalisisConversiones
 from sistema_cotizaciones import (
-    SistemaCotizacionesBMC,
     Cliente,
     EspecificacionCotizacion,
+    SistemaCotizacionesBMC,
 )
 from utils_cotizaciones import (
-    obtener_datos_faltantes,
-    formatear_mensaje_faltantes,
     construir_contexto_validacion,
+    formatear_mensaje_faltantes,
+    obtener_datos_faltantes,
 )
 
 # Unified Model Integrator
@@ -48,13 +55,13 @@ class ContextoConversacion:
 
     cliente_id: str
     sesion_id: str
-    mensajes_intercambiados: List[Dict[str, Any]]
+    mensajes_intercambiados: list[dict[str, Any]]
     intencion_actual: str
-    entidades_extraidas: Dict[str, Any]
+    entidades_extraidas: dict[str, Any]
     estado_cotizacion: str
-    datos_cliente: Dict[str, Any]
-    datos_producto: Dict[str, Any]
-    historial_interacciones: List[str]
+    datos_cliente: dict[str, Any]
+    datos_producto: dict[str, Any]
+    historial_interacciones: list[str]
     confianza_respuesta: float
     timestamp_inicio: datetime.datetime
     timestamp_ultima_actividad: datetime.datetime
@@ -66,10 +73,10 @@ class RespuestaIA:
 
     mensaje: str
     tipo_respuesta: str  # informativa, pregunta, cotizacion, seguimiento
-    acciones_sugeridas: List[str]
+    acciones_sugeridas: list[str]
     confianza: float
-    fuentes_conocimiento: List[str]
-    personalizacion: Dict[str, Any]
+    fuentes_conocimiento: list[str]
+    personalizacion: dict[str, Any]
     timestamp: datetime.datetime
 
 
@@ -151,15 +158,9 @@ class IAConversacionalIntegrada:
     def cargar_configuracion_inicial(self):
         """Carga la configuración inicial de la IA"""
         # Configurar sistema de cotizaciones
-        self.sistema_cotizaciones.actualizar_precio_producto(
-            "isodec", Decimal("150.00")
-        )
-        self.sistema_cotizaciones.actualizar_precio_producto(
-            "poliestireno", Decimal("120.00")
-        )
-        self.sistema_cotizaciones.actualizar_precio_producto(
-            "lana_roca", Decimal("140.00")
-        )
+        self.sistema_cotizaciones.actualizar_precio_producto("isodec", Decimal("150.00"))
+        self.sistema_cotizaciones.actualizar_precio_producto("poliestireno", Decimal("120.00"))
+        self.sistema_cotizaciones.actualizar_precio_producto("lana_roca", Decimal("140.00"))
 
         # Cargar patrones de respuesta iniciales
         self.patrones_respuesta = {
@@ -207,9 +208,7 @@ class IAConversacionalIntegrada:
             ],
         }
 
-    def procesar_mensaje(
-        self, mensaje: str, cliente_id: str, sesion_id: str = None
-    ) -> RespuestaIA:
+    def procesar_mensaje(self, mensaje: str, cliente_id: str, sesion_id: str = None) -> RespuestaIA:
         """Procesa un mensaje del cliente y genera respuesta"""
         if not sesion_id:
             sesion_id = f"sesion_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
@@ -225,9 +224,7 @@ class IAConversacionalIntegrada:
         entidades = self._extraer_entidades(mensaje)
 
         # Generar respuesta
-        respuesta = self._generar_respuesta_inteligente(
-            mensaje, intencion, entidades, contexto
-        )
+        respuesta = self._generar_respuesta_inteligente(mensaje, intencion, entidades, contexto)
 
         # Registrar interacción
         self._registrar_interaccion(mensaje, respuesta, contexto)
@@ -236,11 +233,7 @@ class IAConversacionalIntegrada:
         self._actualizar_conocimiento_conversacion(contexto, respuesta)
 
         # Save to shared context service
-        if (
-            self.use_shared_context
-            and self.shared_context_service
-            and contexto.sesion_id
-        ):
+        if self.use_shared_context and self.shared_context_service and contexto.sesion_id:
             try:
                 # Add assistant message
                 self.shared_context_service.add_message(
@@ -266,18 +259,14 @@ class IAConversacionalIntegrada:
                     },
                     "messages": [
                         {
-                            "role": msg.get("tipo") == "cliente"
-                            and "user"
-                            or "assistant",
+                            "role": msg.get("tipo") == "cliente" and "user" or "assistant",
                             "content": msg.get("mensaje", ""),
                             "timestamp": msg.get("timestamp", datetime.datetime.now()),
                         }
                         for msg in contexto.mensajes_intercambiados
                     ],
                 }
-                self.shared_context_service.save_context(
-                    contexto.sesion_id, context_dict
-                )
+                self.shared_context_service.save_context(contexto.sesion_id, context_dict)
             except Exception as e:
                 print(f"Warning: Failed to save context to shared service: {e}")
 
@@ -292,9 +281,7 @@ class IAConversacionalIntegrada:
         # Try to load from shared context service first
         if self.use_shared_context and self.shared_context_service and sesion_id:
             try:
-                shared_context = self.shared_context_service.get_context(
-                    sesion_id, cliente_id
-                )
+                shared_context = self.shared_context_service.get_context(sesion_id, cliente_id)
                 if shared_context:
                     # Convert shared context to ContextoConversacion
                     contexto = ContextoConversacion(
@@ -302,13 +289,9 @@ class IAConversacionalIntegrada:
                         sesion_id=sesion_id,
                         mensajes_intercambiados=[
                             {
-                                "tipo": msg.get("role") == "user"
-                                and "cliente"
-                                or "asistente",
+                                "tipo": msg.get("role") == "user" and "cliente" or "asistente",
                                 "mensaje": msg.get("content", ""),
-                                "timestamp": msg.get(
-                                    "timestamp", datetime.datetime.now()
-                                ),
+                                "timestamp": msg.get("timestamp", datetime.datetime.now()),
                             }
                             for msg in shared_context.get("messages", [])
                         ],
@@ -417,8 +400,14 @@ class IAConversacionalIntegrada:
             contexto.mensajes_intercambiados = contexto.mensajes_intercambiados[-self.MAX_MESSAGES_PER_CONVERSATION:]
         contexto.timestamp_ultima_actividad = datetime.datetime.now()
 
-    def _analizar_intencion(self, mensaje: str) -> str:
-        """Analiza la intención del mensaje del cliente"""
+
+    def _analizar_intencion(self, mensaje: str) -> tuple[str, float]:
+        """Analiza la intención del mensaje del cliente con confidence scoring
+
+        Returns:
+            Tuple[str, float]: (intent, confidence_score)
+        """
+
         mensaje_lower = mensaje.lower()
 
         # Patrones de intención
@@ -459,8 +448,10 @@ class IAConversacionalIntegrada:
 
         return "general"
 
-    def _extraer_entidades(self, mensaje: str) -> Dict[str, Any]:
-        """Extrae entidades del mensaje"""
+
+    def _extraer_entidades(self, mensaje: str) -> dict[str, Any]:
+        """Extrae entidades del mensaje con matching mejorado"""
+
         mensaje_lower = mensaje.lower()
         entidades = {}
 
@@ -470,7 +461,9 @@ class IAConversacionalIntegrada:
             if producto in mensaje_lower:
                 productos_encontrados.append(producto)
         if productos_encontrados:
-            entidades["productos"] = productos_encontrados
+
+            entidades["productos"] = list(set(productos_encontrados))  # Remove duplicates
+
 
         # Extraer espesores
         espesores_encontrados = []
@@ -478,7 +471,9 @@ class IAConversacionalIntegrada:
             if espesor in mensaje_lower:
                 espesores_encontrados.append(espesor)
         if espesores_encontrados:
-            entidades["espesores"] = espesores_encontrados
+
+            entidades["espesores"] = list(set(espesores_encontrados))  # Remove duplicates
+
 
         # Extraer colores
         colores_encontrados = []
@@ -506,7 +501,7 @@ class IAConversacionalIntegrada:
 
         return entidades
 
-    def _extraer_dimensiones(self, mensaje: str) -> Optional[Dict[str, float]]:
+    def _extraer_dimensiones(self, mensaje: str) -> dict[str, float] | None:
         """Extrae dimensiones del mensaje"""
         # Patrones para dimensiones
         patrones = [
@@ -527,7 +522,7 @@ class IAConversacionalIntegrada:
 
         return None
 
-    def _extraer_telefono(self, mensaje: str) -> Optional[str]:
+    def _extraer_telefono(self, mensaje: str) -> str | None:
         """Extrae número de teléfono del mensaje"""
         patron = r"(\+?598\s?)?(\d{2,3}\s?\d{3}\s?\d{3})"
         match = re.search(patron, mensaje)
@@ -535,7 +530,7 @@ class IAConversacionalIntegrada:
             return match.group(0).replace(" ", "")
         return None
 
-    def _extraer_nombre_apellido(self, mensaje: str) -> Optional[Dict[str, str]]:
+    def _extraer_nombre_apellido(self, mensaje: str) -> dict[str, str] | None:
         """Extrae nombre y apellido del mensaje"""
         # Buscar patrones comunes de presentación
         # Ejemplos: "Me llamo Juan Perez", "Soy Maria Rodriguez", "Juan Perez"
@@ -576,7 +571,7 @@ class IAConversacionalIntegrada:
         self,
         mensaje: str,
         intencion: str,
-        entidades: Dict[str, Any],
+        entidades: dict[str, Any],
         contexto: ContextoConversacion,
     ) -> RespuestaIA:
         """Genera respuesta inteligente basada en el análisis"""
@@ -614,9 +609,7 @@ class IAConversacionalIntegrada:
         if respuesta_conocimiento and len(respuesta_conocimiento) > 50:
             # Verificar si la respuesta es genérica
             respuesta_lower = respuesta_conocimiento.lower()
-            es_generica = any(
-                generica in respuesta_lower for generica in respuestas_genericas
-            )
+            es_generica = any(generica in respuesta_lower for generica in respuestas_genericas)
 
             if not es_generica:
                 # Usar respuesta de la base de conocimiento si no es genérica
@@ -632,9 +625,7 @@ class IAConversacionalIntegrada:
         saludos = self.patrones_respuesta["saludo"]
         mensaje = random.choice(saludos)
 
-        return self._crear_respuesta(
-            mensaje, "informativa", 0.9, ["patrones_respuesta"]
-        )
+        return self._crear_respuesta(mensaje, "informativa", 0.9, ["patrones_respuesta"])
 
     def _manejar_despedida(self, contexto: ContextoConversacion) -> RespuestaIA:
         """Maneja despedidas del cliente"""
@@ -644,7 +635,7 @@ class IAConversacionalIntegrada:
         return self._crear_respuesta(mensaje, "despedida", 0.9, ["patrones_respuesta"])
 
     def _manejar_cotizacion(
-        self, entidades: Dict[str, Any], contexto: ContextoConversacion
+        self, entidades: dict[str, Any], contexto: ContextoConversacion
     ) -> RespuestaIA:
         """Maneja solicitudes de cotización"""
         if contexto.estado_cotizacion == "inicial":
@@ -659,9 +650,7 @@ class IAConversacionalIntegrada:
                 "5️⃣ ¿Qué espesor necesitas? (50mm, 75mm, 100mm, 125mm, 150mm)"
             )
 
-            return self._crear_respuesta(
-                mensaje, "pregunta", 0.9, ["sistema_cotizaciones"]
-            )
+            return self._crear_respuesta(mensaje, "pregunta", 0.9, ["sistema_cotizaciones"])
 
         elif contexto.estado_cotizacion == "recopilando_datos":
             # Actualizar datos del cliente con entidades extraídas
@@ -696,18 +685,14 @@ class IAConversacionalIntegrada:
             if datos_faltantes:
                 # Hay datos faltantes, solicitar al cliente
                 mensaje = formatear_mensaje_faltantes(datos_faltantes)
-                return self._crear_respuesta(
-                    mensaje, "pregunta", 0.8, ["sistema_cotizaciones"]
-                )
+                return self._crear_respuesta(mensaje, "pregunta", 0.8, ["sistema_cotizaciones"])
 
             # Todos los datos están completos, crear cotización
             cotizacion = self._crear_cotizacion(contexto)
             if cotizacion:
                 contexto.estado_cotizacion = "cotizacion_completada"
                 mensaje = self._formatear_cotizacion(cotizacion)
-                return self._crear_respuesta(
-                    mensaje, "cotizacion", 0.95, ["sistema_cotizaciones"]
-                )
+                return self._crear_respuesta(mensaje, "cotizacion", 0.95, ["sistema_cotizaciones"])
             else:
                 # Error al crear cotización
                 return self._crear_respuesta(
@@ -717,12 +702,10 @@ class IAConversacionalIntegrada:
                     ["sistema_cotizaciones"],
                 )
 
-        return self._crear_respuesta(
-            "¿En qué más puedo ayudarte?", "pregunta", 0.7, ["general"]
-        )
+        return self._crear_respuesta("¿En qué más puedo ayudarte?", "pregunta", 0.7, ["general"])
 
     def _manejar_informacion(
-        self, entidades: Dict[str, Any], contexto: ContextoConversacion
+        self, entidades: dict[str, Any], contexto: ContextoConversacion
     ) -> RespuestaIA:
         """Maneja solicitudes de información"""
         if "productos" in entidades:
@@ -740,7 +723,7 @@ class IAConversacionalIntegrada:
         return self._crear_respuesta(mensaje, "informativa", 0.9, ["base_conocimiento"])
 
     def _manejar_consulta_producto(
-        self, entidades: Dict[str, Any], contexto: ContextoConversacion
+        self, entidades: dict[str, Any], contexto: ContextoConversacion
     ) -> RespuestaIA:
         """Maneja consultas específicas sobre productos"""
         if "productos" in entidades:
@@ -751,9 +734,7 @@ class IAConversacionalIntegrada:
 
         return self._crear_respuesta(mensaje, "informativa", 0.8, ["base_conocimiento"])
 
-    def _manejar_objecion(
-        self, mensaje: str, contexto: ContextoConversacion
-    ) -> RespuestaIA:
+    def _manejar_objecion(self, mensaje: str, contexto: ContextoConversacion) -> RespuestaIA:
         """Maneja objeciones del cliente"""
         mensaje_lower = mensaje.lower()
 
@@ -775,7 +756,9 @@ class IAConversacionalIntegrada:
                 "¿Qué te ayudaría a decidir?"
             )
         else:
-            respuesta = "Entiendo tu preocupación. ¿Podrías contarme más específicamente qué te preocupa?"
+            respuesta = (
+                "Entiendo tu preocupación. ¿Podrías contarme más específicamente qué te preocupa?"
+            )
 
         return self._crear_respuesta(
             respuesta, "informativa", 0.8, ["base_conocimiento", "objeciones"]
@@ -887,10 +870,7 @@ class IAConversacionalIntegrada:
 
     def _formatear_cotizacion(self, cotizacion) -> str:
         """Formatea una cotización para mostrar al cliente"""
-        area = (
-            cotizacion.especificaciones.largo_metros
-            * cotizacion.especificaciones.ancho_metros
-        )
+        area = cotizacion.especificaciones.largo_metros * cotizacion.especificaciones.ancho_metros
 
         return (
             f"🎉 **¡COTIZACIÓN LISTA!**\n\n"
@@ -907,7 +887,7 @@ class IAConversacionalIntegrada:
         )
 
     def _crear_respuesta(
-        self, mensaje: str, tipo: str, confianza: float, fuentes: List[str]
+        self, mensaje: str, tipo: str, confianza: float, fuentes: list[str]
     ) -> RespuestaIA:
         """Crea una respuesta estructurada"""
         return RespuestaIA(
@@ -955,13 +935,13 @@ class IAConversacionalIntegrada:
                 self.patrones_respuesta[tipo_respuesta].append(respuesta.mensaje)
 
     def procesar_mensaje_usuario(
-        self, mensaje: str, telefono_cliente: str, sesion_id: str = None,
-        request_id: Optional[str] = None, client_request_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+
+        self, mensaje: str, telefono_cliente: str, sesion_id: str = None
+    ) -> dict[str, Any]:
+
         """
-        Procesa mensaje del usuario con workflow híbrido inteligente:
-        - Pattern matching para intenciones simples (saludos, despedidas)
-        - OpenAI para intenciones complejas (cotizaciones, consultas técnicas)
+        Procesa mensaje del usuario usando IA para respuestas naturales y contextuales.
+        Siempre usa OpenAI cuando está disponible para generar respuestas fluidas e inteligentes.
         Retorna diccionario compatible con API
         
         Args:
@@ -974,17 +954,9 @@ class IAConversacionalIntegrada:
         if not sesion_id:
             sesion_id = f"sesion_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
 
-        # Análisis rápido de intención (sin procesar completamente)
-        intencion_rapida = self._analizar_intencion(mensaje)
 
-        # Intenciones simples que no requieren IA
-        intenciones_simples = ["saludo", "despedida"]
+        # Siempre usar OpenAI si está disponible para respuestas naturales y contextuales
 
-        # Si es intención simple, usar pattern matching (más rápido y eficiente)
-        if intencion_rapida in intenciones_simples:
-            return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
-
-        # Para intenciones complejas, usar OpenAI si está disponible
         if self.use_ai and self.openai_client:
             try:
                 return self._procesar_con_openai(
@@ -993,19 +965,18 @@ class IAConversacionalIntegrada:
                 )
             except Exception as e:
                 print(f"⚠️ Error con OpenAI, usando pattern matching: {e}")
-                # Fallback a pattern matching
-                return self._procesar_mensaje_patrones(
-                    mensaje, telefono_cliente, sesion_id
-                )
+                # Fallback a pattern matching solo si OpenAI falla
+                return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
         else:
             # Si no hay IA, usar pattern matching
             return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
 
     def _procesar_con_openai(
-        self, mensaje: str, telefono_cliente: str, sesion_id: str,
-        request_id: Optional[str] = None, client_request_id: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """Procesa mensaje usando OpenAI con request tracking"""
+
+        self, mensaje: str, telefono_cliente: str, sesion_id: str
+    ) -> dict[str, Any]:
+        """Procesa mensaje usando OpenAI"""
+
         # Obtener contexto
         contexto = self._obtener_contexto_conversacion(telefono_cliente, sesion_id)
 
@@ -1024,9 +995,9 @@ class IAConversacionalIntegrada:
         messages = [
             {
                 "role": "system",
-                "content": f"""Eres Superchapita, un asistente experto en ventas de productos de construcción de BMC Uruguay.
+                "content": f"""Eres Superchapita, un asistente experto en ventas de productos de construcción de BMC Uruguay.                                   
 Tu trabajo es ayudar a los clientes con:
-1. Información sobre productos de aislamiento térmico (Isodec, Poliestireno, Lana de Roca)
+1. Información sobre productos de aislamiento térmico (Isodec, Poliestireno, Lana de Roca)                                                                      
 2. Cotizaciones personalizadas
 3. Consultas técnicas
 4. Seguimiento de pedidos
@@ -1035,9 +1006,17 @@ Tu trabajo es ayudar a los clientes con:
 
 {estado_cotizacion}
 
-Responde de forma natural, conversacional y profesional en español de Uruguay.
-Si el cliente solicita una cotización, pide los datos necesarios: producto, dimensiones (largo x ancho), espesor, color.
-Sé conciso pero completo. Usa emojis moderadamente.
+INSTRUCCIONES CRÍTICAS PARA CONVERSACIÓN NATURAL:
+- Responde de forma FLUIDA, NATURAL y CONVERSACIONAL en español de Uruguay
+- NUNCA repitas información que ya compartiste en mensajes anteriores
+- Si ya saludaste al cliente, NO vuelvas a presentarte ni a explicar tus capacidades
+- Varía tus respuestas - no uses siempre las mismas frases
+- Sé CONCISO - responde directamente a lo que el cliente pregunta
+- Si el cliente dice "hola" por segunda vez, responde brevemente como en una conversación real
+- Si el cliente solicita una cotización, pide los datos necesarios: producto, dimensiones (largo x ancho), espesor, color
+- Usa emojis moderadamente (1-2 por mensaje máximo)
+- Mantén el tono profesional pero amigable
+- Adapta tu respuesta al contexto de la conversación - lee el historial antes de responder
 
 IMPORTANTE: Debes responder SIEMPRE en formato JSON con esta estructura exacta:
 {{
@@ -1048,7 +1027,7 @@ IMPORTANTE: Debes responder SIEMPRE en formato JSON con esta estructura exacta:
   "necesita_datos": ["dato1", "dato2"]
 }}
 
-El campo "tipo" debe ser uno de: cotizacion, informacion, pregunta, seguimiento, general.
+El campo "tipo" debe ser uno de: cotizacion, informacion, pregunta, seguimiento, general.                                                                       
 El campo "confianza" debe ser un número entre 0.0 y 1.0.
 El campo "necesita_datos" debe ser una lista de datos que faltan para completar una cotización (ej: ["producto", "dimensiones", "espesor"]).""",
             }
@@ -1064,71 +1043,18 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
         # Agregar mensaje actual
         messages.append({"role": "user", "content": mensaje})
 
-        # Use unified model integrator if available, otherwise fallback to OpenAI
-        if self.model_integrator:
-            # Convert messages to prompt format
-            system_prompt = None
-            user_prompt = mensaje
-            
-            # Extract system prompt if present
-            if messages and messages[0].get("role") == "system":
-                system_prompt = messages[0].get("content", "")
-                # Combine remaining messages into user prompt
-                user_messages = [msg.get("content", "") for msg in messages[1:] if msg.get("role") == "user"]
-                if user_messages:
-                    user_prompt = "\n".join(user_messages)
-            
-            # Generate response using model integrator
-            ai_response = self.model_integrator.generate(
-                prompt=user_prompt,
-                system_prompt=system_prompt,
-                temperature=0.7,
-                max_tokens=2000,
-                client_request_id=client_request_id,
-            )
-            
-            if ai_response.get("success"):
-                content = ai_response.get("content", "")
-                # Try to parse as JSON
-                try:
-                    resultado = json.loads(content)
-                except json.JSONDecodeError:
-                    # If not JSON, wrap in expected format
-                    resultado = {
-                        "mensaje": content,
-                        "tipo": "general",
-                        "acciones": [],
-                        "confianza": 0.8,
-                        "necesita_datos": []
-                    }
-            else:
-                # Error in generation, use fallback
-                resultado = {
-                    "mensaje": "Lo siento, hubo un error procesando tu mensaje. ¿Puedes reformular tu pregunta?",
-                    "tipo": "general",
-                    "acciones": [],
-                    "confianza": 0.5,
-                    "necesita_datos": []
-                }
-        elif self.openai_client:
-            # Fallback to OpenAI
-            response = self.openai_client.chat.completions.create(
-                model=self.openai_model,
-                messages=messages,
-                temperature=0.7,
-                response_format={"type": "json_object"},
-            )
-            # Parsear respuesta
-            resultado = json.loads(response.choices[0].message.content)
-        else:
-            # No AI available
-            resultado = {
-                "mensaje": "Lo siento, el servicio de IA no está disponible en este momento.",
-                "tipo": "general",
-                "acciones": [],
-                "confianza": 0.0,
-                "necesita_datos": []
-            }
+
+        # Llamar a OpenAI con temperatura más alta para respuestas más variadas y naturales
+        response = self.openai_client.chat.completions.create(
+            model=self.openai_model,
+            messages=messages,
+            temperature=0.85,  # Aumentado de 0.7 a 0.85 para respuestas más variadas y naturales
+            response_format={"type": "json_object"},
+        )
+
+        # Parsear respuesta
+        resultado = json.loads(response.choices[0].message.content)
+
 
         # Actualizar contexto
         self._actualizar_contexto(contexto, mensaje)
@@ -1173,52 +1099,36 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
         # Obtener precios actuales
         precios = {
             "isodec": self.sistema_cotizaciones.obtener_precio_producto("isodec"),
-            "poliestireno": self.sistema_cotizaciones.obtener_precio_producto(
-                "poliestireno"
-            ),
+            "poliestireno": self.sistema_cotizaciones.obtener_precio_producto("poliestireno"),
             "lana_roca": self.sistema_cotizaciones.obtener_precio_producto("lana_roca"),
         }
 
         productos_info.append("PRODUCTOS DISPONIBLES:")
         productos_info.append("1. ISODEC - Panel aislante con núcleo EPS")
-        productos_info.append(
-            f"   Precio base: ${precios.get('isodec', 150):.2f} por m²"
-        )
+        productos_info.append(f"   Precio base: ${precios.get('isodec', 150):.2f} por m²")
         productos_info.append(
             "   Características: Excelente aislamiento térmico, fácil instalación"
         )
 
         productos_info.append("2. POLIESTIRENO - Aislante básico")
-        productos_info.append(
-            f"   Precio base: ${precios.get('poliestireno', 120):.2f} por m²"
-        )
+        productos_info.append(f"   Precio base: ${precios.get('poliestireno', 120):.2f} por m²")
         productos_info.append("   Características: Aislante económico y eficiente")
 
         productos_info.append("3. LANA DE ROCA - Aislante térmico y acústico")
-        productos_info.append(
-            f"   Precio base: ${precios.get('lana_roca', 140):.2f} por m²"
-        )
-        productos_info.append(
-            "   Características: Aislamiento térmico y acústico superior"
-        )
+        productos_info.append(f"   Precio base: ${precios.get('lana_roca', 140):.2f} por m²")
+        productos_info.append("   Características: Aislamiento térmico y acústico superior")
 
-        productos_info.append(
-            "\nESPESORES DISPONIBLES: 50mm, 75mm, 100mm, 125mm, 150mm"
-        )
+        productos_info.append("\nESPESORES DISPONIBLES: 50mm, 75mm, 100mm, 125mm, 150mm")
         productos_info.append("COLORES DISPONIBLES: Blanco, Gris, Beige")
 
         return "\n".join(productos_info)
 
-    def _obtener_estado_cotizacion_para_prompt(
-        self, contexto: ContextoConversacion
-    ) -> str:
+    def _obtener_estado_cotizacion_para_prompt(self, contexto: ContextoConversacion) -> str:
         """Obtiene el estado actual de cotización para enriquecer el prompt"""
         if contexto.estado_cotizacion == "inicial":
             return ""
 
-        estado_info = [
-            f"ESTADO ACTUAL DE LA COTIZACIÓN: {contexto.estado_cotizacion.upper()}"
-        ]
+        estado_info = [f"ESTADO ACTUAL DE LA COTIZACIÓN: {contexto.estado_cotizacion.upper()}"]
 
         if contexto.datos_cliente:
             estado_info.append(
@@ -1234,9 +1144,7 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
             datos_faltantes = []
             if not contexto.datos_producto.get("producto"):
                 datos_faltantes.append("producto")
-            if not contexto.datos_producto.get(
-                "largo"
-            ) or not contexto.datos_producto.get("ancho"):
+            if not contexto.datos_producto.get("largo") or not contexto.datos_producto.get("ancho"):
                 datos_faltantes.append("dimensiones")
             if not contexto.datos_producto.get("espesor"):
                 datos_faltantes.append("espesor")
@@ -1248,7 +1156,7 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
 
     def _procesar_mensaje_patrones(
         self, mensaje: str, telefono_cliente: str, sesion_id: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Procesa mensaje usando pattern matching (fallback)"""
         respuesta = self.procesar_mensaje(mensaje, telefono_cliente, sesion_id)
 

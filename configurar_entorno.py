@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Crea o actualiza el archivo .env con la configuración requerida para OpenAI y MongoDB.
 """
 
 import os
 from pathlib import Path
-from typing import Dict
-
 
 ENV_FILE = Path(".env")
 DEFAULTS = {
@@ -23,8 +20,8 @@ def print_header():
     print()
 
 
-def read_env() -> Dict[str, str]:
-    data: Dict[str, str] = {}
+def read_env() -> dict[str, str]:
+    data: dict[str, str] = {}
     if not ENV_FILE.exists():
         return data
 
@@ -37,7 +34,7 @@ def read_env() -> Dict[str, str]:
     return data
 
 
-def write_env(env_data: Dict[str, str]):
+def write_env(env_data: dict[str, str]):
     lines = [
         "# Archivo generado automáticamente por configurar_entorno.py",
         "# Puedes editarlo manualmente si lo necesitas.",
@@ -82,4 +79,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -101,8 +101,20 @@ site/
 !netlify.toml
 !railway.json
 !render.yaml
+<<<<<<< Updated upstream
 !lighthouse.config.js
 !tailwind.config.js
+=======
+!docker-compose.yml
+!agent_config.json
+!simulate_config.json
+!.cursor/background-tasks.json
+# Keep important config JSON files
+!matriz_precios.json
+!config_conocimiento.json
+!conocimiento_completo.json
+!base_conocimiento_demo.json
+>>>>>>> Stashed changes
 
 # Exclude large knowledge base and analysis files to reduce memory usage
 conocimiento_*.json
@@ -136,6 +148,7 @@ reporte_*.json
 reporte_*.txt
 metricas_*.json
 
+<<<<<<< Updated upstream
 # Composer data (recovery artifacts)
 composer_*.json
 composer_*.md
@@ -170,3 +183,5 @@ coverage
 *.orig
 *.rej
 
+=======
+>>>>>>> Stashed changes

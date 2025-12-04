@@ -11,7 +11,7 @@ RESULTADOS:
 ESTADÍSTICAS:
   interacciones: 20
   patrones: 1
-  productos: 1
+  productos: 75
   patrones_respuesta: 4
   productos_sistema: ['isodec', 'poliestireno', 'lana_roca']
   respuestas_mejoradas: 3

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Valida rápidamente que el conocimiento importado desde Mercado Libre
 esté disponible para pruebas del chatbot.
@@ -10,10 +9,9 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import List, Tuple
 
 
-def load_interactions(path: Path) -> List[dict]:
+def load_interactions(path: Path) -> list[dict]:
     if not path.exists():
         raise FileNotFoundError(
             f"No se encontró {path}. Ejecuta fetch_mercadolibre_questions.py primero."
@@ -23,7 +21,7 @@ def load_interactions(path: Path) -> List[dict]:
     return data.get("interacciones", [])
 
 
-def summarize(interactions: List[dict]) -> Tuple[int, int]:
+def summarize(interactions: list[dict]) -> tuple[int, int]:
     answered = sum(1 for inter in interactions if inter.get("respuesta_agente"))
     pending = len(interactions) - answered
     return answered, pending
@@ -54,4 +52,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

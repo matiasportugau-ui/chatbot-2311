@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Script para verificar el estado de la integración OpenAI"""
 
 import os
-import sys
 
 print("=" * 70)
 print("VERIFICACION DE INTEGRACION OPENAI")
@@ -14,6 +12,7 @@ print()
 print("1. Verificando paquete openai...")
 try:
     import openai
+
     print("   OK - Paquete openai instalado")
     print(f"   Version: {openai.__version__}")
     paquete_instalado = True
@@ -26,7 +25,7 @@ print()
 
 # Verificar API key
 print("2. Verificando OPENAI_API_KEY...")
-api_key = os.getenv('OPENAI_API_KEY')
+api_key = os.getenv("OPENAI_API_KEY")
 if api_key:
     # Mostrar solo los primeros y últimos caracteres por seguridad
     masked_key = api_key[:7] + "..." + api_key[-4:] if len(api_key) > 11 else "***"
@@ -41,7 +40,7 @@ print()
 
 # Verificar modelo
 print("3. Verificando modelo configurado...")
-modelo = os.getenv('OPENAI_MODEL', 'gpt-4o-mini')
+modelo = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 print(f"   Modelo: {modelo}")
 
 print()
@@ -75,4 +74,3 @@ print("4. O crear archivo .env con: OPENAI_API_KEY=sk-tu-key-aqui")
 print()
 print("NOTA: El sistema funciona perfectamente sin OpenAI usando")
 print("      pattern matching y base de conocimiento.")
-

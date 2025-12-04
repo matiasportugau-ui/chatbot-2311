@@ -1,14 +1,22 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
-import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { withRateLimit } from '@/lib/rate-limit'
+import { SettingsDocument } from '@/types/settings'
+import { NextRequest, NextResponse } from 'next/server'
+import {
+  successResponse,
+  errorResponse,
+  unauthorizedResponse,
+  forbiddenResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
 
 /**
  * Settings API Endpoint
  * GET /api/settings - Retrieve settings
  * POST /api/settings - Update settings
- * 
+ *
  * Settings are stored per user or system-wide
  * Requires authentication for system-wide settings
  */
@@ -17,37 +25,45 @@ async function getSettingsHandler(request: NextRequest) {
     // Check authentication for system settings
     const { searchParams } = new URL(request.url)
     const scope = searchParams.get('scope') || 'user'
-    
+
     if (scope === 'system') {
       const token = request.headers.get('Authorization')
       if (!token) {
         return NextResponse.json(
-          { success: false, error: 'Unauthorized - Authentication required for system settings' },
+          {
+            success: false,
+            error: 'Unauthorized - Authentication required for system settings',
+          },
           { status: 401 }
         )
       }
-      
+
       const { validateToken, checkAdminRole } = await import('@/lib/auth')
       const user = await validateToken(token)
       if (!user || !checkAdminRole(user)) {
         return NextResponse.json(
-          { success: false, error: 'Forbidden - Admin access required for system settings' },
+          {
+            success: false,
+            error: 'Forbidden - Admin access required for system settings',
+          },
           { status: 403 }
         )
       }
     }
-    
+
     const userId = searchParams.get('userId')
 
     const db = await connectDB()
     const settings = db.collection('settings')
 
-    const query: any = { scope }
+    const query: Record<string, unknown> = { scope }
     if (scope === 'user' && userId) {
       query.userId = userId
     }
 
-    const settingsDoc = await settings.findOne(query)
+    const settingsDoc = (await settings.findOne(
+      query
+    )) as SettingsDocument | null
 
     // Return default settings if none found
     const defaultSettings = {
@@ -56,32 +72,28 @@ async function getSettingsHandler(request: NextRequest) {
       notifications: {
         email: true,
         push: false,
-        sms: false
+        sms: false,
       },
       dashboard: {
         refreshInterval: 30,
-        itemsPerPage: 20
+        itemsPerPage: 20,
       },
       analytics: {
         dateRange: '30days',
-        showCharts: true
-      }
+        showCharts: true,
+      },
     }
 
-    return NextResponse.json({
-      success: true,
-      data: settingsDoc?.settings || defaultSettings
-    })
-  } catch (error: any) {
+    // SettingsDocument has 'value' property, not 'settings'
+    const settingsValue = settingsDoc?.value as
+      | Record<string, unknown>
+      | undefined
+    return successResponse(settingsValue || defaultSettings)
+  } catch (error: unknown) {
     console.error('Settings GET API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-        data: {}
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
@@ -89,51 +101,41 @@ async function postSettingsHandler(request: NextRequest) {
   try {
     const body = await request.json()
     const { userId, scope = 'user', settings: newSettings } = body
-    
+
     // Check authentication for system settings
     if (scope === 'system') {
       const token = request.headers.get('Authorization')
       if (!token) {
-        return NextResponse.json(
-          { success: false, error: 'Unauthorized - Authentication required for system settings' },
-          { status: 401 }
-        )
+        return unauthorizedResponse('Authentication required for system settings')
       }
-      
+
       const { validateToken, checkAdminRole } = await import('@/lib/auth')
       const user = await validateToken(token)
       if (!user || !checkAdminRole(user)) {
-        return NextResponse.json(
-          { success: false, error: 'Forbidden - Admin access required for system settings' },
-          { status: 403 }
-        )
+        return forbiddenResponse('Admin access required for system settings')
       }
     }
 
     if (!newSettings || typeof newSettings !== 'object') {
-      return NextResponse.json(
-        { success: false, error: 'Settings object is required' },
-        { status: 400 }
+      return validationErrorResponse(
+        ['Settings object is required'],
+        'Missing required field'
       )
     }
 
     // Validate settings structure
     const validationResult = validateSettings(newSettings)
     if (!validationResult.valid) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Settings validation failed',
-          validationErrors: validationResult.errors
-        },
-        { status: 400 }
+      return validationErrorResponse(
+        validationResult.errors,
+        'Settings validation failed'
       )
     }
 
     const db = await connectDB()
     const settings = db.collection('settings')
 
-    const query: any = { scope }
+    const query: Record<string, unknown> = { scope }
     if (scope === 'user' && userId) {
       query.userId = userId
     }
@@ -144,71 +146,85 @@ async function postSettingsHandler(request: NextRequest) {
       {
         $set: {
           settings: newSettings,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         $setOnInsert: {
           scope,
           userId: scope === 'user' ? userId : undefined,
-          createdAt: new Date()
-        }
+          createdAt: new Date(),
+        },
       },
       { upsert: true }
     )
 
-    return NextResponse.json({
-      success: true,
-      data: newSettings,
-      message: 'Settings updated successfully'
-    })
-  } catch (error: any) {
+    return successResponse(newSettings, 'Settings updated successfully')
+  } catch (error: unknown) {
     console.error('Settings POST API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error'
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
-function validateSettings(settings: any): { valid: boolean; errors: string[] } {
+function validateSettings(settings: Record<string, unknown>): {
+  valid: boolean
+  errors: string[]
+} {
   const errors: string[] = []
 
   // Validate theme
-  if (settings.theme && !['light', 'dark', 'auto'].includes(settings.theme)) {
+  const theme = settings.theme
+  if (
+    theme &&
+    typeof theme === 'string' &&
+    !['light', 'dark', 'auto'].includes(theme)
+  ) {
     errors.push('Invalid theme. Must be: light, dark, or auto')
   }
 
   // Validate language
-  if (settings.language && !['es', 'en', 'pt'].includes(settings.language)) {
+  const language = settings.language
+  if (
+    language &&
+    typeof language === 'string' &&
+    !['es', 'en', 'pt'].includes(language)
+  ) {
     errors.push('Invalid language. Must be: es, en, or pt')
   }
 
   // Validate refresh interval
-  if (settings.dashboard?.refreshInterval && 
-      (typeof settings.dashboard.refreshInterval !== 'number' || 
-       settings.dashboard.refreshInterval < 5 || 
-       settings.dashboard.refreshInterval > 300)) {
-    errors.push('Refresh interval must be between 5 and 300 seconds')
+  const dashboard = settings.dashboard
+  if (
+    dashboard &&
+    typeof dashboard === 'object' &&
+    'refreshInterval' in dashboard &&
+    typeof dashboard.refreshInterval === 'number'
+  ) {
+    const refreshInterval = dashboard.refreshInterval
+    if (refreshInterval < 5 || refreshInterval > 300) {
+      errors.push('Refresh interval must be between 5 and 300 seconds')
+    }
   }
 
   // Validate items per page
-  if (settings.dashboard?.itemsPerPage && 
-      (typeof settings.dashboard.itemsPerPage !== 'number' || 
-       settings.dashboard.itemsPerPage < 10 || 
-       settings.dashboard.itemsPerPage > 100)) {
-    errors.push('Items per page must be between 10 and 100')
+  if (
+    dashboard &&
+    typeof dashboard === 'object' &&
+    'itemsPerPage' in dashboard &&
+    typeof dashboard.itemsPerPage === 'number'
+  ) {
+    const itemsPerPage = dashboard.itemsPerPage
+    if (itemsPerPage < 10 || itemsPerPage > 100) {
+      errors.push('Items per page must be between 10 and 100')
+    }
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   }
 }
 
 // Export with rate limiting
 export const GET = withRateLimit(getSettingsHandler, 60, 15 * 60 * 1000) // 60 requests per 15 minutes
 export const POST = withRateLimit(postSettingsHandler, 30, 15 * 60 * 1000) // 30 requests per 15 minutes
-
-

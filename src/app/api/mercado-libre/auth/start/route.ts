@@ -1,10 +1,19 @@
+<<<<<<< Updated upstream
 import { NextRequest, NextResponse } from 'next/server'
 import { startAuthorization } from '@/lib/mercado-libre/client'
+=======
+import { errorResponse, successResponse } from '@/lib/api-response'
+import { startAuthorization } from '@/lib/mercado-libre/client'
+import { withRateLimit } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}))
     const { returnTo } = body || {}
+<<<<<<< Updated upstream
     const result = await startAuthorization(typeof returnTo === 'string' ? returnTo : undefined)
     return NextResponse.json(result)
   } catch (error) {
@@ -15,6 +24,17 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     )
+=======
+    const result = await startAuthorization(
+      typeof returnTo === 'string' ? returnTo : undefined
+    )
+    return successResponse(result)
+  } catch (error: unknown) {
+    console.error('Error initiating Mercado Libre OAuth:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
+    return errorResponse(errorMessage, 500)
+>>>>>>> Stashed changes
   }
 }
 

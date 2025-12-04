@@ -1,122 +1,119 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Generador de Plantillas de Cotización BMC Uruguay
 Crea plantillas personalizadas para diferentes tipos de cotizaciones
 """
 
 import json
-from typing import Dict, List
-from decimal import Decimal
-from sistema_cotizaciones import Cotizacion
+
 
 class GeneradorPlantillas:
     """Generador de plantillas de cotización"""
-    
+
     def __init__(self):
         self.plantillas = {}
         self.cargar_plantillas_base()
-    
+
     def cargar_plantillas_base(self):
         """Carga las plantillas base del sistema"""
-        
+
         # Plantilla para Isodec
-        self.plantillas['isodec_estandar'] = {
-            'nombre': 'Isodec - Cotización Estándar',
-            'producto_base': 'isodec',
-            'campos_requeridos': [
-                'cliente.nombre',
-                'cliente.telefono',
-                'cliente.direccion',
-                'especificaciones.largo_metros',
-                'especificaciones.ancho_metros',
-                'especificaciones.espesor',
-                'especificaciones.color'
+        self.plantillas["isodec_estandar"] = {
+            "nombre": "Isodec - Cotización Estándar",
+            "producto_base": "isodec",
+            "campos_requeridos": [
+                "cliente.nombre",
+                "cliente.telefono",
+                "cliente.direccion",
+                "especificaciones.largo_metros",
+                "especificaciones.ancho_metros",
+                "especificaciones.espesor",
+                "especificaciones.color",
             ],
-            'campos_opcionales': [
-                'especificaciones.termina_front',
-                'especificaciones.termina_sup',
-                'especificaciones.termina_lat_1',
-                'especificaciones.termina_lat_2',
-                'especificaciones.anclajes',
-                'especificaciones.traslado'
+            "campos_opcionales": [
+                "especificaciones.termina_front",
+                "especificaciones.termina_sup",
+                "especificaciones.termina_lat_1",
+                "especificaciones.termina_lat_2",
+                "especificaciones.anclajes",
+                "especificaciones.traslado",
             ],
-            'formulas': {
-                'area_total': 'largo_metros * ancho_metros',
-                'precio_base': 'precio_metro_cuadrado * area_total',
-                'factor_espesor': 'self._calcular_factor_espesor(espesor)',
-                'factor_color': 'self._calcular_factor_color(color)',
-                'factor_terminaciones': 'self._calcular_factor_terminaciones(termina_front, termina_sup, termina_lat_1, termina_lat_2)',
-                'precio_final': 'precio_base * factor_espesor * factor_color * factor_terminaciones'
+            "formulas": {
+                "area_total": "largo_metros * ancho_metros",
+                "precio_base": "precio_metro_cuadrado * area_total",
+                "factor_espesor": "self._calcular_factor_espesor(espesor)",
+                "factor_color": "self._calcular_factor_color(color)",
+                "factor_terminaciones": "self._calcular_factor_terminaciones(termina_front, termina_sup, termina_lat_1, termina_lat_2)",
+                "precio_final": "precio_base * factor_espesor * factor_color * factor_terminaciones",
             },
-            'template_html': self._generar_template_html_isodec(),
-            'template_pdf': self._generar_template_pdf_isodec()
+            "template_html": self._generar_template_html_isodec(),
+            "template_pdf": self._generar_template_pdf_isodec(),
         }
-        
+
         # Plantilla para cotización rápida
-        self.plantillas['cotizacion_rapida'] = {
-            'nombre': 'Cotización Rápida',
-            'producto_base': 'cualquiera',
-            'campos_requeridos': [
-                'cliente.nombre',
-                'cliente.telefono',
-                'especificaciones.largo_metros',
-                'especificaciones.ancho_metros'
+        self.plantillas["cotizacion_rapida"] = {
+            "nombre": "Cotización Rápida",
+            "producto_base": "cualquiera",
+            "campos_requeridos": [
+                "cliente.nombre",
+                "cliente.telefono",
+                "especificaciones.largo_metros",
+                "especificaciones.ancho_metros",
             ],
-            'campos_opcionales': [
-                'especificaciones.producto',
-                'especificaciones.espesor',
-                'especificaciones.color'
+            "campos_opcionales": [
+                "especificaciones.producto",
+                "especificaciones.espesor",
+                "especificaciones.color",
             ],
-            'formulas': {
-                'area_total': 'largo_metros * ancho_metros',
-                'precio_estimado': 'area_total * 150'  # Precio estimado por m²
+            "formulas": {
+                "area_total": "largo_metros * ancho_metros",
+                "precio_estimado": "area_total * 150",  # Precio estimado por m²
             },
-            'template_html': self._generar_template_html_rapida(),
-            'template_pdf': self._generar_template_pdf_rapida()
+            "template_html": self._generar_template_html_rapida(),
+            "template_pdf": self._generar_template_pdf_rapida(),
         }
-        
+
         # Plantilla para cotización detallada
-        self.plantillas['cotizacion_detallada'] = {
-            'nombre': 'Cotización Detallada',
-            'producto_base': 'cualquiera',
-            'campos_requeridos': [
-                'cliente.nombre',
-                'cliente.telefono',
-                'cliente.direccion',
-                'cliente.zona',
-                'especificaciones.producto',
-                'especificaciones.largo_metros',
-                'especificaciones.ancho_metros',
-                'especificaciones.espesor',
-                'especificaciones.relleno',
-                'especificaciones.color'
+        self.plantillas["cotizacion_detallada"] = {
+            "nombre": "Cotización Detallada",
+            "producto_base": "cualquiera",
+            "campos_requeridos": [
+                "cliente.nombre",
+                "cliente.telefono",
+                "cliente.direccion",
+                "cliente.zona",
+                "especificaciones.producto",
+                "especificaciones.largo_metros",
+                "especificaciones.ancho_metros",
+                "especificaciones.espesor",
+                "especificaciones.relleno",
+                "especificaciones.color",
             ],
-            'campos_opcionales': [
-                'especificaciones.termina_front',
-                'especificaciones.termina_sup',
-                'especificaciones.termina_lat_1',
-                'especificaciones.termina_lat_2',
-                'especificaciones.anclajes',
-                'especificaciones.traslado',
-                'especificaciones.direccion',
-                'especificaciones.forma',
-                'especificaciones.origen'
+            "campos_opcionales": [
+                "especificaciones.termina_front",
+                "especificaciones.termina_sup",
+                "especificaciones.termina_lat_1",
+                "especificaciones.termina_lat_2",
+                "especificaciones.anclajes",
+                "especificaciones.traslado",
+                "especificaciones.direccion",
+                "especificaciones.forma",
+                "especificaciones.origen",
             ],
-            'formulas': {
-                'area_total': 'largo_metros * ancho_metros',
-                'perimetro': '2 * (largo_metros + ancho_metros)',
-                'precio_base': 'precio_metro_cuadrado * area_total',
-                'costo_terminaciones': 'perimetro * precio_terminacion_metro_lineal',
-                'costo_servicios': 'costo_anclajes + costo_traslado',
-                'subtotal': 'precio_base + costo_terminaciones + costo_servicios',
-                'iva': 'subtotal * 0.22',
-                'total': 'subtotal + iva'
+            "formulas": {
+                "area_total": "largo_metros * ancho_metros",
+                "perimetro": "2 * (largo_metros + ancho_metros)",
+                "precio_base": "precio_metro_cuadrado * area_total",
+                "costo_terminaciones": "perimetro * precio_terminacion_metro_lineal",
+                "costo_servicios": "costo_anclajes + costo_traslado",
+                "subtotal": "precio_base + costo_terminaciones + costo_servicios",
+                "iva": "subtotal * 0.22",
+                "total": "subtotal + iva",
             },
-            'template_html': self._generar_template_html_detallada(),
-            'template_pdf': self._generar_template_pdf_detallada()
+            "template_html": self._generar_template_html_detallada(),
+            "template_pdf": self._generar_template_pdf_detallada(),
         }
-    
+
     def _generar_template_html_isodec(self) -> str:
         """Genera template HTML para Isodec"""
         return """
@@ -252,7 +249,7 @@ class GeneradorPlantillas:
 </body>
 </html>
         """
-    
+
     def _generar_template_html_rapida(self) -> str:
         """Genera template HTML para cotización rápida"""
         return """
@@ -328,7 +325,7 @@ class GeneradorPlantillas:
 </body>
 </html>
         """
-    
+
     def _generar_template_html_detallada(self) -> str:
         """Genera template HTML para cotización detallada"""
         return """
@@ -467,52 +464,54 @@ class GeneradorPlantillas:
 </body>
 </html>
         """
-    
+
     def _generar_template_pdf_isodec(self) -> str:
         """Genera template PDF para Isodec"""
         return "Template PDF para Isodec (implementar con reportlab)"
-    
+
     def _generar_template_pdf_rapida(self) -> str:
         """Genera template PDF para cotización rápida"""
         return "Template PDF para cotización rápida (implementar con reportlab)"
-    
+
     def _generar_template_pdf_detallada(self) -> str:
         """Genera template PDF para cotización detallada"""
         return "Template PDF para cotización detallada (implementar con reportlab)"
-    
-    def obtener_plantilla(self, nombre_plantilla: str) -> Dict:
+
+    def obtener_plantilla(self, nombre_plantilla: str) -> dict:
         """Obtiene una plantilla por nombre"""
         return self.plantillas.get(nombre_plantilla, {})
-    
-    def listar_plantillas(self) -> List[str]:
+
+    def listar_plantillas(self) -> list[str]:
         """Lista todas las plantillas disponibles"""
         return list(self.plantillas.keys())
-    
-    def crear_plantilla_personalizada(self, nombre: str, configuracion: Dict):
+
+    def crear_plantilla_personalizada(self, nombre: str, configuracion: dict):
         """Crea una plantilla personalizada"""
         self.plantillas[nombre] = configuracion
-    
+
     def exportar_plantillas(self, archivo: str):
         """Exporta todas las plantillas a un archivo JSON"""
-        with open(archivo, 'w', encoding='utf-8') as f:
+        with open(archivo, "w", encoding="utf-8") as f:
             json.dump(self.plantillas, f, ensure_ascii=False, indent=2)
-    
+
     def importar_plantillas(self, archivo: str):
         """Importa plantillas desde un archivo JSON"""
-        with open(archivo, 'r', encoding='utf-8') as f:
+        with open(archivo, encoding="utf-8") as f:
             self.plantillas = json.load(f)
+
 
 def main():
     """Función principal para demostrar el generador de plantillas"""
     generador = GeneradorPlantillas()
-    
+
     print("Plantillas disponibles:")
     for plantilla in generador.listar_plantillas():
         print(f"- {plantilla}")
-    
+
     # Exportar plantillas
-    generador.exportar_plantillas('plantillas_cotizacion.json')
+    generador.exportar_plantillas("plantillas_cotizacion.json")
     print("\nPlantillas exportadas a 'plantillas_cotizacion.json'")
+
 
 if __name__ == "__main__":
     main()

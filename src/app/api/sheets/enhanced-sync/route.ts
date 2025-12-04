@@ -1,8 +1,21 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
-import { NextRequest, NextResponse } from 'next/server'
-import { GoogleSheetsEnhancedClient } from '@/lib/google-sheets-enhanced'
+import {
+  errorResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
+import {
+  GoogleSheetsEnhancedClient,
+  QuoteData,
+} from '@/lib/google-sheets-enhanced'
 import { initializeBMCSystem } from '@/lib/initialize-system'
+<<<<<<< Updated upstream
+=======
+import { withRateLimit } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 
 let systemInitialized = false
 async function ensureSystemInitialized() {
@@ -18,92 +31,99 @@ async function ensureSystemInitialized() {
 
 /**
  * 📊 API de Sincronización Mejorada con Google Sheets
- * 
+ *
  * Endpoints para gestión completa del "Administrador de Cotizaciones"
  */
 
 export async function GET(request: NextRequest) {
   try {
     await ensureSystemInitialized()
-    
+
     const { searchParams } = new URL(request.url)
     const action = searchParams.get('action') || 'all'
     const phone = searchParams.get('phone')
     const arg = searchParams.get('arg')
-    
+
     const sheetsClient = new GoogleSheetsEnhancedClient()
-    
+
     switch (action) {
       case 'all':
         return await getAllData(sheetsClient)
-      
+
       case 'admin':
         return await getAdminData(sheetsClient)
-      
+
       case 'enviados':
         return await getEnviadosData(sheetsClient)
-      
+
       case 'confirmados':
         return await getConfirmadosData(sheetsClient)
-      
+
       case 'statistics':
         return await getStatistics(sheetsClient)
-      
+
       case 'search':
         if (phone) {
           return await searchByPhone(sheetsClient, phone)
         } else if (arg) {
           return await searchByArg(sheetsClient, arg)
         } else {
-          return NextResponse.json({ error: 'Missing phone or arg parameter' }, { status: 400 })
+          return validationErrorResponse(
+            ['Missing phone or arg parameter'],
+            'Search requires phone or arg parameter'
+          )
         }
-      
+
       default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+        return validationErrorResponse(
+          ['Invalid action'],
+          'Invalid action parameter'
+        )
     }
   } catch (error: any) {
     console.error('Error in enhanced-sync GET:', error)
-    return NextResponse.json({ 
-      error: 'Internal server error', 
-      details: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 })
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
+    return errorResponse('Internal server error', 500, errorMessage)
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     await ensureSystemInitialized()
-    
+
     const body = await request.json()
     const { action, data } = body
-    
+
     const sheetsClient = new GoogleSheetsEnhancedClient()
-    
+
     switch (action) {
       case 'add_quote':
         return await addQuote(sheetsClient, data)
-      
+
       case 'move_to_enviados':
         return await moveToEnviados(sheetsClient, data)
-      
+
       case 'move_to_confirmado':
         return await moveToConfirmado(sheetsClient, data)
-      
+
       case 'update_status':
         return await updateStatus(sheetsClient, data)
-      
+
       case 'update_cell':
         return await updateCell(sheetsClient, data)
-      
+
       default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+        return validationErrorResponse(
+          ['Invalid action'],
+          'Invalid action parameter'
+        )
     }
   } catch (error: any) {
     console.error('Error in enhanced-sync POST:', error)
-    return NextResponse.json({ 
-      error: 'Internal server error', 
-      details: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 })
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
+    return errorResponse('Internal server error', 500, errorMessage)
   }
 }
 
@@ -112,25 +132,30 @@ export async function POST(request: NextRequest) {
  */
 async function getAllData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
-    const [adminData, enviadosData, confirmadosData, statistics] = await Promise.all([
-      sheetsClient.readAdminTab(),
-      sheetsClient.readEnviadosTab(),
-      sheetsClient.readConfirmadoTab(),
-      sheetsClient.getStatistics()
-    ])
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        admin: adminData,
-        enviados: enviadosData,
-        confirmados: confirmadosData,
-        statistics,
-        timestamp: new Date().toISOString()
-      }
+    const [adminData, enviadosData, confirmadosData, statistics] =
+      await Promise.all([
+        sheetsClient.readAdminTab(),
+        sheetsClient.readEnviadosTab(),
+        sheetsClient.readConfirmadoTab(),
+        sheetsClient.getStatistics(),
+      ])
+
+    return successResponse({
+      admin: adminData,
+      enviados: enviadosData,
+      confirmados: confirmadosData,
+      statistics,
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error getting all data: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error getting all data: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
@@ -140,17 +165,21 @@ async function getAllData(sheetsClient: GoogleSheetsEnhancedClient) {
 async function getAdminData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
     const adminData = await sheetsClient.readAdminTab()
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        admin: adminData,
-        count: adminData.length,
-        timestamp: new Date().toISOString()
-      }
+
+    return successResponse({
+      admin: adminData,
+      count: adminData.length,
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error getting admin data: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error getting admin data: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
@@ -160,17 +189,21 @@ async function getAdminData(sheetsClient: GoogleSheetsEnhancedClient) {
 async function getEnviadosData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
     const enviadosData = await sheetsClient.readEnviadosTab()
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        enviados: enviadosData,
-        count: enviadosData.length,
-        timestamp: new Date().toISOString()
-      }
+
+    return successResponse({
+      enviados: enviadosData,
+      count: enviadosData.length,
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error getting enviados data: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error getting enviados data: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
@@ -180,17 +213,21 @@ async function getEnviadosData(sheetsClient: GoogleSheetsEnhancedClient) {
 async function getConfirmadosData(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
     const confirmadosData = await sheetsClient.readConfirmadoTab()
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        confirmados: confirmadosData,
-        count: confirmadosData.length,
-        timestamp: new Date().toISOString()
-      }
+
+    return successResponse({
+      confirmados: confirmadosData,
+      count: confirmadosData.length,
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error getting confirmados data: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error getting confirmados data: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
@@ -200,137 +237,272 @@ async function getConfirmadosData(sheetsClient: GoogleSheetsEnhancedClient) {
 async function getStatistics(sheetsClient: GoogleSheetsEnhancedClient) {
   try {
     const statistics = await sheetsClient.getStatistics()
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        statistics,
-        timestamp: new Date().toISOString()
-      }
+
+    return successResponse({
+      statistics,
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error getting statistics: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error getting statistics: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * 🔍 Buscar por teléfono
  */
-async function searchByPhone(sheetsClient: GoogleSheetsEnhancedClient, phone: string) {
+async function searchByPhone(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  phone: string
+) {
   try {
     const results = await sheetsClient.findByPhone(phone)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        phone,
-        results,
-        total: results.pendientes.length + results.enviados.length + results.confirmados.length,
-        timestamp: new Date().toISOString()
-      }
+
+    return successResponse({
+      phone,
+      results,
+      total:
+        results.pendientes.length +
+        results.enviados.length +
+        results.confirmados.length,
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error searching by phone: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error searching by phone: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * 🔍 Buscar por código Arg
  */
-async function searchByArg(sheetsClient: GoogleSheetsEnhancedClient, arg: string) {
+async function searchByArg(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  arg: string
+) {
   try {
     const results = await sheetsClient.findByArg(arg)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        arg,
-        results,
-        found: !!(results.admin || results.enviados || results.confirmados),
-        timestamp: new Date().toISOString()
-      }
+
+    return successResponse({
+      arg,
+      results,
+      found: !!(results.admin || results.enviados || results.confirmados),
+      timestamp: new Date().toISOString(),
     })
+<<<<<<< Updated upstream
   } catch (error: any) {
     throw new Error(`Error searching by arg: ${error.message}`)
+=======
+  } catch (error: unknown) {
+    throw new Error(
+      `Error searching by arg: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * ➕ Agregar cotización
  */
+<<<<<<< Updated upstream
 async function addQuote(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
+=======
+async function addQuote(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  data: Record<string, unknown>
+) {
+>>>>>>> Stashed changes
   try {
-    // Generar código Arg si no se proporciona
-    if (!data.arg) {
-      data.arg = await sheetsClient.generateArgCode(data.telefono, data.origen || 'WA')
+    // Convert data to QuoteData format
+    const quoteData: QuoteData = {
+      arg: typeof data.arg === 'string' ? data.arg : '',
+      estado: typeof data.estado === 'string' ? data.estado : 'Pendiente',
+      fecha:
+        typeof data.fecha === 'string'
+          ? data.fecha
+          : new Date().toISOString().split('T')[0],
+      cliente: typeof data.cliente === 'string' ? data.cliente : '',
+      origen: typeof data.origen === 'string' ? data.origen : 'WA',
+      telefono:
+        typeof data.telefono === 'string'
+          ? data.telefono
+          : String(data.telefono || ''),
+      direccion: typeof data.direccion === 'string' ? data.direccion : '',
+      consulta: typeof data.consulta === 'string' ? data.consulta : '',
+      precio: typeof data.precio === 'string' ? data.precio : undefined,
+      fechaEnvio:
+        typeof data.fechaEnvio === 'string' ? data.fechaEnvio : undefined,
     }
-    
-    await sheetsClient.addQuoteToAdmin(data)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
+
+    // Generar código Arg si no se proporciona
+    if (!quoteData.arg) {
+      quoteData.arg = await sheetsClient.generateArgCode(
+        quoteData.telefono,
+        quoteData.origen
+      )
+    }
+
+    await sheetsClient.addQuoteToAdmin(quoteData)
+
+    return successResponse(
+      {
         message: 'Cotización agregada exitosamente',
+<<<<<<< Updated upstream
         arg: data.arg,
         timestamp: new Date().toISOString()
       }
     })
   } catch (error: any) {
     throw new Error(`Error adding quote: ${error.message}`)
+=======
+        arg: quoteData.arg,
+        timestamp: new Date().toISOString(),
+      },
+      'Cotización agregada exitosamente'
+    )
+  } catch (error: unknown) {
+    throw new Error(
+      `Error adding quote: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * 📤 Mover a Enviados
  */
+<<<<<<< Updated upstream
 async function moveToEnviados(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
+=======
+async function moveToEnviados(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  data: Record<string, unknown>
+) {
+>>>>>>> Stashed changes
   try {
-    await sheetsClient.moveToEnviados(data.rowNumber, data.additionalData)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
+    const rowNumber =
+      typeof data.rowNumber === 'number'
+        ? data.rowNumber
+        : Number(data.rowNumber)
+    if (Number.isNaN(rowNumber) || rowNumber <= 0) {
+      throw new Error('rowNumber must be a positive number')
+    }
+    await sheetsClient.moveToEnviados(rowNumber, data.additionalData)
+
+    return successResponse(
+      {
         message: 'Cotización movida a Enviados exitosamente',
+<<<<<<< Updated upstream
         rowNumber: data.rowNumber,
         timestamp: new Date().toISOString()
       }
     })
   } catch (error: any) {
     throw new Error(`Error moving to enviados: ${error.message}`)
+=======
+        rowNumber,
+        timestamp: new Date().toISOString(),
+      },
+      'Cotización movida a Enviados exitosamente'
+    )
+  } catch (error: unknown) {
+    throw new Error(
+      `Error moving to enviados: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * ✅ Mover a Confirmado
  */
+<<<<<<< Updated upstream
 async function moveToConfirmado(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
+=======
+async function moveToConfirmado(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  data: Record<string, unknown>
+) {
+>>>>>>> Stashed changes
   try {
-    await sheetsClient.moveToConfirmado(data.rowNumber, data.additionalData)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
+    const rowNumber =
+      typeof data.rowNumber === 'number'
+        ? data.rowNumber
+        : Number(data.rowNumber)
+    if (Number.isNaN(rowNumber) || rowNumber <= 0) {
+      throw new Error('rowNumber must be a positive number')
+    }
+    await sheetsClient.moveToConfirmado(rowNumber, data.additionalData)
+
+    return successResponse(
+      {
         message: 'Cotización movida a Confirmado exitosamente',
+<<<<<<< Updated upstream
         rowNumber: data.rowNumber,
         timestamp: new Date().toISOString()
       }
     })
   } catch (error: any) {
     throw new Error(`Error moving to confirmado: ${error.message}`)
+=======
+        rowNumber,
+        timestamp: new Date().toISOString(),
+      },
+      'Cotización movida a Confirmado exitosamente'
+    )
+  } catch (error: unknown) {
+    throw new Error(
+      `Error moving to confirmado: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * 🔄 Actualizar estado
  */
+<<<<<<< Updated upstream
 async function updateStatus(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
+=======
+async function updateStatus(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  data: Record<string, unknown>
+) {
+>>>>>>> Stashed changes
   try {
-    await sheetsClient.updateCellValue(data.sheetName, data.row, 'B', data.status)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
+    const sheetName =
+      typeof data.sheetName === 'string'
+        ? data.sheetName
+        : String(data.sheetName || '')
+    const row = typeof data.row === 'number' ? data.row : Number(data.row)
+    const status =
+      typeof data.status === 'string' ? data.status : String(data.status || '')
+
+    if (!sheetName) {
+      throw new Error('sheetName is required')
+    }
+    if (Number.isNaN(row) || row <= 0) {
+      throw new Error('row must be a positive number')
+    }
+
+    await sheetsClient.updateCellValue(sheetName, row, 'B', status)
+
+    return successResponse(
+      {
         message: 'Estado actualizado exitosamente',
+<<<<<<< Updated upstream
         sheetName: data.sheetName,
         row: data.row,
         status: data.status,
@@ -339,28 +511,68 @@ async function updateStatus(sheetsClient: GoogleSheetsEnhancedClient, data: any)
     })
   } catch (error: any) {
     throw new Error(`Error updating status: ${error.message}`)
+=======
+        sheetName,
+        row,
+        status,
+        timestamp: new Date().toISOString(),
+      },
+      'Estado actualizado exitosamente'
+    )
+  } catch (error: unknown) {
+    throw new Error(
+      `Error updating status: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }
 
 /**
  * 🔧 Actualizar celda específica
  */
-async function updateCell(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
+interface UpdateCellData {
+  sheetName: string
+  row: number
+  column: string
+  value: unknown
+}
+
+async function updateCell(
+  sheetsClient: GoogleSheetsEnhancedClient,
+  data: UpdateCellData
+) {
   try {
-    await sheetsClient.updateCellValue(data.sheetName, data.row, data.column, data.value)
-    
-    return NextResponse.json({
-      success: true,
-      data: {
+    const value =
+      typeof data.value === 'string' ? data.value : String(data.value ?? '')
+    await sheetsClient.updateCellValue(
+      data.sheetName,
+      data.row,
+      data.column,
+      value
+    )
+
+    return successResponse(
+      {
         message: 'Celda actualizada exitosamente',
         sheetName: data.sheetName,
         row: data.row,
         column: data.column,
         value: data.value,
+<<<<<<< Updated upstream
         timestamp: new Date().toISOString()
       }
     })
   } catch (error: any) {
     throw new Error(`Error updating cell: ${error.message}`)
+=======
+        timestamp: new Date().toISOString(),
+      },
+      'Celda actualizada exitosamente'
+    )
+  } catch (error: unknown) {
+    throw new Error(
+      `Error updating cell: ${error instanceof Error ? error.message : String(error)}`
+    )
+>>>>>>> Stashed changes
   }
 }

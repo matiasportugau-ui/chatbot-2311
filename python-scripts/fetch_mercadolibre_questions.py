@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Sincroniza preguntas y respuestas del vendedor en Mercado Libre para
 transformarlas en interacciones aprovechables por el chatbot.
@@ -13,13 +12,12 @@ import csv
 import json
 import os
 import sys
-from dataclasses import dataclass, asdict
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
-
 
 MELI_API_BASE = "https://api.mercadolibre.com"
 DEFAULT_LIMIT = 50
@@ -34,10 +32,10 @@ class MercadoLibreQuestion:
     item_id: str
     status: str
     text: str
-    answer_text: Optional[str]
-    answer_status: Optional[str]
+    answer_text: str | None
+    answer_status: str | None
     seller_id: str
-    buyer_id: Optional[str]
+    buyer_id: str | None
 
 
 class MercadoLibreConversationSync:
@@ -45,12 +43,12 @@ class MercadoLibreConversationSync:
 
     def __init__(
         self,
-        access_token: Optional[str] = None,
-        seller_id: Optional[str] = None,
+        access_token: str | None = None,
+        seller_id: str | None = None,
         limit: int = DEFAULT_LIMIT,
         output_dir: Path | None = None,
         knowledge_filename: str = "conocimiento_mercadolibre.json",
-        csv_export: Optional[str] = None,
+        csv_export: str | None = None,
     ):
         self.access_token = access_token or os.getenv("MELI_ACCESS_TOKEN")
         self.seller_id = seller_id or os.getenv("MELI_SELLER_ID")
@@ -76,7 +74,7 @@ class MercadoLibreConversationSync:
             questions = self._fetch_questions()
 
         normalized = [self._normalize_question(q) for q in questions]
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = datetime.now(UTC).isoformat()
 
         raw_payload = {
             "metadata": {
@@ -97,10 +95,10 @@ class MercadoLibreConversationSync:
             f"{raw_path} / {self.knowledge_path}"
         )
 
-    def _fetch_questions(self) -> List[Dict[str, Any]]:
+    def _fetch_questions(self) -> list[dict[str, Any]]:
         """Pagina todas las preguntas del vendedor."""
         offset = 0
-        questions: List[Dict[str, Any]] = []
+        questions: list[dict[str, Any]] = []
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
 
@@ -131,24 +129,25 @@ class MercadoLibreConversationSync:
 
         return questions
 
-    def _load_csv_questions(self, csv_path: Path) -> List[Dict[str, Any]]:
+    def _load_csv_questions(self, csv_path: Path) -> list[dict[str, Any]]:
         """Convierte un CSV exportado manualmente en el formato esperado."""
         if not csv_path.exists():
             raise RuntimeError(f"No se encontró el archivo CSV: {csv_path}")
 
-        def pick(row: Dict[str, str], keys: List[str], default: str = "") -> str:
+        def pick(row: dict[str, str], keys: list[str], default: str = "") -> str:
             for key in keys:
                 if key in row and row[key]:
                     return row[key]
             return default
 
-        mapped: List[Dict[str, Any]] = []
+        mapped: list[dict[str, Any]] = []
         with csv_path.open("r", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
             for idx, row in enumerate(reader, start=1):
                 mapped.append(
                     {
-                        "id": pick(row, ["id", "question_id", "pregunta_id", "codigo"]) or f"csv_{idx}",
+                        "id": pick(row, ["id", "question_id", "pregunta_id", "codigo"])
+                        or f"csv_{idx}",
                         "date_created": pick(
                             row,
                             [
@@ -163,7 +162,9 @@ class MercadoLibreConversationSync:
                         "text": pick(row, ["text", "question", "pregunta", "mensaje"]),
                         "answer": {
                             "text": pick(row, ["answer_text", "respuesta", "respuesta_texto"]),
-                            "status": pick(row, ["answer_status", "estado_respuesta"], "UNANSWERED"),
+                            "status": pick(
+                                row, ["answer_status", "estado_respuesta"], "UNANSWERED"
+                            ),
                         },
                         "seller_id": pick(row, ["seller_id", "vendedor"]),
                         "from": {"id": pick(row, ["buyer_id", "usuario", "user_id"])},
@@ -171,7 +172,7 @@ class MercadoLibreConversationSync:
                 )
         return mapped
 
-    def _normalize_question(self, question: Dict[str, Any]) -> MercadoLibreQuestion:
+    def _normalize_question(self, question: dict[str, Any]) -> MercadoLibreQuestion:
         """Simplifica la pregunta para facilitar su transformación posterior."""
         answer = question.get("answer") or {}
 
@@ -188,10 +189,10 @@ class MercadoLibreConversationSync:
         )
 
     def _build_knowledge_payload(
-        self, questions: List[MercadoLibreQuestion], timestamp: str
-    ) -> Dict[str, Any]:
+        self, questions: list[MercadoLibreQuestion], timestamp: str
+    ) -> dict[str, Any]:
         """Convierte las preguntas en interacciones para el consolidado."""
-        interacciones: List[Dict[str, Any]] = []
+        interacciones: list[dict[str, Any]] = []
         for question in questions:
             resultado = "respondido" if question.answer_text else "pendiente"
             interacciones.append(
@@ -225,10 +226,11 @@ class MercadoLibreConversationSync:
         }
 
     @staticmethod
-    def _write_json(path: Path, payload: Dict[str, Any]) -> None:
+    def _write_json(path: Path, payload: dict[str, Any]) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=2)
+
     try:
         limit = int(os.getenv("MELI_PAGE_SIZE", str(DEFAULT_LIMIT)))
     except ValueError:
@@ -257,4 +259,3 @@ class MercadoLibreConversationSync:
 
 if __name__ == "__main__":
     main()
-

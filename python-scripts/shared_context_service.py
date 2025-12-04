@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Shared Context Service for Multi-Agent System
 Provides unified MongoDB-based context management for all agents
@@ -7,8 +6,7 @@ Provides unified MongoDB-based context management for all agents
 
 import logging
 from datetime import datetime
-from typing import Optional, Dict, Any, List
-from dataclasses import dataclass, asdict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +20,7 @@ try:
     if str(parent_dir) not in sys.path:
         sys.path.insert(0, str(parent_dir))
 
-    from mongodb_service import get_mongodb_service, ensure_mongodb_connected
+    from mongodb_service import ensure_mongodb_connected, get_mongodb_service
 
     MONGODB_AVAILABLE = True
 except ImportError:
@@ -37,7 +35,7 @@ class SharedContextService:
         self._in_memory_sessions = {}
         self._in_memory_contexts = {}
 
-    def get_context(self, session_id: str, user_phone: str) -> Optional[Dict[str, Any]]:
+    def get_context(self, session_id: str, user_phone: str) -> dict[str, Any] | None:
         """
         Retrieve full conversation context for a session
 
@@ -51,9 +49,8 @@ class SharedContextService:
         try:
             if MONGODB_AVAILABLE and ensure_mongodb_connected():
                 mongodb = get_mongodb_service()
-                context_col = mongodb.get_collection("context")
-
-                if context_col:
+                if mongodb is not None:
+                    context_col = mongodb.get_collection("context")
                     context_doc = context_col.find_one(
                         {"session_id": session_id, "user_phone": user_phone}
                     )
@@ -73,7 +70,7 @@ class SharedContextService:
             key = f"{user_phone}_{session_id}"
             return self._in_memory_contexts.get(key)
 
-    def save_context(self, session_id: str, context: Dict[str, Any]) -> bool:
+    def save_context(self, session_id: str, context: dict[str, Any]) -> bool:
         """
         Save/update conversation context
 
@@ -92,9 +89,8 @@ class SharedContextService:
 
             if MONGODB_AVAILABLE and ensure_mongodb_connected():
                 mongodb = get_mongodb_service()
-                context_col = mongodb.get_collection("context")
-
-                if context_col:
+                if mongodb is not None:
+                    context_col = mongodb.get_collection("context")
                     # Prepare document
                     context_doc = {
                         "session_id": session_id,
@@ -130,7 +126,7 @@ class SharedContextService:
         session_id: str,
         message: str,
         role: str,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> bool:
         """
         Add message to conversation history
@@ -147,9 +143,8 @@ class SharedContextService:
         try:
             if MONGODB_AVAILABLE and ensure_mongodb_connected():
                 mongodb = get_mongodb_service()
-                context_col = mongodb.get_collection("context")
-
-                if context_col:
+                if mongodb is not None:
+                    context_col = mongodb.get_collection("context")
                     message_entry = {
                         "role": role,
                         "content": message,
@@ -187,7 +182,7 @@ class SharedContextService:
             logger.error(f"Error adding message: {e}")
             return False
 
-    def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+    def get_session(self, session_id: str) -> dict[str, Any] | None:
         """
         Get session metadata
 
@@ -200,9 +195,8 @@ class SharedContextService:
         try:
             if MONGODB_AVAILABLE and ensure_mongodb_connected():
                 mongodb = get_mongodb_service()
-                sessions_col = mongodb.get_collection("sessions")
-
-                if sessions_col:
+                if mongodb is not None:
+                    sessions_col = mongodb.get_collection("sessions")
                     session_doc = sessions_col.find_one({"session_id": session_id})
                     if session_doc:
                         session_dict = dict(session_doc)
@@ -219,8 +213,8 @@ class SharedContextService:
     def create_session(
         self,
         user_phone: str,
-        initial_message: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        initial_message: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Create new session
@@ -235,9 +229,7 @@ class SharedContextService:
         """
         import uuid
 
-        session_id = (
-            f"sess_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
-        )
+        session_id = f"sess_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
 
         session_data = {
             "session_id": session_id,
@@ -251,9 +243,8 @@ class SharedContextService:
         try:
             if MONGODB_AVAILABLE and ensure_mongodb_connected():
                 mongodb = get_mongodb_service()
-                sessions_col = mongodb.get_collection("sessions")
-
-                if sessions_col:
+                if mongodb is not None:
+                    sessions_col = mongodb.get_collection("sessions")
                     sessions_col.insert_one(session_data)
 
                     # Create initial context if message provided
@@ -276,9 +267,7 @@ class SharedContextService:
                 self.add_message(session_id, initial_message, "user")
             return session_id
 
-    def list_sessions(
-        self, user_phone: Optional[str] = None, limit: int = 50
-    ) -> List[Dict[str, Any]]:
+    def list_sessions(self, user_phone: str | None = None, limit: int = 50) -> list[dict[str, Any]]:
         """
         List sessions for a user or all sessions
 
@@ -292,16 +281,13 @@ class SharedContextService:
         try:
             if MONGODB_AVAILABLE and ensure_mongodb_connected():
                 mongodb = get_mongodb_service()
-                sessions_col = mongodb.get_collection("sessions")
-
-                if sessions_col:
+                if mongodb is not None:
+                    sessions_col = mongodb.get_collection("sessions")
                     query = {}
                     if user_phone:
                         query["user_phone"] = user_phone
 
-                    sessions = list(
-                        sessions_col.find(query).sort("last_activity", -1).limit(limit)
-                    )
+                    sessions = list(sessions_col.find(query).sort("last_activity", -1).limit(limit))
 
                     # Convert to dicts and remove _id
                     result = []
@@ -319,9 +305,7 @@ class SharedContextService:
                     result.append(session)
 
             # Sort by last_activity
-            result.sort(
-                key=lambda x: x.get("last_activity", datetime.min), reverse=True
-            )
+            result.sort(key=lambda x: x.get("last_activity", datetime.min), reverse=True)
             return result[:limit]
 
         except Exception as e:
@@ -331,9 +315,7 @@ class SharedContextService:
             for session in self._in_memory_sessions.values():
                 if not user_phone or session.get("user_phone") == user_phone:
                     result.append(session)
-            result.sort(
-                key=lambda x: x.get("last_activity", datetime.min), reverse=True
-            )
+            result.sort(key=lambda x: x.get("last_activity", datetime.min), reverse=True)
             return result[:limit]
 
 

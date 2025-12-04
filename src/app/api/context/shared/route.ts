@@ -1,7 +1,20 @@
 export const dynamic = 'force-dynamic'
 
+<<<<<<< Updated upstream
 import { getSharedContextService } from '@/lib/shared-context-service'
 import { NextRequest, NextResponse } from 'next/server'
+=======
+import {
+  errorResponse,
+  notFoundResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
+import { withRateLimit } from '@/lib/rate-limit'
+import { getSharedContextService } from '@/lib/shared-context-service'
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 
 /**
  * Shared Context API Route
@@ -20,62 +33,53 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'get': {
         if (!sessionId || !userPhone) {
-          return NextResponse.json(
-            { error: 'sessionId and userPhone are required' },
-            { status: 400 }
+          return validationErrorResponse(
+            ['sessionId and userPhone are required'],
+            'Missing required parameters'
           )
         }
         const context = await service.getContext(sessionId, userPhone)
         if (!context) {
-          return NextResponse.json(
-            { error: 'Context not found' },
-            { status: 404 }
-          )
+          return notFoundResponse('Context')
         }
-        return NextResponse.json({ success: true, data: context })
+        return successResponse(context)
       }
 
       case 'session': {
         if (!sessionId) {
-          return NextResponse.json(
-            { error: 'sessionId is required' },
-            { status: 400 }
+          return validationErrorResponse(
+            ['sessionId is required'],
+            'Missing required parameter'
           )
         }
         const session = await service.getSession(sessionId)
         if (!session) {
-          return NextResponse.json(
-            { error: 'Session not found' },
-            { status: 404 }
-          )
+          return notFoundResponse('Session')
         }
-        return NextResponse.json({ success: true, data: session })
+        return successResponse(session)
       }
 
       case 'list_sessions': {
-        const limit = Number.parseInt(searchParams.get('limit') || '50', 10)
+        let limit = Number.parseInt(searchParams.get('limit') || '50', 10)
+        // Validate limit to prevent NaN
+        if (Number.isNaN(limit) || limit <= 0) {
+          limit = 50 // Use default if invalid
+        }
         const sessions = await service.listSessions(
           userPhone || undefined,
           limit
         )
-        return NextResponse.json({ success: true, data: sessions })
+        return successResponse(sessions)
       }
 
       default:
-        return NextResponse.json(
-          { error: `Invalid action: ${action}` },
-          { status: 400 }
-        )
+        return errorResponse(`Invalid action: ${action}`, 400)
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Shared Context GET API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
@@ -90,44 +94,44 @@ export async function POST(request: NextRequest) {
       case 'save': {
         const { sessionId, context } = body
         if (!sessionId || !context) {
-          return NextResponse.json(
-            { error: 'sessionId and context are required' },
-            { status: 400 }
+          return validationErrorResponse(
+            ['sessionId and context are required'],
+            'Missing required parameters'
           )
         }
-        const success = await service.saveContext(sessionId, context)
-        return NextResponse.json({
-          success,
-          message: success ? 'Context saved' : 'Failed to save context',
-        })
+        const saved = await service.saveContext(sessionId, context)
+        if (saved) {
+          return successResponse({ saved: true }, 'Context saved')
+        }
+        return errorResponse('Failed to save context', 500)
       }
 
       case 'add_message': {
         const { sessionId, message, role, metadata } = body
         if (!sessionId || !message || !role) {
-          return NextResponse.json(
-            { error: 'sessionId, message, and role are required' },
-            { status: 400 }
+          return validationErrorResponse(
+            ['sessionId, message, and role are required'],
+            'Missing required parameters'
           )
         }
-        const success = await service.addMessage(
+        const added = await service.addMessage(
           sessionId,
           message,
           role,
           metadata
         )
-        return NextResponse.json({
-          success,
-          message: success ? 'Message added' : 'Failed to add message',
-        })
+        if (added) {
+          return successResponse({ added: true }, 'Message added')
+        }
+        return errorResponse('Failed to add message', 500)
       }
 
       case 'create_session': {
         const { userPhone, initialMessage, metadata } = body
         if (!userPhone) {
-          return NextResponse.json(
-            { error: 'userPhone is required' },
-            { status: 400 }
+          return validationErrorResponse(
+            ['userPhone is required'],
+            'Missing required parameter'
           )
         }
         const sessionId = await service.createSession(
@@ -135,27 +139,17 @@ export async function POST(request: NextRequest) {
           initialMessage,
           metadata
         )
-        return NextResponse.json({
-          success: true,
-          data: { session_id: sessionId },
-        })
+        return successResponse({ session_id: sessionId }, 'Session created')
       }
 
       default:
-        return NextResponse.json(
-          { error: `Invalid action: ${action}` },
-          { status: 400 }
-        )
+        return errorResponse(`Invalid action: ${action}`, 400)
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Shared Context POST API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
@@ -167,21 +161,14 @@ export async function DELETE(request: NextRequest) {
     if (action === 'invalidate_cache') {
       // Cache invalidation would be handled by the service
       // For now, just return success
-      return NextResponse.json({ success: true, message: 'Cache invalidated' })
+      return successResponse({ invalidated: true }, 'Cache invalidated')
     }
 
-    return NextResponse.json(
-      { error: `Invalid action: ${action}` },
-      { status: 400 }
-    )
-  } catch (error: any) {
+    return errorResponse(`Invalid action: ${action}`, 400)
+  } catch (error: unknown) {
     console.error('Shared Context DELETE API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }

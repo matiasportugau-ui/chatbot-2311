@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Sincroniza el catálogo de productos públicos del sitio Shopify
 bmcuruguay.com.uy y lo transforma en archivos reutilizables por la
@@ -11,14 +10,13 @@ from __future__ import annotations
 import json
 import os
 import sys
-from dataclasses import dataclass, asdict
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 from bs4 import BeautifulSoup
-
 
 SHOPIFY_STORE_URL = "https://bmcuruguay.com.uy"
 PRODUCTS_ENDPOINT = f"{SHOPIFY_STORE_URL}/products.json"
@@ -58,14 +56,14 @@ class ShopifyProduct:
     title: str
     vendor: str
     product_type: str
-    tags: List[str]
+    tags: list[str]
     url: str
     description: str
-    variants: List[ShopifyVariant]
-    options: List[Dict[str, Any]]
-    images: List[str]
-    published_at: Optional[str]
-    updated_at: Optional[str]
+    variants: list[ShopifyVariant]
+    options: list[dict[str, Any]]
+    images: list[str]
+    published_at: str | None
+    updated_at: str | None
 
 
 class ShopifyProductSync:
@@ -98,7 +96,7 @@ class ShopifyProductSync:
 
         products = self._fetch_all_products()
         normalized = [self._normalize_product(prod) for prod in products]
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = datetime.now(UTC).isoformat()
 
         raw_payload = {
             "metadata": {
@@ -118,10 +116,10 @@ class ShopifyProductSync:
             f"{self.raw_path} / {self.knowledge_path}"
         )
 
-    def _fetch_all_products(self) -> List[Dict[str, Any]]:
+    def _fetch_all_products(self) -> list[dict[str, Any]]:
         """Recorre todas las páginas del endpoint público de Shopify."""
         page = 1
-        products: List[Dict[str, Any]] = []
+        products: list[dict[str, Any]] = []
 
         with requests.Session() as session:
             session.headers.update(
@@ -144,7 +142,7 @@ class ShopifyProductSync:
 
         return products
 
-    def _normalize_product(self, product: Dict[str, Any]) -> ShopifyProduct:
+    def _normalize_product(self, product: dict[str, Any]) -> ShopifyProduct:
         """Convierte el producto bruto en una estructura tipada."""
         description_html = product.get("body_html") or ""
         soup = BeautifulSoup(description_html, "html.parser")
@@ -188,8 +186,8 @@ class ShopifyProductSync:
         )
 
     def _build_knowledge_payload(
-        self, products: List[ShopifyProduct], timestamp: str
-    ) -> Dict[str, Any]:
+        self, products: list[ShopifyProduct], timestamp: str
+    ) -> dict[str, Any]:
         """Crea el archivo de conocimiento compatible con el consolidado."""
         conocimiento_productos = {}
         for product in products:
@@ -243,12 +241,12 @@ class ShopifyProductSync:
         freshest_path = self.knowledge_path if self.knowledge_path.exists() else self.raw_path
         if not freshest_path.exists():
             return False
-        last_modified = datetime.fromtimestamp(freshest_path.stat().st_mtime, timezone.utc)
-        age_minutes = (datetime.now(timezone.utc) - last_modified).total_seconds() / 60
+        last_modified = datetime.fromtimestamp(freshest_path.stat().st_mtime, UTC)
+        age_minutes = (datetime.now(UTC) - last_modified).total_seconds() / 60
         return age_minutes < self.max_age_minutes
 
     @staticmethod
-    def _write_json(path: Path, payload: Dict[str, Any]) -> None:
+    def _write_json(path: Path, payload: dict[str, Any]) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=2)
@@ -273,4 +271,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

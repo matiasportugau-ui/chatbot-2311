@@ -6,7 +6,7 @@
       "archivo": "/app/conocimiento_consolidado.json",
       "interacciones": 20,
       "patrones": 1,
-      "productos": 1
+      "productos": 75
     },
     {
       "tipo": "ia_conversacional",
@@ -35,7 +35,7 @@
   "estadisticas": {
     "interacciones": 20,
     "patrones": 1,
-    "productos": 1,
+    "productos": 75,
     "patrones_respuesta": 4,
     "productos_sistema": [
       "isodec",

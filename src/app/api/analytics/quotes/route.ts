@@ -1,7 +1,14 @@
 export const dynamic = 'force-dynamic'
 
+import { errorResponse, successResponse } from '@/lib/api-response'
 import { connectDB } from '@/lib/mongodb'
+<<<<<<< Updated upstream
 import { NextRequest, NextResponse } from 'next/server'
+=======
+import { withRateLimit } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 
 /**
  * Analytics Quotes API Endpoint
@@ -31,13 +38,14 @@ export async function GET(request: NextRequest) {
     // Build date filter
     const dateFilter: any = {}
     if (dateFrom || dateTo) {
-      dateFilter.timestamp = {}
+      const timestampFilter: { $gte?: Date; $lte?: Date } = {}
       if (dateFrom) {
-        dateFilter.timestamp.$gte = new Date(dateFrom)
+        timestampFilter.$gte = new Date(dateFrom)
       }
       if (dateTo) {
-        dateFilter.timestamp.$lte = new Date(dateTo)
+        timestampFilter.$lte = new Date(dateTo)
       }
+      dateFilter.timestamp = timestampFilter
     }
 
     // Get total quotes
@@ -57,17 +65,25 @@ export async function GET(request: NextRequest) {
     )
 
     // Merge month filter with user date filter
+<<<<<<< Updated upstream
     const monthFilter: any = { ...dateFilter }
     if (monthFilter.timestamp) {
+=======
+    const monthFilter: Record<string, unknown> = { ...dateFilter }
+    const userTimestamp = dateFilter.timestamp as
+      | { $gte?: Date; $lte?: Date }
+      | undefined
+    if (userTimestamp) {
+>>>>>>> Stashed changes
       // Combine user date range with month range
       monthFilter.timestamp = {
         $gte:
-          dateFilter.timestamp.$gte && dateFilter.timestamp.$gte > startOfMonth
-            ? dateFilter.timestamp.$gte
+          userTimestamp.$gte && userTimestamp.$gte > startOfMonth
+            ? userTimestamp.$gte
             : startOfMonth,
         $lte:
-          dateFilter.timestamp.$lte && dateFilter.timestamp.$lte < endOfMonth
-            ? dateFilter.timestamp.$lte
+          userTimestamp.$lte && userTimestamp.$lte < endOfMonth
+            ? userTimestamp.$lte
             : endOfMonth,
       }
     } else {
@@ -249,54 +265,27 @@ export async function GET(request: NextRequest) {
       ? Math.round(avgResponseTime[0].avgTime / (1000 * 60))
       : 0
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        totalQuotes,
-        quotesThisMonth,
-        quotesLastMonth,
-        averageQuoteValue,
-        conversionRate,
-        averageResponseTime: averageResponseTimeMinutes,
-        topProducts: topProductsFormatted,
-        quotesByStatus: quotesByStatusFormatted,
-        quotesByTime: quotesByTimeFormatted,
-        revenue: {
-          total: totalRevenue,
-          thisMonth: revenueThisMonthValue,
-          lastMonth: revenueLastMonthValue,
-          growth: revenueGrowth,
-        },
+    return successResponse({
+      totalQuotes,
+      quotesThisMonth,
+      quotesLastMonth,
+      averageQuoteValue,
+      conversionRate,
+      averageResponseTime: averageResponseTimeMinutes,
+      topProducts: topProductsFormatted,
+      quotesByStatus: quotesByStatusFormatted,
+      quotesByTime: quotesByTimeFormatted,
+      revenue: {
+        total: totalRevenue,
+        thisMonth: revenueThisMonthValue,
+        lastMonth: revenueLastMonthValue,
+        growth: revenueGrowth,
       },
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Analytics Quotes API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-        data: {
-          totalQuotes: 0,
-          quotesThisMonth: 0,
-          quotesLastMonth: 0,
-          averageQuoteValue: 0,
-          conversionRate: 0,
-          averageResponseTime: 0,
-          topProducts: [],
-          quotesByStatus: [],
-          quotesByTime: Array.from({ length: 24 }, (_, i) => ({
-            hour: i,
-            count: 0,
-          })),
-          revenue: {
-            total: 0,
-            thisMonth: 0,
-            lastMonth: 0,
-            growth: 0,
-          },
-        },
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }

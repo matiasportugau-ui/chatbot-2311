@@ -1,62 +1,51 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 FastAPI Server para Sistema de Cotizaciones BMC
 Expone endpoints para procesamiento de mensajes y cotizaciones
 """
 
-import os
 import json
 import logging
+import os
 import uuid
+from collections.abc import Awaitable, Callable
 from datetime import datetime
-from typing import Dict, Any, Optional
 from decimal import Decimal
+from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request, Header
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
-from contextlib import asynccontextmanager
 import uvicorn
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 
-# Configurar logging primero para que esté disponible en todo el módulo
+from ia_conversacional_integrada import IAConversacionalIntegrada
+from sistema_cotizaciones import (
+    Cliente,
+    EspecificacionCotizacion,
+    SistemaCotizacionesBMC,
+)
+
+# Configurar logging primero para que logger esté disponible
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-# Rate limiting
+# Prometheus metrics
 try:
-    from slowapi import Limiter, _rate_limit_exceeded_handler
-    from slowapi.util import get_remote_address
-    from slowapi.errors import RateLimitExceeded
-    RATE_LIMITING_AVAILABLE = True
+    from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, generate_latest
+
+    PROMETHEUS_AVAILABLE = True
 except ImportError:
     RATE_LIMITING_AVAILABLE = False
     logger.warning("Rate limiting not available - slowapi not installed")
 
-from ia_conversacional_integrada import IAConversacionalIntegrada
-from sistema_cotizaciones import (
-    SistemaCotizacionesBMC,
-    Cliente,
-    EspecificacionCotizacion,
+# Inicializar FastAPI
+app = FastAPI(
+    title="BMC Chat Service API",
+    description="API para procesamiento de mensajes y cotizaciones BMC Uruguay",
+    version="1.0.0",
 )
-
-# Import MongoDB service for connection pooling
-try:
-    from mongodb_service import (
-        get_mongodb_service,
-        ensure_mongodb_connected
-    )
-    MONGODB_SERVICE_AVAILABLE = True
-except ImportError:
-    MONGODB_SERVICE_AVAILABLE = False
-    get_mongodb_service = None
-    ensure_mongodb_connected = None
-    logger.warning(
-        "MongoDB service not available - mongodb_service module not found"
-    )
 
 # Import request tracking utilities
 try:
@@ -162,21 +151,32 @@ except Exception as e:
     USE_SHARED_CONTEXT = False
     shared_context_service = None
 
-# Inicializar FastAPI con lifespan (después de definir lifespan)
-app = FastAPI(
-    title="BMC Chat Service API",
-    description="API para procesamiento de mensajes y cotizaciones BMC Uruguay",
-    version="1.0.0",
-    lifespan=lifespan,
-)
+# Initialize Prometheus metrics
+if PROMETHEUS_AVAILABLE:
+    # Response time histogram
+    response_time_histogram = Histogram(
+        "chat_response_time_seconds", "Chat response time in seconds", ["endpoint", "method"]
+    )
 
-# CORS middleware - Configure allowed origins from environment
-# In production, specify exact domains. For development, allow localhost
-cors_origins = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8080,http://localhost:5678").split(",")
-# Remove wildcard in production - only allow specific origins
-if os.getenv("ENVIRONMENT") == "production":
-    # In production, only allow specific domains
-    cors_origins = [origin.strip() for origin in cors_origins if origin.strip() and origin != "*"]
+    # Request counter
+    request_counter = Counter(
+        "chat_requests_total", "Total number of chat requests", ["endpoint", "method", "status"]
+    )
+
+    # Intent detection accuracy
+    intent_accuracy_counter = Counter(
+        "intent_detection_accuracy", "Intent detection accuracy", ["intent", "confidence_level"]
+    )
+
+    # Error counter
+    error_counter = Counter(
+        "chat_errors_total", "Total number of errors", ["endpoint", "error_type"]
+    )
+
+    # Active sessions gauge
+    active_sessions_gauge = Gauge("chat_active_sessions", "Number of active chat sessions")
+
+    logger.info("Prometheus metrics initialized")
 else:
     # In development, allow localhost origins
     cors_origins = [origin.strip() for origin in cors_origins if origin.strip()]
@@ -199,11 +199,12 @@ if RATE_LIMITING_AVAILABLE:
 else:
     limiter = None
 
+
 # Modelos Pydantic
 class ChatRequest(BaseModel):
     mensaje: str = Field(..., description="Mensaje del cliente")
     telefono: str = Field(..., description="Número de teléfono del cliente")
-    sesionId: Optional[str] = Field(None, description="ID de sesión (opcional)")
+    sesionId: str | None = Field(None, description="ID de sesión (opcional)")
 
 
 class ChatResponse(BaseModel):
@@ -217,15 +218,15 @@ class ChatResponse(BaseModel):
 
 
 class QuoteRequest(BaseModel):
-    cliente: Dict[str, Any]
-    especificaciones: Dict[str, Any]
-    asignado_a: Optional[str] = "MA"
-    observaciones: Optional[str] = ""
+    cliente: dict[str, Any]
+    especificaciones: dict[str, Any]
+    asignado_a: str | None = "MA"
+    observaciones: str | None = ""
 
 
 class QuoteResponse(BaseModel):
     id: str
-    cliente: Dict[str, Any]
+    cliente: dict[str, Any]
     producto: str
     precio_total: float
     precio_m2: float
@@ -235,7 +236,10 @@ class QuoteResponse(BaseModel):
 
 # Middleware para logging de requests con observabilidad y request tracking
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_requests(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    request_id = str(uuid.uuid4())
     start_time = datetime.now()
 
     # Extract client request ID if provided
@@ -259,6 +263,10 @@ async def log_requests(request: Request, call_next):
     else:
         # Fallback to UUID if tracking not available
         request_id = str(uuid.uuid4())
+
+    # Record metrics
+    if METRICS_AVAILABLE:
+        increment_request_counter(request.url.path, request.method)
 
     # Log structured request
     if UTILS_AVAILABLE:
@@ -291,23 +299,12 @@ async def log_requests(request: Request, call_next):
         # Log structured response
         process_time = (datetime.now() - start_time).total_seconds()
 
-        if UTILS_AVAILABLE:
-            structured_logger.info(
-                f"API Response: {request.method} {request.url.path} - {response.status_code}",
-                method=request.method,
-                path=request.url.path,
-                status_code=response.status_code,
-                process_time=process_time
-            )
-        else:
-            response_data = {
-                "request_id": request_id,
-                "status_code": response.status_code,
-                "process_time": process_time,
-                "timestamp": datetime.now().isoformat(),
-                "type": "response",
-            }
-            logger.info(f"Response: {json.dumps(response_data)}")
+        # Record metrics
+        if PROMETHEUS_AVAILABLE:
+            response_time_histogram.labels(endpoint=endpoint, method=method).observe(process_time)
+            request_counter.labels(
+                endpoint=endpoint, method=method, status=str(response.status_code)
+            ).inc()
 
         # Agregar request_id al header
         response.headers["X-Request-ID"] = request_id
@@ -343,6 +340,11 @@ async def log_requests(request: Request, call_next):
             "type": "error",
         }
         logger.error(f"Error: {json.dumps(error_data)}")
+
+        # Record error metric
+        if PROMETHEUS_AVAILABLE:
+            error_counter.labels(endpoint=endpoint, error_type=type(e).__name__).inc()
+
         raise
 
 
@@ -350,7 +352,7 @@ async def log_requests(request: Request, call_next):
 @app.get("/api/health")
 @rate_limit("30/minute")
 async def health_check():
-    """Health check endpoint with rate limit status and dependency checks"""
+    """Health check endpoint with dependency checks"""
     health_data = {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
@@ -500,30 +502,13 @@ async def get_rate_limits():
 
 
 @app.post("/chat/process", response_model=ChatResponse)
-@rate_limit("10/minute")
-async def process_chat_message(
-    request: ChatRequest,
-    http_request: Request
-):
+async def process_chat_message(request: ChatRequest) -> ChatResponse:
     """
     Procesa un mensaje del cliente y retorna respuesta
     Rate limit: 10 requests per minute
     """
     try:
-        # Get request ID from middleware
-        request_id = getattr(http_request.state, 'request_id', None)
-        client_request_id = getattr(http_request.state, 'client_request_id', None)
-
-        if UTILS_AVAILABLE:
-            structured_logger.info(
-                f"Processing message from {request.telefono}: {request.mensaje[:50]}...",
-                request_id=request_id,
-                client_request_id=client_request_id
-            )
-        else:
-            logger.info(
-                f"Processing message from {request.telefono}: {request.mensaje[:50]}..."
-            )
+        logger.info(f"Processing message from {request.telefono}: {request.mensaje[:50]}...")
 
         # Get or create session using shared context service
         session_id = request.sesionId
@@ -559,6 +544,20 @@ async def process_chat_message(
         if session_id:
             resultado["sesion_id"] = session_id
 
+        # Record intent detection metrics
+        if PROMETHEUS_AVAILABLE and "intencion" in resultado:
+            intent = resultado.get("intencion", "general")
+            confidence = resultado.get("confianza", 0.0)
+            confidence_level = (
+                "high" if confidence >= 0.8 else "medium" if confidence >= 0.5 else "low"
+            )
+            intent_accuracy_counter.labels(intent=intent, confidence_level=confidence_level).inc()
+
+        # Update active sessions gauge
+        if PROMETHEUS_AVAILABLE and active_sessions_gauge:
+            # This is a simplified count - in production, track actual active sessions
+            pass
+
         # Save conversation to shared context service
         if USE_SHARED_CONTEXT and shared_context_service and session_id:
             try:
@@ -582,9 +581,7 @@ async def process_chat_message(
                         },
                         "messages": [
                             {
-                                "role": msg.get("tipo") == "cliente"
-                                and "user"
-                                or "assistant",
+                                "role": msg.get("tipo") == "cliente" and "user" or "assistant",
                                 "content": msg.get("mensaje", ""),
                                 "timestamp": msg.get("timestamp", datetime.now()),
                             }
@@ -598,10 +595,22 @@ async def process_chat_message(
         # CRITICAL: Save conversation directly to MongoDB conversations collection
         # Use mongodb_service for connection pooling instead of creating new connections
         try:
-            if MONGODB_SERVICE_AVAILABLE:
-                mongodb_service = get_mongodb_service()
-                if mongodb_service:
-                    conversations_col = mongodb_service.get_collection("conversations")
+            mongodb_uri = os.getenv("MONGODB_URI")
+            if mongodb_uri:
+                from pymongo import MongoClient
+
+                client = MongoClient(
+                    mongodb_uri,
+                    serverSelectionTimeoutMS=5000,
+                    connectTimeoutMS=5000,
+                )
+                # Test connection
+                client.server_info()
+
+                db = client.get_database()
+                conversations_col = db.conversations
+
+                if conversations_col:
                     conversations_col.insert_one(
                         {
                             "session_id": session_id or resultado.get("sesion_id", ""),
@@ -616,45 +625,8 @@ async def process_chat_message(
                             "source": "api",
                         }
                     )
-                    logger.debug(
-                        f"Conversation saved to MongoDB for session {session_id}"
-                    )
-                else:
-                    logger.warning(
-                        "MongoDB service unavailable, conversation not saved"
-                    )
-            else:
-                # Fallback to old method if service not available
-                mongodb_uri = os.getenv("MONGODB_URI")
-                if mongodb_uri:
-                    from pymongo import MongoClient
-                    client = MongoClient(
-                        mongodb_uri,
-                        serverSelectionTimeoutMS=5000,
-                        connectTimeoutMS=5000,
-                    )
-                    client.server_info()
-                    db = client.get_database()
-                    conversations_col = db.conversations
-                    if conversations_col:
-                        conversations_col.insert_one(
-                            {
-                                "session_id": session_id or resultado.get("sesion_id", ""),
-                                "phone": request.telefono,
-                                "message": request.mensaje,
-                                "response": resultado.get("mensaje", ""),
-                                "response_type": resultado.get("tipo", ""),
-                                "confidence": resultado.get("confianza", 0.0),
-                                "intent": resultado.get("intencion", ""),
-                                "entities": resultado.get("entidades", {}),
-                                "timestamp": datetime.now(),
-                                "source": "api",
-                            }
-                        )
-                        logger.debug(
-                            f"Conversation saved to MongoDB for session {session_id}"
-                        )
-                    client.close()
+                    logger.debug(f"Conversation saved to MongoDB for session {session_id}")
+                client.close()
         except Exception as e:
             logger.warning(f"Could not save conversation to MongoDB: {e}")
 
@@ -663,25 +635,17 @@ async def process_chat_message(
 
     except Exception as e:
         logger.error(f"Error processing message: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"Error procesando mensaje: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error procesando mensaje: {str(e)}")
 
 
 @app.post("/quote/create", response_model=QuoteResponse)
-@rate_limit("5/minute")
-async def create_quote(
-    request: QuoteRequest,
-    http_request: Request
-):
+async def create_quote(request: QuoteRequest) -> QuoteResponse:
     """
     Crea una nueva cotización
     Rate limit: 5 requests per minute
     """
     try:
-        logger.info(
-            f"Creating quote for client: {request.cliente.get('nombre', 'Unknown')}"
-        )
+        logger.info(f"Creating quote for client: {request.cliente.get('nombre', 'Unknown')}")
 
         # Crear cliente
         cliente = Cliente(
@@ -737,28 +701,56 @@ async def create_quote(
 
     except Exception as e:
         logger.error(f"Error creating quote: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"Error creando cotización: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error creando cotización: {str(e)}")
 
 
 @app.get("/insights")
-@rate_limit("10/minute")
-async def get_insights():
+async def get_insights() -> dict[str, Any]:
     """Obtiene insights de la base de conocimiento"""
     try:
         insights = ia.base_conocimiento.generar_insights()
         return {"success": True, "data": insights}
     except Exception as e:
         logger.error(f"Error getting insights: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error obteniendo insights: {str(e)}")
+
+
+@app.get("/metrics")
+async def get_metrics() -> Response:
+    """Prometheus metrics endpoint"""
+    if not PROMETHEUS_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Prometheus metrics not available")
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+@app.get("/auth/login")
+async def login(username: str, password: str):
+    """
+    Login endpoint to obtain JWT token
+    
+    Args:
+        username: Username for authentication
+        password: Password for authentication
+    
+    Returns:
+        JWT access token
+    """
+    # Simple authentication - in production, use proper user database
+    admin_password = os.getenv("ADMIN_PASSWORD", "change-this-secure-password")
+    
+    if username == "admin" and password == admin_password:
+        token = create_access_token({"username": username, "role": "admin"})
+        return {"access_token": token, "token_type": "bearer"}
+    else:
         raise HTTPException(
-            status_code=500, detail=f"Error obteniendo insights: {str(e)}"
+            status_code=401,
+            detail="Invalid username or password"
         )
 
 
 @app.get("/conversations")
 @rate_limit("20/minute")
-async def get_conversations(limit: int = 50):
+async def get_conversations(limit: int = 50) -> dict[str, Any]:
     """Obtiene conversaciones recientes desde MongoDB (si está disponible)"""
     try:
         if MONGODB_SERVICE_AVAILABLE:
@@ -783,12 +775,16 @@ async def get_conversations(limit: int = 50):
             db = client.get_database()
             conversations_col = db.conversations
 
-            # Get recent conversations
-            conversations = list(
-                conversations_col.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
-            )
-            client.close()
-            return {"success": True, "data": conversations, "count": len(conversations)}
+        client = MongoClient(mongodb_uri)
+        db = client.get_database()
+        conversations_col = db.conversations
+
+        # Get recent conversations
+        conversations: list[dict[str, Any]] = list(
+            conversations_col.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
+        )
+
+        return {"success": True, "data": conversations, "count": len(conversations)}
     except Exception as e:
         logger.error(f"Error getting conversations: {e}", exc_info=True)
         return {"success": False, "data": [], "error": str(e)}

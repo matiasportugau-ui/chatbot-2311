@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-// @ts-ignore - AI SDK v5 exports useChat from main package
+// @ts-expect-error - AI SDK v5 exports useChat from main package
 import { useChat } from 'ai'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -66,7 +66,7 @@ export function ChatInterfaceEvolved({
     api: '/api/chat/stream',
     // Note: body parameter may not be reliably sent in AI SDK v5.0.78
     // We use a custom fetch function to ensure data is always sent correctly
-    fetch: async (input, init) => {
+    fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
       // Parse existing body if present
       let requestBody: any = {}
       if (init?.body) {

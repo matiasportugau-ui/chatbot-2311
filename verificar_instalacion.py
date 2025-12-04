@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Script de verificación de instalación"""
 
-import sys
 import os
+import sys
 
 print("=" * 70)
 print("VERIFICACION DE INSTALACION - BMC Chatbot")
@@ -18,6 +17,7 @@ print()
 print("Verificando módulos básicos...")
 try:
     from sistema_cotizaciones import SistemaCotizacionesBMC
+
     print("✓ sistema_cotizaciones")
 except ImportError as e:
     print(f"✗ sistema_cotizaciones: {e}")
@@ -25,6 +25,7 @@ except ImportError as e:
 
 try:
     from utils_cotizaciones import obtener_datos_faltantes
+
     print("✓ utils_cotizaciones")
 except ImportError as e:
     print(f"✗ utils_cotizaciones: {e}")
@@ -34,12 +35,14 @@ except ImportError as e:
 print("\nVerificando módulos opcionales...")
 try:
     from base_conocimiento_dinamica import BaseConocimientoDinamica
+
     print("✓ base_conocimiento_dinamica")
 except ImportError as e:
     print(f"⚠ base_conocimiento_dinamica: {e} (opcional)")
 
 try:
     from ia_conversacional_integrada import IAConversacionalIntegrada
+
     print("✓ ia_conversacional_integrada")
 except ImportError as e:
     print(f"⚠ ia_conversacional_integrada: {e} (opcional)")
@@ -50,7 +53,7 @@ archivos_conocimiento = [
     "base_conocimiento_final.json",
     "conocimiento_completo.json",
     "base_conocimiento_exportada.json",
-    "base_conocimiento_demo.json"
+    "base_conocimiento_demo.json",
 ]
 
 encontrados = []
@@ -67,4 +70,3 @@ print("VERIFICACION COMPLETA")
 print("=" * 70)
 print("\nEl sistema está listo para ejecutarse.")
 print("Ejecuta: python chat_interactivo.py")
-

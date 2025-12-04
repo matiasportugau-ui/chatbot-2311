@@ -55,6 +55,7 @@ google-auth>=2.0.0
 google-auth-oauthlib>=1.0.0
 google-auth-httplib2>=0.1.0
 
+<<<<<<< Updated upstream
 # Para n8n API integration
 # requests ya está incluido arriba (línea 15)
 
@@ -69,3 +70,8 @@ redis>=5.0.0
 
 # Para monitoreo de sistema
 psutil>=5.9.0
+=======
+# Para linting y formateo de código Python
+ruff>=0.1.0
+black>=23.0.0
+>>>>>>> Stashed changes

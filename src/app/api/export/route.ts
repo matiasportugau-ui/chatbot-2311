@@ -1,10 +1,16 @@
 export const dynamic = 'force-dynamic'
 
+import {
+  errorResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
+import { requireAuth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
+import { withRateLimit } from '@/lib/rate-limit'
+import type { ImportRecord } from '@/types/import-export'
 import { NextRequest, NextResponse } from 'next/server'
 import * as XLSX from 'xlsx'
-import { requireAuth } from '@/lib/auth'
-import { withRateLimit } from '@/lib/rate-limit'
 
 // Security constants
 const MAX_RECORDS = 10000 // Maximum records to export
@@ -62,9 +68,9 @@ async function exportHandler(request: NextRequest) {
 
     // Validate required parameters
     if (!type) {
-      return NextResponse.json(
-        { success: false, error: 'Type parameter is required' },
-        { status: 400 }
+      return validationErrorResponse(
+        ['Type parameter is required'],
+        'Missing required parameter'
       )
     }
 
@@ -99,16 +105,22 @@ async function exportHandler(request: NextRequest) {
     }
 
     const db = await connectDB()
-    let data: any[] = []
+    let data: ImportRecord[] = []
     let filename = ''
 
+<<<<<<< Updated upstream
     // Build filter query with validation
     const query: any = {}
 
     // Validate and sanitize date filters
+=======
+    // Build filter query
+    const query: Record<string, unknown> = {}
+>>>>>>> Stashed changes
     if (filters.dateFrom || filters.dateTo) {
-      query.timestamp = {}
+      const timestampFilter: { $gte?: Date; $lte?: Date } = {}
       if (filters.dateFrom) {
+<<<<<<< Updated upstream
         const dateFrom = new Date(filters.dateFrom)
         if (isNaN(dateFrom.getTime())) {
           return NextResponse.json(
@@ -127,7 +139,14 @@ async function exportHandler(request: NextRequest) {
           )
         }
         query.timestamp.$lte = dateTo
+=======
+        timestampFilter.$gte = new Date(filters.dateFrom)
       }
+      if (filters.dateTo) {
+        timestampFilter.$lte = new Date(filters.dateTo)
+>>>>>>> Stashed changes
+      }
+      query.timestamp = timestampFilter
     }
 
     // Validate and sanitize status filter
@@ -196,9 +215,8 @@ async function exportHandler(request: NextRequest) {
         const analyticsConversations = db.collection('conversations')
 
         const totalQuotes = await analyticsQuotes.countDocuments(query)
-        const totalConversations = await analyticsConversations.countDocuments(
-          query
-        )
+        const totalConversations =
+          await analyticsConversations.countDocuments(query)
 
         data = [
           {
@@ -279,7 +297,7 @@ async function exportHandler(request: NextRequest) {
           contentType =
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
           filename = filename.replace(/\.(json|excel)$/i, '.xlsx')
-        } catch (excelError: any) {
+        } catch (excelError: unknown) {
           console.error('Excel export error:', excelError)
 
           // If timeout or size limit, return error instead of fallback
@@ -335,28 +353,21 @@ async function exportHandler(request: NextRequest) {
     }
 
     // For JSON, return JSON response with data
-    return NextResponse.json({
-      success: true,
-      data: {
-        filename,
-        format: format.toUpperCase(),
-        recordCount: data.length,
-        content: JSON.parse(exportData as string),
-      },
+    return successResponse({
+      filename,
+      format: format.toUpperCase(),
+      recordCount: data.length,
+      content: JSON.parse(exportData as string),
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Export API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
-function escapeCSVValue(value: any): string {
+function escapeCSVValue(value: unknown): string {
   if (value === null || value === undefined) {
     return ''
   }
@@ -381,7 +392,7 @@ function escapeCSVValue(value: any): string {
   return stringValue
 }
 
-function convertToCSV(data: any[]): string {
+function convertToCSV(data: ImportRecord[]): string {
   if (!data || data.length === 0) {
     return ''
   }
@@ -400,4 +411,8 @@ function convertToCSV(data: any[]): string {
 }
 
 // Export with authentication and rate limiting
-export const POST = withRateLimit(requireAuth(async (request: NextRequest) => exportHandler(request)), 20, 15 * 60 * 1000)
+export const POST = withRateLimit(
+  requireAuth(async (request: NextRequest) => exportHandler(request)),
+  20,
+  15 * 60 * 1000
+)

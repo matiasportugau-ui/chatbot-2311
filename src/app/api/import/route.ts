@@ -1,9 +1,21 @@
 export const dynamic = 'force-dynamic'
 
-import { connectDB } from '@/lib/mongodb'
-import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
+import { connectDB } from '@/lib/mongodb'
 import { withRateLimit } from '@/lib/rate-limit'
+import type {
+  ConversationRecord,
+  ImportRecord,
+  ProductRecord,
+  QuoteRecord,
+  ValidationResult,
+} from '@/types/import-export'
+import { NextRequest } from 'next/server'
+import {
+  successResponse,
+  errorResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
 
 /**
  * Import API Endpoint
@@ -24,16 +36,16 @@ async function importHandler(request: NextRequest) {
     const validateOnly = formData.get('validateOnly') === 'true'
 
     if (!file) {
-      return NextResponse.json(
-        { success: false, error: 'File is required' },
-        { status: 400 }
+      return validationErrorResponse(
+        ['File is required'],
+        'Missing required field'
       )
     }
 
     if (!type) {
-      return NextResponse.json(
-        { success: false, error: 'Type parameter is required' },
-        { status: 400 }
+      return validationErrorResponse(
+        ['Type parameter is required'],
+        'Missing required parameter'
       )
     }
 
@@ -41,7 +53,7 @@ async function importHandler(request: NextRequest) {
     const fileContent = await file.text()
     const fileName = file.name.toLowerCase()
 
-    let data: any[]
+    let data: ImportRecord[]
 
     // Parse file based on extension
     if (fileName.endsWith('.json')) {
@@ -52,32 +64,29 @@ async function importHandler(request: NextRequest) {
     } else if (fileName.endsWith('.csv')) {
       data = parseCSV(fileContent)
     } else {
-      return NextResponse.json(
-        { success: false, error: 'Unsupported file format. Use JSON or CSV' },
-        { status: 400 }
+      return validationErrorResponse(
+        ['Unsupported file format. Use JSON or CSV'],
+        'Invalid file format'
       )
     }
 
     // Validate data structure
     const validationResult = validateData(data, type)
     if (!validationResult.valid) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Data validation failed',
-          validationErrors: validationResult.errors,
-        },
-        { status: 400 }
+      return validationErrorResponse(
+        validationResult.errors,
+        'Data validation failed'
       )
     }
 
     if (validateOnly) {
-      return NextResponse.json({
-        success: true,
-        message: 'Data validation passed',
-        recordCount: data.length,
-        validated: true,
-      })
+      return successResponse(
+        {
+          recordCount: data.length,
+          validated: true,
+        },
+        'Data validation passed'
+      )
     }
 
     // Import data to MongoDB
@@ -98,9 +107,11 @@ async function importHandler(request: NextRequest) {
               }
               await conversations.insertOne(record)
               imported++
-            } catch (err: any) {
+            } catch (err: unknown) {
               failed++
-              errors.push(`Record ${imported + failed}: ${err.message}`)
+              const errorMessage =
+                err instanceof Error ? err.message : 'Unknown error'
+              errors.push(`Record ${imported + failed}: ${errorMessage}`)
             }
           }
           break
@@ -121,9 +132,11 @@ async function importHandler(request: NextRequest) {
               }
               await quotes.insertOne(record)
               imported++
-            } catch (err: any) {
+            } catch (err: unknown) {
               failed++
-              errors.push(`Record ${imported + failed}: ${err.message}`)
+              const errorMessage =
+                err instanceof Error ? err.message : 'Unknown error'
+              errors.push(`Record ${imported + failed}: ${errorMessage}`)
             }
           }
           break
@@ -134,57 +147,44 @@ async function importHandler(request: NextRequest) {
             try {
               await products.insertOne(record)
               imported++
-            } catch (err: any) {
+            } catch (err: unknown) {
               failed++
-              errors.push(`Record ${imported + failed}: ${err.message}`)
+              const errorMessage =
+                err instanceof Error ? err.message : 'Unknown error'
+              errors.push(`Record ${imported + failed}: ${errorMessage}`)
             }
           }
           break
 
         default:
-          return NextResponse.json(
-            {
-              success: false,
-              error: 'Invalid type. Use: conversations, quotes, or products',
-            },
-            { status: 400 }
+          return validationErrorResponse(
+            ['Invalid type. Use: conversations, quotes, or products'],
+            'Invalid type parameter'
           )
       }
-    } catch (err: any) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Import failed: ${err.message}`,
-          imported,
-          failed,
-          errors: errors.slice(0, 10), // Limit error messages
-        },
-        { status: 500 }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      return errorResponse(
+        `Import failed: ${errorMessage}`,
+        500
       )
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        imported,
-        failed,
-        total: data.length,
-        errors: errors.slice(0, 10), // Return first 10 errors
-      },
+    return successResponse({
+      imported,
+      failed,
+      total: data.length,
+      errors: errors.slice(0, 10), // Return first 10 errors
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Import API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-      },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return errorResponse(errorMessage, 500)
   }
 }
 
-function parseCSV(csvContent: string): any[] {
+function parseCSV(csvContent: string): ImportRecord[] {
   const lines = csvContent.split('\n').filter(line => line.trim())
   if (lines.length === 0) {
     return []
@@ -225,12 +225,12 @@ function parseCSV(csvContent: string): any[] {
 
   // Parse header
   const headers = parseCSVLine(lines[0]).map(h => h.replace(/^"|"$/g, ''))
-  const data: any[] = []
+  const data: ImportRecord[] = []
 
   // Parse rows
   for (let i = 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i]).map(v => v.replace(/^"|"$/g, ''))
-    const record: any = {}
+    const record: ImportRecord = {}
     headers.forEach((header, index) => {
       record[header] = values[index] || ''
     })
@@ -240,10 +240,7 @@ function parseCSV(csvContent: string): any[] {
   return data
 }
 
-function validateData(
-  data: any[],
-  type: string
-): { valid: boolean; errors: string[] } {
+function validateData(data: ImportRecord[], type: string): ValidationResult {
   const errors: string[] = []
 
   if (!Array.isArray(data) || data.length === 0) {
@@ -255,7 +252,8 @@ function validateData(
   switch (type) {
     case 'conversations':
       data.forEach((record, index) => {
-        if (!record.user_phone) {
+        const convRecord = record as ConversationRecord
+        if (!convRecord.user_phone) {
           errors.push(`Record ${index + 1}: Missing user_phone`)
         }
       })
@@ -263,10 +261,11 @@ function validateData(
 
     case 'quotes':
       data.forEach((record, index) => {
-        if (!record.cliente) {
+        const quoteRecord = record as QuoteRecord
+        if (!quoteRecord.cliente) {
           errors.push(`Record ${index + 1}: Missing cliente`)
         }
-        if (!record.telefono) {
+        if (!quoteRecord.telefono) {
           errors.push(`Record ${index + 1}: Missing telefono`)
         }
       })
@@ -274,7 +273,8 @@ function validateData(
 
     case 'products':
       data.forEach((record, index) => {
-        if (!record.name && !record.product) {
+        const productRecord = record as ProductRecord
+        if (!productRecord.name && !productRecord.product) {
           errors.push(`Record ${index + 1}: Missing product name`)
         }
       })
@@ -288,4 +288,8 @@ function validateData(
 }
 
 // Export with authentication and rate limiting
-export const POST = withRateLimit(requireAuth(async (request: NextRequest) => importHandler(request)), 10, 15 * 60 * 1000)
+export const POST = withRateLimit(
+  requireAuth(async (request: NextRequest) => importHandler(request)),
+  10,
+  15 * 60 * 1000
+)

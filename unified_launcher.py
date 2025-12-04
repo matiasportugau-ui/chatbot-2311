@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Unified Launcher for BMC Chatbot System
 Single entry point for all system operations
 """
 
-import sys
-import subprocess
+import argparse
+import logging
 import platform
 import signal
+import subprocess
+import sys
 import time
-import logging
 from pathlib import Path
-from typing import List, Optional
-import argparse
+
+
 
 
 # Color codes for terminal output
@@ -31,9 +31,9 @@ class Colors:
 
 def print_header(text: str):
     """Print formatted header"""
-    print(f"\n{Colors.BOLD}{Colors.HEADER}{'='*70}{Colors.ENDC}")
+    print(f"\n{Colors.BOLD}{Colors.HEADER}{'=' * 70}{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.HEADER}{text.center(70)}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.HEADER}{'='*70}{Colors.ENDC}\n")
+    print(f"{Colors.BOLD}{Colors.HEADER}{'=' * 70}{Colors.ENDC}\n")
 
 
 def print_success(text: str):
@@ -71,16 +71,41 @@ class UnifiedLauncher:
         self.skip_setup = skip_setup
         self.production = production
         self.dev = dev
-        self.background_processes: List[subprocess.Popen] = []
+
+        self.non_interactive = non_interactive
+        self.background_processes: list[subprocess.Popen] = []
+
 
         # Setup logging
         self.log_dir = self.root_dir / "logs"
         self.log_dir.mkdir(exist_ok=True)
         self._setup_logging()
 
-        # Signal handlers for cleanup
-        signal.signal(signal.SIGINT, self._signal_handler)
-        signal.signal(signal.SIGTERM, self._signal_handler)
+
+        # Find executables (critical for system operation)
+        self.python_cmd = self._find_python()
+        self.node_cmd = self._find_node()
+        self.npm_cmd = self._find_npm()
+
+        # Validate Python is available (critical requirement)
+        if not self.python_cmd:
+            error_msg = (
+                "Python 3.11+ is required but not found. Please install Python 3.11 or higher."
+            )
+            print_error(error_msg)
+            if self.logger:
+                self.logger.error(error_msg)
+            raise RuntimeError(error_msg)
+
+        # Signal handlers for cleanup (only on Unix-like systems)
+        if hasattr(signal, "SIGINT"):
+            try:
+                signal.signal(signal.SIGINT, self._signal_handler)
+                signal.signal(signal.SIGTERM, self._signal_handler)
+            except (ValueError, OSError) as e:
+                # Signal handlers may not work in all contexts (e.g., threads)
+                self.logger.warning(f"Could not set signal handlers: {e}")
+
 
     def _setup_logging(self):
         """Setup logging system"""
@@ -105,19 +130,32 @@ class UnifiedLauncher:
 
     def _cleanup_processes(self):
         """Clean up background processes"""
+
+        if not self.background_processes:
+            return
+
+        self.logger.info(f"Cleaning up {len(self.background_processes)} background process(es)")
         for process in self.background_processes:
             try:
-                process.terminate()
-                process.wait(timeout=5)
-            except:
-                try:
-                    process.kill()
-                except:
-                    pass
+                if process.poll() is None:  # Process is still running
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                        self.logger.debug(f"Process {process.pid} terminated gracefully")
+                    except subprocess.TimeoutExpired:
+                        self.logger.warning(f"Process {process.pid} did not terminate, killing...")
+                        process.kill()
+                        process.wait()
+            except (OSError, ProcessLookupError) as e:
+                # Process may have already terminated
+                self.logger.debug(f"Process cleanup: {e}")
+            except Exception as e:
+                self.logger.error(f"Unexpected error during process cleanup: {e}")
         self.background_processes.clear()
 
-    def _find_python(self) -> Optional[str]:
-        """Find Python executable"""
+    def _find_python(self) -> str | None:
+        """Find Python executable with version 3.11+"""
+
         for cmd in ["python3", "python", "py"]:
             try:
                 result = subprocess.run(
@@ -136,7 +174,7 @@ class UnifiedLauncher:
                 continue
         return None
 
-    def _find_node(self) -> Optional[str]:
+    def _find_node(self) -> str | None:
         """Find Node.js executable"""
         for cmd in ["node", "nodejs"]:
             try:
@@ -149,7 +187,7 @@ class UnifiedLauncher:
                 continue
         return None
 
-    def _find_npm(self) -> Optional[str]:
+    def _find_npm(self) -> str | None:
         """Find npm executable"""
         for cmd in ["npm", "yarn"]:
             try:
@@ -161,6 +199,133 @@ class UnifiedLauncher:
             except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
                 continue
         return None
+
+
+    def _auto_detect_env_vars(self) -> dict[str, str]:
+        """Auto-detect environment variables from system environment"""
+        import os
+
+        detected = {}
+        # Check system environment variables first (highest priority)
+        env_vars_to_check = [
+            "OPENAI_API_KEY",
+            "MONGODB_URI",
+            "NEXTAUTH_SECRET",
+            "NEXTAUTH_URL",
+            "WHATSAPP_ACCESS_TOKEN",
+            "WHATSAPP_PHONE_NUMBER_ID",
+            "WHATSAPP_VERIFY_TOKEN",
+            "MELI_ACCESS_TOKEN",
+            "MELI_SELLER_ID",
+            "MERCADO_LIBRE_WEBHOOK_SECRET",
+        ]
+
+        for var in env_vars_to_check:
+            value = os.environ.get(var)
+            if value and value.strip() and not value.startswith("your-"):
+                detected[var] = value
+                self.logger.debug(f"Auto-detected {var} from system environment")
+
+        return detected
+
+    def _auto_generate_secrets(self) -> dict[str, str]:
+        """Auto-generate secrets and tokens"""
+        import random
+        import secrets
+        import string
+
+        generated = {}
+
+        # Generate NEXTAUTH_SECRET if not provided
+        if "NEXTAUTH_SECRET" not in generated:
+            generated["NEXTAUTH_SECRET"] = secrets.token_urlsafe(32)
+
+        # Generate WhatsApp verify token if not provided
+        if "WHATSAPP_VERIFY_TOKEN" not in generated:
+            chars = string.ascii_letters + string.digits + "-_"
+            generated["WHATSAPP_VERIFY_TOKEN"] = "".join(random.choice(chars) for _ in range(32))
+
+        # Generate Mercado Libre webhook secret if not provided
+        if "MERCADO_LIBRE_WEBHOOK_SECRET" not in generated:
+            generated["MERCADO_LIBRE_WEBHOOK_SECRET"] = secrets.token_urlsafe(24)
+
+        return generated
+
+    def _get_sensible_defaults(self) -> dict[str, str]:
+        """Get sensible default values for optional variables"""
+        defaults = {
+            "MONGODB_URI": "mongodb://localhost:27017/bmc_chat",
+            "NEXTAUTH_URL": "http://localhost:3000",
+            "PY_CHAT_SERVICE_URL": "http://localhost:8000",
+            "NEXT_PUBLIC_API_URL": "http://localhost:3001/api",
+            "NEXT_PUBLIC_WS_URL": "ws://localhost:3001/ws",
+            "OPENAI_MODEL": "gpt-4o-mini",
+            "MERCADO_LIBRE_AUTH_URL": "https://auth.mercadolibre.com.uy",
+            "MERCADO_LIBRE_API_URL": "https://api.mercadolibre.com",
+            "N8N_WEBHOOK_URL_EXTERNAL": "http://localhost:5678/webhook/whatsapp",
+        }
+        return defaults
+
+    def _auto_setup(self) -> tuple[dict[str, str], list[str]]:
+        """
+        Auto-setup environment variables.
+        Returns: (env_updates, missing_required)
+        """
+        env_file = self.root_dir / ".env"
+        env_example = self.root_dir / "env.example"
+        env_updates = {}
+        missing_required = []
+
+        # Step 1: Auto-detect from system environment
+        detected = self._auto_detect_env_vars()
+        env_updates.update(detected)
+        if detected:
+            print_info(f"Auto-detected {len(detected)} variable(s) from system environment")
+
+        # Step 2: Load existing .env file
+        env_content = ""
+        if env_file.exists():
+            env_content = env_file.read_text(encoding="utf-8")
+        elif env_example.exists():
+            print_info("Creating .env from env.example...")
+            env_content = env_example.read_text(encoding="utf-8")
+
+        # Step 3: Extract existing values from .env (don't override detected)
+        if env_content:
+            for line in env_content.split("\n"):
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, value = line.split("=", 1)
+                    key = key.strip()
+                    value = value.strip().strip('"').strip("'")
+                    # Only use if not placeholder and not already detected
+                    if (
+                        key not in env_updates
+                        and value
+                        and not value.startswith("your-")
+                        and value not in ["", '""', "''"]
+                    ):
+                        env_updates[key] = value
+
+        # Step 4: Auto-generate secrets
+        generated = self._auto_generate_secrets()
+        for key, value in generated.items():
+            if key not in env_updates:
+                env_updates[key] = value
+                print_success(f"Auto-generated {key}")
+
+        # Step 5: Apply sensible defaults for optional variables
+        defaults = self._get_sensible_defaults()
+        for key, value in defaults.items():
+            if key not in env_updates:
+                env_updates[key] = value
+
+        # Step 6: Check for required variables
+        if "OPENAI_API_KEY" not in env_updates or not env_updates["OPENAI_API_KEY"]:
+            missing_required.append("OPENAI_API_KEY")
+
+        return env_updates, missing_required
+
 
     def check_prerequisites(self) -> bool:
         """Check all prerequisites"""
@@ -230,7 +395,27 @@ class UnifiedLauncher:
 
         self.setup_complete = True
         print_success("Environment setup complete!")
-        
+
+
+        # Show configuration summary
+        if not self.skip_setup:
+            print_header("Setup Summary")
+            env_file = self.root_dir / ".env"
+            if env_file.exists():
+                try:
+                    env_updates, missing = self._auto_setup()
+                    if env_updates:
+                        print_info(f"✓ Auto-configured {len(env_updates)} variable(s)")
+                    if missing:
+                        print_warning(
+                            f"⚠ {len(missing)} required variable(s) still need configuration"
+                        )
+                        if not self.non_interactive:
+                            print_info("Run setup again or configure manually in .env file")
+                except Exception as e:
+                    self.logger.debug(f"Could not show setup summary: {e}")
+
+
         # Optional: Validate WhatsApp and import n8n workflows
         if not self.skip_setup:
             self._validate_whatsapp()
@@ -315,7 +500,111 @@ class UnifiedLauncher:
             print_warning("Please configure OPENAI_API_KEY in .env file")
             return False
 
-        return False
+
+        # Update env_content with auto-detected/generated values
+        env_updated = False
+        lines = env_content.split("\n")
+        updated_lines = []
+        existing_keys = set()
+
+        for line in lines:
+            line_stripped = line.strip()
+            # Skip comments and empty lines
+            if not line_stripped or line_stripped.startswith("#"):
+                updated_lines.append(line)
+                continue
+
+            # Parse existing key=value pairs
+            if "=" in line_stripped and not line_stripped.startswith("#"):
+                key = line_stripped.split("=", 1)[0].strip()
+                existing_keys.add(key)
+
+                # Replace if we have an update for this key
+                if key in env_updates:
+                    updated_lines.append(f"{key}={env_updates[key]}")
+                    env_updated = True
+                    # Remove from updates so we can add remaining ones
+                    del env_updates[key]
+                else:
+                    # Keep original line if no update
+                    updated_lines.append(line)
+            else:
+                updated_lines.append(line)
+
+        # Add any new variables that weren't in the file
+        for key, value in env_updates.items():
+            if key not in existing_keys:
+                updated_lines.append(f"{key}={value}")
+                env_updated = True
+
+        env_content = "\n".join(updated_lines)
+        if not env_content.endswith("\n"):
+            env_content += "\n"
+
+        # Handle missing required variables
+        if missing_required:
+            if self.non_interactive:
+                print_error(
+                    f"Required variables missing in non-interactive mode: {', '.join(missing_required)}"
+                )
+                print_info("Set them as system environment variables or in .env file")
+                return False
+            else:
+                # Only prompt for OPENAI_API_KEY if missing
+                if "OPENAI_API_KEY" in missing_required:
+                    print_warning("OPENAI_API_KEY is missing or not configured")
+                    print_info("Options:")
+                    print_info("  1. Set OPENAI_API_KEY environment variable")
+                    print_info("  2. Add it to .env file")
+                    print_info("  3. Get API key from: https://platform.openai.com/api-keys")
+
+                    # Try interactive setup
+                    config_script = self.root_dir / "configurar_entorno.py"
+                    if config_script.exists():
+                        try:
+                            import importlib.util
+
+                            spec = importlib.util.spec_from_file_location(
+                                "configurar_entorno", config_script
+                            )
+                            if spec and spec.loader:
+                                module = importlib.util.module_from_spec(spec)
+                                spec.loader.exec_module(module)
+                                if hasattr(module, "main"):
+                                    print_info("Running interactive OpenAI API key setup...")
+                                    module.main()
+                                    # Reload to get the new value
+                                    env_updates, _ = self._auto_setup()
+                                    if "OPENAI_API_KEY" in env_updates:
+                                        # Update the content again
+                                        env_content = re.sub(
+                                            r"OPENAI_API_KEY\s*=\s*.*",
+                                            f"OPENAI_API_KEY={env_updates['OPENAI_API_KEY']}",
+                                            env_content,
+                                            flags=re.MULTILINE,
+                                        )
+                                        env_updated = True
+                                        missing_required.remove("OPENAI_API_KEY")
+                        except Exception as e:
+                            self.logger.warning(f"Could not import configurar_entorno: {e}")
+
+        # Save updated .env if changes were made
+        if env_updated:
+            try:
+                env_file.write_text(env_content, encoding="utf-8")
+                self.logger.info("Updated .env file with auto-detected/generated values")
+                print_success("Environment file updated with auto-configuration")
+            except (OSError, PermissionError) as e:
+                print_error(f"Could not write .env file: {e}")
+                return False
+
+        # Show summary
+        if env_updates:
+            print_info(f"Auto-configured {len(env_updates)} environment variable(s)")
+
+        # Return True if no required variables are missing
+        return len(missing_required) == 0
+
 
     def _consolidate_knowledge(self) -> bool:
         """Consolidate knowledge base files if they exist"""
@@ -366,9 +655,7 @@ class UnifiedLauncher:
                 # Import and call the function directly
                 import importlib.util
 
-                spec = importlib.util.spec_from_file_location(
-                    "gestionar_servicios", gestion_script
-                )
+                spec = importlib.util.spec_from_file_location("gestionar_servicios", gestion_script)
                 if spec and spec.loader:
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
@@ -396,9 +683,7 @@ class UnifiedLauncher:
 
         for package_json in package_json_paths:
             if package_json.exists():
-                print_info(
-                    f"Installing Node.js dependencies from {package_json.parent.name}..."
-                )
+                print_info(f"Installing Node.js dependencies from {package_json.parent.name}...")
                 try:
                     result = subprocess.run(
                         [self.npm_cmd, "install"],
@@ -407,9 +692,7 @@ class UnifiedLauncher:
                         capture_output=True,
                         text=True,
                     )
-                    print_success(
-                        f"Node.js dependencies installed in {package_json.parent.name}"
-                    )
+                    print_success(f"Node.js dependencies installed in {package_json.parent.name}")
                     return True
                 except subprocess.CalledProcessError as e:
                     print_warning(f"Failed to install Node.js dependencies: {e}")
@@ -464,9 +747,7 @@ class UnifiedLauncher:
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
                 else:
-                    raise ImportError(
-                        "Could not load verificar_sistema_completo module"
-                    )
+                    raise ImportError("Could not load verificar_sistema_completo module")
 
                 if hasattr(module, "main"):
                     module.main()
@@ -489,7 +770,9 @@ class UnifiedLauncher:
         try:
             env_content = env_file.read_text()
             has_whatsapp = any(
-                key in env_content and "your-" not in env_content.split(key)[1].split('\n')[0]
+
+                key in env_content and "your-" not in env_content.split(key)[1].split("\n")[0]
+
                 for key in ["WHATSAPP_ACCESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID"]
             )
             
@@ -527,7 +810,7 @@ class UnifiedLauncher:
             response = requests.get("http://localhost:5678/healthz", timeout=2)
             if response.status_code != 200:
                 return True  # n8n not running, skip
-        except:
+        except Exception:
             return True  # Can't check, skip
         
         print_info("n8n detected. Import workflows? (y/n, default: n):")
@@ -645,13 +928,11 @@ class UnifiedLauncher:
                 max_attempts = 30
                 for i in range(max_attempts):
                     try:
-                        response = requests.get(
-                            "http://localhost:8000/health", timeout=2
-                        )
+                        response = requests.get("http://localhost:8000/health", timeout=2)
                         if response.status_code == 200:
                             print_success("API server is ready")
                             break
-                    except:
+                    except Exception:
                         if i < max_attempts - 1:
                             time.sleep(1)
                         else:
@@ -674,9 +955,7 @@ class UnifiedLauncher:
                 if self.production:
                     # Production: build then start
                     print_info("Building Next.js application...")
-                    subprocess.run(
-                        [self.npm_cmd, "run", "build"], cwd=nextjs_dir, check=True
-                    )
+                    subprocess.run([self.npm_cmd, "run", "build"], cwd=nextjs_dir, check=True)
                     print_success("Build complete, starting production server...")
                     subprocess.run([self.npm_cmd, "run", "start"], cwd=nextjs_dir)
                 else:
@@ -760,7 +1039,7 @@ class UnifiedLauncher:
             try:
                 with socket.create_connection(("localhost", 27017), timeout=2):
                     print_success("  MongoDB: Connected")
-            except (socket.error, OSError, ConnectionRefusedError):
+            except (OSError, ConnectionRefusedError):
                 print_warning("  MongoDB: Not connected (optional)")
         except ImportError:
             print_warning("  MongoDB: socket not available")
@@ -835,10 +1114,9 @@ class UnifiedLauncher:
         if validator_script.exists():
             print_info("Running environment validation...")
             try:
-                subprocess.run(
-                    [self.python_cmd, str(validator_script)],
-                    cwd=self.root_dir
-                )
+
+                subprocess.run([self.python_cmd, str(validator_script)], cwd=self.root_dir)
+
             except Exception as e:
                 print_error(f"Error running validation: {e}")
         else:
@@ -866,7 +1144,7 @@ class UnifiedLauncher:
         if log_file.exists():
             print_info(f"Showing last 50 lines of {log_file}")
             try:
-                with open(log_file, "r", encoding="utf-8") as f:
+                with open(log_file, encoding="utf-8") as f:
                     lines = f.readlines()
                     for line in lines[-50:]:
                         print(line.rstrip())
@@ -875,7 +1153,7 @@ class UnifiedLauncher:
         else:
             print_warning("No log file found")
 
-    def run(self, mode: Optional[str] = None):
+    def run(self, mode: str | None = None):
         """Run the launcher"""
         # Check prerequisites
         if not self.check_prerequisites():
@@ -895,11 +1173,7 @@ class UnifiedLauncher:
             try:
                 modes, dev_tools = self.show_menu()
 
-                choice = (
-                    input(f"\n{Colors.BOLD}Select option: {Colors.ENDC}")
-                    .strip()
-                    .lower()
-                )
+                choice = input(f"\n{Colors.BOLD}Select option: {Colors.ENDC}").strip().lower()
 
                 if choice == "0":
                     print_success("Goodbye!")
@@ -949,9 +1223,7 @@ class UnifiedLauncher:
                         return
                     print_header(f"Starting: {script}")
                     try:
-                        subprocess.run(
-                            [self.python_cmd, str(script_path)], cwd=self.root_dir
-                        )
+                        subprocess.run([self.python_cmd, str(script_path)], cwd=self.root_dir)
                     except KeyboardInterrupt:
                         print_warning("\nInterrupted by user")
                 elif script_type == "node":
@@ -969,9 +1241,7 @@ class UnifiedLauncher:
                         commands = script.split(" && ")
                         for cmd in commands:
                             parts = cmd.strip().split()
-                            subprocess.run(
-                                [self.npm_cmd, "run"] + parts[1:], cwd=work_dir
-                            )
+                            subprocess.run([self.npm_cmd, "run"] + parts[1:], cwd=work_dir)
                     else:
                         parts = script.split()
                         subprocess.run([self.npm_cmd, "run"] + parts[1:], cwd=work_dir)

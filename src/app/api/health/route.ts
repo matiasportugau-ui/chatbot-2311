@@ -1,11 +1,18 @@
 export const dynamic = 'force-dynamic'
 
+import { errorResponse, successResponse } from '@/lib/api-response'
 import { connectDB, validateMongoDBURI } from '@/lib/mongodb'
+import { withRateLimit } from '@/lib/rate-limit'
 import {
   getSystemStatus,
   initializeSimpleSystem,
 } from '@/lib/simple-initialize'
+<<<<<<< Updated upstream
 import { NextResponse } from 'next/server'
+=======
+import { RATE_LIMITS } from '@/types/api'
+import { NextRequest } from 'next/server'
+>>>>>>> Stashed changes
 
 /**
  * Health Check Endpoint Simplificado
@@ -36,7 +43,12 @@ export async function GET() {
         mongodbStatus = 'ready'
       } catch (error: any) {
         mongodbStatus = 'error'
+<<<<<<< Updated upstream
         mongodbError = error.message || 'Connection failed'
+=======
+        mongodbError =
+          error instanceof Error ? error.message : 'Connection failed'
+>>>>>>> Stashed changes
       }
     }
 
@@ -86,6 +98,7 @@ export async function GET() {
       services.googleSheets.configured &&
       services.mongodb.configured
 
+<<<<<<< Updated upstream
     return NextResponse.json({
       status: allCriticalServicesReady ? 'healthy' : 'partial',
       timestamp: new Date().toISOString(),
@@ -106,6 +119,29 @@ export async function GET() {
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       },
       { status: 500 }
+=======
+    return successResponse(
+      {
+        status: allCriticalServicesReady ? 'healthy' : 'partial',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        services,
+        initialization: result,
+        systemStatus: getSystemStatus(),
+      },
+      allCriticalServicesReady
+        ? 'All critical services are configured and ready'
+        : 'Some services need configuration'
+    )
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    return errorResponse(
+      errorMessage,
+      500,
+      process.env.NODE_ENV === 'development' ? errorStack : undefined
+>>>>>>> Stashed changes
     )
   }
 }
