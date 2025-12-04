@@ -12,7 +12,7 @@
       "tipo": "ia_conversacional",
       "estado": "exitoso",
       "patrones_respuesta": 4,
-      "respuesta_test": "¡Hola! Soy tu asistente de cotizaciones de BMC Uru..."
+      "respuesta_test": "¡Hola! ¿Te interesa cotizar algún producto de aisl..."
     },
     {
       "tipo": "productos",

@@ -87,3 +87,4 @@ build/
 
 # Vercel
 .vercel/
+backup_metadata/

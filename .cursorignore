@@ -19,13 +19,15 @@ ENV/
 env/
 .conda/
 
-# Build outputs
+# Build outputs and caches
 dist/
 build/
 *.egg-info/
 .next/
+.next/cache/
 out/
 .vercel/
+*.pack.gz
 
 # IDE and Editor files
 .vscode/
@@ -58,18 +60,23 @@ yarn-error.log*
 *.sqlite
 *.sqlite3
 
-# Backup files
+# Backup files and metadata
 backups/
+backup_metadata/
+backup_system/
 *.bak
 *.backup
 restored/
 restored_from_backup/
+*.crypt14
+msgstore_*.db
 
 # Recovery files (temporary)
 recovery_*.py
 recovery_*.json
 recovery_*.txt
 recovery_*.md
+recovery_stash_*.txt
 RecoveredChats.md
 recovered_chats.json
 
@@ -86,7 +93,7 @@ site/
 
 # Large data files (exclude most JSON, but whitelist important ones)
 *.json
-# Whitelist important configuration and knowledge files
+# Whitelist important configuration files only (exclude large data files)
 !package.json
 !package-lock.json
 !tsconfig.json
@@ -95,18 +102,18 @@ site/
 !railway.json
 !render.yaml
 !lighthouse.config.js
-!matriz_precios.json
-!config_conocimiento.json
-!conocimiento_consolidado.json
-!conocimiento_completo.json
-!base_conocimiento_demo.json
+!tailwind.config.js
 
-# Large knowledge base files (can be large, exclude but allow access when needed)
-# Uncomment if these files are too large:
-# conocimiento_*.json
-# base_conocimiento_*.json
-# ia_conversacional_*.json
-# analisis_conversaciones_*.json
+# Exclude large knowledge base and analysis files to reduce memory usage
+conocimiento_*.json
+base_conocimiento_*.json
+ia_conversacional_*.json
+analisis_conversaciones_*.json
+module_analysis_results.json
+github_analysis_results.json
+recovery_composer_data.json
+kb_populated_*.json
+kb_population_results_*.json
 
 # Temporary and cache files
 *.tmp
@@ -132,6 +139,7 @@ metricas_*.json
 # Composer data (recovery artifacts)
 composer_*.json
 composer_*.md
+recovery_composer_*.json
 
 # Git files (already handled by Git, but exclude from Cursor context)
 .git/
@@ -145,6 +153,7 @@ Desktop.ini
 *.so
 *.egg
 .mypy_cache/
+**/.mypy_cache/
 .dmypy.json
 dmypy.json
 

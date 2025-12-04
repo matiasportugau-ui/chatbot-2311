@@ -19,7 +19,7 @@ from base_conocimiento_dinamica import InteraccionCliente
 
 # Import webhook validation utilities
 # SECURITY: Webhook validation is mandatory - fail securely if not available
-
+try:
     from utils.security.webhook_validation import validate_webhook_request
     WEBHOOK_VALIDATION_AVAILABLE = True
 except ImportError as e:
@@ -30,13 +30,13 @@ except ImportError as e:
         raise ImportError(
             "CRITICAL SECURITY ERROR: Webhook validation module cannot be imported. "
             "Service cannot start in production without webhook validation. "
-rror: {str(e)}"
+            f"Error: {str(e)}"
         ) from e
     else:
- development, log warning but allow startup
+        # In development, log warning but allow startup
         WEBHOOK_VALIDATION_AVAILABLE = False
         print("⚠️ WARNING: Webhook validation utilities not available - webhook requests will be REJECTED")
-t error: {str(e)}")
+        print(f"   Error: {str(e)}")
         print("   In production, this would prevent service startup")
 
 
@@ -45,20 +45,33 @@ class IntegracionWhatsApp:
 
     def __init__(self, ia_conversacional: IAConversacionalIntegrada):
         self.ia = ia_conversacional
-(__name__)
+        self.app = Flask(__name__)
         self.configurar_rutas()
         self.webhook_verificado = False
 
-WhatsApp - Load from environment variables or secret files
+        # WhatsApp - Load from environment variables or secret files
         # Support both direct env vars and Docker secrets (via *_FILE pattern)
         self.whatsapp_token = self._read_secret("WHATSAPP_TOKEN", "TU_WHATSAPP_TOKEN")
         self.whatsapp_phone_id = self._read_secret("WHATSAPP_PHONE_ID", "TU_PHONE_ID")
-.webhook_verify_token = self._read_secret("WHATSAPP_WEBHOOK_SECRET", "TU_VERIFY_TOKEN")
+        self.webhook_verify_token = self._read_secret("WHATSAPP_WEBHOOK_SECRET", "TU_VERIFY_TOKEN")
 
         # URL base de WhatsApp API
         self.whatsapp_api_url = f"https://graph.facebook.com/v18.0/{self.whatsapp_phone_id}/messages"
 
-(self):
+    def _read_secret(self, env_var: str, default: str) -> str:
+        """Read secret from environment variable or file"""
+        value = os.getenv(env_var, default)
+        # Support Docker secrets pattern (read from file if *_FILE exists)
+        file_var = f"{env_var}_FILE"
+        if file_var in os.environ:
+            try:
+                with open(os.environ[file_var], 'r') as f:
+                    value = f.read().strip()
+            except Exception as e:
+                print(f"Warning: Could not read {file_var}: {e}")
+        return value
+
+    def configurar_rutas(self):
         """Configura las rutas de la API Flask"""
 
         @self.app.route('/webhook', methods=['GET', 'POST'])
@@ -66,7 +79,7 @@ WhatsApp - Load from environment variables or secret files
             if request.method == 'GET':
                 # Verificación del webhook
                 return self.verificar_webhook()
-elif request.method == 'POST':
+            elif request.method == 'POST':
                 # Procesar mensajes entrantes
                 return self.procesar_mensaje_whatsapp()
 
@@ -78,29 +91,29 @@ elif request.method == 'POST':
         def estado_sistema():
             return self.obtener_estado_sistema()
 
-
+    def verificar_webhook(self):
         """Verifica el webhook de WhatsApp"""
         verify_token = request.args.get('hub.verify_token')
-('hub.challenge')
+        challenge = request.args.get('hub.challenge')
 
         if verify_token == self.webhook_verify_token:
             self.webhook_verificado = True
             print("✅ Webhook de WhatsApp verificado correctamente")
-
+            return challenge, 200
         else:
             print("❌ Error en verificación del webhook")
+            return jsonify({"status": "error"}), 403
 
-
-lf):
+    def procesar_mensaje_whatsapp(self):
         """Procesa mensajes entrantes de WhatsApp"""
         try:
-ature validation is mandatory
+            # Signature validation is mandatory
             # Fail securely - reject all requests if validation cannot be performed
-N_AVAILABLE:
+            if not WEBHOOK_VALIDATION_AVAILABLE:
                 print("❌ SECURITY ERROR: Webhook validation not available - rejecting request")
                 return jsonify({
                     "status": "error",
-        "message": "Webhook validation unavailable - request rejected for security"
+                    "message": "Webhook validation unavailable - request rejected for security"
                 }), 503  # Service Unavailable - indicates system misconfiguration
 
             # Validate webhook signature - mandatory security check
@@ -108,22 +121,22 @@ N_AVAILABLE:
             if not is_valid:
                 print(f"❌ Webhook signature validation failed: {error_msg}")
                 return jsonify({
-",
+                    "status": "error",
                     "message": "Invalid webhook signature"
                 }), 403
 
             data = request.get_json()
 
-ot in data:
+            if 'entry' not in data:
                 return jsonify({"status": "error", "message": "Datos inválidos"}), 400
 
             # Extraer información del mensaje
-
+            entry = data['entry'][0]
             changes = entry['changes'][0]
-
+            value = changes['value']
 
             if 'messages' not in value:
-tus": "ok"})
+                return jsonify({"status": "ok"})
 
             messages = value['messages']
 
@@ -134,7 +147,7 @@ tus": "ok"})
 
         except Exception as e:
             print(f"❌ Error procesando mensaje WhatsApp: {e}")
-return jsonify({"status": "error", "message": str(e)}), 500
+            return jsonify({"status": "error", "message": str(e)}), 500
 
     def procesar_mensaje_individual(self, message: Dict, value: Dict):
         """Procesa un mensaje individual de WhatsApp"""
@@ -142,7 +155,7 @@ return jsonify({"status": "error", "message": str(e)}), 500
             # Extraer datos del mensaje
             from_number = message['from']
             message_id = message['id']
-estamp']
+            timestamp = message.get('timestamp', '')
 
             # Extraer texto del mensaje
             if 'text' in message:
@@ -150,38 +163,40 @@ estamp']
             else:
                 text = "Mensaje no soportado"
 
-formación del contacto
+            # Información del contacto
             contacts = value.get('contacts', [])
             contact_name = contacts[0]['profile']['name'] if contacts else "Cliente"
 
             print(f"📱 Mensaje recibido de {contact_name} ({from_number}): {text}")
 
-on IA
+            # Procesar con IA
             respuesta = self.ia.procesar_mensaje(text, from_number)
 
             # Enviar respuesta
-number, respuesta.mensaje)
+            self.enviar_respuesta_whatsapp(from_number, respuesta.mensaje)
 
             # Registrar interacción
-    self.registrar_interaccion_whatsapp(
+            self.registrar_interaccion_whatsapp(
                 from_number, contact_name, text, respuesta.mensaje, message_id
             )
 
         except Exception as e:
             print(f"❌ Error procesando mensaje individual: {e}")
 
-lf, to_number: str, message_text: str):
-puesta por WhatsApp"""
+    def enviar_respuesta_whatsapp(self, to_number: str, message_text: str):
+        """Envía una respuesta por WhatsApp"""
         try:
+            headers = {
+                'Authorization': f'Bearer {self.whatsapp_token}',
+                'Content-Type': 'application/json'
+            }
 
-zation': f'Bearer {self.whatsapp_token}',
-lication/json'
 
 
-
+            data = {
                 "messaging_product": "whatsapp",
-    "to": to_number,
-        "type": "text",
+                "to": to_number,
+                "type": "text",
                 "text": {"body": message_text}
             }
 
@@ -199,14 +214,14 @@ lication/json'
         except Exception as e:
             print(f"❌ Error enviando respuesta WhatsApp: {e}")
 
-):
- enviar mensajes manuales"""
+    def enviar_mensaje_whatsapp(self):
+        """Endpoint para enviar mensajes manuales"""
         try:
-)
-data.get('to')
+            data = request.get_json()
+            to_number = data.get('to')
             message_text = data.get('message')
 
-    if not to_number or not message_text:
+            if not to_number or not message_text:
                 return jsonify({"status": "error", "message": "Faltan parámetros"}), 400
 
             self.enviar_respuesta_whatsapp(to_number, message_text)
@@ -218,49 +233,45 @@ data.get('to')
 
     def registrar_interaccion_whatsapp(self, phone: str, name: str, mensaje: str, respuesta: str, message_id: str):
         """Registra una interacción de WhatsApp en la base de conocimiento"""
-
-= InteraccionCliente(
-",
-p=datetime.datetime.now(),
+        try:
+            interaccion = InteraccionCliente(
+                timestamp=datetime.datetime.now(),
                 cliente_id=phone,
-    tipo_interaccion="whatsapp",
-        mensaje_cliente=mensaje,
+                tipo_interaccion="whatsapp",
+                mensaje_cliente=mensaje,
                 respuesta_agente=respuesta,
                 contexto={
                     "canal": "whatsapp",
                     "cliente_nombre": name,
-efono": phone,
-    "message_id": message_id
-    },
-        resultado="exitoso"
+                    "telefono": phone,
+                    "message_id": message_id
+                },
+                resultado="exitoso"
             )
 
             self.ia.base_conocimiento.registrar_interaccion(interaccion)
             print(f"✅ Interacción registrada en base de conocimiento")
-
-xception as e:
+        except Exception as e:
             print(f"❌ Error registrando interacción: {e}")
 
-estado_sistema(self):
+    def obtener_estado_sistema(self):
         """Obtiene el estado actual del sistema"""
-
-icas = {
+        try:
+            metricas = {
                 "sistema_activo": True,
-_verificado": self.webhook_verificado,
-"total_interacciones": len(self.ia.base_conocimiento.interacciones),
+                "webhook_verificado": self.webhook_verificado,
+                "total_interacciones": len(self.ia.base_conocimiento.interacciones),
                 "total_patrones": len(self.ia.base_conocimiento.patrones_venta),
                 "total_insights": len(self.ia.base_conocimiento.insights_automaticos),
                 "conversaciones_activas": len(self.ia.conversaciones_activas),
                 "timestamp": datetime.datetime.now().isoformat()
             }
-
-return jsonify(metricas)
-
+            return jsonify(metricas)
         except Exception as e:
-return jsonify({"error": str(e)}), 500
+            return jsonify({"error": str(e)}), 500
 
     def iniciar_servidor(self, host='0.0.0.0', port=5000, debug=False):
-    """Inicia el servidor Flask"""
+        """Inicia el servidor Flask"""
         print(f"🚀 Iniciando servidor WhatsApp en {host}:{port}")
         print(f"📱 Webhook URL: http://{host}:{port}/webhook")
         print(f"📊 Estado del sistema: http://{host}:{port}/estado_sistema")
@@ -282,7 +293,7 @@ return jsonify({"error": str(e)}), 500
         # Registrar interacción
         self.registrar_interaccion_whatsapp(phone, name, message, respuesta.mensaje, f"sim_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}")
 
-    return respuesta
+        return respuesta
 
 
 def main():
@@ -290,14 +301,14 @@ def main():
     print("📱 INTEGRACIÓN WHATSAPP BMC URUGUAY")
     print("=" * 50)
 
-IA conversacional
- IAConversacionalIntegrada()
+    # Inicializar IA conversacional
+    ia = IAConversacionalIntegrada()
 
     # Crear integración WhatsApp
     whatsapp = IntegracionWhatsApp(ia)
 
-r algunos mensajes para demostrar
-t("\n🎭 SIMULANDO CONVERSACIONES WHATSAPP")
+    # Simular algunos mensajes para demostrar
+    print("\n🎭 SIMULANDO CONVERSACIONES WHATSAPP")
     print("-" * 40)
 
     mensajes_simulados = [
@@ -306,7 +317,7 @@ t("\n🎭 SIMULANDO CONVERSACIONES WHATSAPP")
             "name": "Juan Pérez",
             "message": "Hola, necesito información sobre Isodec"
         },
-    {
+        {
             "phone": "59899123456",
             "name": "Juan Pérez",
             "message": "Quiero cotizar para mi casa, 10m x 5m, 100mm"

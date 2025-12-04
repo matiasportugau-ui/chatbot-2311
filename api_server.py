@@ -17,7 +17,14 @@ from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+from contextlib import asynccontextmanager
 import uvicorn
+
+# Configurar logging primero para que esté disponible en todo el módulo
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 # Rate limiting
 try:
@@ -36,6 +43,21 @@ from sistema_cotizaciones import (
     EspecificacionCotizacion,
 )
 
+# Import MongoDB service for connection pooling
+try:
+    from mongodb_service import (
+        get_mongodb_service,
+        ensure_mongodb_connected
+    )
+    MONGODB_SERVICE_AVAILABLE = True
+except ImportError:
+    MONGODB_SERVICE_AVAILABLE = False
+    get_mongodb_service = None
+    ensure_mongodb_connected = None
+    logger.warning(
+        "MongoDB service not available - mongodb_service module not found"
+    )
+
 # Import request tracking utilities
 try:
     from utils.request_tracking import get_request_tracker, set_request_context
@@ -53,23 +75,99 @@ except ImportError:
     def get_rate_limit_monitor():
         return None
 
-# Configurar logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
 # Initialize structured logger if available
 if UTILS_AVAILABLE:
     structured_logger = get_structured_logger(__name__)
 else:
     structured_logger = logger
 
-# Inicializar FastAPI
+# CORS and rate limiting configuration will be done after app initialization
+
+# Helper function for conditional rate limiting
+def rate_limit(limit_str: str):
+    """Conditional rate limit decorator"""
+    def decorator(func):
+        if RATE_LIMITING_AVAILABLE and limiter:
+            return limiter.limit(limit_str)(func)
+        return func
+    return decorator
+
+# Inicializar IA conversacional
+ia = IAConversacionalIntegrada()
+sistema_cotizaciones = SistemaCotizacionesBMC()
+
+# Periodic cleanup task to prevent memory leaks
+import asyncio
+from datetime import datetime, timedelta
+
+async def periodic_cleanup():
+    """Periodically cleanup old conversations to prevent memory growth"""
+    while True:
+        try:
+            await asyncio.sleep(3600)  # Run every hour
+            if hasattr(ia, '_limpiar_conversaciones_antiguas'):
+                ia._limpiar_conversaciones_antiguas()
+                logger.debug("Periodic conversation cleanup completed")
+        except Exception as e:
+            logger.warning(f"Error in periodic cleanup: {e}")
+
+# Start cleanup task in background
+cleanup_task = None
+
+# Lifespan context manager for FastAPI
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup and shutdown events"""
+    # Startup
+    global cleanup_task
+    cleanup_task = asyncio.create_task(periodic_cleanup())
+    logger.info("Background cleanup task started")
+
+    # Initialize MongoDB connection early
+    if MONGODB_SERVICE_AVAILABLE:
+        try:
+            if ensure_mongodb_connected():
+                logger.info("MongoDB connection initialized on startup")
+            else:
+                logger.warning("MongoDB connection failed on startup, will retry on first request")
+        except Exception as e:
+            logger.warning(f"Error initializing MongoDB connection on startup: {e}")
+
+    yield
+
+    # Shutdown
+    if cleanup_task:
+        cleanup_task.cancel()
+        try:
+            await cleanup_task
+        except asyncio.CancelledError:
+            pass
+    logger.info("Background cleanup task stopped")
+
+# Shared context service for multi-agent system
+try:
+    import sys
+    from pathlib import Path
+
+    python_scripts_path = Path(__file__).parent / "python-scripts"
+    if str(python_scripts_path) not in sys.path:
+        sys.path.insert(0, str(python_scripts_path))
+    from shared_context_service import get_shared_context_service
+
+    shared_context_service = get_shared_context_service()
+    USE_SHARED_CONTEXT = True
+    logger.info("Shared context service initialized")
+except Exception as e:
+    logger.warning(f"Shared context service not available: {e}")
+    USE_SHARED_CONTEXT = False
+    shared_context_service = None
+
+# Inicializar FastAPI con lifespan (después de definir lifespan)
 app = FastAPI(
     title="BMC Chat Service API",
     description="API para procesamiento de mensajes y cotizaciones BMC Uruguay",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # CORS middleware - Configure allowed origins from environment
@@ -100,38 +198,6 @@ if RATE_LIMITING_AVAILABLE:
     logger.info("Rate limiting enabled")
 else:
     limiter = None
-
-# Helper function for conditional rate limiting
-def rate_limit(limit_str: str):
-    """Conditional rate limit decorator"""
-    def decorator(func):
-        if RATE_LIMITING_AVAILABLE and limiter:
-            return limiter.limit(limit_str)(func)
-        return func
-    return decorator
-
-# Inicializar IA conversacional
-ia = IAConversacionalIntegrada()
-sistema_cotizaciones = SistemaCotizacionesBMC()
-
-# Shared context service for multi-agent system
-try:
-    import sys
-    from pathlib import Path
-
-    python_scripts_path = Path(__file__).parent / "python-scripts"
-    if str(python_scripts_path) not in sys.path:
-        sys.path.insert(0, str(python_scripts_path))
-    from shared_context_service import get_shared_context_service
-
-    shared_context_service = get_shared_context_service()
-    USE_SHARED_CONTEXT = True
-    logger.info("Shared context service initialized")
-except Exception as e:
-    logger.warning(f"Shared context service not available: {e}")
-    USE_SHARED_CONTEXT = False
-    shared_context_service = None
-
 
 # Modelos Pydantic
 class ChatRequest(BaseModel):
@@ -282,13 +348,52 @@ async def log_requests(request: Request, call_next):
 
 @app.get("/health")
 @app.get("/api/health")
+@rate_limit("30/minute")
 async def health_check():
-    """Health check endpoint with rate limit status"""
+    """Health check endpoint with rate limit status and dependency checks"""
     health_data = {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "service": "bmc-chat-api",
+        "dependencies": {}
     }
+
+    # Check MongoDB connectivity
+    try:
+        mongodb_uri = os.getenv("MONGODB_URI")
+        if mongodb_uri:
+            from pymongo import MongoClient
+            client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=2000)
+            client.server_info()
+            client.close()
+            health_data["dependencies"]["mongodb"] = {"status": "healthy", "connected": True}
+        else:
+            health_data["dependencies"]["mongodb"] = {"status": "unknown", "connected": False, "error": "MONGODB_URI not configured"}
+    except Exception as e:
+        health_data["dependencies"]["mongodb"] = {"status": "unhealthy", "connected": False, "error": str(e)}
+        health_data["status"] = "degraded"
+
+    # Check Qdrant connectivity
+    try:
+        qdrant_url = os.getenv("QDRANT_URL", "http://qdrant:6333")
+        import requests
+        response = requests.get(f"{qdrant_url}/", timeout=2)
+        if response.status_code == 200:
+            health_data["dependencies"]["qdrant"] = {"status": "healthy", "connected": True}
+        else:
+            health_data["dependencies"]["qdrant"] = {"status": "unhealthy", "connected": False, "error": f"HTTP {response.status_code}"}
+            health_data["status"] = "degraded"
+    except Exception as e:
+        health_data["dependencies"]["qdrant"] = {"status": "unhealthy", "connected": False, "error": str(e)}
+        health_data["status"] = "degraded"
+
+    # Check OpenAI API (basic check - just verify key is set)
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if openai_key and openai_key.startswith("sk-"):
+        health_data["dependencies"]["openai"] = {"status": "configured", "key_present": True}
+    else:
+        health_data["dependencies"]["openai"] = {"status": "misconfigured", "key_present": False}
+        health_data["status"] = "degraded"
 
     # Add rate limit status if available
     if UTILS_AVAILABLE:
@@ -307,12 +412,14 @@ async def health_check():
 
             if warnings:
                 health_data["warnings"] = warnings
-                health_data["status"] = "degraded"
+                if health_data["status"] == "healthy":
+                    health_data["status"] = "degraded"
 
     return health_data
 
 
 @app.get("/api/debug/request/{request_id}")
+@rate_limit("20/minute")
 async def get_request_debug(request_id: str):
     """
     Retrieve request details by ID for debugging.
@@ -352,6 +459,7 @@ async def get_request_debug(request_id: str):
 
 
 @app.get("/api/monitoring/rate-limits")
+@rate_limit("10/minute")
 async def get_rate_limits():
     """
     Get current rate limit status for all providers.
@@ -488,23 +596,12 @@ async def process_chat_message(
                 logger.warning(f"Failed to save context to shared service: {e}")
 
         # CRITICAL: Save conversation directly to MongoDB conversations collection
+        # Use mongodb_service for connection pooling instead of creating new connections
         try:
-            mongodb_uri = os.getenv("MONGODB_URI")
-            if mongodb_uri:
-                from pymongo import MongoClient
-
-                client = MongoClient(
-                    mongodb_uri,
-                    serverSelectionTimeoutMS=5000,
-                    connectTimeoutMS=5000,
-                )
-                # Test connection
-                client.server_info()
-
-                db = client.get_database()
-                conversations_col = db.conversations
-
-                if conversations_col:
+            if MONGODB_SERVICE_AVAILABLE:
+                mongodb_service = get_mongodb_service()
+                if mongodb_service:
+                    conversations_col = mongodb_service.get_collection("conversations")
                     conversations_col.insert_one(
                         {
                             "session_id": session_id or resultado.get("sesion_id", ""),
@@ -522,7 +619,42 @@ async def process_chat_message(
                     logger.debug(
                         f"Conversation saved to MongoDB for session {session_id}"
                     )
-                client.close()
+                else:
+                    logger.warning(
+                        "MongoDB service unavailable, conversation not saved"
+                    )
+            else:
+                # Fallback to old method if service not available
+                mongodb_uri = os.getenv("MONGODB_URI")
+                if mongodb_uri:
+                    from pymongo import MongoClient
+                    client = MongoClient(
+                        mongodb_uri,
+                        serverSelectionTimeoutMS=5000,
+                        connectTimeoutMS=5000,
+                    )
+                    client.server_info()
+                    db = client.get_database()
+                    conversations_col = db.conversations
+                    if conversations_col:
+                        conversations_col.insert_one(
+                            {
+                                "session_id": session_id or resultado.get("sesion_id", ""),
+                                "phone": request.telefono,
+                                "message": request.mensaje,
+                                "response": resultado.get("mensaje", ""),
+                                "response_type": resultado.get("tipo", ""),
+                                "confidence": resultado.get("confianza", 0.0),
+                                "intent": resultado.get("intencion", ""),
+                                "entities": resultado.get("entidades", {}),
+                                "timestamp": datetime.now(),
+                                "source": "api",
+                            }
+                        )
+                        logger.debug(
+                            f"Conversation saved to MongoDB for session {session_id}"
+                        )
+                    client.close()
         except Exception as e:
             logger.warning(f"Could not save conversation to MongoDB: {e}")
 
@@ -611,6 +743,7 @@ async def create_quote(
 
 
 @app.get("/insights")
+@rate_limit("10/minute")
 async def get_insights():
     """Obtiene insights de la base de conocimiento"""
     try:
@@ -624,29 +757,44 @@ async def get_insights():
 
 
 @app.get("/conversations")
+@rate_limit("20/minute")
 async def get_conversations(limit: int = 50):
     """Obtiene conversaciones recientes desde MongoDB (si está disponible)"""
     try:
-        mongodb_uri = os.getenv("MONGODB_URI")
-        if not mongodb_uri:
-            return {"success": True, "data": [], "message": "MongoDB not configured"}
+        if MONGODB_SERVICE_AVAILABLE:
+            mongodb_service = get_mongodb_service()
+            if mongodb_service:
+                conversations_col = mongodb_service.get_collection("conversations")
+                # Get recent conversations
+                conversations = list(
+                    conversations_col.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
+                )
+                return {"success": True, "data": conversations, "count": len(conversations)}
+            else:
+                return {"success": True, "data": [], "message": "MongoDB service unavailable"}
+        else:
+            # Fallback to old method if service not available (should not happen in production)
+            mongodb_uri = os.getenv("MONGODB_URI")
+            if not mongodb_uri:
+                return {"success": True, "data": [], "message": "MongoDB not configured"}
 
-        from pymongo import MongoClient
+            from pymongo import MongoClient
+            client = MongoClient(mongodb_uri)
+            db = client.get_database()
+            conversations_col = db.conversations
 
-        client = MongoClient(mongodb_uri)
-        db = client.get_database()
-        conversations_col = db.conversations
-
-        # Get recent conversations
-        conversations = list(
-            conversations_col.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
-        )
-
-        return {"success": True, "data": conversations, "count": len(conversations)}
+            # Get recent conversations
+            conversations = list(
+                conversations_col.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
+            )
+            client.close()
+            return {"success": True, "data": conversations, "count": len(conversations)}
     except Exception as e:
         logger.error(f"Error getting conversations: {e}", exc_info=True)
         return {"success": False, "data": [], "error": str(e)}
 
+
+# Startup and shutdown events are now handled by lifespan context manager above
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))

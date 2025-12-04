@@ -76,6 +76,11 @@ class RespuestaIA:
 class IAConversacionalIntegrada:
     """IA Conversacional que aprende y evoluciona constantemente"""
 
+    # Memory limits to prevent unbounded growth
+    MAX_CONVERSATIONS = 100  # Maximum number of active conversations to keep in memory
+    MAX_MESSAGES_PER_CONVERSATION = 50  # Maximum messages per conversation
+    CONVERSATION_TIMEOUT_HOURS = 24  # Remove conversations inactive for this many hours
+
     def __init__(self):
         self.base_conocimiento = BaseConocimientoDinamica()
         self.motor_analisis = MotorAnalisisConversiones(self.base_conocimiento)
@@ -350,7 +355,52 @@ class IAConversacionalIntegrada:
         )
 
         self.conversaciones_activas[clave_contexto] = contexto
+        
+        # Periodically cleanup old conversations to prevent memory growth
+        if len(self.conversaciones_activas) > self.MAX_CONVERSATIONS:
+            self._limpiar_conversaciones_antiguas()
+        
         return contexto
+
+    def _limpiar_conversaciones_antiguas(self):
+        """Remove old or inactive conversations to free memory"""
+        if not self.conversaciones_activas:
+            return
+        
+        now = datetime.datetime.now()
+        timeout_delta = datetime.timedelta(hours=self.CONVERSATION_TIMEOUT_HOURS)
+        
+        # Remove conversations that are inactive for too long
+        keys_to_remove = []
+        for clave, contexto in self.conversaciones_activas.items():
+            time_since_activity = now - contexto.timestamp_ultima_actividad
+            if time_since_activity > timeout_delta:
+                keys_to_remove.append(clave)
+        
+        # Remove old conversations
+        for clave in keys_to_remove:
+            del self.conversaciones_activas[clave]
+        
+        # If still over limit, remove oldest conversations
+        if len(self.conversaciones_activas) > self.MAX_CONVERSATIONS:
+            # Sort by last activity time and remove oldest
+            sorted_conversations = sorted(
+                self.conversaciones_activas.items(),
+                key=lambda x: x[1].timestamp_ultima_actividad
+            )
+            # Remove oldest conversations
+            num_to_remove = len(self.conversaciones_activas) - self.MAX_CONVERSATIONS
+            for clave, _ in sorted_conversations[:num_to_remove]:
+                del self.conversaciones_activas[clave]
+        
+        if keys_to_remove or len(self.conversaciones_activas) > self.MAX_CONVERSATIONS:
+            # Use print if logger not available
+            try:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"Cleaned up {len(keys_to_remove)} old conversations. Active: {len(self.conversaciones_activas)}")
+            except:
+                print(f"Cleaned up {len(keys_to_remove)} old conversations. Active: {len(self.conversaciones_activas)}")
 
     def _actualizar_contexto(self, contexto: ContextoConversacion, mensaje: str):
         """Actualiza el contexto con un nuevo mensaje"""
@@ -361,6 +411,10 @@ class IAConversacionalIntegrada:
                 "timestamp": datetime.datetime.now().isoformat(),
             }
         )
+        # Limit message history to prevent unbounded memory growth
+        if len(contexto.mensajes_intercambiados) > self.MAX_MESSAGES_PER_CONVERSATION:
+            # Keep only the most recent messages
+            contexto.mensajes_intercambiados = contexto.mensajes_intercambiados[-self.MAX_MESSAGES_PER_CONVERSATION:]
         contexto.timestamp_ultima_actividad = datetime.datetime.now()
 
     def _analizar_intencion(self, mensaje: str) -> str:
@@ -1085,6 +1139,9 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
                 "timestamp": datetime.datetime.now().isoformat(),
             }
         )
+        # Limit message history after adding assistant message
+        if len(contexto.mensajes_intercambiados) > self.MAX_MESSAGES_PER_CONVERSATION:
+            contexto.mensajes_intercambiados = contexto.mensajes_intercambiados[-self.MAX_MESSAGES_PER_CONVERSATION:]
 
         # Crear respuesta estructurada
         fuente = ["model_integrator"] if self.model_integrator else ["openai"]
