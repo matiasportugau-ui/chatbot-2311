@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import uuid
+from contextlib import asynccontextmanager
 from collections.abc import Awaitable, Callable
 from datetime import datetime
 from decimal import Decimal
@@ -37,15 +38,12 @@ try:
 
     PROMETHEUS_AVAILABLE = True
 except ImportError:
-    RATE_LIMITING_AVAILABLE = False
-    logger.warning("Rate limiting not available - slowapi not installed")
+    PROMETHEUS_AVAILABLE = False
+    logger.warning("Prometheus metrics not available - prometheus_client not installed")
 
-# Inicializar FastAPI
-app = FastAPI(
-    title="BMC Chat Service API",
-    description="API para procesamiento de mensajes y cotizaciones BMC Uruguay",
-    version="1.0.0",
-)
+# FastAPI app will be initialized after lifespan is defined
+# (lifespan needs to reference 'ia' which is initialized later)
+app = None
 
 # Import request tracking utilities
 try:
@@ -71,6 +69,21 @@ else:
     structured_logger = logger
 
 # CORS and rate limiting configuration will be done after app initialization
+
+# Rate limiting configuration
+try:
+    from slowapi import Limiter, _rate_limit_exceeded_handler
+    from slowapi.util import get_remote_address
+    from slowapi.errors import RateLimitExceeded
+    RATE_LIMITING_AVAILABLE = True
+except ImportError:
+    RATE_LIMITING_AVAILABLE = False
+    Limiter = None
+    get_remote_address = None
+    RateLimitExceeded = Exception
+    def _rate_limit_exceeded_handler(*args, **kwargs):
+        pass
+    logger.warning("Rate limiting not available - slowapi not installed")
 
 # Helper function for conditional rate limiting
 def rate_limit(limit_str: str):
@@ -133,6 +146,14 @@ async def lifespan(app: FastAPI):
             pass
     logger.info("Background cleanup task stopped")
 
+# Initialize FastAPI app with lifespan (now that ia is defined and lifespan is ready)
+app = FastAPI(
+    title="BMC Chat Service API",
+    description="API para procesamiento de mensajes y cotizaciones BMC Uruguay",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
 # Shared context service for multi-agent system
 try:
     import sys
@@ -150,6 +171,13 @@ except Exception as e:
     logger.warning(f"Shared context service not available: {e}")
     USE_SHARED_CONTEXT = False
     shared_context_service = None
+
+# CORS configuration
+cors_origins_str = os.getenv("CORS_ORIGINS", "*")
+if cors_origins_str == "*":
+    cors_origins = ["*"]
+else:
+    cors_origins = [origin.strip() for origin in cors_origins_str.split(",") if origin.strip()]
 
 # Initialize Prometheus metrics
 if PROMETHEUS_AVAILABLE:
@@ -177,9 +205,6 @@ if PROMETHEUS_AVAILABLE:
     active_sessions_gauge = Gauge("chat_active_sessions", "Number of active chat sessions")
 
     logger.info("Prometheus metrics initialized")
-else:
-    # In development, allow localhost origins
-    cors_origins = [origin.strip() for origin in cors_origins if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
@@ -727,17 +752,17 @@ async def get_metrics() -> Response:
 async def login(username: str, password: str):
     """
     Login endpoint to obtain JWT token
-    
+
     Args:
         username: Username for authentication
         password: Password for authentication
-    
+
     Returns:
         JWT access token
     """
     # Simple authentication - in production, use proper user database
     admin_password = os.getenv("ADMIN_PASSWORD", "change-this-secure-password")
-    
+
     if username == "admin" and password == admin_password:
         token = create_access_token({"username": username, "role": "admin"})
         return {"access_token": token, "token_type": "bearer"}

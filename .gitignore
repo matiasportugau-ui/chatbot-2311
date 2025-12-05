@@ -88,3 +88,11 @@ build/
 # Vercel
 .vercel/
 backup_metadata/
+# Secretos locales - NO SUBIR A GIT
+.bmc-secrets/
+~/.bmc-secrets/
+.env.backup.*
+.env.local.bak*
+backup_metadata/*.json
+*.bak
+backup_metadata/*.json

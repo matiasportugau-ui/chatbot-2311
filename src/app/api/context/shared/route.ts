@@ -1,9 +1,6 @@
 export const dynamic = 'force-dynamic'
 
-<<<<<<< Updated upstream
-import { getSharedContextService } from '@/lib/shared-context-service'
-import { NextRequest, NextResponse } from 'next/server'
-=======
+
 import {
   errorResponse,
   notFoundResponse,
@@ -14,7 +11,7 @@ import { withRateLimit } from '@/lib/rate-limit'
 import { getSharedContextService } from '@/lib/shared-context-service'
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
+
 
 /**
  * Shared Context API Route

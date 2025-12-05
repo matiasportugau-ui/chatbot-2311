@@ -6,7 +6,22 @@ Se ejecuta automáticamente al abrir Cursor para asegurar configuración correct
 
 import json
 import sys
+import shutil
+from datetime import datetime
 from pathlib import Path
+
+def deep_merge(base_dict, update_dict):
+    """
+    Realiza un merge profundo de dos diccionarios.
+    Los valores de update_dict tienen prioridad, pero se preservan las claves de base_dict.
+    """
+    result = base_dict.copy()
+    for key, value in update_dict.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result
 
 def ensure_default_config():
     """Asegura que la configuración por defecto esté aplicada"""
@@ -33,15 +48,30 @@ def ensure_default_config():
         try:
             with open(config_file, 'r') as f:
                 existing_config = json.load(f)
-            # Actualizar con valores por defecto (forzar auto_approve)
-            existing_config.update({
+            # Merge profundo: preserva todas las claves de default_config
+            # pero mantiene los valores existentes donde aplique
+            default_config = deep_merge(default_config, existing_config)
+            # Forzar actualización de valores críticos
+            default_config.update({
                 "auto_approve": True,
                 "require_manual_approval": False,
                 "execution_mode": "automated"
             })
-            default_config = existing_config
-        except Exception:
-            pass
+        except json.JSONDecodeError as e:
+            # El archivo existe pero tiene JSON inválido - hacer backup antes de sobrescribir
+            backup_file = config_file.with_suffix(f'.invalid_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json')
+            try:
+                shutil.copy2(config_file, backup_file)
+                print(f"⚠️  Archivo de configuración inválido detectado. Backup creado: {backup_file}")
+                print(f"   Error de JSON: {e}")
+                print(f"   Se aplicará configuración por defecto. Revise el backup para recuperar datos.")
+            except Exception as backup_error:
+                print(f"⚠️  Error al crear backup del archivo inválido: {backup_error}")
+                print(f"   Error de JSON original: {e}")
+        except Exception as e:
+            # Otros errores (permisos, etc.) - advertir pero continuar
+            print(f"⚠️  Error al leer configuración existente: {e}")
+            print(f"   Se aplicará configuración por defecto.")
     
     # Guardar configuración
     with open(config_file, 'w') as f:

@@ -251,17 +251,28 @@ class AutoFixer:
                 timeout=10
             )
             
-            containers = result.stdout.lower()
-            mongo_containers = ['mongodb', 'bmc-mongodb', 'mongo']
+            # Parsear nombres reales de contenedores
+            container_names = [line.strip() for line in result.stdout.split('\n') if line.strip()]
+            mongo_keywords = ['mongodb', 'bmc-mongodb', 'mongo']
             
-            for name in mongo_containers:
-                if name in containers:
-                    # Iniciar contenedor
-                    print(f"🔧 Auto-fix: Iniciando contenedor {name}...")
-                    subprocess.run(['docker', 'start', name], timeout=10)
-                    time.sleep(3)
-                    self._record_fix("mongodb_connection", solution, True)
-                    return True, f"MongoDB iniciado: {name}"
+            # Buscar contenedor que contenga alguna palabra clave
+            found_container = None
+            for container_name in container_names:
+                container_lower = container_name.lower()
+                for keyword in mongo_keywords:
+                    if keyword in container_lower:
+                        found_container = container_name
+                        break
+                if found_container:
+                    break
+            
+            if found_container:
+                # Iniciar contenedor usando el nombre real
+                print(f"🔧 Auto-fix: Iniciando contenedor {found_container}...")
+                subprocess.run(['docker', 'start', found_container], timeout=10)
+                time.sleep(3)
+                self._record_fix("mongodb_connection", solution, True)
+                return True, f"MongoDB iniciado: {found_container}"
             
             # Crear nuevo contenedor
             print("🔧 Auto-fix: Creando contenedor MongoDB...")

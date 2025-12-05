@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
-<<<<<<< Updated upstream
-=======
+
 import {
   errorResponse,
   successResponse,
@@ -13,9 +12,8 @@ import {
   processAndRespondToWhatsApp,
 } from '@/lib/whatsapp-to-sheets'
 import { RATE_LIMITS } from '@/types/api'
->>>>>>> Stashed changes
+
 import { NextRequest, NextResponse } from 'next/server'
-import { processAndRespondToWhatsApp, WhatsAppMessage } from '@/lib/whatsapp-to-sheets'
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'bmc_whatsapp_verify_2024'
 
@@ -42,14 +40,12 @@ export async function POST(request: NextRequest) {
     
     // Verificar que es un evento de WhatsApp
     if (body.object !== 'whatsapp_business_account') {
-<<<<<<< Updated upstream
-      return NextResponse.json({ error: 'Invalid object type' }, { status: 400 })
-=======
+
       return validationErrorResponse(
         ['Invalid object type'],
         'Expected whatsapp_business_account object'
       )
->>>>>>> Stashed changes
+
     }
     
     // Procesar cada entrada
@@ -60,13 +56,7 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-<<<<<<< Updated upstream
-    
-    return NextResponse.json({ status: 'ok' })
-  } catch (error) {
-    console.error('Error processing WhatsApp webhook:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
-=======
+
 
     return successResponse({ status: 'ok' })
   } catch (error: unknown) {
@@ -74,7 +64,7 @@ export async function POST(request: NextRequest) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error'
     return errorResponse(errorMessage, 500)
->>>>>>> Stashed changes
+
   }
 }
 

@@ -247,13 +247,15 @@ Cada vez que recibas nuevos datos de conversaciones o quieras sincronizar el cat
    ```bash
    source .venv/bin/activate
    python python-scripts/fetch_shopify_products.py
-   python python-scripts/fetch_mercadolibre_questions.py  # requiere MELI_ACCESS_TOKEN/MELI_SELLER_ID
+   python python-scripts/fetch_mercadolibre_questions.py  # requiere MERCADO_LIBRE_ACCESS_TOKEN/MERCADO_LIBRE_SELLER_ID
    # o usa un CSV exportado:
    # python python-scripts/fetch_mercadolibre_questions.py --csv-export data/mercadolibre/export.csv
    ```
    > Tip: Usa `python python-scripts/mercadolibre_oauth_helper.py` para generar y
-   > refrescar los tokens (`MELI_ACCESS_TOKEN`/`MELI_REFRESH_TOKEN`) directamente
+   > refrescar los tokens (`MERCADO_LIBRE_ACCESS_TOKEN`/`MERCADO_LIBRE_REFRESH_TOKEN`) directamente
    > desde tu App ID y client secret.
+   > 
+   > **Nota:** Las variables `MELI_*` siguen siendo soportadas para compatibilidad, pero se recomienda usar `MERCADO_LIBRE_*`. Ver [MERCADOLIBRE_ENV.md](MERCADOLIBRE_ENV.md) para más detalles.
 2. Ejecuta `bash scripts/refresh_knowledge.sh`. El script:
    - Activa `.venv`
    - Corre los ingesters anteriores automáticamente (controlables con `RUN_SHOPIFY_SYNC` y `RUN_MELI_SYNC`)

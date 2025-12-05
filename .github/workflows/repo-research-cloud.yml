@@ -1,0 +1,128 @@
+name: Repo Research Agent - Cloud Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      github_owner:
+        description: 'GitHub Owner/Organization'
+        required: false
+        default: 'matiasportugau-ui'
+      workspace_path:
+        description: 'Workspace path to analyze'
+        required: false
+        default: '.'
+  schedule:
+    # Ejecutar diariamente a las 2 AM UTC
+    - cron: '0 2 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - 'repo_research_agent.py'
+      - 'local_repo_research_agent.py'
+      - '.github/workflows/repo-research-cloud.yml'
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    name: Investigación de Repositorios iOS
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pygithub
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+      
+      - name: Configure GitHub Token
+        run: |
+          if [ -z "${{ secrets.GITHUB_TOKEN }}" ]; then
+            echo "⚠️  GITHUB_TOKEN no configurado en secrets"
+          else
+            echo "✅ GITHUB_TOKEN configurado"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Run Local Research Agent
+        id: research
+        run: |
+          echo "🚀 Iniciando investigación de repositorios iOS..."
+          python3 local_repo_research_agent.py \
+            --workspace "${{ github.event.inputs.workspace_path || '.' }}" \
+            --github-owner "${{ github.event.inputs.github_owner || 'matiasportugau-ui' }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER: ${{ github.event.inputs.github_owner || 'matiasportugau-ui' }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      
+      - name: Upload Research Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: research-report-${{ github.run_number }}
+          path: |
+            local_research_report_*.json
+            local_execution_*.json
+          retention-days: 30
+      
+      - name: Create Summary Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Buscar archivo de reporte
+            const files = fs.readdirSync('.');
+            const reportFile = files.find(f => f.startsWith('local_research_report_'));
+            
+            if (reportFile) {
+              const report = JSON.parse(fs.readFileSync(reportFile, 'utf8'));
+              const summary = report.summary || {};
+              
+              const comment = `## 📊 Reporte de Investigación de Repositorios iOS
+              
+              **Execution ID:** \`${report.execution_id || 'N/A'}\`
+              
+              ### Resultados:
+              - ✅ Repositorios iOS encontrados: ${summary.total_repos || 0}
+              - ✅ Módulos en workspace: ${summary.total_modules || 0}
+              - ✅ Mejoras identificadas: ${summary.total_improvements || 0}
+              - ✅ Fases en plan: ${summary.plan_phases || 0}
+              
+              📄 [Ver reporte completo](${reportFile})
+              `;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+      
+      - name: Upload Results to GitHub
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: research-results
+          path: |
+            local_research_report_*.json
+            local_execution_*.json

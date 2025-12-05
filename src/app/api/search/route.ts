@@ -1,11 +1,6 @@
 export const dynamic = 'force-dynamic'
 
-<<<<<<< Updated upstream
-import { NextRequest, NextResponse } from 'next/server'
-import { connectDB } from '@/lib/mongodb'
-import { requireAuth } from '@/lib/auth'
-import { withRateLimit } from '@/lib/rate-limit'
-=======
+
 import {
   errorResponse,
   successResponse,
@@ -45,7 +40,7 @@ interface QuoteDocument {
   items?: Array<{ product?: string }>
   [key: string]: unknown
 }
->>>>>>> Stashed changes
+
 
 /**
  * Sanitize regex query to prevent regex injection
@@ -93,13 +88,10 @@ async function searchHandler(request: NextRequest) {
 
     // Search conversations
     if (type === 'all' || type === 'conversations') {
-<<<<<<< Updated upstream
-      const conversations = db.collection('conversations')
-      
-=======
+
       const conversations = db.collection<ConversationDocument>('conversations')
 
->>>>>>> Stashed changes
+
       // Try MongoDB full-text search first (requires text index)
       let conversationResults: any[] = []
       try {
@@ -109,17 +101,7 @@ async function searchHandler(request: NextRequest) {
           .toArray()
       } catch (textSearchError: any) {
         // Fallback to sanitized regex if text index doesn't exist
-<<<<<<< Updated upstream
-        if (textSearchError.message?.includes('text index') || 
-            textSearchError.message?.includes('no text index')) {
-          conversationResults = await conversations.find({
-            $or: [
-              { user_phone: { $regex: sanitizedQuery, $options: 'i' } },
-              { 'messages.content': { $regex: sanitizedQuery, $options: 'i' } },
-              { intent: { $regex: sanitizedQuery, $options: 'i' } }
-            ]
-          })
-=======
+
         const errorMessage =
           textSearchError instanceof Error
             ? textSearchError.message
@@ -138,7 +120,7 @@ async function searchHandler(request: NextRequest) {
                 { intent: { $regex: sanitizedQuery, $options: 'i' } },
               ],
             })
->>>>>>> Stashed changes
+
             .limit(limit)
             .toArray()
         } else {
@@ -146,16 +128,7 @@ async function searchHandler(request: NextRequest) {
         }
       }
 
-<<<<<<< Updated upstream
-      results.push(...conversationResults.map(conv => ({
-        type: 'conversation',
-        id: conv._id?.toString(),
-        title: `Conversation with ${conv.user_phone}`,
-        description: conv.messages?.[0]?.content || 'No messages',
-        relevance: 0.8,
-        data: conv
-      })))
-=======
+
       results.push(
         ...conversationResults.map(conv => ({
           type: 'conversation' as const,
@@ -166,18 +139,15 @@ async function searchHandler(request: NextRequest) {
           data: conv,
         }))
       )
->>>>>>> Stashed changes
+
     }
 
     // Search quotes
     if (type === 'all' || type === 'quotes') {
-<<<<<<< Updated upstream
-      const quotes = db.collection('quotes')
-      
-=======
+
       const quotes = db.collection<QuoteDocument>('quotes')
 
->>>>>>> Stashed changes
+
       // Try MongoDB full-text search first
       let quoteResults: any[] = []
       try {
@@ -187,18 +157,7 @@ async function searchHandler(request: NextRequest) {
           .toArray()
       } catch (textSearchError: any) {
         // Fallback to sanitized regex if text index doesn't exist
-<<<<<<< Updated upstream
-        if (textSearchError.message?.includes('text index') || 
-            textSearchError.message?.includes('no text index')) {
-          quoteResults = await quotes.find({
-            $or: [
-              { cliente: { $regex: sanitizedQuery, $options: 'i' } },
-              { telefono: { $regex: sanitizedQuery, $options: 'i' } },
-              { consulta: { $regex: sanitizedQuery, $options: 'i' } },
-              { direccion: { $regex: sanitizedQuery, $options: 'i' } }
-            ]
-          })
-=======
+
         const errorMessage =
           textSearchError instanceof Error
             ? textSearchError.message
@@ -216,7 +175,7 @@ async function searchHandler(request: NextRequest) {
                 { direccion: { $regex: sanitizedQuery, $options: 'i' } },
               ],
             })
->>>>>>> Stashed changes
+
             .limit(limit)
             .toArray()
         } else {
@@ -224,16 +183,7 @@ async function searchHandler(request: NextRequest) {
         }
       }
 
-<<<<<<< Updated upstream
-      results.push(...quoteResults.map(quote => ({
-        type: 'quote',
-        id: quote._id?.toString(),
-        title: `Quote for ${quote.cliente || 'Unknown'}`,
-        description: quote.consulta || 'No description',
-        relevance: 0.9,
-        data: quote
-      })))
-=======
+
       results.push(
         ...quoteResults.map(quote => ({
           type: 'quote' as const,
@@ -244,7 +194,7 @@ async function searchHandler(request: NextRequest) {
           data: quote,
         }))
       )
->>>>>>> Stashed changes
+
     }
 
     // Search users (by phone)
@@ -254,16 +204,7 @@ async function searchHandler(request: NextRequest) {
         user_phone: { $regex: query, $options: 'i' },
       })
 
-<<<<<<< Updated upstream
-      results.push(...userPhones.slice(0, limit).map(phone => ({
-        type: 'user',
-        id: phone,
-        title: `User: ${phone}`,
-        description: `Phone number: ${phone}`,
-        relevance: 0.7,
-        data: { phone }
-      })))
-=======
+
       results.push(
         ...userPhones.slice(0, limit).map(phone => ({
           type: 'user' as const,
@@ -274,7 +215,7 @@ async function searchHandler(request: NextRequest) {
           data: { phone },
         }))
       )
->>>>>>> Stashed changes
+
     }
 
     // Search products
@@ -298,16 +239,7 @@ async function searchHandler(request: NextRequest) {
         ])
         .toArray()
 
-<<<<<<< Updated upstream
-      results.push(...productResults.map(product => ({
-        type: 'product',
-        id: product._id,
-        title: product._id,
-        description: `Found in ${product.count} quotes`,
-        relevance: 0.8,
-        data: product
-      })))
-=======
+
       results.push(
         ...productResults.map(product => ({
           type: 'product' as const,
@@ -318,7 +250,7 @@ async function searchHandler(request: NextRequest) {
           data: product,
         }))
       )
->>>>>>> Stashed changes
+
     }
 
     // Sort by relevance and limit
@@ -347,20 +279,7 @@ async function searchHandler(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('Search API Error:', error)
-<<<<<<< Updated upstream
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Internal server error',
-        data: { query: '', type: 'all', results: [], count: 0 }
-      },
-      { status: 500 }
-    )
-  }
-}
 
-
-=======
     const errorMessage =
       error instanceof Error ? error.message : 'Internal server error'
     return errorResponse(errorMessage, 500)
@@ -373,4 +292,4 @@ export const POST = withRateLimit(
   30, // 30 requests per 15 minutes
   15 * 60 * 1000
 )
->>>>>>> Stashed changes
+

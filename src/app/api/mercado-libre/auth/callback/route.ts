@@ -1,13 +1,8 @@
-<<<<<<< Updated upstream
-=======
+
 import { validationErrorResponse } from '@/lib/api-response'
 import { handleAuthorizationCallback } from '@/lib/mercado-libre/client'
 import { withRateLimit } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/types/api'
->>>>>>> Stashed changes
-import { NextRequest, NextResponse } from 'next/server'
-import { handleAuthorizationCallback } from '@/lib/mercado-libre/client'
-
 function buildRedirectUrl(baseUrl: URL, target: string) {
   if (/^https?:\/\//.test(target)) {
     return target
@@ -31,14 +26,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (!code || !state) {
-<<<<<<< Updated upstream
-    return NextResponse.json({ error: 'Missing code or state.' }, { status: 400 })
-=======
+
     return validationErrorResponse(
       ['Missing code or state'],
       'OAuth callback requires code and state parameters'
     )
->>>>>>> Stashed changes
+
   }
 
   try {

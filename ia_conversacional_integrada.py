@@ -11,7 +11,7 @@ import random
 import re
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any
+from typing import Any, Optional, Dict, List
 
 # Load environment variables from .env file
 try:
@@ -40,6 +40,15 @@ try:
 except ImportError:
     MODEL_INTEGRATOR_AVAILABLE = False
     print("Warning: Model integrator not available. Using pattern matching only.")
+
+# Knowledge Manager and Training System
+try:
+    from AI_AGENTS.EXECUTOR.knowledge_manager import KnowledgeManager
+    from AI_AGENTS.EXECUTOR.training_system import TrainingSystem
+    KNOWLEDGE_SYSTEM_AVAILABLE = True
+except ImportError as e:
+    KNOWLEDGE_SYSTEM_AVAILABLE = False
+    print(f"Warning: Knowledge system not available: {e}")
 
 # OpenAI integration (fallback)
 try:
@@ -95,6 +104,19 @@ class IAConversacionalIntegrada:
         self.conversaciones_activas = {}
         self.patrones_respuesta = {}
         self.entidades_reconocidas = {}
+        
+        # Initialize Knowledge Manager and Training System
+        self.knowledge_manager = None
+        self.training_system = None
+        if KNOWLEDGE_SYSTEM_AVAILABLE:
+            try:
+                from pathlib import Path
+                project_root = Path(__file__).parent
+                self.knowledge_manager = KnowledgeManager(project_root=project_root)
+                self.training_system = TrainingSystem(self.knowledge_manager)
+                print("✅ Knowledge Manager and Training System initialized")
+            except Exception as e:
+                print(f"⚠️ Error initializing knowledge system: {e}")
 
         # Shared context service for multi-agent system
         try:
@@ -154,6 +176,99 @@ class IAConversacionalIntegrada:
             print("⚠️ No AI models available, using pattern matching only")
 
         self.cargar_configuracion_inicial()
+    
+    def _enriquecer_contexto_completo(self, mensaje: str, tema: Optional[str] = None) -> Dict:
+        """Enriquece el contexto con base de conocimiento, documentación y conversaciones similares"""
+        contexto = {
+            'productos': {},
+            'documentacion': [],
+            'conversaciones_similares': [],
+            'patrones_venta': []
+        }
+        
+        if not self.knowledge_manager:
+            return contexto
+        
+        # 1. Cargar información de productos relevantes
+        if tema:
+            resultados = self.knowledge_manager.buscar_informacion_relevante(tema, max_results=5)
+            contexto['productos'] = resultados.get('productos', [])
+            contexto['documentacion'] = resultados.get('documentacion', [])
+            contexto['conversaciones_similares'] = resultados.get('conversaciones', [])
+        
+        # 2. Obtener ejemplos few-shot
+        if self.training_system:
+            contexto['conversaciones_similares'] = self.training_system.encontrar_conversaciones_similares(
+                mensaje, n=5
+            )
+        
+        # 3. Obtener patrones de venta
+        contexto['patrones_venta'] = self.knowledge_manager.obtener_patrones_venta()
+        
+        return contexto
+    
+    def _construir_system_prompt(self, contexto_enriquecido: Dict) -> str:
+        """Construye el system prompt con toda la información disponible"""
+        prompt = """Eres Superchapita, un asistente experto en ventas de productos de construcción de BMC Uruguay.
+
+Tu trabajo es ayudar a los clientes con:
+1. Información sobre productos de aislamiento térmico (Isodec, Poliestireno, Lana de Roca)
+2. Cotizaciones personalizadas
+3. Consultas técnicas
+4. Seguimiento de pedidos
+
+"""
+        
+        # Agregar base de conocimiento de productos
+        if contexto_enriquecido.get('productos'):
+            prompt += "BASE DE CONOCIMIENTO DE PRODUCTOS:\n"
+            for producto in contexto_enriquecido['productos'][:3]:  # Limitar a 3 productos
+                prompt += f"- {json.dumps(producto, default=str, ensure_ascii=False)}\n"
+            prompt += "\n"
+        else:
+            # Cargar todos los productos si no hay específicos
+            if self.knowledge_manager:
+                productos = self.knowledge_manager.cargar_base_conocimiento_productos()
+                prompt += "BASE DE CONOCIMIENTO DE PRODUCTOS:\n"
+                for nombre, info in list(productos.items())[:5]:
+                    if not nombre.startswith('_'):
+                        prompt += f"- {nombre}: {json.dumps(info, default=str, ensure_ascii=False)[:200]}...\n"
+                prompt += "\n"
+        
+        # Agregar documentación relevante
+        if contexto_enriquecido.get('documentacion'):
+            prompt += "DOCUMENTACIÓN RELEVANTE:\n"
+            for doc in contexto_enriquecido['documentacion'][:2]:  # Limitar a 2 documentos
+                prompt += f"- {doc.get('titulo', '')}: {doc.get('contenido', '')[:500]}...\n"
+            prompt += "\n"
+        
+        # Agregar ejemplos few-shot
+        if contexto_enriquecido.get('conversaciones_similares'):
+            prompt += "EJEMPLOS DE CONVERSACIONES EXITOSAS (Few-shot):\n"
+            for conv in contexto_enriquecido['conversaciones_similares'][:3]:  # Limitar a 3 ejemplos
+                prompt += f"Usuario: {conv.get('mensaje_cliente', '')}\n"
+                prompt += f"Asistente: {conv.get('respuesta_bot', '')}\n\n"
+            prompt += "\n"
+        
+        # Agregar patrones de venta
+        if contexto_enriquecido.get('patrones_venta'):
+            prompt += "PATRONES DE VENTA APRENDIDOS:\n"
+            for patron in contexto_enriquecido['patrones_venta'][:3]:
+                prompt += f"- {patron}\n"
+            prompt += "\n"
+        
+        # Instrucciones finales
+        prompt += """INSTRUCCIONES:
+- Responde SIEMPRE usando información de la base de conocimiento
+- Sé natural y conversacional en español de Uruguay
+- Varía tus respuestas - no uses siempre las mismas frases
+- PROHIBIDO: Respuestas genéricas sin contexto
+- PROHIBIDO: Repetir información ya compartida
+- Sé CONCISO - responde directamente a lo que el cliente pregunta
+- Usa emojis moderadamente (1-2 por mensaje máximo)
+- Mantén el tono profesional pero amigable"""
+        
+        return prompt
 
     def cargar_configuracion_inicial(self):
         """Carga la configuración inicial de la IA"""
@@ -621,18 +736,70 @@ class IAConversacionalIntegrada:
         return self._manejar_consulta_general(mensaje, contexto)
 
     def _manejar_saludo(self, contexto: ContextoConversacion) -> RespuestaIA:
-        """Maneja saludos del cliente"""
-        saludos = self.patrones_respuesta["saludo"]
-        mensaje = random.choice(saludos)
-
-        return self._crear_respuesta(mensaje, "informativa", 0.9, ["patrones_respuesta"])
+        """Maneja saludos del cliente usando IA"""
+        return self._generar_saludo_ia(contexto)
+    
+    def _generar_saludo_ia(self, contexto: ContextoConversacion) -> RespuestaIA:
+        """Genera saludo usando IA con contexto de base de conocimiento"""
+        if not self.use_ai or not self.model_integrator:
+            # Fallback mínimo si no hay IA
+            mensaje = "¡Hola! Soy tu asistente de cotizaciones de BMC Uruguay. ¿En qué puedo ayudarte?"
+            return self._crear_respuesta(mensaje, "informativa", 0.7, ["fallback"])
+        
+        # Enriquecer contexto
+        contexto_enriquecido = self._enriquecer_contexto_completo("Hola, quiero información sobre productos", "saludo")
+        system_prompt = self._construir_system_prompt(contexto_enriquecido)
+        
+        user_prompt = "El cliente dice 'hola' o saluda. Genera un saludo amigable y profesional presentándote como Superchapita, asistente de BMC Uruguay."
+        
+        try:
+            response = self.model_integrator.generate(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.8,
+                max_tokens=150
+            )
+            
+            mensaje = response.strip() if isinstance(response, str) else str(response)
+            return self._crear_respuesta(mensaje, "informativa", 0.9, ["ia", "base_conocimiento"])
+        except Exception as e:
+            print(f"[ERROR] Error generando saludo con IA: {e}")
+            mensaje = "¡Hola! Soy tu asistente de cotizaciones de BMC Uruguay. ¿En qué puedo ayudarte?"
+            return self._crear_respuesta(mensaje, "informativa", 0.7, ["fallback"])
 
     def _manejar_despedida(self, contexto: ContextoConversacion) -> RespuestaIA:
-        """Maneja despedidas del cliente"""
-        despedidas = self.patrones_respuesta["despedida"]
-        mensaje = random.choice(despedidas)
-
-        return self._crear_respuesta(mensaje, "despedida", 0.9, ["patrones_respuesta"])
+        """Maneja despedidas del cliente usando IA"""
+        return self._generar_despedida_ia(contexto)
+    
+    def _generar_despedida_ia(self, contexto: ContextoConversacion) -> RespuestaIA:
+        """Genera despedida usando IA con contexto de la conversación"""
+        if not self.use_ai or not self.model_integrator:
+            mensaje = "¡Gracias por contactar BMC Uruguay! Que tengas un excelente día."
+            return self._crear_respuesta(mensaje, "despedida", 0.7, ["fallback"])
+        
+        # Construir contexto de la conversación
+        historial_resumen = ""
+        if contexto.mensajes_intercambiados:
+            ultimos = contexto.mensajes_intercambiados[-3:]
+            historial_resumen = "\n".join([f"{m.get('tipo', '')}: {m.get('mensaje', '')[:100]}" for m in ultimos])
+        
+        system_prompt = "Eres Superchapita, asistente de BMC Uruguay. Genera despedidas amigables y profesionales."
+        user_prompt = f"El cliente se despide. Contexto de la conversación:\n{historial_resumen}\n\nGenera una despedida apropiada."
+        
+        try:
+            response = self.model_integrator.generate(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.7,
+                max_tokens=100
+            )
+            
+            mensaje = response.strip() if isinstance(response, str) else str(response)
+            return self._crear_respuesta(mensaje, "despedida", 0.9, ["ia"])
+        except Exception as e:
+            print(f"[ERROR] Error generando despedida con IA: {e}")
+            mensaje = "¡Gracias por contactar BMC Uruguay! Que tengas un excelente día."
+            return self._crear_respuesta(mensaje, "despedida", 0.7, ["fallback"])
 
     def _manejar_cotizacion(
         self, entidades: dict[str, Any], contexto: ContextoConversacion
@@ -767,8 +934,9 @@ class IAConversacionalIntegrada:
     def _manejar_consulta_general(
         self, mensaje: str, contexto: ContextoConversacion
     ) -> RespuestaIA:
-        """Maneja consultas generales"""
-        mensaje = (
+        """Maneja consultas generales usando IA"""
+        if not self.use_ai or not self.model_integrator:
+            mensaje_respuesta = (
             "Puedo ayudarte con:\n\n"
             "🏠 Información sobre productos de aislamiento\n"
             "💰 Cotizaciones personalizadas\n"
@@ -776,50 +944,84 @@ class IAConversacionalIntegrada:
             "🔧 Consultas sobre instalación\n\n"
             "¿En qué te gustaría que te ayude?"
         )
-
-        return self._crear_respuesta(mensaje, "informativa", 0.7, ["general"])
+            return self._crear_respuesta(mensaje_respuesta, "informativa", 0.7, ["fallback"])
+        
+        # Enriquecer contexto
+        contexto_enriquecido = self._enriquecer_contexto_completo(mensaje, "consulta_general")
+        system_prompt = self._construir_system_prompt(contexto_enriquecido)
+        
+        user_prompt = f"El cliente pregunta: {mensaje}\n\nGenera una respuesta útil y contextual basada en la información disponible."
+        
+        try:
+            response = self.model_integrator.generate(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.7,
+                max_tokens=300
+            )
+            
+            mensaje_respuesta = response.strip() if isinstance(response, str) else str(response)
+            return self._crear_respuesta(mensaje_respuesta, "informativa", 0.8, ["ia", "base_conocimiento"])
+        except Exception as e:
+            print(f"[ERROR] Error manejando consulta general con IA: {e}")
+            mensaje_respuesta = "Puedo ayudarte con información sobre productos, cotizaciones y especificaciones técnicas. ¿En qué te gustaría que te ayude?"
+            return self._crear_respuesta(mensaje_respuesta, "informativa", 0.7, ["fallback"])
 
     def _obtener_informacion_producto(self, producto: str) -> str:
-        """Obtiene información detallada de un producto"""
-        if producto == "isodec":
-            return (
-                "🏠 **ISODEC - Panel Aislante Térmico**\n\n"
-                "**Características principales:**\n"
-                "✅ Núcleo de EPS (Poliestireno Expandido)\n"
-                "✅ Excelente aislamiento térmico\n"
-                "✅ Fácil instalación\n"
-                "✅ Durabilidad superior\n\n"
-                "**Opciones disponibles:**\n"
-                "📏 Espesores: 50mm, 75mm, 100mm, 125mm, 150mm\n"
-                "🎨 Colores: Blanco, Gris, Personalizado\n"
-                "🔧 Terminaciones: Gotero, Hormigón, Aluminio\n\n"
-                "💰 **Precio base:** $150/m² (100mm, Blanco)\n\n"
-                "¿Te interesa cotizar Isodec?"
-            )
-        elif producto == "poliestireno":
-            return (
-                "🧱 **POLIESTIRENO EXPANDIDO**\n\n"
-                "**Características principales:**\n"
-                "✅ Aislante térmico básico\n"
-                "✅ Bajo costo\n"
-                "✅ Fácil manipulación\n"
-                "✅ Ideal para proyectos básicos\n\n"
-                "💰 **Precio base:** $120/m² (100mm)\n\n"
-                "¿Te interesa cotizar Poliestireno?"
-            )
-        elif producto in ["lana", "lana_roca"]:
-            return (
-                "🪨 **LANA DE ROCA**\n\n"
-                "**Características principales:**\n"
-                "✅ Aislante térmico y acústico\n"
-                "✅ Resistente al fuego\n"
-                "✅ No tóxico\n"
-                "✅ Excelente durabilidad\n\n"
-                "💰 **Precio base:** $140/m² (100mm)\n\n"
-                "¿Te interesa cotizar Lana de Roca?"
-            )
+        """Obtiene información detallada de un producto usando IA"""
+        return self._obtener_informacion_producto_ia(producto)
+    
+    def _obtener_informacion_producto_ia(self, producto: str) -> str:
+        """Obtiene información de producto usando IA y base de conocimiento"""
+        # Obtener información del producto desde Knowledge Manager
+        info_producto = None
+        if self.knowledge_manager:
+            info_producto = self.knowledge_manager.obtener_info_producto(producto)
+        
+        # Si no hay IA disponible, usar información básica
+        if not self.use_ai or not self.model_integrator:
+            if info_producto:
+                return json.dumps(info_producto, indent=2, ensure_ascii=False)
+            return f"Información sobre {producto} no disponible en este momento."
+        
+        # Construir prompt con información del producto
+        info_texto = ""
+        if info_producto:
+            info_texto = json.dumps(info_producto, indent=2, ensure_ascii=False)
         else:
-            return "Producto no reconocido. ¿Podrías especificar cuál te interesa?"
+            info_texto = f"Producto: {producto}\nNo se encontró información detallada en la base de conocimiento."
+        
+        system_prompt = """Eres Superchapita, asistente experto en productos de aislamiento térmico de BMC Uruguay.
+Genera respuestas informativas, naturales y conversacionales sobre productos.
+Incluye características, precios, especificaciones y opciones disponibles."""
+        
+        user_prompt = f"""Un cliente pregunta sobre el producto: {producto}
+
+Información disponible del producto:
+{info_texto}
+
+Genera una respuesta natural y completa sobre este producto, incluyendo:
+- Características principales
+- Precios (si están disponibles)
+- Opciones disponibles (espesores, colores, terminaciones)
+- Ventajas y beneficios
+
+Responde de forma conversacional y amigable."""
+        
+        try:
+            response = self.model_integrator.generate(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.7,
+                max_tokens=400
+            )
+            
+            return response.strip() if isinstance(response, str) else str(response)
+        except Exception as e:
+            print(f"[ERROR] Error obteniendo información de producto con IA: {e}")
+            if info_producto:
+                return json.dumps(info_producto, indent=2, ensure_ascii=False)
+            return f"Información sobre {producto} no disponible en este momento."
 
     def _crear_cotizacion(self, contexto: ContextoConversacion):
         """Crea una cotización basada en los datos del contexto"""
@@ -955,24 +1157,208 @@ class IAConversacionalIntegrada:
             sesion_id = f"sesion_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
 
 
-        # Siempre usar OpenAI si está disponible para respuestas naturales y contextuales
-
-        if self.use_ai and self.openai_client:
+        # Usar IA obligatoria - NO fallback a pattern matching
+        if self.use_ai and self.model_integrator:
             try:
-                return self._procesar_con_openai(
+                return self._procesar_con_ia(
                     mensaje, telefono_cliente, sesion_id,
                     request_id=request_id, client_request_id=client_request_id
                 )
             except Exception as e:
-                print(f"⚠️ Error con OpenAI, usando pattern matching: {e}")
-                # Fallback a pattern matching solo si OpenAI falla
-                return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
+                print(f"⚠️ Error con model_integrator: {e}")
+                # Intentar con otro modelo si está disponible
+                if self.openai_client:
+                    try:
+                        return self._procesar_con_openai_fallback(
+                            mensaje, telefono_cliente, sesion_id
+                        )
+                    except Exception as e2:
+                        print(f"⚠️ Error con OpenAI fallback: {e2}")
+                        raise Exception("Todos los modelos de IA fallaron. No se puede procesar el mensaje.")
+                else:
+                    raise Exception("Model integrator falló y no hay fallback disponible.")
+        elif self.use_ai and self.openai_client:
+            # Fallback a OpenAI directo si model_integrator no está disponible
+            try:
+                return self._procesar_con_openai_fallback(
+                    mensaje, telefono_cliente, sesion_id
+                )
+            except Exception as e:
+                print(f"⚠️ Error con OpenAI: {e}")
+                raise Exception("IA no disponible. No se puede procesar el mensaje.")
         else:
-            # Si no hay IA, usar pattern matching
-            return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
+            raise Exception("IA no disponible. Configure al menos un modelo de IA.")
 
-    def _procesar_con_openai(
+    def _procesar_con_ia(
+        self, mensaje: str, telefono_cliente: str, sesion_id: str,
+        request_id: Optional[str] = None, client_request_id: Optional[str] = None
+    ) -> dict[str, Any]:
+        """Procesa mensaje usando model_integrator (método principal)"""
+        
+        # Obtener contexto
+        contexto = self._obtener_contexto_conversacion(telefono_cliente, sesion_id)
+        
+        # Enriquecer contexto completo
+        contexto_enriquecido = self._enriquecer_contexto_completo(mensaje)
+        
+        # Construir system prompt
+        system_prompt = self._construir_system_prompt(contexto_enriquecido)
+        
+        # Obtener historial reciente
+        historial = (
+            contexto.mensajes_intercambiados[-5:]
+            if len(contexto.mensajes_intercambiados) > 5
+            else contexto.mensajes_intercambiados
+        )
+        
+        # Construir mensaje con historial
+        historial_texto = ""
+        for msg in historial:
+            if msg.get("tipo") == "cliente":
+                historial_texto += f"Usuario: {msg.get('mensaje', '')}\n"
+            else:
+                historial_texto += f"Asistente: {msg.get('mensaje', '')}\n"
+        
+        user_prompt = f"{historial_texto}Usuario: {mensaje}\n\nAsistente:"
+        
+        # Generar respuesta con model_integrator
+        try:
+            response = self.model_integrator.generate(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.7,
+                max_tokens=500
+            )
+            
+            mensaje_respuesta = response.strip() if isinstance(response, str) else str(response)
+            
+            # Procesar respuesta exitosa para aprendizaje
+            if self.training_system:
+                conversacion_data = {
+                    'mensaje_cliente': mensaje,
+                    'respuesta_bot': mensaje_respuesta,
+                    'confianza': 0.9,
+                    'completada': False
+                }
+                # Procesar en background (no bloquear)
+                try:
+                    self.training_system.procesar_conversacion_para_aprendizaje(conversacion_data)
+                except Exception as e:
+                    print(f"[WARNING] Error procesando conversación para aprendizaje: {e}")
+            
+            # Actualizar contexto
+            contexto.mensajes_intercambiados.append({
+                "tipo": "cliente",
+                "mensaje": mensaje,
+                "timestamp": datetime.datetime.now().isoformat()
+            })
+            contexto.mensajes_intercambiados.append({
+                "tipo": "asistente",
+                "mensaje": mensaje_respuesta,
+                "timestamp": datetime.datetime.now().isoformat()
+            })
+            contexto.timestamp_ultima_actividad = datetime.datetime.now()
+            
+            return {
+                "mensaje": mensaje_respuesta,
+                "tipo": "general",
+                "acciones": [],
+                "confianza": 0.9,
+                "necesita_datos": [],
+                "fuente": "model_integrator"
+            }
+            
+        except Exception as e:
+            print(f"[ERROR] Error en _procesar_con_ia: {e}")
+            raise
+    
+    def _procesar_con_openai_fallback(
+        self, mensaje: str, telefono_cliente: str, sesion_id: str
+    ) -> dict[str, Any]:
+        """Procesa mensaje usando OpenAI como fallback"""
+        
+        # Obtener contexto
+        contexto = self._obtener_contexto_conversacion(telefono_cliente, sesion_id)
+        
+        # Obtener historial reciente
+        historial = (
+            contexto.mensajes_intercambiados[-5:]
+            if len(contexto.mensajes_intercambiados) > 5
+            else contexto.mensajes_intercambiados
+        )
+        
+        # Obtener información de productos
+        info_productos = self._obtener_info_productos_para_prompt()
+        estado_cotizacion = self._obtener_estado_cotizacion_para_prompt(contexto)
+        
+        # Construir mensajes
+        messages = [
+            {
+                "role": "system",
+                "content": f"""Eres Superchapita, un asistente experto en ventas de productos de construcción de BMC Uruguay.
+Tu trabajo es ayudar a los clientes con:
+1. Información sobre productos de aislamiento térmico (Isodec, Poliestireno, Lana de Roca)
+2. Cotizaciones personalizadas
+3. Consultas técnicas
+4. Seguimiento de pedidos
 
+{info_productos}
+
+{estado_cotizacion}
+
+INSTRUCCIONES:
+- Responde de forma FLUIDA, NATURAL y CONVERSACIONAL en español de Uruguay
+- NUNCA repitas información que ya compartiste
+- Varía tus respuestas
+- Sé CONCISO
+- Usa emojis moderadamente (1-2 por mensaje máximo)
+- Mantén el tono profesional pero amigable"""
+            }
+        ]
+        
+        # Agregar historial
+        for msg in historial:
+            if msg["tipo"] == "cliente":
+                messages.append({"role": "user", "content": msg["mensaje"]})
+            else:
+                messages.append({"role": "assistant", "content": msg["mensaje"]})
+        
+        # Agregar mensaje actual
+        messages.append({"role": "user", "content": mensaje})
+        
+        # Llamar a OpenAI
+        response = self.openai_client.chat.completions.create(
+            model=self.openai_model,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        mensaje_respuesta = response.choices[0].message.content.strip()
+        
+        # Actualizar contexto
+        contexto.mensajes_intercambiados.append({
+            "tipo": "cliente",
+            "mensaje": mensaje,
+            "timestamp": datetime.datetime.now().isoformat()
+        })
+        contexto.mensajes_intercambiados.append({
+            "tipo": "asistente",
+            "mensaje": mensaje_respuesta,
+            "timestamp": datetime.datetime.now().isoformat()
+        })
+        contexto.timestamp_ultima_actividad = datetime.datetime.now()
+        
+        return {
+            "mensaje": mensaje_respuesta,
+            "tipo": "general",
+            "acciones": [],
+            "confianza": 0.85,
+            "necesita_datos": [],
+            "fuente": "openai_fallback"
+        }
+    
+    def _procesar_con_openai_OLD(
         self, mensaje: str, telefono_cliente: str, sesion_id: str
     ) -> dict[str, Any]:
         """Procesa mensaje usando OpenAI"""
@@ -1154,10 +1540,10 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
 
         return "\n".join(estado_info) if len(estado_info) > 1 else ""
 
-    def _procesar_mensaje_patrones(
+    def _procesar_mensaje_patrones_DEPRECATED(
         self, mensaje: str, telefono_cliente: str, sesion_id: str
     ) -> dict[str, Any]:
-        """Procesa mensaje usando pattern matching (fallback)"""
+        """DEPRECATED: Procesa mensaje usando pattern matching (fallback) - NO USAR, usar IA obligatoria"""
         respuesta = self.procesar_mensaje(mensaje, telefono_cliente, sesion_id)
 
         # Convertir RespuestaIA a formato API

@@ -9,12 +9,11 @@ import {
   processWebhookEvent,
   verifyWebhookSignature
 } from '@/lib/mercado-libre/webhook-service'
-<<<<<<< Updated upstream
-=======
+
 import { withRateLimit } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
+
 
 export const dynamic = 'force-dynamic'
 
@@ -43,11 +42,9 @@ export async function POST(request: NextRequest) {
     return successResponse({ received: true })
   } catch (error: unknown) {
     console.error('Error handling Mercado Libre webhook:', error)
-<<<<<<< Updated upstream
-    return NextResponse.json({ error: 'Error procesando webhook' }, { status: 500 })
-=======
+
     return errorResponse('Error procesando webhook', 500)
->>>>>>> Stashed changes
+
   }
 }
 

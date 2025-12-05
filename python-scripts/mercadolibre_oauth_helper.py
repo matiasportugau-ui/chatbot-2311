@@ -7,8 +7,8 @@ Permite:
   • Intercambiar el `code` por `access_token` + `refresh_token`.
   • Refrescar un token sin repetir el flujo completo.
   • Guardar automáticamente los valores en un archivo `.env` compatible con
-    los scripts del proyecto (MELI_ACCESS_TOKEN, MELI_REFRESH_TOKEN,
-    MELI_SELLER_ID).
+    los scripts del proyecto (MERCADO_LIBRE_ACCESS_TOKEN, MERCADO_LIBRE_REFRESH_TOKEN,
+    MERCADO_LIBRE_SELLER_ID). También guarda versiones MELI_* para compatibilidad.
 """
 
 from __future__ import annotations
@@ -147,15 +147,21 @@ class MercadoLibreOAuthHelper:
         self, tokens: OAuthTokens, env_path: Path, include_seller: bool = True
     ) -> None:
         """Actualiza el archivo .env con los tokens más recientes."""
-        updates: dict[str, str] = {"MELI_ACCESS_TOKEN": tokens.access_token}
+        # Usar MERCADO_LIBRE_* como estándar, pero también actualizar MELI_* para compatibilidad
+        updates: dict[str, str] = {
+            "MERCADO_LIBRE_ACCESS_TOKEN": tokens.access_token,
+            "MELI_ACCESS_TOKEN": tokens.access_token,  # Compatibilidad hacia atrás
+        }
         if tokens.refresh_token:
-            updates["MELI_REFRESH_TOKEN"] = tokens.refresh_token
+            updates["MERCADO_LIBRE_REFRESH_TOKEN"] = tokens.refresh_token
+            updates["MELI_REFRESH_TOKEN"] = tokens.refresh_token  # Compatibilidad hacia atrás
         if include_seller:
             seller_id = tokens.user_id or self.seller_id
             if not seller_id and tokens.access_token:
                 seller_id = self.fetch_seller_id(tokens.access_token)
             if seller_id:
-                updates["MELI_SELLER_ID"] = seller_id
+                updates["MERCADO_LIBRE_SELLER_ID"] = seller_id
+                updates["MELI_SELLER_ID"] = seller_id  # Compatibilidad hacia atrás
 
         if not updates:
             return

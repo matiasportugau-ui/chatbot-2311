@@ -31,6 +31,13 @@ from utils_cotizaciones import (
     obtener_datos_faltantes,
 )
 
+# Importar IA Conversacional Integrada para mejorar respuestas
+try:
+    from ia_conversacional_integrada import IAConversacionalIntegrada
+    IA_CONVERSACIONAL_AVAILABLE = True
+except ImportError:
+    IA_CONVERSACIONAL_AVAILABLE = False
+
 
 # Import centralized language processor
 try:
@@ -61,6 +68,22 @@ class AgenteInteractivo:
         self.paso_actual = 0
         self.datos_cliente = {}
         self.datos_especificaciones = {}
+
+        # Inicializar IA Conversacional si está disponible
+        self.ia_conversacional = None
+        if IA_CONVERSACIONAL_AVAILABLE:
+            try:
+                self.ia_conversacional = IAConversacionalIntegrada()
+                if self.ia_conversacional.use_ai:
+                    print("[INFO] IA Conversacional habilitada para respuestas inteligentes", file=sys.stderr)
+                    models = self.ia_conversacional.model_integrator.list_available_models()
+                    enabled = [m for m in models if m.get('enabled')]
+                    providers = set(m.get('provider') for m in enabled)
+                    print(f"[INFO] Modelos disponibles: {len(enabled)} de {len(providers)} proveedores ({', '.join(providers)})", file=sys.stderr)
+                else:
+                    print("[WARNING] IA Conversacional no habilitada (sin credenciales)", file=sys.stderr)
+            except Exception as e:
+                print(f"[WARNING] No se pudo inicializar IA Conversacional: {e}", file=sys.stderr)
 
 
         # Initialize centralized language processor if available
@@ -117,7 +140,7 @@ class AgenteInteractivo:
                 elif self.conversacion_activa:
                     return self.procesar_datos_cotizacion(mensaje)
                 else:
-                    return self.responder_general()
+                    return self.responder_general(mensaje)
             except Exception as e:
                 print(f"Warning: Language processor failed, using legacy method: {e}")
                 # Fallback to legacy pattern matching
@@ -160,12 +183,26 @@ class AgenteInteractivo:
         elif self.conversacion_activa:
             return self.procesar_datos_cotizacion(mensaje)
 
-        # Respuesta general
+        # Respuesta general (con IA si está disponible)
         else:
-            return self.responder_general()
+            return self.responder_general(mensaje)
 
     def saludar(self):
-        """Saluda al usuario"""
+        """Saluda al usuario usando IA si está disponible"""
+        # Si tenemos IA, generar saludo personalizado
+        if self.ia_conversacional and self.ia_conversacional.use_ai:
+            try:
+                respuesta_ia = self.ia_conversacional.procesar_mensaje(
+                    mensaje="Hola, soy un cliente interesado en productos de aislamiento térmico. Preséntate de forma amigable.",
+                    cliente_id="chat_interactivo",
+                    sesion_id=f"session_{id(self)}"
+                )
+                if hasattr(respuesta_ia, 'mensaje') and respuesta_ia.mensaje:
+                    return respuesta_ia.mensaje
+            except Exception as e:
+                print(f"[WARNING] Error generando saludo con IA: {e}", file=sys.stderr)
+
+        # Fallback a saludo predefinido
         return (
             "¡Hola! 👋\n\n"
             "Soy tu agente de cotizaciones de **BMC Uruguay**.\n"
@@ -555,8 +592,22 @@ class AgenteInteractivo:
         except Exception as e:
             return f"❌ **Error generando cotización:** {str(e)}\n\n¿Podrías intentar de nuevo?"
 
-    def responder_general(self):
-        """Responde a mensajes generales"""
+    def responder_general(self, mensaje_original: str = ""):
+        """Responde a mensajes generales usando IA si está disponible"""
+        # Si tenemos IA, usarla para generar respuesta inteligente
+        if self.ia_conversacional and self.ia_conversacional.use_ai:
+            try:
+                respuesta_ia = self.ia_conversacional.procesar_mensaje(
+                    mensaje=mensaje_original or "El usuario pregunta algo general sobre productos de aislamiento térmico",
+                    cliente_id="chat_interactivo",
+                    sesion_id=f"session_{id(self)}"
+                )
+                if hasattr(respuesta_ia, 'mensaje') and respuesta_ia.mensaje:
+                    return respuesta_ia.mensaje
+            except Exception as e:
+                print(f"[WARNING] Error usando IA: {e}", file=sys.stderr)
+
+        # Fallback a respuesta predefinida
         return (
             "🤔 No estoy seguro de cómo ayudarte con eso.\n\n"
             "Puedo ayudarte con:\n"

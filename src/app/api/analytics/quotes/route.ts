@@ -2,13 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { errorResponse, successResponse } from '@/lib/api-response'
 import { connectDB } from '@/lib/mongodb'
-<<<<<<< Updated upstream
-import { NextRequest, NextResponse } from 'next/server'
-=======
-import { withRateLimit } from '@/lib/rate-limit'
-import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
 
 /**
  * Analytics Quotes API Endpoint
@@ -65,16 +59,11 @@ export async function GET(request: NextRequest) {
     )
 
     // Merge month filter with user date filter
-<<<<<<< Updated upstream
-    const monthFilter: any = { ...dateFilter }
-    if (monthFilter.timestamp) {
-=======
     const monthFilter: Record<string, unknown> = { ...dateFilter }
     const userTimestamp = dateFilter.timestamp as
       | { $gte?: Date; $lte?: Date }
       | undefined
     if (userTimestamp) {
->>>>>>> Stashed changes
       // Combine user date range with month range
       monthFilter.timestamp = {
         $gte:

@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 import os
 import sys
 from dataclasses import dataclass
@@ -19,7 +20,18 @@ from typing import Any
 
 import requests
 
-MELI_API_BASE = "https://api.mercadolibre.com"
+# Configurar logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
+# API base URL - usa MERCADO_LIBRE_API_URL o fallback a MELI_API_BASE para compatibilidad
+MERCADO_LIBRE_API_BASE = os.getenv(
+    "MERCADO_LIBRE_API_URL", os.getenv("MELI_API_BASE", "https://api.mercadolibre.com")
+)
 DEFAULT_LIMIT = 50
 
 
@@ -50,8 +62,13 @@ class MercadoLibreConversationSync:
         knowledge_filename: str = "conocimiento_mercadolibre.json",
         csv_export: str | None = None,
     ):
-        self.access_token = access_token or os.getenv("MELI_ACCESS_TOKEN")
-        self.seller_id = seller_id or os.getenv("MELI_SELLER_ID")
+        # Usar MERCADO_LIBRE_* con fallback a MELI_* para compatibilidad
+        self.access_token = access_token or os.getenv(
+            "MERCADO_LIBRE_ACCESS_TOKEN"
+        ) or os.getenv("MELI_ACCESS_TOKEN")
+        self.seller_id = seller_id or os.getenv(
+            "MERCADO_LIBRE_SELLER_ID"
+        ) or os.getenv("MELI_SELLER_ID")
         self.limit = limit
         self.output_dir = output_dir or Path("data/mercadolibre")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -60,19 +77,27 @@ class MercadoLibreConversationSync:
 
         if not self.csv_export and (not self.access_token or not self.seller_id):
             raise RuntimeError(
-                "Debe definir MELI_ACCESS_TOKEN y MELI_SELLER_ID o utilizar --csv-export "
-                "para sincronizar las preguntas."
+                "Debe definir MERCADO_LIBRE_ACCESS_TOKEN y MERCADO_LIBRE_SELLER_ID "
+                "(o MELI_ACCESS_TOKEN y MELI_SELLER_ID para compatibilidad) "
+                "o utilizar --csv-export para sincronizar las preguntas."
             )
 
     def run(self) -> None:
         """Descarga preguntas, genera archivos crudos y transformados."""
+        logger.info("Iniciando sincronización de preguntas de MercadoLibre")
+        
         if self.csv_export:
+            logger.info(f"Usando archivo CSV: {self.csv_export}")
             raw_source = str(self.csv_export)
             questions = self._load_csv_questions(self.csv_export)
         else:
-            raw_source = MELI_API_BASE
+            logger.info(f"Sincronizando desde API: {MERCADO_LIBRE_API_BASE}")
+            logger.info(f"Seller ID: {self.seller_id}")
+            raw_source = MERCADO_LIBRE_API_BASE
             questions = self._fetch_questions()
 
+        logger.info(f"Total de preguntas obtenidas: {len(questions)}")
+        
         normalized = [self._normalize_question(q) for q in questions]
         timestamp = datetime.now(UTC).isoformat()
 
@@ -86,10 +111,20 @@ class MercadoLibreConversationSync:
         }
         raw_path = self.output_dir / "mercadolibre_questions_raw.json"
         self._write_json(raw_path, raw_payload)
+        logger.info(f"Archivo raw guardado: {raw_path}")
 
         knowledge_payload = self._build_knowledge_payload(normalized, timestamp)
         self._write_json(self.knowledge_path, knowledge_payload)
+        logger.info(f"Archivo de conocimiento guardado: {self.knowledge_path}")
 
+        answered_count = sum(1 for q in normalized if q.answer_text)
+        pending_count = len(normalized) - answered_count
+        
+        logger.info(
+            f"Sincronización completada: {len(questions)} preguntas totales "
+            f"({answered_count} respondidas, {pending_count} pendientes)"
+        )
+        
         print(
             f"✅ Mercado Libre sync completado: {len(questions)} preguntas → "
             f"{raw_path} / {self.knowledge_path}"
@@ -99,10 +134,13 @@ class MercadoLibreConversationSync:
         """Pagina todas las preguntas del vendedor."""
         offset = 0
         questions: list[dict[str, Any]] = []
+        page_count = 0
 
-        headers = {"Authorization": f"Bearer {self.access_token}"}
+        headers = {"Authorization": f"Bearer {self.access_token[:8]}..."}
+        logger.info(f"Iniciando fetch de preguntas (limit por página: {self.limit})")
 
         while True:
+            page_count += 1
             params = {
                 "seller_id": self.seller_id,
                 "offset": offset,
@@ -110,29 +148,62 @@ class MercadoLibreConversationSync:
                 "sort_fields": "date_created",
                 "sort_types": "DESC",
             }
-            response = requests.get(
-                f"{MELI_API_BASE}/questions/search", params=params, headers=headers, timeout=30
-            )
+            
+            logger.debug(f"Página {page_count}: offset={offset}, limit={self.limit}")
+            
+            try:
+                response = requests.get(
+                    f"{MERCADO_LIBRE_API_BASE}/questions/search",
+                    params=params,
+                    headers={"Authorization": f"Bearer {self.access_token}"},
+                    timeout=30
+                )
 
-            if response.status_code == 401:
-                raise RuntimeError("Token de Mercado Libre inválido o expirado.")
-            response.raise_for_status()
-            data = response.json()
-            chunk = data.get("questions", [])
-            if not chunk:
-                break
-            questions.extend(chunk)
-            print(f"  • Offset {offset}: {len(chunk)} preguntas")
-            if len(chunk) < self.limit:
-                break
-            offset += self.limit
+                if response.status_code == 401:
+                    logger.error("Token de Mercado Libre inválido o expirado")
+                    raise RuntimeError("Token de Mercado Libre inválido o expirado.")
+                
+                response.raise_for_status()
+                data = response.json()
+                chunk = data.get("questions", [])
+                
+                if not chunk:
+                    logger.info(f"No hay más preguntas (página {page_count})")
+                    break
+                
+                questions.extend(chunk)
+                logger.info(f"Página {page_count}: {len(chunk)} preguntas obtenidas (total acumulado: {len(questions)})")
+                print(f"  • Offset {offset}: {len(chunk)} preguntas")
+                
+                if len(chunk) < self.limit:
+                    logger.info(f"Última página alcanzada (menos de {self.limit} resultados)")
+                    break
+                    
+                offset += self.limit
+                
+            except requests.HTTPError as e:
+                logger.error(
+                    f"Error HTTP al obtener preguntas (página {page_count}): {e}",
+                    extra={"status_code": response.status_code, "offset": offset}
+                )
+                raise
+            except requests.RequestException as e:
+                logger.error(
+                    f"Error de red al obtener preguntas (página {page_count}): {e}",
+                    extra={"offset": offset}
+                )
+                raise
 
+        logger.info(f"Fetch completado: {len(questions)} preguntas en {page_count} página(s)")
         return questions
 
     def _load_csv_questions(self, csv_path: Path) -> list[dict[str, Any]]:
         """Convierte un CSV exportado manualmente en el formato esperado."""
         if not csv_path.exists():
+            logger.error(f"Archivo CSV no encontrado: {csv_path}")
             raise RuntimeError(f"No se encontró el archivo CSV: {csv_path}")
+        
+        logger.info(f"Cargando preguntas desde CSV: {csv_path}")
 
         def pick(row: dict[str, str], keys: list[str], default: str = "") -> str:
             for key in keys:
@@ -170,6 +241,8 @@ class MercadoLibreConversationSync:
                         "from": {"id": pick(row, ["buyer_id", "usuario", "user_id"])},
                     }
                 )
+        
+        logger.info(f"CSV procesado: {len(mapped)} preguntas cargadas")
         return mapped
 
     def _normalize_question(self, question: dict[str, Any]) -> MercadoLibreQuestion:
@@ -231,8 +304,14 @@ class MercadoLibreConversationSync:
         with path.open("w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=2)
 
+
+def main() -> None:
     try:
-        limit = int(os.getenv("MELI_PAGE_SIZE", str(DEFAULT_LIMIT)))
+        # Usar MERCADO_LIBRE_PAGE_SIZE con fallback a MELI_PAGE_SIZE para compatibilidad
+        limit = int(
+            os.getenv("MERCADO_LIBRE_PAGE_SIZE")
+            or os.getenv("MELI_PAGE_SIZE", str(DEFAULT_LIMIT))
+        )
     except ValueError:
         limit = DEFAULT_LIMIT
     parser = argparse.ArgumentParser(description="Sincroniza preguntas de Mercado Libre")
@@ -244,16 +323,25 @@ class MercadoLibreConversationSync:
     args = parser.parse_args()
 
     try:
+        logger.info("Inicializando sincronizador de MercadoLibre")
         syncer = MercadoLibreConversationSync(limit=limit, csv_export=args.csv_export)
         syncer.run()
+        logger.info("Sincronización completada exitosamente")
     except RuntimeError as exc:
+        logger.error(f"Error de ejecución: {exc}", exc_info=True)
         print(f"⚠️  {exc}", file=sys.stderr)
         sys.exit(1)
     except requests.HTTPError as exc:
+        logger.error(f"Error HTTP al consultar Mercado Libre: {exc}", exc_info=True)
         print(f"❌ Error HTTP al consultar Mercado Libre: {exc}", file=sys.stderr)
         sys.exit(1)
     except requests.RequestException as exc:
+        logger.error(f"Error de red al consultar Mercado Libre: {exc}", exc_info=True)
         print(f"❌ Error de red al consultar Mercado Libre: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as exc:
+        logger.error(f"Error inesperado: {exc}", exc_info=True)
+        print(f"❌ Error inesperado: {exc}", file=sys.stderr)
         sys.exit(1)
 
 

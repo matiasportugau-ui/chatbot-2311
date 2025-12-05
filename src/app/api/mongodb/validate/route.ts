@@ -1,9 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { validateMongoDBURI } from '@/lib/mongodb'
-<<<<<<< Updated upstream
-import { NextRequest, NextResponse } from 'next/server'
-=======
+
 import { withRateLimit } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
@@ -12,7 +10,7 @@ import {
   errorResponse,
   validationErrorResponse,
 } from '@/lib/api-response'
->>>>>>> Stashed changes
+
 
 /**
  * MongoDB Connection String Validation Endpoint
@@ -58,22 +56,7 @@ export async function POST(request: NextRequest) {
         valid: true,
         format: isSRV ? 'mongodb+srv' : isStandard ? 'mongodb' : 'unknown',
         databaseName: databaseName || null,
-<<<<<<< Updated upstream
-        message: 'MongoDB connection string format is valid',
-      })
-    } catch (validationError: any) {
-      return NextResponse.json(
-        {
-          success: false,
-          valid: false,
-          error:
-            validationError.message ||
-            'Invalid MongoDB connection string format',
-          message:
-            'MongoDB connection strings must begin with "mongodb://" or "mongodb+srv://"',
-        },
-        { status: 400 }
-=======
+
       }, 'MongoDB connection string format is valid')
     } catch (validationError: unknown) {
       const errorMessage = validationError instanceof Error
@@ -82,24 +65,15 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(
         [errorMessage],
         'MongoDB connection strings must begin with "mongodb://" or "mongodb+srv://"'
->>>>>>> Stashed changes
+
       )
     }
   } catch (error: any) {
     console.error('MongoDB Validation API Error:', error)
-<<<<<<< Updated upstream
-    return NextResponse.json(
-      {
-        success: false,
-        valid: false,
-        error: error.message || 'Internal server error',
-      },
-      { status: 500 }
-    )
-=======
+
     const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return errorResponse(errorMessage, 500)
->>>>>>> Stashed changes
+
   }
 }
 
@@ -107,14 +81,10 @@ export async function POST(request: NextRequest) {
  * GET /api/mongodb/validate
  * Returns validation rules and examples
  */
-<<<<<<< Updated upstream
-export async function GET() {
-  return NextResponse.json({
-    success: true,
-=======
+
 async function getValidateHandler() {
   return successResponse({
->>>>>>> Stashed changes
+
     rules: {
       format: 'Must start with "mongodb://" or "mongodb+srv://"',
       examples: {

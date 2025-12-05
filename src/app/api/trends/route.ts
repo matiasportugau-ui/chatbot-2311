@@ -1,9 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { connectDB } from '@/lib/mongodb'
-<<<<<<< Updated upstream
-import { NextRequest, NextResponse } from 'next/server'
-=======
+
 import { withRateLimit } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
@@ -11,7 +9,7 @@ import {
   successResponse,
   errorResponse,
 } from '@/lib/api-response'
->>>>>>> Stashed changes
+
 
 /**
  * Trends API Endpoint

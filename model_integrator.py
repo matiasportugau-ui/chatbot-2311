@@ -290,8 +290,8 @@ class UnifiedModelIntegrator:
                         if not self.default_provider:
                             self.default_provider = ModelProvider.OPENAI
         
-        # Groq
-        if GROQ_AVAILABLE:
+        # Groq (disabled if DISABLE_GROQ=true)
+        if GROQ_AVAILABLE and not os.getenv("DISABLE_GROQ", "").lower() == "true":
             groq_key = os.getenv("GROQ_API_KEY")
             if groq_key:
                 models = os.getenv("GROQ_MODELS", "llama-3.1-70b-versatile,llama-3.1-8b-instant").split(",")
@@ -336,9 +336,10 @@ class UnifiedModelIntegrator:
         
         # Grok (xAI) - uses OpenAI-compatible API
         if GROK_AVAILABLE:
-            grok_key = os.getenv("GROK_API_KEY")
+            # Support both XAI_API_KEY (preferred) and GROK_API_KEY (legacy)
+            grok_key = os.getenv("XAI_API_KEY") or os.getenv("GROK_API_KEY")
             if grok_key:
-                models = os.getenv("GROK_MODELS", "grok-beta,grok-2-1212,grok-4-latest").split(",")
+                models = os.getenv("XAI_MODEL", os.getenv("GROK_MODELS", "grok-beta,grok-2-1212,grok-4-latest")).split(",")
                 for model in models:
                     model = model.strip()
                     if model in default_configs["grok"]:

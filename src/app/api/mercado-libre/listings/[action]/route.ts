@@ -18,15 +18,9 @@ type RouteContext = {
   }
 }
 
-<<<<<<< Updated upstream
-function invalidActionResponse(action: string) {
-  return NextResponse.json({ error: `Acción no soportada: ${action}` }, { status: 400 })
-}
 
-export async function GET(request: NextRequest, context: RouteContext) {
-=======
 async function getListingsHandler(request: NextRequest, context: RouteContext) {
->>>>>>> Stashed changes
+
   const action = context.params.action
   const url = new URL(request.url)
 
@@ -52,42 +46,53 @@ async function getListingsHandler(request: NextRequest, context: RouteContext) {
       const listingId = url.searchParams.get('id')
 
       if (!listingId) {
-<<<<<<< Updated upstream
-        return NextResponse.json({ error: 'El parámetro id es obligatorio' }, { status: 400 })
-=======
+
         return validationErrorResponse(
           ['El parámetro id es obligatorio'],
           'Missing required parameter'
         )
->>>>>>> Stashed changes
+
       }
 
       const listing = await getListing(listingId)
       return successResponse(listing)
     }
 
-<<<<<<< Updated upstream
-    return invalidActionResponse(action)
-  } catch (error) {
-    console.error(`Error handling Mercado Libre listings GET (${action}):`, error)
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Error desconocido' },
-      { status: 500 }
-    )
-=======
+
     return validationErrorResponse(
       [`Acción no soportada: ${action}`],
       'Invalid action'
     )
   } catch (error: unknown) {
+    const errorContext = {
+      action,
+      method: 'GET',
+      url: request.url,
+      queryParams: Object.fromEntries(url.searchParams.entries()),
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      details: (error as any)?.details,
+    }
+    
     console.error(
-      `Error handling Mercado Libre listings GET (${action}):`,
-      error
+      `[MercadoLibre Listings] Error en GET ${action}:`,
+      JSON.stringify(errorContext, null, 2)
     )
+    
     const errorMessage =
       error instanceof Error ? error.message : 'Error desconocido'
-    return errorResponse(errorMessage, 500)
->>>>>>> Stashed changes
+    
+    // Determinar código de estado apropiado
+    let statusCode = 500
+    if ((error as any)?.details?.error === 'invalid_grant') {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('no está conectado')) {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('obligatorio')) {
+      statusCode = 400
+    }
+    
+    return errorResponse(errorMessage, statusCode)
   }
 }
 
@@ -105,14 +110,12 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const { id, payload } = body
 
       if (!id || !payload) {
-<<<<<<< Updated upstream
-        return NextResponse.json({ error: 'Se requieren los campos id y payload' }, { status: 400 })
-=======
+
         return validationErrorResponse(
           ['Se requieren los campos id y payload'],
           'Missing required fields'
         )
->>>>>>> Stashed changes
+
       }
 
       const listing = await updateListing(id, payload)
@@ -123,42 +126,53 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const { id, status } = body
 
       if (!id || !status) {
-<<<<<<< Updated upstream
-        return NextResponse.json({ error: 'Se requieren los campos id y status' }, { status: 400 })
-=======
+
         return validationErrorResponse(
           ['Se requieren los campos id y status'],
           'Missing required fields'
         )
->>>>>>> Stashed changes
+
       }
 
       const listing = await changeListingStatus(id, status)
       return successResponse(listing)
     }
 
-<<<<<<< Updated upstream
-    return invalidActionResponse(action)
-  } catch (error) {
-    console.error(`Error handling Mercado Libre listings POST (${action}):`, error)
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Error desconocido' },
-      { status: 500 }
-    )
-=======
+
     return validationErrorResponse(
       [`Acción no soportada: ${action}`],
       'Invalid action'
     )
   } catch (error: unknown) {
+    const errorContext = {
+      action,
+      method: 'POST',
+      body: body,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      details: (error as any)?.details,
+    }
+    
     console.error(
-      `Error handling Mercado Libre listings POST (${action}):`,
-      error
+      `[MercadoLibre Listings] Error en POST ${action}:`,
+      JSON.stringify(errorContext, null, 2)
     )
+    
     const errorMessage =
       error instanceof Error ? error.message : 'Error desconocido'
-    return errorResponse(errorMessage, 500)
->>>>>>> Stashed changes
+    
+    // Determinar código de estado apropiado
+    let statusCode = 500
+    if ((error as any)?.details?.error === 'invalid_grant') {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('no está conectado')) {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('obligatorio') || 
+               error instanceof Error && error.message.includes('requieren')) {
+      statusCode = 400
+    }
+    
+    return errorResponse(errorMessage, statusCode)
   }
 }
 

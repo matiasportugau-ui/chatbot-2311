@@ -108,43 +108,19 @@ async function exportHandler(request: NextRequest) {
     let data: ImportRecord[] = []
     let filename = ''
 
-<<<<<<< Updated upstream
-    // Build filter query with validation
-    const query: any = {}
 
-    // Validate and sanitize date filters
-=======
     // Build filter query
     const query: Record<string, unknown> = {}
->>>>>>> Stashed changes
+
     if (filters.dateFrom || filters.dateTo) {
       const timestampFilter: { $gte?: Date; $lte?: Date } = {}
       if (filters.dateFrom) {
-<<<<<<< Updated upstream
-        const dateFrom = new Date(filters.dateFrom)
-        if (isNaN(dateFrom.getTime())) {
-          return NextResponse.json(
-            { success: false, error: 'Invalid dateFrom format' },
-            { status: 400 }
-          )
-        }
-        query.timestamp.$gte = dateFrom
-      }
-      if (filters.dateTo) {
-        const dateTo = new Date(filters.dateTo)
-        if (isNaN(dateTo.getTime())) {
-          return NextResponse.json(
-            { success: false, error: 'Invalid dateTo format' },
-            { status: 400 }
-          )
-        }
-        query.timestamp.$lte = dateTo
-=======
+
         timestampFilter.$gte = new Date(filters.dateFrom)
       }
       if (filters.dateTo) {
         timestampFilter.$lte = new Date(filters.dateTo)
->>>>>>> Stashed changes
+
       }
       query.timestamp = timestampFilter
     }

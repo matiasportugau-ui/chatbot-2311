@@ -11,12 +11,11 @@ import {
   markOrderReadyToShip,
   syncSellerOrders
 } from '@/lib/mercado-libre/orders'
-<<<<<<< Updated upstream
-=======
+
 import { withRateLimit } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
+
 
 type RouteContext = {
   params: {
@@ -24,17 +23,10 @@ type RouteContext = {
   }
 }
 
-<<<<<<< Updated upstream
-function errorResponse(message: string, status: number = 400) {
-  return NextResponse.json({ error: message }, { status })
-}
 
-export async function GET(request: NextRequest, context: RouteContext) {
-  const action = context.params.action
-=======
 async function getOrdersHandler(request: NextRequest, context?: RouteContext) {
   // Extract action from URL path or context
->>>>>>> Stashed changes
+
   const url = new URL(request.url)
   const pathParts = url.pathname.split('/')
   const action = context?.params?.action || pathParts[pathParts.length - 1]
@@ -60,23 +52,42 @@ async function getOrdersHandler(request: NextRequest, context?: RouteContext) {
       'Invalid action'
     )
   } catch (error: unknown) {
-    console.error(`Mercado Libre orders GET error (${action}):`, error)
+    const errorContext = {
+      action,
+      method: 'GET',
+      url: request.url,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      details: (error as any)?.details,
+    }
+    
+    console.error(
+      `[MercadoLibre Orders] Error en GET ${action}:`,
+      JSON.stringify(errorContext, null, 2)
+    )
+    
     const errorMessage =
       error instanceof Error ? error.message : 'Error desconocido'
-    return errorResponse(errorMessage, 500)
+    
+    // Determinar código de estado apropiado
+    let statusCode = 500
+    if ((error as any)?.details?.error === 'invalid_grant') {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('no está conectado')) {
+      statusCode = 401
+    }
+    
+    return errorResponse(errorMessage, statusCode)
   }
 }
 
-<<<<<<< Updated upstream
-export async function POST(request: NextRequest, context: RouteContext) {
-  const action = context.params.action
-=======
+
 async function postOrdersHandler(request: NextRequest, context?: RouteContext) {
   // Extract action from URL path or context
   const url = new URL(request.url)
   const pathParts = url.pathname.split('/')
   const action = context?.params?.action || pathParts[pathParts.length - 1]
->>>>>>> Stashed changes
+
   const body = await request.json().catch(() => ({}))
 
   try {
@@ -134,15 +145,39 @@ async function postOrdersHandler(request: NextRequest, context?: RouteContext) {
       'Invalid action'
     )
   } catch (error: unknown) {
-    console.error(`Mercado Libre orders POST error (${action}):`, error)
+    const errorContext = {
+      action,
+      method: 'POST',
+      url: request.url,
+      body: body,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      details: (error as any)?.details,
+    }
+    
+    console.error(
+      `[MercadoLibre Orders] Error en POST ${action}:`,
+      JSON.stringify(errorContext, null, 2)
+    )
+    
     const errorMessage =
       error instanceof Error ? error.message : 'Error desconocido'
-    return errorResponse(errorMessage, 500)
+    
+    // Determinar código de estado apropiado
+    let statusCode = 500
+    if ((error as any)?.details?.error === 'invalid_grant') {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('no está conectado')) {
+      statusCode = 401
+    } else if (error instanceof Error && error.message.includes('obligatorio')) {
+      statusCode = 400
+    }
+    
+    return errorResponse(errorMessage, statusCode)
   }
 }
 
-<<<<<<< Updated upstream
-=======
+
 // Wrapper functions that extract action from URL for rate limiting compatibility
 async function getHandlerWrapper(request: NextRequest) {
   const url = new URL(request.url)
@@ -172,4 +207,4 @@ export const POST = withRateLimit(
   RATE_LIMITS.MERCADO_LIBRE.maxRequests,
   RATE_LIMITS.MERCADO_LIBRE.windowMs
 )
->>>>>>> Stashed changes
+

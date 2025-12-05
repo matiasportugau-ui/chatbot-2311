@@ -7,12 +7,10 @@ import {
   getSystemStatus,
   initializeSimpleSystem,
 } from '@/lib/simple-initialize'
-<<<<<<< Updated upstream
-import { NextResponse } from 'next/server'
-=======
+
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
+
 
 /**
  * Health Check Endpoint Simplificado
@@ -43,12 +41,10 @@ export async function GET() {
         mongodbStatus = 'ready'
       } catch (error: any) {
         mongodbStatus = 'error'
-<<<<<<< Updated upstream
-        mongodbError = error.message || 'Connection failed'
-=======
+
         mongodbError =
           error instanceof Error ? error.message : 'Connection failed'
->>>>>>> Stashed changes
+
       }
     }
 
@@ -98,28 +94,7 @@ export async function GET() {
       services.googleSheets.configured &&
       services.mongodb.configured
 
-<<<<<<< Updated upstream
-    return NextResponse.json({
-      status: allCriticalServicesReady ? 'healthy' : 'partial',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development',
-      services,
-      initialization: result,
-      systemStatus: getSystemStatus(),
-      message: allCriticalServicesReady
-        ? 'All critical services are configured and ready'
-        : 'Some services need configuration',
-    })
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        status: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-      },
-      { status: 500 }
-=======
+
     return successResponse(
       {
         status: allCriticalServicesReady ? 'healthy' : 'partial',
@@ -141,7 +116,7 @@ export async function GET() {
       errorMessage,
       500,
       process.env.NODE_ENV === 'development' ? errorStack : undefined
->>>>>>> Stashed changes
+
     )
   }
 }

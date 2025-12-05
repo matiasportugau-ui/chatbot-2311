@@ -60,7 +60,11 @@ class UnifiedLauncher:
     """Unified launcher for BMC Chatbot System"""
 
     def __init__(
-        self, skip_setup: bool = False, production: bool = False, dev: bool = False
+        self,
+        skip_setup: bool = False,
+        production: bool = False,
+        dev: bool = False,
+        non_interactive: bool = False
     ):
         self.root_dir = Path(__file__).parent.resolve()
         self.python_cmd = self._find_python()
@@ -420,11 +424,11 @@ class UnifiedLauncher:
         if not self.skip_setup:
             self._validate_whatsapp()
             self._import_n8n_workflows()
-        
+
         # Optional: Run integration tests
         if self.dev:  # Only in dev mode to avoid slowing down production
             self._run_integration_tests()
-        
+
         return True
 
     def _install_python_deps(self) -> bool:
@@ -610,7 +614,7 @@ class UnifiedLauncher:
         """Consolidate knowledge base files if they exist"""
         consolidate_script = self.root_dir / "consolidar_conocimiento.py"
         consolidated_file = self.root_dir / "conocimiento_consolidado.json"
-        
+
         # Check if consolidation is needed
         if consolidated_file.exists():
             # Check if it's recent (less than 7 days old)
@@ -619,12 +623,12 @@ class UnifiedLauncher:
             if file_age < 7 * 24 * 3600:  # 7 days
                 print_success("Consolidated knowledge file exists and is recent")
                 return True
-        
+
         # Try to consolidate if script exists
         if consolidate_script.exists():
             try:
                 import importlib.util
-                
+
                 spec = importlib.util.spec_from_file_location(
                     "consolidar_conocimiento", consolidate_script
                 )
@@ -633,7 +637,7 @@ class UnifiedLauncher:
                     spec.loader.exec_module(module)
                 else:
                     raise ImportError("Could not load consolidar_conocimiento module")
-                
+
                 # Check if ConsolidadorConocimiento class exists
                 if hasattr(module, "ConsolidadorConocimiento"):
                     consolidador = module.ConsolidadorConocimiento()
@@ -644,7 +648,7 @@ class UnifiedLauncher:
             except Exception as e:
                 self.logger.warning(f"Could not consolidate knowledge: {e}")
                 print_warning("Knowledge consolidation skipped (not critical)")
-        
+
         return True  # Not critical, system can work without consolidation
 
     def _manage_services(self) -> bool:
@@ -706,7 +710,7 @@ class UnifiedLauncher:
         if not validator_script.exists():
             print_warning("Environment validator not found, skipping validation")
             return True  # Not critical
-        
+
         try:
             result = subprocess.run(
                 [self.python_cmd, str(validator_script)],
@@ -715,7 +719,7 @@ class UnifiedLauncher:
                 text=True,
                 timeout=30
             )
-            
+
             if result.returncode == 0:
                 print_success("Environment validation passed")
                 return True
@@ -731,7 +735,7 @@ class UnifiedLauncher:
         except Exception as e:
             self.logger.warning(f"Could not validate environment: {e}")
             return True  # Not critical
-    
+
     def _verify_system(self) -> bool:
         """Verify system setup"""
         verify_script = self.root_dir / "verificar_sistema_completo.py"
@@ -755,18 +759,18 @@ class UnifiedLauncher:
             except Exception as e:
                 self.logger.warning(f"Could not verify system: {e}")
         return True
-    
+
     def _validate_whatsapp(self) -> bool:
         """Validate WhatsApp credentials if configured"""
         whatsapp_validator = self.root_dir / "scripts" / "verify_whatsapp_credentials.py"
         if not whatsapp_validator.exists():
             return True  # Not critical
-        
+
         # Check if WhatsApp is configured
         env_file = self.root_dir / ".env"
         if not env_file.exists():
             return True
-        
+
         try:
             env_content = env_file.read_text()
             has_whatsapp = any(
@@ -775,10 +779,10 @@ class UnifiedLauncher:
 
                 for key in ["WHATSAPP_ACCESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID"]
             )
-            
+
             if not has_whatsapp:
                 return True  # Not configured, skip
-            
+
             print_info("Validating WhatsApp credentials...")
             result = subprocess.run(
                 [self.python_cmd, str(whatsapp_validator)],
@@ -787,23 +791,23 @@ class UnifiedLauncher:
                 text=True,
                 timeout=30
             )
-            
+
             if result.returncode == 0:
                 print_success("WhatsApp credentials validated")
             else:
                 print_warning("WhatsApp validation found issues (optional)")
-            
+
             return True  # Not critical
         except Exception as e:
             self.logger.warning(f"Could not validate WhatsApp: {e}")
             return True
-    
+
     def _import_n8n_workflows(self) -> bool:
         """Import n8n workflows if n8n is available"""
         n8n_importer = self.root_dir / "scripts" / "import_n8n_workflow.py"
         if not n8n_importer.exists():
             return True  # Not critical
-        
+
         # Check if n8n is running
         try:
             import requests
@@ -812,7 +816,7 @@ class UnifiedLauncher:
                 return True  # n8n not running, skip
         except Exception:
             return True  # Can't check, skip
-        
+
         print_info("n8n detected. Import workflows? (y/n, default: n):")
         try:
             response = input("  > ").strip().lower()
@@ -825,22 +829,22 @@ class UnifiedLauncher:
                     text=True,
                     timeout=60
                 )
-                
+
                 if result.returncode == 0:
                     print_success("n8n workflows imported")
                 else:
                     print_warning("n8n workflow import had issues")
         except (EOFError, KeyboardInterrupt):
             print_info("Skipping n8n workflow import")
-        
+
         return True  # Not critical
-    
+
     def _run_integration_tests(self) -> bool:
         """Run integration tests after setup"""
         test_script = self.root_dir / "scripts" / "test_integration.py"
         if not test_script.exists():
             return True  # Not critical
-        
+
         print_info("Running integration tests...")
         try:
             result = subprocess.run(
@@ -848,7 +852,7 @@ class UnifiedLauncher:
                 cwd=self.root_dir,
                 timeout=120
             )
-            
+
             if result.returncode == 0:
                 print_success("Integration tests passed")
                 return True
@@ -974,6 +978,68 @@ class UnifiedLauncher:
         # Cleanup on exit
         self._cleanup_processes()
 
+    def _start_api_server_if_needed(self) -> bool:
+        """Start API server automatically if not running"""
+        api_server_file = self.root_dir / "api_server.py"
+        if not api_server_file.exists():
+            return False
+
+        # Check if API server is already running
+        try:
+            import requests
+            try:
+                response = requests.get("http://localhost:8000/health", timeout=2)
+                if response.status_code == 200:
+                    return True  # Already running
+            except (requests.RequestException, ConnectionError):
+                pass  # Not running, continue to start it
+        except ImportError:
+            pass  # requests not available, try to start anyway
+
+        # Start API server in background
+        print_info("  Starting API Server automatically...")
+        try:
+            api_log = self.log_dir / "api_server.log"
+            with open(api_log, "w", encoding="utf-8") as log_file:
+                api_process = subprocess.Popen(
+                    [self.python_cmd, "api_server.py"],
+                    cwd=self.root_dir,
+                    stdout=log_file,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                )
+            self.background_processes.append(api_process)
+            print_success(f"  API Server started (PID: {api_process.pid})")
+            print_info(f"    Logs: {api_log}")
+
+            # Wait for API to be ready (with timeout)
+            try:
+                import requests
+                max_attempts = 15
+                for i in range(max_attempts):
+                    try:
+                        time.sleep(1)  # Wait 1 second between attempts
+                        response = requests.get("http://localhost:8000/health", timeout=2)
+                        if response.status_code == 200:
+                            print_success("  API Server is ready")
+                            return True
+                    except Exception:
+                        if i < max_attempts - 1:
+                            continue
+                        else:
+                            print_warning("  API Server started but may not be ready yet")
+                            print_info("    Check logs if issues persist")
+                            return True  # Started, even if not ready yet
+            except ImportError:
+                print_warning("  requests module not available, cannot verify API readiness")
+                return True  # Started, but can't verify
+        except Exception as e:
+            print_error(f"  Failed to start API Server: {e}")
+            self.logger.error("Failed to start API Server", exc_info=True)
+            return False
+
+        return True
+
     def _show_status(self):
         """Show system status"""
         print_header("System Status")
@@ -1006,7 +1072,7 @@ class UnifiedLauncher:
                 if has_mongo
                 else print_warning("  MONGODB_URI not configured")
             )
-            
+
             # Run comprehensive validation
             validator_script = self.root_dir / "scripts" / "validate_environment.py"
             if validator_script.exists():
@@ -1044,7 +1110,8 @@ class UnifiedLauncher:
         except ImportError:
             print_warning("  MongoDB: socket not available")
 
-        # Check API server
+        # Check API server and start if needed
+        api_running = False
         try:
             import requests
 
@@ -1052,27 +1119,32 @@ class UnifiedLauncher:
                 response = requests.get("http://localhost:8000/health", timeout=2)
                 if response.status_code == 200:
                     print_success("  API Server: Running")
+                    api_running = True
                 else:
                     print_warning("  API Server: Not responding")
             except (requests.RequestException, ConnectionError):
                 print_warning("  API Server: Not running")
         except ImportError:
             print_warning("  API Server: requests not installed")
-        
-        # Check n8n
-        try:
-            import requests
-            try:
-                response = requests.get("http://localhost:5678/healthz", timeout=2)
-                if response.status_code == 200:
-                    print_success("  n8n: Running")
-                else:
-                    print_warning("  n8n: Not responding")
-            except (requests.RequestException, ConnectionError):
-                print_warning("  n8n: Not running (optional)")
-        except ImportError:
-            pass
-        
+
+        # Auto-start API server if not running
+        if not api_running:
+            if self._start_api_server_if_needed():
+                # Re-check after starting
+                time.sleep(2)
+                try:
+                    import requests
+                    try:
+                        response = requests.get("http://localhost:8000/health", timeout=2)
+                        if response.status_code == 200:
+                            print_success("  API Server: Running (auto-started)")
+                        else:
+                            print_warning("  API Server: Started but not responding yet")
+                    except Exception:
+                        print_info("  API Server: Starting... (check logs if issues persist)")
+                except ImportError:
+                    pass
+
         # Check n8n
         try:
             import requests
@@ -1090,7 +1162,7 @@ class UnifiedLauncher:
     def _run_tests(self):
         """Run system tests"""
         print_header("Running Tests")
-        
+
         test_script = self.root_dir / "scripts" / "test_integration.py"
         if test_script.exists():
             print_info("Running integration tests...")
@@ -1108,7 +1180,7 @@ class UnifiedLauncher:
     def _check_config(self):
         """Check configuration"""
         print_header("Configuration Check")
-        
+
         # Run comprehensive environment validation
         validator_script = self.root_dir / "scripts" / "validate_environment.py"
         if validator_script.exists():
@@ -1121,7 +1193,7 @@ class UnifiedLauncher:
                 print_error(f"Error running validation: {e}")
         else:
             print_warning("Environment validator not found")
-        
+
         # Also show status
         self._show_status()
 
@@ -1305,7 +1377,10 @@ Examples:
     args = parser.parse_args()
 
     launcher = UnifiedLauncher(
-        skip_setup=args.skip_setup, production=args.production, dev=args.dev
+        skip_setup=args.skip_setup,
+        production=args.production,
+        dev=args.dev,
+        non_interactive=False
     )
 
     if args.setup_only:

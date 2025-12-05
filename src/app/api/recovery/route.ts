@@ -3,9 +3,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 
-<<<<<<< Updated upstream
-const execAsync = promisify(exec);
-=======
+
 import {
   errorResponse,
   successResponse,
@@ -15,11 +13,9 @@ import { requireAdmin } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import { withRateLimit } from '@/lib/rate-limit'
 import { promises as fs } from 'fs'
-import { NextRequest } from 'next/server'
-import path from 'path'
->>>>>>> Stashed changes
 
-export async function GET(request: NextRequest) {
+
+async function getRecoveryHandler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'scan';
@@ -36,14 +32,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-<<<<<<< Updated upstream
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-=======
+
     const report: RecoveryReport = {
       timestamp: new Date().toISOString(),
       mongodb: {
@@ -252,11 +241,11 @@ export async function GET(request: NextRequest) {
     const errorMessage =
       error instanceof Error ? error.message : 'Internal server error'
     return errorResponse(errorMessage, 500)
->>>>>>> Stashed changes
+
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postRecoveryHandler(request: NextRequest) {
   try {
     const body = await request.json();
     const { action, backup_id, scope, selective, dry_run, conflict_resolution } = body;
@@ -277,27 +266,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-<<<<<<< Updated upstream
-    if (action === 'preview') {
-      const { stdout } = await execAsync(
-        `python3 ${path.join(process.cwd(), 'recover.py')} preview ${backup_id} --config backup_system/backup_config.json`
-      );
-      
-      return NextResponse.json({
-        success: true,
-        data: stdout
-      });
-    }
 
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-}
-=======
     return validationErrorResponse(
       ['Invalid action'],
       'Invalid action parameter'
@@ -433,4 +402,4 @@ export const POST = withRateLimit(
   5, // 5 requests per 15 minutes (admin only, lower for write operations)
   15 * 60 * 1000
 )
->>>>>>> Stashed changes
+

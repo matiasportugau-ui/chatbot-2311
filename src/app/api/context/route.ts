@@ -1,12 +1,10 @@
 export const dynamic = 'force-dynamic'
 
 import { getSharedContextService } from '@/lib/shared-context-service'
-<<<<<<< Updated upstream
-import { NextRequest, NextResponse } from 'next/server'
-=======
+
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
+
 import { OpenAI } from 'openai'
 import {
   successResponse,

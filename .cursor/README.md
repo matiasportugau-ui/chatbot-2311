@@ -29,7 +29,7 @@ Valores por defecto en formato JSON:
 ### Ejecución
 - Modo: `automated`
 - Auto-continuación: `true`
-- Rango de fases: `-8` a `15`
+- Rango de fases: `0` a `15`
 
 ### Fases
 - Auto-aprobación: `true` para todas

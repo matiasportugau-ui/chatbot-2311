@@ -10,12 +10,11 @@ import {
   QuoteData,
 } from '@/lib/google-sheets-enhanced'
 import { initializeBMCSystem } from '@/lib/initialize-system'
-<<<<<<< Updated upstream
-=======
+
 import { withRateLimit } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/types/api'
 import { NextRequest } from 'next/server'
->>>>>>> Stashed changes
+
 
 let systemInitialized = false
 async function ensureSystemInitialized() {
@@ -147,15 +146,12 @@ async function getAllData(sheetsClient: GoogleSheetsEnhancedClient) {
       statistics,
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error getting all data: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error getting all data: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -171,15 +167,12 @@ async function getAdminData(sheetsClient: GoogleSheetsEnhancedClient) {
       count: adminData.length,
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error getting admin data: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error getting admin data: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -195,15 +188,12 @@ async function getEnviadosData(sheetsClient: GoogleSheetsEnhancedClient) {
       count: enviadosData.length,
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error getting enviados data: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error getting enviados data: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -219,15 +209,12 @@ async function getConfirmadosData(sheetsClient: GoogleSheetsEnhancedClient) {
       count: confirmadosData.length,
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error getting confirmados data: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error getting confirmados data: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -242,15 +229,12 @@ async function getStatistics(sheetsClient: GoogleSheetsEnhancedClient) {
       statistics,
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error getting statistics: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error getting statistics: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -273,15 +257,12 @@ async function searchByPhone(
         results.confirmados.length,
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error searching by phone: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error searching by phone: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -301,29 +282,24 @@ async function searchByArg(
       found: !!(results.admin || results.enviados || results.confirmados),
       timestamp: new Date().toISOString(),
     })
-<<<<<<< Updated upstream
-  } catch (error: any) {
-    throw new Error(`Error searching by arg: ${error.message}`)
-=======
+
   } catch (error: unknown) {
     throw new Error(
       `Error searching by arg: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
 /**
  * ➕ Agregar cotización
  */
-<<<<<<< Updated upstream
-async function addQuote(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
-=======
+
 async function addQuote(
   sheetsClient: GoogleSheetsEnhancedClient,
   data: Record<string, unknown>
 ) {
->>>>>>> Stashed changes
+
   try {
     // Convert data to QuoteData format
     const quoteData: QuoteData = {
@@ -359,14 +335,7 @@ async function addQuote(
     return successResponse(
       {
         message: 'Cotización agregada exitosamente',
-<<<<<<< Updated upstream
-        arg: data.arg,
-        timestamp: new Date().toISOString()
-      }
-    })
-  } catch (error: any) {
-    throw new Error(`Error adding quote: ${error.message}`)
-=======
+
         arg: quoteData.arg,
         timestamp: new Date().toISOString(),
       },
@@ -376,21 +345,19 @@ async function addQuote(
     throw new Error(
       `Error adding quote: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
 /**
  * 📤 Mover a Enviados
  */
-<<<<<<< Updated upstream
-async function moveToEnviados(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
-=======
+
 async function moveToEnviados(
   sheetsClient: GoogleSheetsEnhancedClient,
   data: Record<string, unknown>
 ) {
->>>>>>> Stashed changes
+
   try {
     const rowNumber =
       typeof data.rowNumber === 'number'
@@ -404,14 +371,7 @@ async function moveToEnviados(
     return successResponse(
       {
         message: 'Cotización movida a Enviados exitosamente',
-<<<<<<< Updated upstream
-        rowNumber: data.rowNumber,
-        timestamp: new Date().toISOString()
-      }
-    })
-  } catch (error: any) {
-    throw new Error(`Error moving to enviados: ${error.message}`)
-=======
+
         rowNumber,
         timestamp: new Date().toISOString(),
       },
@@ -421,21 +381,19 @@ async function moveToEnviados(
     throw new Error(
       `Error moving to enviados: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
 /**
  * ✅ Mover a Confirmado
  */
-<<<<<<< Updated upstream
-async function moveToConfirmado(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
-=======
+
 async function moveToConfirmado(
   sheetsClient: GoogleSheetsEnhancedClient,
   data: Record<string, unknown>
 ) {
->>>>>>> Stashed changes
+
   try {
     const rowNumber =
       typeof data.rowNumber === 'number'
@@ -449,14 +407,7 @@ async function moveToConfirmado(
     return successResponse(
       {
         message: 'Cotización movida a Confirmado exitosamente',
-<<<<<<< Updated upstream
-        rowNumber: data.rowNumber,
-        timestamp: new Date().toISOString()
-      }
-    })
-  } catch (error: any) {
-    throw new Error(`Error moving to confirmado: ${error.message}`)
-=======
+
         rowNumber,
         timestamp: new Date().toISOString(),
       },
@@ -466,21 +417,19 @@ async function moveToConfirmado(
     throw new Error(
       `Error moving to confirmado: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
 /**
  * 🔄 Actualizar estado
  */
-<<<<<<< Updated upstream
-async function updateStatus(sheetsClient: GoogleSheetsEnhancedClient, data: any) {
-=======
+
 async function updateStatus(
   sheetsClient: GoogleSheetsEnhancedClient,
   data: Record<string, unknown>
 ) {
->>>>>>> Stashed changes
+
   try {
     const sheetName =
       typeof data.sheetName === 'string'
@@ -502,16 +451,7 @@ async function updateStatus(
     return successResponse(
       {
         message: 'Estado actualizado exitosamente',
-<<<<<<< Updated upstream
-        sheetName: data.sheetName,
-        row: data.row,
-        status: data.status,
-        timestamp: new Date().toISOString()
-      }
-    })
-  } catch (error: any) {
-    throw new Error(`Error updating status: ${error.message}`)
-=======
+
         sheetName,
         row,
         status,
@@ -523,7 +463,7 @@ async function updateStatus(
     throw new Error(
       `Error updating status: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
 
@@ -558,13 +498,7 @@ async function updateCell(
         row: data.row,
         column: data.column,
         value: data.value,
-<<<<<<< Updated upstream
-        timestamp: new Date().toISOString()
-      }
-    })
-  } catch (error: any) {
-    throw new Error(`Error updating cell: ${error.message}`)
-=======
+
         timestamp: new Date().toISOString(),
       },
       'Celda actualizada exitosamente'
@@ -573,6 +507,6 @@ async function updateCell(
     throw new Error(
       `Error updating cell: ${error instanceof Error ? error.message : String(error)}`
     )
->>>>>>> Stashed changes
+
   }
 }
