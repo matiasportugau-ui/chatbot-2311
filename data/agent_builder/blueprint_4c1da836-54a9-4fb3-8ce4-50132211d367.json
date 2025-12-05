@@ -1,0 +1,170 @@
+{
+  "agent_id": "4c1da836-54a9-4fb3-8ce4-50132211d367",
+  "agent_name": "Demo Sales Agent",
+  "agent_type": "sales",
+  "created_at": "2025-12-05T22:39:41.089235",
+  "updated_at": "2025-12-05T22:39:41.091870",
+  "capabilities": [
+    "quotes",
+    "sales",
+    "support"
+  ],
+  "intents": [],
+  "workflows": [],
+  "priority_level": "NORMAL",
+  "consultations": [
+    {
+      "consultation_id": "a16fdcc0-efe0-4764-9526-bc975a3556aa",
+      "timestamp": "2025-12-05T22:39:41.089553",
+      "topic": "How do I configure my sales agent?",
+      "level": "basic",
+      "questions": [],
+      "recommendations": [
+        "Define the core purpose of your sales agent",
+        "Identify the main capabilities and intents the agent should handle",
+        "Establish basic workflows and response patterns",
+        "Set up agent configuration in agent_config.json"
+      ],
+      "insights": [
+        "Start with a clear, focused scope for your agent",
+        "Use existing agent patterns as templates",
+        "Test with simple scenarios first"
+      ],
+      "code_examples": [
+        {
+          "title": "Basic Agent Registration",
+          "code": "\nfrom agent_coordinator import get_coordinator, TaskPriority\n\ncoordinator = get_coordinator()\nagent_id = coordinator.register_agent(\n    agent_type=\"sales\",\n    agent_instance=my_agent,\n    capabilities=[\"quotes\"]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the sales agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    },
+    {
+      "consultation_id": "e6552e1d-48fd-44b5-afe7-d33042bcd990",
+      "timestamp": "2025-12-05T22:39:41.090096",
+      "topic": "How can I integrate with the quote system?",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the sales agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    },
+    {
+      "consultation_id": "84c5c5c3-8f57-4cde-adff-4a214205fe37",
+      "timestamp": "2025-12-05T22:39:41.090627",
+      "topic": "What's the best way to handle errors?",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the sales agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    },
+    {
+      "consultation_id": "7114e434-2f14-4f1f-8b32-93a42a522a11",
+      "timestamp": "2025-12-05T22:39:41.091207",
+      "topic": "How do I implement workflows?",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms",
+        "Study the WorkflowEngine class in agent_workflows.py for workflow patterns"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Create a custom workflow for your use case"
+      ]
+    },
+    {
+      "consultation_id": "69cfdb66-dc31-4eed-a42e-51c490fbaced",
+      "timestamp": "2025-12-05T22:39:41.091863",
+      "topic": "How can I optimize performance?",
+      "level": "advanced",
+      "questions": [],
+      "recommendations": [
+        "Implement proactive agent behaviors and automation",
+        "Add comprehensive monitoring and alerting",
+        "Create custom workflows with conditional branching",
+        "Integrate with external systems (MongoDB, WhatsApp, n8n)",
+        "Implement A/B testing for response optimization"
+      ],
+      "insights": [
+        "Proactive agents can significantly improve user engagement",
+        "Use the workflow engine for complex multi-step automation",
+        "Monitor and optimize based on metrics and user feedback",
+        "Consider implementing machine learning for intent classification",
+        "Design for scalability and concurrent operations"
+      ],
+      "code_examples": [
+        {
+          "title": "Proactive Agent with Workflow",
+          "code": "\nfrom agent_workflows import get_workflow_engine, WorkflowStep, StepType\nfrom proactive_agent_actions import get_proactive_actions\n\nworkflow_engine = get_workflow_engine()\nproactive_actions = get_proactive_actions()\n\n# Create custom workflow\nworkflow_id = workflow_engine.create_workflow(\n    name=\"follow_up_abandoned_quotes\",\n    steps=[\n        WorkflowStep(\n            step_id=\"detect\",\n            step_type=StepType.TASK,\n            agent_type=\"analytics\",\n            task_type=\"detect_abandoned_quotes\"\n        ),\n        WorkflowStep(\n            step_id=\"generate_message\",\n            step_type=StepType.TASK,\n            agent_type=\"sales\",\n            task_type=\"generate_followup\"\n        ),\n        WorkflowStep(\n            step_id=\"send\",\n            step_type=StepType.TASK,\n            agent_type=\"follow_up\",\n            task_type=\"send_message\"\n        )\n    ]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the sales agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    }
+  ],
+  "development_stage": "testing",
+  "completion_percentage": 75.0,
+  "custom_config": {}
+}
