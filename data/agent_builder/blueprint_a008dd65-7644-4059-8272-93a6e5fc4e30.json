@@ -1,0 +1,45 @@
+{
+  "agent_id": "a008dd65-7644-4059-8272-93a6e5fc4e30",
+  "agent_name": "VerificationAgent",
+  "agent_type": "custom",
+  "created_at": "2025-12-05T22:42:54.153991",
+  "updated_at": "2025-12-05T22:42:54.154271",
+  "capabilities": [],
+  "intents": [],
+  "workflows": [],
+  "priority_level": "NORMAL",
+  "consultations": [
+    {
+      "consultation_id": "35124266-cc97-48dc-8bc7-6dd753092d11",
+      "timestamp": "2025-12-05T22:42:54.154257",
+      "topic": "Test query",
+      "level": "basic",
+      "questions": [],
+      "recommendations": [
+        "Define the core purpose of your custom agent",
+        "Identify the main capabilities and intents the agent should handle",
+        "Establish basic workflows and response patterns",
+        "Set up agent configuration in agent_config.json"
+      ],
+      "insights": [
+        "Start with a clear, focused scope for your agent",
+        "Use existing agent patterns as templates",
+        "Test with simple scenarios first"
+      ],
+      "code_examples": [
+        {
+          "title": "Basic Agent Registration",
+          "code": "\nfrom agent_coordinator import get_coordinator, TaskPriority\n\ncoordinator = get_coordinator()\nagent_id = coordinator.register_agent(\n    agent_type=\"custom\",\n    agent_instance=my_agent,\n    capabilities=[\"basic_capability\"]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the custom agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    }
+  ],
+  "development_stage": "planning",
+  "completion_percentage": 25.0,
+  "custom_config": {}
+}
