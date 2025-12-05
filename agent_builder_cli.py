@@ -63,12 +63,13 @@ class AgentBuilderCLI:
             return
         
         print("\nTipos de agente disponibles:")
-        for i, agent_type in enumerate(AgentType, 1):
+        agent_types = list(AgentType)
+        for i, agent_type in enumerate(agent_types, 1):
             print(f"{i}. {agent_type.value}")
         
         try:
-            type_choice = int(input("\nSelecciona el tipo (1-6): "))
-            agent_type = list(AgentType)[type_choice - 1]
+            type_choice = int(input(f"\nSelecciona el tipo (1-{len(agent_types)}): "))
+            agent_type = agent_types[type_choice - 1]
         except (ValueError, IndexError):
             print("❌ Selección inválida")
             return
@@ -285,19 +286,17 @@ class AgentBuilderCLI:
         description = input("Descripción: ").strip()
         
         print("\nPrioridad:")
-        print("1. Baja")
-        print("2. Media")
-        print("3. Alta")
-        print("4. Urgente")
+        priorities = [
+            TaskPriority.LOW,
+            TaskPriority.MEDIUM,
+            TaskPriority.HIGH,
+            TaskPriority.URGENT
+        ]
+        for i, p in enumerate(priorities, 1):
+            print(f"{i}. {p.value.capitalize()}")
         
         try:
-            priority_choice = int(input("Selecciona prioridad (1-4): "))
-            priorities = [
-                TaskPriority.LOW,
-                TaskPriority.MEDIUM,
-                TaskPriority.HIGH,
-                TaskPriority.URGENT
-            ]
+            priority_choice = int(input(f"Selecciona prioridad (1-{len(priorities)}): "))
             priority = priorities[priority_choice - 1]
         except (ValueError, IndexError):
             priority = TaskPriority.MEDIUM

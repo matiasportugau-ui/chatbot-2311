@@ -247,7 +247,7 @@ agent_id = coordinator.register_agent(
 )
 """.format(
                     agent_type=blueprint.agent_type.value,
-                    capability=blueprint.capabilities[0] if blueprint.capabilities else "basic_capability"
+                    capability=blueprint.capabilities[0] if blueprint.capabilities and len(blueprint.capabilities) > 0 else "basic_capability"
                 )
             })
         
@@ -524,22 +524,26 @@ def collaborative_quote_generation(customer_data):
     
     def _dict_to_blueprint(self, data: Dict[str, Any]) -> AgentBlueprint:
         """Convert dictionary to AgentBlueprint"""
-        # Parse dates
-        data['created_at'] = datetime.fromisoformat(data['created_at'])
-        data['updated_at'] = datetime.fromisoformat(data['updated_at'])
-        
-        # Parse agent type
-        data['agent_type'] = AgentType(data['agent_type'])
-        
-        # Parse consultations
-        consultations = []
-        for c_data in data.get('consultations', []):
-            c_data['timestamp'] = datetime.fromisoformat(c_data['timestamp'])
-            c_data['level'] = ConsultationLevel(c_data['level'])
-            consultations.append(Consultation(**c_data))
-        data['consultations'] = consultations
-        
-        return AgentBlueprint(**data)
+        try:
+            # Parse dates
+            data['created_at'] = datetime.fromisoformat(data['created_at'])
+            data['updated_at'] = datetime.fromisoformat(data['updated_at'])
+            
+            # Parse agent type
+            data['agent_type'] = AgentType(data['agent_type'])
+            
+            # Parse consultations
+            consultations = []
+            for c_data in data.get('consultations', []):
+                c_data['timestamp'] = datetime.fromisoformat(c_data['timestamp'])
+                c_data['level'] = ConsultationLevel(c_data['level'])
+                consultations.append(Consultation(**c_data))
+            data['consultations'] = consultations
+            
+            return AgentBlueprint(**data)
+        except (ValueError, KeyError) as e:
+            logger.error(f"Error parsing blueprint data: {e}")
+            raise ValueError(f"Invalid blueprint data format: {e}")
     
     def generate_report(self, agent_id: str) -> Dict[str, Any]:
         """

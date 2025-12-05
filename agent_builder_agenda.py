@@ -22,6 +22,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Constants
+MAX_SUGGESTIONS = 5
+HIGH_WORKLOAD_THRESHOLD = 5
+MIN_ESTIMATED_HOURS = 0.1  # Minimum hours for efficiency calculation
+
 
 class TaskStatus(Enum):
     """Status of development tasks"""
@@ -485,6 +490,11 @@ class AgentBuilderAgenda:
         total_estimated = sum(t.estimated_hours for t in agent_tasks)
         total_actual = sum(t.actual_hours for t in agent_tasks)
         
+        # Calculate efficiency with minimum threshold
+        efficiency = 0
+        if total_estimated >= MIN_ESTIMATED_HOURS:
+            efficiency = total_actual / total_estimated
+        
         return {
             "agent_id": agent_id,
             "tasks": {
@@ -502,7 +512,7 @@ class AgentBuilderAgenda:
             "hours": {
                 "estimated": total_estimated,
                 "actual": total_actual,
-                "efficiency": total_actual / total_estimated if total_estimated > 0 else 0
+                "efficiency": efficiency
             },
             "completion_rate": (
                 len(completed_tasks) / len(agent_tasks) * 100
@@ -569,10 +579,10 @@ class AgentBuilderAgenda:
         
         if in_progress == 0:
             suggestions.append("Getting started: Prioritizing initial tasks")
-        elif in_progress > 5:
+        elif in_progress > HIGH_WORKLOAD_THRESHOLD:
             suggestions.append("Managing workload: Focusing efforts")
         
-        return suggestions[:5]  # Return top 5 suggestions
+        return suggestions[:MAX_SUGGESTIONS]  # Return top suggestions
     
     def save_task(self, task: DevelopmentTask):
         """Save a task to disk"""
