@@ -62,6 +62,33 @@
     "product_recommendations_enabled": true,
     "price_drop_notifications_enabled": false,
     "seasonal_campaigns_enabled": true
+  },
+  "agent_builder": {
+    "storage_path": "./data/agent_builder",
+    "consultation_levels": {
+      "basic": {
+        "consultation_count": 0,
+        "focus": "fundamental concepts and setup"
+      },
+      "intermediate": {
+        "consultation_count": 1,
+        "focus": "advanced features and integration"
+      },
+      "advanced": {
+        "consultation_count": 4,
+        "focus": "optimization and complex workflows"
+      },
+      "expert": {
+        "consultation_count": 8,
+        "focus": "architecture and specialized systems"
+      }
+    },
+    "agenda_settings": {
+      "default_consultation_duration_minutes": 60,
+      "default_task_priority": "medium",
+      "suggested_topics_limit": 5,
+      "auto_schedule_consultations": false
+    }
   }
 }
 

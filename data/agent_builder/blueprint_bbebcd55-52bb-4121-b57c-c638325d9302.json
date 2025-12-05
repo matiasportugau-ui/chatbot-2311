@@ -1,0 +1,78 @@
+{
+  "agent_id": "bbebcd55-52bb-4121-b57c-c638325d9302",
+  "agent_name": "CustomerSupportAgent",
+  "agent_type": "support",
+  "created_at": "2025-12-05T22:28:40.000307",
+  "updated_at": "2025-12-05T22:28:40.001028",
+  "capabilities": [
+    "answer_questions",
+    "handle_complaints"
+  ],
+  "intents": [],
+  "workflows": [],
+  "priority_level": "NORMAL",
+  "consultations": [
+    {
+      "consultation_id": "224c548e-221e-4a9b-93b1-e620729fdd2e",
+      "timestamp": "2025-12-05T22:28:40.000622",
+      "topic": "How do I set up the agent routing?",
+      "level": "basic",
+      "questions": [],
+      "recommendations": [
+        "Define the core purpose of your support agent",
+        "Identify the main capabilities and intents the agent should handle",
+        "Establish basic workflows and response patterns",
+        "Set up agent configuration in agent_config.json"
+      ],
+      "insights": [
+        "Start with a clear, focused scope for your agent",
+        "Use existing agent patterns as templates",
+        "Test with simple scenarios first"
+      ],
+      "code_examples": [
+        {
+          "title": "Basic Agent Registration",
+          "code": "\nfrom agent_coordinator import get_coordinator, TaskPriority\n\ncoordinator = get_coordinator()\nagent_id = coordinator.register_agent(\n    agent_type=\"support\",\n    agent_instance=my_agent,\n    capabilities=[\"answer_questions\"]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the support agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    },
+    {
+      "consultation_id": "6b4109f7-6e21-4686-8ea8-cfb8140d48f2",
+      "timestamp": "2025-12-05T22:28:40.001018",
+      "topic": "How can I add context awareness to responses?",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the support agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    }
+  ],
+  "development_stage": "development",
+  "completion_percentage": 50.0,
+  "custom_config": {}
+}

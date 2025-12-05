@@ -1,0 +1,16 @@
+{
+  "milestone_id": "806aad9c-742d-499c-a974-04a7417b3c2d",
+  "agent_id": "agent_123",
+  "title": "MVP Release",
+  "description": "Release minimum viable product for sales agent",
+  "target_date": "2025-12-19T22:28:48.723481",
+  "completed": false,
+  "completed_at": null,
+  "criteria": [
+    "All core features implemented",
+    "Error handling in place",
+    "Integration tests passing",
+    "Documentation complete"
+  ],
+  "achievements": []
+}

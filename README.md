@@ -15,6 +15,7 @@ Sistema completo para la gestión de cotizaciones de productos de aislamiento t�
 - **Reportes detallados** en HTML y PDF
 - **Sistema modular** con componentes independientes
 - **Validación inteligente de datos** - El bot solicita automáticamente información faltante
+- **🆕 Agent Builder** - Sistema personalizado para desarrollo de agentes con consultas progresivas
 
 ## Validación Inteligente de Datos (Bot)
 
@@ -301,6 +302,64 @@ Detén la API con `CTRL+C`. Si necesitas lanzar el simulador, abre otra terminal
 ### Persistencia y monitoreo opcional
 
 Consulta `[MONITOREO_AUTOMATIZADO.md](MONITOREO_AUTOMATIZADO.md)` para habilitar MongoDB como fallback y programar tareas (cron, launchd o systemd) que ejecuten `scripts/refresh_knowledge.sh` o `scripts/run_full_stack.sh`.
+
+## 🤖 Agent Builder - Sistema de Desarrollo Personalizado
+
+El **Agent Builder** es una herramienta innovadora para crear y desarrollar agentes con consultas progresivamente más profundas. Cada consulta acumula contexto y proporciona recomendaciones más avanzadas.
+
+### Inicio Rápido
+
+```bash
+# Iniciar interfaz interactiva
+python agent_builder_cli.py
+```
+
+### Características
+
+- **📈 Consultas Progresivas**: 4 niveles (Básico → Intermedio → Avanzado → Experto)
+- **📋 Gestión de Agenda**: Programa consultas y gestiona tareas de desarrollo
+- **📊 Seguimiento de Progreso**: Métricas, hitos y etapas de desarrollo
+- **💡 Sugerencias Inteligentes**: Recomendaciones basadas en el estado actual
+- **📚 Historial Completo**: Cada consulta se guarda con contexto acumulativo
+
+### Niveles de Consulta
+
+1. **Básico (Consulta 1)**: Conceptos fundamentales y setup inicial
+2. **Intermedio (Consultas 2-4)**: Características avanzadas e integración
+3. **Avanzado (Consultas 5-8)**: Optimización y workflows complejos
+4. **Experto (Consulta 9+)**: Arquitectura y sistemas especializados
+
+### Documentación Completa
+
+Ver **[AGENT_BUILDER_GUIDE.md](./AGENT_BUILDER_GUIDE.md)** para:
+- Guía de uso detallada
+- Ejemplos de código
+- Mejores prácticas
+- Integración con el sistema existente
+
+### Ejemplo de Uso
+
+```python
+from agent_builder import get_agent_builder, AgentType
+
+builder = get_agent_builder()
+
+# Crear agente
+agent = builder.create_agent_blueprint(
+    agent_name="MiAgente",
+    agent_type=AgentType.SALES,
+    initial_capabilities=["cotizaciones", "ventas"]
+)
+
+# Consulta progresiva
+consultation = builder.consult(
+    agent.agent_id,
+    "¿Cómo implemento workflows complejos?"
+)
+
+print(f"Nivel: {consultation.level.value}")
+print(f"Recomendaciones: {len(consultation.recommendations)}")
+```
 
 ## Uso del Sistema
 

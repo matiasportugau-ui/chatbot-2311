@@ -1,0 +1,12 @@
+{
+  "item_id": "98e8056f-9f95-4b5f-a4ed-88742c9b5afa",
+  "agent_id": "agent_123",
+  "item_type": "consultation",
+  "title": "Consultation: Advanced workflow integration",
+  "description": "Advanced workflow integration",
+  "scheduled_time": "2025-12-08T08:28:48.723307",
+  "duration_minutes": 90,
+  "completed": false,
+  "notes": "Focus on multi-step workflows and error recovery",
+  "related_task_id": null
+}
