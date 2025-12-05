@@ -1,0 +1,19 @@
+{
+  "task_id": "2b30805b-a582-4d28-ab3d-78c999eed53a",
+  "agent_id": "bc1e7a75-2738-49ac-b357-4f2f265bfe86",
+  "title": "Definir workflows de cotización",
+  "description": "Workflows para generación automática de cotizaciones",
+  "status": "pending",
+  "priority": "medium",
+  "created_at": "2025-12-05T22:33:23.106580",
+  "due_date": "2025-12-10T22:33:23.106566",
+  "completed_at": null,
+  "estimated_hours": 4.0,
+  "actual_hours": 0.0,
+  "tags": [
+    "workflows",
+    "quotes"
+  ],
+  "dependencies": [],
+  "notes": ""
+}

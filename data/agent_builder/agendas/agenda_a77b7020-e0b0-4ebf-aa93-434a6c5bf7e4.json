@@ -1,0 +1,12 @@
+{
+  "item_id": "a77b7020-e0b0-4ebf-aa93-434a6c5bf7e4",
+  "agent_id": "bc1e7a75-2738-49ac-b357-4f2f265bfe86",
+  "item_type": "consultation",
+  "title": "Consultation: Integración avanzada de workflows",
+  "description": "Integración avanzada de workflows",
+  "scheduled_time": "2025-12-09T22:33:23.106777",
+  "duration_minutes": 90,
+  "completed": false,
+  "notes": "Discutir integración con sistema de cotizaciones existente",
+  "related_task_id": null
+}

@@ -1,0 +1,79 @@
+{
+  "agent_id": "bc1e7a75-2738-49ac-b357-4f2f265bfe86",
+  "agent_name": "BMC Sales Agent",
+  "agent_type": "sales",
+  "created_at": "2025-12-05T22:33:23.105546",
+  "updated_at": "2025-12-05T22:33:23.107190",
+  "capabilities": [
+    "crear_cotizaciones",
+    "responder_consultas",
+    "recomendar_productos"
+  ],
+  "intents": [],
+  "workflows": [],
+  "priority_level": "NORMAL",
+  "consultations": [
+    {
+      "consultation_id": "720a57c2-b086-41a2-b528-57dfff39e4b2",
+      "timestamp": "2025-12-05T22:33:23.105830",
+      "topic": "¿Cómo configuro el agente de ventas para BMC Uruguay?",
+      "level": "basic",
+      "questions": [],
+      "recommendations": [
+        "Define the core purpose of your sales agent",
+        "Identify the main capabilities and intents the agent should handle",
+        "Establish basic workflows and response patterns",
+        "Set up agent configuration in agent_config.json"
+      ],
+      "insights": [
+        "Start with a clear, focused scope for your agent",
+        "Use existing agent patterns as templates",
+        "Test with simple scenarios first"
+      ],
+      "code_examples": [
+        {
+          "title": "Basic Agent Registration",
+          "code": "\nfrom agent_coordinator import get_coordinator, TaskPriority\n\ncoordinator = get_coordinator()\nagent_id = coordinator.register_agent(\n    agent_type=\"sales\",\n    agent_instance=my_agent,\n    capabilities=[\"crear_cotizaciones\"]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the sales agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    },
+    {
+      "consultation_id": "eff152f6-d945-4b2a-910e-8807894e9625",
+      "timestamp": "2025-12-05T22:33:23.107178",
+      "topic": "¿Cómo integro el agente con el sistema de cotizaciones existente?",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the sales agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    }
+  ],
+  "development_stage": "development",
+  "completion_percentage": 50.0,
+  "custom_config": {}
+}

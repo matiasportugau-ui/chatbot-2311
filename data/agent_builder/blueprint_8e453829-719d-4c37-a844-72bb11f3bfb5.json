@@ -1,0 +1,167 @@
+{
+  "agent_id": "8e453829-719d-4c37-a844-72bb11f3bfb5",
+  "agent_name": "Workflow Automation Agent",
+  "agent_type": "custom",
+  "created_at": "2025-12-05T22:33:23.107617",
+  "updated_at": "2025-12-05T22:33:23.109544",
+  "capabilities": [
+    "multi_step_workflows",
+    "conditional_branching",
+    "parallel_execution"
+  ],
+  "intents": [],
+  "workflows": [],
+  "priority_level": "NORMAL",
+  "consultations": [
+    {
+      "consultation_id": "9da71f80-9669-423f-b47f-d00f41973ea4",
+      "timestamp": "2025-12-05T22:33:23.107831",
+      "topic": "Workflow basics and setup",
+      "level": "basic",
+      "questions": [],
+      "recommendations": [
+        "Define the core purpose of your custom agent",
+        "Identify the main capabilities and intents the agent should handle",
+        "Establish basic workflows and response patterns",
+        "Set up agent configuration in agent_config.json",
+        "Study the WorkflowEngine class in agent_workflows.py for workflow patterns"
+      ],
+      "insights": [
+        "Start with a clear, focused scope for your agent",
+        "Use existing agent patterns as templates",
+        "Test with simple scenarios first"
+      ],
+      "code_examples": [
+        {
+          "title": "Basic Agent Registration",
+          "code": "\nfrom agent_coordinator import get_coordinator, TaskPriority\n\ncoordinator = get_coordinator()\nagent_id = coordinator.register_agent(\n    agent_type=\"custom\",\n    agent_instance=my_agent,\n    capabilities=[\"multi_step_workflows\"]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Create a custom workflow for your use case"
+      ]
+    },
+    {
+      "consultation_id": "c7326d9d-3d88-448f-b67d-facbb8c8c667",
+      "timestamp": "2025-12-05T22:33:23.108112",
+      "topic": "Conditional branching in workflows",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms",
+        "Study the WorkflowEngine class in agent_workflows.py for workflow patterns"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Create a custom workflow for your use case"
+      ]
+    },
+    {
+      "consultation_id": "d92967fd-7fb6-43ca-bbae-2bf6f51bfc6b",
+      "timestamp": "2025-12-05T22:33:23.108512",
+      "topic": "Parallel task execution",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Test the custom agent with real scenarios",
+        "Review and refine based on consultation recommendations",
+        "Schedule next consultation to discuss implementation progress"
+      ]
+    },
+    {
+      "consultation_id": "f16cf6f5-fdb0-47c6-889b-070087a3bb01",
+      "timestamp": "2025-12-05T22:33:23.109054",
+      "topic": "Error handling in workflows",
+      "level": "intermediate",
+      "questions": [],
+      "recommendations": [
+        "Implement advanced routing logic for complex scenarios",
+        "Add context awareness to your agent's responses",
+        "Integrate with the workflow engine for multi-step processes",
+        "Implement error handling and fallback mechanisms",
+        "Study the WorkflowEngine class in agent_workflows.py for workflow patterns"
+      ],
+      "insights": [
+        "Context retention improves multi-turn conversations",
+        "Use the router's intent analysis for better request handling",
+        "Implement graceful degradation for unexpected inputs",
+        "Monitor agent performance metrics"
+      ],
+      "code_examples": [
+        {
+          "title": "Advanced Agent with Context",
+          "code": "\nfrom agent_router import get_router, RoutingContext\n\nrouter = get_router()\n\ncontext = RoutingContext(\n    message=user_message,\n    user_id=user_id,\n    session_data=session_data,\n    urgency=\"high\" if is_urgent else \"normal\"\n)\n\ndecision = router.route_message(user_message, context)\n"
+        }
+      ],
+      "next_steps": [
+        "Create a custom workflow for your use case"
+      ]
+    },
+    {
+      "consultation_id": "f57c2446-bb81-46d3-a6f5-05cf36b25585",
+      "timestamp": "2025-12-05T22:33:23.109537",
+      "topic": "Advanced workflow patterns",
+      "level": "advanced",
+      "questions": [],
+      "recommendations": [
+        "Implement proactive agent behaviors and automation",
+        "Add comprehensive monitoring and alerting",
+        "Create custom workflows with conditional branching",
+        "Integrate with external systems (MongoDB, WhatsApp, n8n)",
+        "Implement A/B testing for response optimization",
+        "Study the WorkflowEngine class in agent_workflows.py for workflow patterns"
+      ],
+      "insights": [
+        "Proactive agents can significantly improve user engagement",
+        "Use the workflow engine for complex multi-step automation",
+        "Monitor and optimize based on metrics and user feedback",
+        "Consider implementing machine learning for intent classification",
+        "Design for scalability and concurrent operations"
+      ],
+      "code_examples": [
+        {
+          "title": "Proactive Agent with Workflow",
+          "code": "\nfrom agent_workflows import get_workflow_engine, WorkflowStep, StepType\nfrom proactive_agent_actions import get_proactive_actions\n\nworkflow_engine = get_workflow_engine()\nproactive_actions = get_proactive_actions()\n\n# Create custom workflow\nworkflow_id = workflow_engine.create_workflow(\n    name=\"follow_up_abandoned_quotes\",\n    steps=[\n        WorkflowStep(\n            step_id=\"detect\",\n            step_type=StepType.TASK,\n            agent_type=\"analytics\",\n            task_type=\"detect_abandoned_quotes\"\n        ),\n        WorkflowStep(\n            step_id=\"generate_message\",\n            step_type=StepType.TASK,\n            agent_type=\"sales\",\n            task_type=\"generate_followup\"\n        ),\n        WorkflowStep(\n            step_id=\"send\",\n            step_type=StepType.TASK,\n            agent_type=\"follow_up\",\n            task_type=\"send_message\"\n        )\n    ]\n)\n"
+        }
+      ],
+      "next_steps": [
+        "Create a custom workflow for your use case"
+      ]
+    }
+  ],
+  "development_stage": "testing",
+  "completion_percentage": 75.0,
+  "custom_config": {}
+}
