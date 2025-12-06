@@ -7,9 +7,17 @@ Extrae conversaciones y solicitudes para uso en entrenamiento de modelos
 import json
 import os
 import sys
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Generator, Union
+
+try:
+    import ijson  # Para streaming de JSONs grandes
+    IJSON_AVAILABLE = True
+except ImportError:
+    IJSON_AVAILABLE = False
+    print("⚠️  ijson no está instalado. Recomendado para archivos grandes: pip install ijson")
 
 try:
     from pymongo import MongoClient
@@ -34,6 +42,22 @@ class ExtractorDatosEntrenamiento:
         self.client: Optional[MongoClient] = None
         self.db = None
         
+        # Regex para PII
+        self.email_regex = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+        self.phone_regex = re.compile(r'\b(?:\+?598|0)?9[1-9]\d{6}\b|\b\+?\d{8,15}\b')
+        self.url_regex = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+
+    def redactar_pii(self, texto: str) -> str:
+        """Redacta información personal identificable del texto"""
+        if not texto or not isinstance(texto, str):
+            return texto
+            
+        texto = self.email_regex.sub('[EMAIL]', texto)
+        texto = self.phone_regex.sub('[PHONE]', texto)
+        # Opcional: redactar URLs si no son relevantes para el producto
+        # texto = self.url_regex.sub('[URL]', texto)
+        return texto
+
     def conectar_mongodb(self) -> bool:
         """Conecta a MongoDB"""
         if not MONGODB_AVAILABLE:
@@ -80,15 +104,6 @@ class ExtractorDatosEntrenamiento:
     ) -> List[Dict[str, Any]]:
         """
         Extrae mensajes de WhatsApp desde MongoDB
-        
-        Args:
-            fecha_desde: Fecha desde la cual extraer (opcional)
-            fecha_hasta: Fecha hasta la cual extraer (opcional)
-            limite: Límite de documentos a extraer (opcional)
-            coleccion: Nombre de la colección (default: "conversations")
-        
-        Returns:
-            Lista de conversaciones en formato para entrenamiento
         """
         if not self.db:
             if not self.conectar_mongodb():
@@ -114,17 +129,21 @@ class ExtractorDatosEntrenamiento:
             conversaciones = []
             for doc in cursor:
                 # Formatear para entrenamiento
+                msg_text = self.redactar_pii(doc.get("message", ""))
+                resp_text = self.redactar_pii(doc.get("response", ""))
+                
+                if not msg_text and not resp_text:
+                    continue
+
                 conversacion = {
                     "source": "whatsapp",
                     "session_id": doc.get("session_id", ""),
-                    "phone": doc.get("phone", ""),
                     "timestamp": doc.get("timestamp", "").isoformat() if isinstance(doc.get("timestamp"), datetime) else str(doc.get("timestamp", "")),
-                    "message": doc.get("message", ""),
-                    "response": doc.get("response", ""),
+                    "message": msg_text,
+                    "response": resp_text,
                     "response_type": doc.get("response_type", ""),
                     "confidence": doc.get("confidence", 0.0),
                     "intent": doc.get("intent", ""),
-                    "entities": doc.get("entities", {}),
                     "metadata": {
                         "source": doc.get("source", "api"),
                         "original_id": str(doc.get("_id", "")),
@@ -150,17 +169,21 @@ class ExtractorDatosEntrenamiento:
                                 if msg_idx + 1 < len(messages) and messages[msg_idx + 1].get("role") == "assistant":
                                     response_msg = messages[msg_idx + 1]
                                 
+                                msg_text = self.redactar_pii(msg.get("content", ""))
+                                resp_text = self.redactar_pii(response_msg.get("content", "") if response_msg else "")
+                                
+                                if not msg_text:
+                                    continue
+
                                 conversacion = {
                                     "source": "whatsapp",
                                     "session_id": ctx_doc.get("session_id", ""),
-                                    "phone": ctx_doc.get("user_phone", ""),
                                     "timestamp": msg.get("timestamp", ctx_doc.get("last_activity", "")).isoformat() if isinstance(msg.get("timestamp"), datetime) else str(msg.get("timestamp", "")),
-                                    "message": msg.get("content", ""),
-                                    "response": response_msg.get("content", "") if response_msg else "",
+                                    "message": msg_text,
+                                    "response": resp_text,
                                     "response_type": "text",
                                     "confidence": 0.0,
                                     "intent": ctx_doc.get("intent", ""),
-                                    "entities": ctx_doc.get("entities", {}),
                                     "metadata": {
                                         "source": "context",
                                         "original_id": str(ctx_doc.get("_id", "")),
@@ -179,49 +202,75 @@ class ExtractorDatosEntrenamiento:
             print(f"❌ Error extrayendo WhatsApp: {e}")
             return []
     
-    def extraer_whatsapp_archivo(self, archivo: str) -> List[Dict[str, Any]]:
+    def _parse_streaming_json(self, archivo: str) -> Generator[Dict, None, None]:
+        """Generador para parsear JSONs grandes con ijson"""
+        with open(archivo, 'rb') as f:
+            if IJSON_AVAILABLE:
+                # Intenta detectar si es una lista o objetos sueltos
+                try:
+                    # Asumimos lista de objetos
+                    items = ijson.items(f, 'item')
+                    yield from items
+                except Exception:
+                    # Fallback o intentar otra estructura
+                    f.seek(0)
+                    yield from ijson.items(f, '')
+            else:
+                # Fallback a carga completa si ijson no está
+                f.seek(0)
+                import json
+                data = json.load(f)
+                if isinstance(data, list):
+                    yield from data
+                else:
+                    yield data
+
+    def extraer_whatsapp_archivo(self, archivo: str, streaming: bool = True) -> List[Dict[str, Any]]:
         """
-        Extrae mensajes de WhatsApp desde un archivo JSON
-        
-        Args:
-            archivo: Ruta al archivo JSON con conversaciones
-        
-        Returns:
-            Lista de conversaciones formateadas
+        Extrae mensajes de WhatsApp desde un archivo JSON (soporta archivos masivos)
         """
+        conversaciones = []
         try:
-            with open(archivo, 'r', encoding='utf-8') as f:
-                datos = json.load(f)
+            iterator = self._parse_streaming_json(archivo) if streaming and IJSON_AVAILABLE else None
             
-            conversaciones = []
-            if isinstance(datos, list):
-                for item in datos:
-                    conversacion = {
-                        "source": "whatsapp",
-                        "session_id": item.get("session_id", ""),
-                        "phone": item.get("phone", ""),
-                        "timestamp": item.get("timestamp", ""),
-                        "message": item.get("message", ""),
-                        "response": item.get("response", ""),
-                        "response_type": item.get("response_type", ""),
-                        "confidence": item.get("confidence", 0.0),
-                        "intent": item.get("intent", ""),
-                        "entities": item.get("entities", {}),
-                        "metadata": {
-                            "source": "file",
-                            "file": archivo
-                        }
+            if iterator is None:
+                # Fallback a método memoria antiguo
+                with open(archivo, 'r', encoding='utf-8') as f:
+                    datos = json.load(f)
+                iterator = datos if isinstance(datos, list) else [datos]
+
+            count = 0
+            for item in iterator:
+                msg_text = self.redactar_pii(item.get("message", ""))
+                resp_text = self.redactar_pii(item.get("response", ""))
+
+                if not msg_text and not resp_text:
+                    continue
+
+                conversacion = {
+                    "source": "whatsapp",
+                    "session_id": item.get("session_id", ""),
+                    "timestamp": item.get("timestamp", ""),
+                    "message": msg_text,
+                    "response": resp_text,
+                    "response_type": item.get("response_type", ""),
+                    "confidence": item.get("confidence", 0.0),
+                    "intent": item.get("intent", ""),
+                    "metadata": {
+                        "source": "file",
+                        "file": archivo
                     }
-                    conversaciones.append(conversacion)
+                }
+                conversaciones.append(conversacion)
+                count += 1
+                if count % 10000 == 0:
+                    print(f"⏳ Procesados {count} registros...")
             
             print(f"✅ Extraídas {len(conversaciones)} conversaciones desde archivo")
             return conversaciones
             
         except FileNotFoundError:
             print(f"❌ Archivo no encontrado: {archivo}")
-            return []
-        except json.JSONDecodeError as e:
-            print(f"❌ Error leyendo JSON: {e}")
             return []
         except Exception as e:
             print(f"❌ Error extrayendo desde archivo: {e}")
@@ -230,22 +279,20 @@ class ExtractorDatosEntrenamiento:
     def extraer_mercado_libre_archivo(self, archivo: str) -> List[Dict[str, Any]]:
         """
         Extrae solicitudes de Mercado Libre desde un archivo JSON/CSV
-        
-        Args:
-            archivo: Ruta al archivo con datos de Mercado Libre
-        
-        Returns:
-            Lista de solicitudes formateadas
         """
         try:
             path = Path(archivo)
-            
+            datos = []
+
             if path.suffix.lower() == '.json':
-                with open(archivo, 'r', encoding='utf-8') as f:
-                    datos = json.load(f)
+                # Intentar streaming si es JSON
+                if IJSON_AVAILABLE:
+                     datos = list(self._parse_streaming_json(archivo))
+                else:
+                    with open(archivo, 'r', encoding='utf-8') as f:
+                        datos = json.load(f)
             elif path.suffix.lower() == '.csv':
                 import csv
-                datos = []
                 with open(archivo, 'r', encoding='utf-8') as f:
                     reader = csv.DictReader(f)
                     datos = list(reader)
@@ -255,32 +302,30 @@ class ExtractorDatosEntrenamiento:
             
             solicitudes = []
             
-            # Manejar formato con estructura {interacciones: [...]}
             if isinstance(datos, dict) and "interacciones" in datos:
                 datos = datos["interacciones"]
             
             if isinstance(datos, list):
                 for item in datos:
-                    # Formatear según estructura esperada de Mercado Libre
-                    # Soporta múltiples formatos: API ML, interacciones KB, etc.
+                    question_text = self.redactar_pii(item.get("text") or item.get("question", "") or item.get("mensaje_cliente", ""))
+                    answer_text = self.redactar_pii(
+                        item.get("answer", {}).get("text", "") if isinstance(item.get("answer"), dict) 
+                        else item.get("answer", "") or item.get("respuesta_agente", "")
+                    )
+
                     solicitud = {
                         "source": "mercado_libre",
                         "question_id": item.get("question_id") or item.get("id", ""),
                         "product_id": item.get("product_id") or item.get("item_id", "") or (item.get("contexto", {}).get("item_id", "") if isinstance(item.get("contexto"), dict) else ""),
-                        "buyer_id": item.get("buyer_id") or item.get("user_id", "") or item.get("cliente_id", ""),
                         "timestamp": item.get("date_created") or item.get("timestamp", ""),
-                        "question": item.get("text") or item.get("question", "") or item.get("mensaje_cliente", ""),
-                        "answer": (
-                            item.get("answer", {}).get("text", "") if isinstance(item.get("answer"), dict) 
-                            else item.get("answer", "") or item.get("respuesta_agente", "")
-                        ),
+                        "question": question_text,
+                        "answer": answer_text,
                         "status": item.get("status", "") or item.get("resultado", ""),
                         "product_title": item.get("product_title") or item.get("title", ""),
                         "metadata": {
                             "source": "file",
                             "file": archivo,
                             "tipo_interaccion": item.get("tipo_interaccion", ""),
-                            "contexto": item.get("contexto", {})
                         }
                     }
                     solicitudes.append(solicitud)
@@ -303,14 +348,6 @@ class ExtractorDatosEntrenamiento:
     ) -> List[Dict[str, Any]]:
         """
         Extrae solicitudes de Mercado Libre desde la API
-        
-        Args:
-            access_token: Token de acceso de Mercado Libre
-            seller_id: ID del vendedor (opcional)
-            limite: Límite de solicitudes a extraer
-        
-        Returns:
-            Lista de solicitudes formateadas
         """
         try:
             import requests
@@ -326,7 +363,6 @@ class ExtractorDatosEntrenamiento:
                     "limit": limite
                 }
             else:
-                # Si no hay seller_id, intentar obtener desde el token
                 url = "https://api.mercadolibre.com/questions/search"
                 params = {
                     "status": "ANSWERED",
@@ -348,10 +384,9 @@ class ExtractorDatosEntrenamiento:
                         "source": "mercado_libre",
                         "question_id": question.get("id", ""),
                         "product_id": question.get("item_id", ""),
-                        "buyer_id": question.get("from", {}).get("id", ""),
                         "timestamp": question.get("date_created", ""),
-                        "question": question.get("text", ""),
-                        "answer": question.get("answer", {}).get("text", "") if question.get("answer") else "",
+                        "question": self.redactar_pii(question.get("text", "")),
+                        "answer": self.redactar_pii(question.get("answer", {}).get("text", "") if question.get("answer") else ""),
                         "status": question.get("status", ""),
                         "product_title": question.get("item", {}).get("title", ""),
                         "metadata": {
@@ -382,11 +417,6 @@ class ExtractorDatosEntrenamiento:
     ):
         """
         Guarda los datos extraídos en formato para entrenamiento
-        
-        Args:
-            datos: Lista de datos a guardar
-            archivo_salida: Ruta del archivo de salida
-            formato: Formato de salida ("json" o "csv")
         """
         try:
             path = Path(archivo_salida)
@@ -404,12 +434,10 @@ class ExtractorDatosEntrenamiento:
                     print("⚠️  No hay datos para guardar")
                     return
                 
-                # Obtener todas las claves posibles
                 all_keys = set()
                 for item in datos:
                     all_keys.update(item.keys())
                 
-                # Aplanar estructuras anidadas
                 flattened_data = []
                 for item in datos:
                     flat_item = {}
@@ -439,12 +467,6 @@ class ExtractorDatosEntrenamiento:
     def generar_resumen(self, datos: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Genera un resumen de los datos extraídos
-        
-        Args:
-            datos: Lista de datos extraídos
-        
-        Returns:
-            Diccionario con estadísticas
         """
         if not datos:
             return {"total": 0}
@@ -614,4 +636,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

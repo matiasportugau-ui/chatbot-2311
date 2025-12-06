@@ -27,21 +27,17 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir gunicorn uvicorn
 
-# Copy dependency files for Next.js
-COPY nextjs-app/package.json nextjs-app/package-lock.json ./nextjs-app/
+# Copy dependency files for Next.js - Root dependencies are what matters
+COPY package.json package-lock.json ./
 
 # Install Node.js dependencies
-WORKDIR /app/nextjs-app
 RUN npm ci
 
 # Copy the rest of the application
-WORKDIR /app
 COPY . .
 
 # Build Next.js application
-WORKDIR /app/nextjs-app
 RUN npm run build
-WORKDIR /app
 
 # Expose ports
 EXPOSE 8000 3000
