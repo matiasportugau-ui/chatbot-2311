@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "mode": "automated",
+  "resume": true,
+  "check_interval": 300,
+  "auto_restart": true,
+  "log_file": "consolidation/logs/auto_start.log"
+}

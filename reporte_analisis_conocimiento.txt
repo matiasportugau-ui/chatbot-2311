@@ -1,0 +1,71 @@
+======================================================================
+REPORTE DE ANÁLISIS DE CONOCIMIENTO
+======================================================================
+Fecha: 2025-11-19T16:58:11.056006
+
+RESUMEN GENERAL:
+  Total archivos analizados: 11
+  Total interacciones: 25
+  Total patrones de venta: 0
+  Total conocimiento productos: 3
+  Total insights: 25
+
+ARCHIVO MÁS COMPLETO:
+  base_conocimiento_final.json
+
+DETALLES POR ARCHIVO:
+  ✅ analisis_conversiones_demo.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ analisis_conversiones_exportado.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ analisis_conversiones_final.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ base_conocimiento_demo.json:
+     Interacciones: 7
+     Patrones: 0
+     Productos: 1
+     Insights: 7
+  ✅ base_conocimiento_exportada.json:
+     Interacciones: 4
+     Patrones: 0
+     Productos: 1
+     Insights: 4
+  ✅ base_conocimiento_final.json:
+     Interacciones: 14
+     Patrones: 0
+     Productos: 1
+     Insights: 14
+  ✅ conocimiento_completo.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ conocimiento_completo_demo.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ ia_conversacional_demo.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ ia_conversacional_exportada.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0
+  ✅ ia_conversacional_final.json:
+     Interacciones: 0
+     Patrones: 0
+     Productos: 0
+     Insights: 0

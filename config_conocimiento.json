@@ -1,0 +1,34 @@
+{
+  "carga_conocimiento": {
+    "habilitada": true,
+    "archivos_prioridad": [
+      "conocimiento_consolidado.json",
+      "conocimiento_mercadolibre.json",
+      "conocimiento_shopify.json",
+      "base_conocimiento_final.json",
+      "conocimiento_completo.json",
+      "base_conocimiento_exportada.json",
+      "base_conocimiento_demo.json",
+      "conocimiento_completo_demo.json"
+    ],
+    "cargar_primer_archivo_encontrado": true,
+    "intentar_mongodb": true,
+    "mongodb_uri": "mongodb://localhost:27017/bmc_chat"
+  },
+  "consolidacion": {
+    "habilitada": false,
+    "archivo_salida": "conocimiento_consolidado.json",
+    "evitar_duplicados": true,
+    "combinar_productos": true
+  },
+  "logging": {
+    "nivel": "INFO",
+    "mostrar_carga": true,
+    "mostrar_estadisticas": true
+  },
+  "validacion": {
+    "validar_al_cargar": true,
+    "verificar_integridad": true,
+    "advertencias_duplicados": true
+  }
+}

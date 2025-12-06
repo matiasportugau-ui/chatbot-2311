@@ -1,0 +1,29 @@
+======================================================================
+REPORTE DE ANÁLISIS DE ESCENARIOS
+======================================================================
+Fecha: 2025-11-19T16:58:17.350318
+
+RESUMEN GENERAL:
+  Total archivos: 12
+  Total escenarios: 0
+  Total mensajes: 0
+  Productos únicos mencionados: 0
+  Tipos de conversación únicos: 0
+
+COBERTURA:
+  Productos mencionados: 
+  Tipos de conversación: 
+
+DETALLES POR ARCHIVO:
+  ❌ complex_technical.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ edge_cases.json: Error analizando archivo: 'str' object has no attribute 'get'
+  ❌ error_recovery.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ installation.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ multi_product_quotes.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ multi_turn.json: Error analizando archivo: 'str' object has no attribute 'get'
+  ❌ objections.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ product_comparison.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ product_info.json: Error analizando archivo: 'str' object has no attribute 'get'
+  ❌ quote_request.json: Error analizando archivo: 'str' object has no attribute 'get'
+  ❌ regional_variations.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)
+  ❌ warranty_payment.json: Error parseando JSON: Expecting value: line 1 column 1 (char 0)

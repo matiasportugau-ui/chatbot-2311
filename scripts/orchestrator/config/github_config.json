@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "create_issues": true,
+  "update_on_phase_start": true,
+  "update_on_phase_complete": true,
+  "update_on_approval": true,
+  "update_on_error": true,
+  "labels": [
+    "automation",
+    "consolidation",
+    "production"
+  ]
+}

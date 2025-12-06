@@ -1,0 +1,216 @@
+# BMC Chatbot Project - Cursor Rules
+
+## Project Overview
+This is a multi-stack chatbot system for BMC Uruguay that handles quotations, WhatsApp integration, and conversational AI. The system integrates FastAPI (Python), Next.js (TypeScript), MongoDB, n8n workflows, and multiple AI providers.
+
+## Architecture Guidelines
+
+### Multi-Stack Architecture
+- **Frontend:** Next.js 14 with TypeScript, App Router pattern
+- **Backend:** FastAPI (Python 3.11+) with async/await patterns
+- **Database:** MongoDB 7.0+ with collections: conversations, quotes, context, analytics, products, settings
+- **Workflow:** n8n for orchestration and automation
+- **AI Models:** OpenAI (primary), Groq, Gemini, xAI/Grok (via model_integrator.py)
+- **Containerization:** Docker Compose for local development
+
+### Code Organization
+- **Python Backend:** Root level Python files for core logic
+- **Frontend:** `nextjs-app/` directory for Next.js application
+- **Scripts:** `python-scripts/` for utility scripts
+- **Workflows:** `n8n_workflows/` for n8n workflow definitions
+- **Documentation:** Markdown files in root and `docs/` directory
+- **Configuration:** JSON files for knowledge base, pricing matrices, etc.
+
+## Coding Standards
+
+### Python Code Style
+- Use Python 3.11+ features (type hints, dataclasses, async/await)
+- Follow PEP 8 with 4-space indentation
+- Use type hints for all function parameters and return values
+- Prefer `pathlib.Path` over `os.path`
+- Use `logging` module instead of `print` statements
+- Use `Decimal` for financial calculations (prices, quotes)
+- Async functions should use `async def` and `await` properly
+- FastAPI routes should use dependency injection for shared resources
+
+### TypeScript/Next.js Code Style
+- Use TypeScript strict mode
+- Prefer functional components with hooks
+- Use App Router conventions (app directory structure)
+- Server components by default, client components when needed
+- Use proper error boundaries and loading states
+
+### Error Handling
+- Always use try-except blocks for external API calls
+- Log errors with sufficient context for debugging
+- Return appropriate HTTP status codes in FastAPI
+- Use custom exception classes for domain-specific errors
+- Implement retry logic with exponential backoff for external services
+
+### Security Best Practices
+- Never hardcode API keys or secrets
+- Use environment variables from `.env` file (see `env.example`)
+- Validate all user inputs (use Pydantic models)
+- Implement rate limiting on API endpoints
+- Use HTTPS in production
+- Sanitize inputs to prevent injection attacks
+- Implement webhook signature validation for WhatsApp
+
+## File Naming Conventions
+- Python files: `snake_case.py`
+- TypeScript files: `PascalCase.tsx` for components, `camelCase.ts` for utilities
+- Configuration files: `kebab-case.json` or `snake_case.json`
+- Documentation: `UPPER_SNAKE_CASE.md` for guides, `Title Case.md` for general docs
+
+## Key Modules and Their Purposes
+
+### Core Python Modules
+- `api_server.py` - FastAPI server with main endpoints
+- `ia_conversacional_integrada.py` - Conversational AI with OpenAI integration
+- `sistema_cotizaciones.py` - Quotation engine logic
+- `base_conocimiento_dinamica.py` - Dynamic knowledge base management
+- `integracion_whatsapp.py` - WhatsApp Business API integration
+- `n8n_integration.py` - n8n workflow integration
+- `model_integrator.py` - Multi-provider AI model integration
+- `language_module.py` - Language detection and translation
+
+### Important Configuration Files
+- `matriz_precios.json` - Product pricing matrix (whitelisted in .cursorignore)
+- `config_conocimiento.json` - Knowledge base configuration (whitelisted)
+- `conocimiento_consolidado.json` - Consolidated knowledge base
+- `docker-compose.yml` - Service orchestration
+- `env.example` - Environment variables template
+
+## Integration Patterns
+
+### WhatsApp Integration
+- Use `integracion_whatsapp.py` for message handling
+- Webhook endpoints should verify signatures
+- Messages are processed through `ia_conversacional_integrada.py`
+- Responses are sent back via WhatsApp API
+
+### n8n Workflows
+- Workflows are defined in JSON format
+- Use `n8n_integration.py` to trigger workflows programmatically
+- Webhook nodes should use environment variables for URLs
+- Error handling should route to dead-letter queues
+
+### AI Model Integration
+- Use `model_integrator.py` for all AI model calls
+- Support multiple providers: OpenAI, Groq, Gemini, xAI/Grok
+- Model selection based on strategy: cost, speed, quality, balanced
+- Always implement fallback to alternative models on failure
+
+### Knowledge Base
+- Knowledge is stored in JSON files and MongoDB
+- Use `base_conocimiento_dinamica.py` for knowledge operations
+- Knowledge ingestion via `populate_kb.py` and `consolidar_conocimiento.py`
+- Qdrant vector database for semantic search (when configured)
+
+## Development Workflow
+
+### Adding New Features
+1. Create feature branch from `main`
+2. Implement feature following coding standards
+3. Update relevant documentation
+4. Test locally with Docker Compose
+5. Create pull request with description
+
+### Testing
+- Use `pytest` for Python unit tests
+- Test API endpoints with FastAPI TestClient
+- Test Next.js components with React Testing Library
+- Integration tests should use test database
+
+### Environment Setup
+- Copy `env.example` to `.env` and fill in values
+- Use `scripts/setup_chatbot_env.sh` for Python environment
+- Use `npm install` in `nextjs-app/` for frontend dependencies
+- Use `docker-compose up` for full stack
+
+## Common Tasks
+
+### Starting the System
+- **Full Stack:** `python unified_launcher.py --mode fullstack`
+- **API Only:** `python api_server.py`
+- **Frontend Only:** `cd nextjs-app && npm run dev`
+- **Docker:** `docker-compose up`
+
+### Updating Knowledge Base
+1. Run data ingestion scripts: `python python-scripts/fetch_shopify_products.py`
+2. Consolidate: `python consolidar_conocimiento.py`
+3. Validate: `python validar_integracion.py`
+4. Restart API server to load new knowledge
+
+### Debugging
+- Check logs in `logs/` directory
+- Use FastAPI docs at `http://localhost:8000/docs`
+- MongoDB logs in Docker: `docker-compose logs mongodb`
+- n8n UI at `http://localhost:5678`
+
+## Important Notes
+
+### When Modifying Code
+- Always maintain backward compatibility when possible
+- Update related documentation when changing APIs
+- Consider impact on Docker containers
+- Test with multiple AI providers if modifying model integration
+
+### When Adding Dependencies
+- Add to `requirements.txt` for Python
+- Add to `nextjs-app/package.json` for Node.js
+- Update `Dockerfile.python` if needed
+- Document in relevant README files
+
+### When Working with AI
+- Always handle rate limits and errors gracefully
+- Implement caching for expensive AI calls when possible
+- Use appropriate models for tasks (e.g., GPT-4o-mini for simple tasks)
+- Monitor token usage and costs
+
+## Project-Specific Context
+
+### BMC Uruguay Domain
+- Products: Isodec, Poliestireno Expandido, Lana de Roca
+- Espesores: 50mm, 75mm, 100mm, 125mm, 150mm
+- Pricing: Zone-based, includes IVA (22%)
+- Services: Flete, instalación, anclajes
+
+### Quotation Flow
+1. User requests quote via WhatsApp
+2. Bot extracts required data (product, dimensions, customer info)
+3. System validates data completeness
+4. Quotation engine calculates price
+5. Quote is stored in MongoDB
+6. Response sent to user via WhatsApp
+
+### Language Support
+- Primary: Spanish (Uruguay)
+- Language detection via `language_module.py`
+- Responses should be natural and conversational
+- Use formal "usted" when appropriate
+
+## Cursor-Specific Instructions
+
+### When Using Cursor Agent
+- Always check existing code patterns before creating new code
+- Reference `README.md` and architecture docs for context
+- Use existing utility functions rather than creating duplicates
+- Follow the established error handling patterns
+- Maintain consistency with existing code style
+
+### When Using Inline Edit
+- Preserve existing function signatures when possible
+- Maintain type hints and docstrings
+- Keep error handling consistent
+- Update related tests if modifying logic
+
+### When Using Tab Completion
+- Prefer existing patterns and conventions
+- Use established naming conventions
+- Follow the project's import organization
+- Maintain consistency with surrounding code
+
+
+
+

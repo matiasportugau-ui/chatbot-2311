@@ -1,0 +1,76 @@
+[tool.ruff]
+# Ruff configuration for Python linting and formatting
+line-length = 100
+target-version = "py311"
+exclude = [
+    ".git",
+    "__pycache__",
+    ".next",
+    "node_modules",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".venv",
+    "venv",
+    "env"
+]
+
+[tool.ruff.lint]
+# Enable specific rule sets
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "B008",  # Do not perform function calls in argument defaults
+    "C901",  # Too complex
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["ia_conversacional_integrada", "sistema_cotizaciones", "base_conocimiento_dinamica"]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+# Indent with spaces
+indent-style = "space"
+# Line ending
+line-ending = "auto"
+
+[tool.black]
+# Black formatter configuration (if using black extension)
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.git
+  | __pycache__
+  | \.next
+  | node_modules
+  | build
+  | dist
+  | \.venv
+  | venv
+)/
+'''
+
+[tool.pylint]
+# Pylint configuration (if needed)
+max-line-length = 100
+

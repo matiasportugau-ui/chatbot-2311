@@ -1,0 +1,45 @@
+name: Auto Update Products
+
+on:
+  schedule:
+    # Ejecuta cada día a las 3 AM UTC (medianoche en Uruguay)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Permite ejecución manual
+  push:
+    branches:
+      - new-branch
+      - main
+    paths:
+      - 'mapeador_productos_web.py'
+      - 'sistema_cotizaciones.py'
+
+jobs:
+  update-products:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+        
+    - name: Run product mapper
+      run: |
+        python mapeador_productos_web.py
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add productos_mapeados.json matriz_precios.json
+        git diff --staged --quiet || git commit -m "Auto-update: Productos sincronizados desde web [skip ci]"
+        git push
+

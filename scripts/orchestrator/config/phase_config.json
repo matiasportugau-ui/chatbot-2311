@@ -1,0 +1,130 @@
+{
+  "phases": {
+    "0": {
+      "name": "BMC Discovery & Assessment",
+      "dependencies": [],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "1": {
+      "name": "Repository Analysis",
+      "dependencies": [
+        0
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "2": {
+      "name": "Component Mapping",
+      "dependencies": [
+        1
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "3": {
+      "name": "Merge Strategy",
+      "dependencies": [
+        2
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "4": {
+      "name": "Conflict Resolution",
+      "dependencies": [
+        3
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "5": {
+      "name": "Testing & Validation",
+      "dependencies": [
+        4
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "6": {
+      "name": "Documentation",
+      "dependencies": [
+        5
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "7": {
+      "name": "Integration Testing",
+      "dependencies": [
+        6
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "8": {
+      "name": "Final Configuration",
+      "dependencies": [
+        7
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "9": {
+      "name": "Production Security Hardening",
+      "dependencies": [
+        8
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "10": {
+      "name": "Infrastructure as Code",
+      "dependencies": [
+        9
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "11": {
+      "name": "Observability & Monitoring",
+      "dependencies": [
+        10
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "12": {
+      "name": "Performance & Load Testing",
+      "dependencies": [
+        11
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "13": {
+      "name": "CI/CD Pipeline",
+      "dependencies": [
+        12
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "14": {
+      "name": "Disaster Recovery & Backup",
+      "dependencies": [
+        13
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    },
+    "15": {
+      "name": "Final Production Validation",
+      "dependencies": [
+        14
+      ],
+      "timeout": 3600,
+      "agent": "OrchestratorAgent"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "session_id": "sim_20251109234648_ede28f1f",
+  "phone": "+59898765432",
+  "started_at": "2025-11-09T23:46:49.197220",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:46:49.197220",
+      "user_message": "Quiero cotizar Isodec 10x5 100mm blanco",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234648_ede28f1f",
+        "timestamp": "2025-11-09T23:46:49.196243"
+      },
+      "session_id": "sim_20251109234648_ede28f1f"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "validaciones": [
+    {
+      "tipo": "carga_conocimiento",
+      "estado": "exitoso",
+      "archivo": "/app/conocimiento_consolidado.json",
+      "interacciones": 20,
+      "patrones": 1,
+      "productos": 75
+    },
+    {
+      "tipo": "ia_conversacional",
+      "estado": "exitoso",
+      "patrones_respuesta": 4,
+      "respuesta_test": "{'content': '¡Hola! Soy Superchapita, tu asistente..."
+    },
+    {
+      "tipo": "productos",
+      "estado": "exitoso",
+      "productos": [
+        "isodec",
+        "poliestireno",
+        "lana_roca"
+      ]
+    },
+    {
+      "tipo": "uso_conocimiento",
+      "estado": "exitoso",
+      "respuestas_mejoradas": 3,
+      "total": 3
+    }
+  ],
+  "errores": [],
+  "advertencias": [],
+  "estadisticas": {
+    "interacciones": 20,
+    "patrones": 1,
+    "productos": 75,
+    "patrones_respuesta": 4,
+    "productos_sistema": [
+      "isodec",
+      "poliestireno",
+      "lana_roca"
+    ],
+    "respuestas_mejoradas": 3,
+    "total_preguntas_test": 3
+  },
+  "resultados": {
+    "carga_conocimiento": true,
+    "ia_conversacional": true,
+    "productos": true,
+    "uso_conocimiento": true
+  },
+  "exitoso": true
+}

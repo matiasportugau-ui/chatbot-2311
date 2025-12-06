@@ -1,0 +1,12 @@
+{
+  "api_url": "http://localhost:8000",
+  "mongodb_uri": "mongodb://localhost:27017/bmc_chat",
+  "use_real_openai": true,
+  "use_pattern_matching_fallback": true,
+  "persist_to_kb": true,
+  "session_timeout": 3600,
+  "default_phone": "+59891234567",
+  "verbose": true,
+  "export_conversations": true
+}
+

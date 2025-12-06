@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Empty Message",
+    "phone": "+59891234567",
+    "messages": [
+      ""
+    ],
+    "expected_type": "general",
+    "description": "Handle empty message"
+  },
+  {
+    "name": "Unclear Request",
+    "phone": "+59891234567",
+    "messages": [
+      "Hola, necesito algo",
+      "No sé qué quiero"
+    ],
+    "expected_type": "general",
+    "description": "Handle unclear or ambiguous requests"
+  },
+  {
+    "name": "Invalid Dimensions",
+    "phone": "+59891234567",
+    "messages": [
+      "Quiero cotizar Isodec",
+      "0 metros x 0 metros",
+      "10x5 metros",
+      "100mm"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Handle invalid input and recovery"
+  },
+  {
+    "name": "Non-existent Product",
+    "phone": "+59891234567",
+    "messages": [
+      "Quiero cotizar producto XYZ",
+      "No existe ese producto",
+      "Ok, entonces Isodec"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Handle requests for non-existent products"
+  },
+  {
+    "name": "Mixed Language",
+    "phone": "+59891234567",
+    "messages": [
+      "Hello, I need a quote",
+      "Hola, quiero cotizar Isodec",
+      "10x5 metros"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Handle mixed language input"
+  }
+]
+

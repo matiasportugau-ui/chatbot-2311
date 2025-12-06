@@ -1,0 +1,67 @@
+{
+  "fecha_analisis": "2025-11-19T16:58:17.350318",
+  "escenarios": [
+    {
+      "archivo": "test_scenarios\\complex_technical.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\edge_cases.json",
+      "error": "Error analizando archivo: 'str' object has no attribute 'get'"
+    },
+    {
+      "archivo": "test_scenarios\\error_recovery.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\installation.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\multi_product_quotes.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\multi_turn.json",
+      "error": "Error analizando archivo: 'str' object has no attribute 'get'"
+    },
+    {
+      "archivo": "test_scenarios\\objections.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\product_comparison.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\product_info.json",
+      "error": "Error analizando archivo: 'str' object has no attribute 'get'"
+    },
+    {
+      "archivo": "test_scenarios\\quote_request.json",
+      "error": "Error analizando archivo: 'str' object has no attribute 'get'"
+    },
+    {
+      "archivo": "test_scenarios\\regional_variations.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "archivo": "test_scenarios\\warranty_payment.json",
+      "error": "Error parseando JSON: Expecting value: line 1 column 1 (char 0)"
+    }
+  ],
+  "resumen": {
+    "total_archivos": 12,
+    "total_escenarios": 0,
+    "total_mensajes": 0,
+    "productos_unicos": 0,
+    "tipos_conversacion_unicos": 0
+  },
+  "cobertura": {
+    "productos_mencionados": [],
+    "tipos_conversacion": [],
+    "casos_uso": []
+  },
+  "productos_mencionados": "set()",
+  "casos_uso": []
+}

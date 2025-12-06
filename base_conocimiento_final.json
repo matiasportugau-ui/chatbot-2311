@@ -1,0 +1,453 @@
+{
+  "interacciones": [
+    {
+      "id": "ia_20251024042753",
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "cliente_id": "demo_cliente",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Hola, necesito información sobre Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042754",
+      "timestamp": "2025-10-24 04:27:54.393968",
+      "cliente_id": "demo_cliente",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042754",
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "cliente_id": "demo_cliente",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "El precio me parece caro, ¿hay descuentos?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.400721",
+      "cliente_id": "demo_cliente",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Perfecto, procedo con la compra",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.902855",
+      "cliente_id": "59899123456",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Hola, necesito cotizar Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "wa_sim_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.902910",
+      "cliente_id": "59899123456",
+      "tipo_interaccion": "whatsapp",
+      "mensaje_cliente": "Hola, necesito cotizar Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "whatsapp",
+        "cliente_nombre": "Juan Pérez",
+        "telefono": "59899123456",
+        "message_id": "sim_20251024042755"
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.903001",
+      "cliente_id": "59899765432",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "¿Cuál es el precio de poliestireno 75mm?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "wa_sim_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "cliente_id": "59899765432",
+      "tipo_interaccion": "whatsapp",
+      "mensaje_cliente": "¿Cuál es el precio de poliestireno 75mm?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "whatsapp",
+        "cliente_nombre": "María García",
+        "telefono": "59899765432",
+        "message_id": "sim_20251024042755"
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.903346",
+      "cliente_id": "sistema_sheets",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Isodec 100mm / 8 p de 10 m / paneles blancos / completo + flete",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "sheets_RA001",
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "cliente_id": "099123456",
+      "tipo_interaccion": "cotizacion_sheets",
+      "mensaje_cliente": "Isodec 100mm / 8 p de 10 m / paneles blancos / completo + flete",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "google_sheets",
+        "arg": "RA001",
+        "estado": "Pendiente",
+        "cliente": "Juan Pérez",
+        "origen": "WA",
+        "zona": "Montevideo",
+        "informacion_extraida": {
+          "producto": "isodec",
+          "espesor": "100mm",
+          "dimensiones": {
+            "tipo": "paneles",
+            "cantidad": 8,
+            "largo": 10,
+            "unidad": "paneles"
+          },
+          "servicios": {
+            "flete": true,
+            "instalacion": true,
+            "accesorios": false
+          },
+          "color": "blanco",
+          "completo": true,
+          "urgente": false
+        }
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.903763",
+      "cliente_id": "sistema_sheets",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Poliestireno 75mm / techo de 50 m2 / gris / sin flete",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "sheets_MO002",
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "cliente_id": "099765432",
+      "tipo_interaccion": "cotizacion_sheets",
+      "mensaje_cliente": "Poliestireno 75mm / techo de 50 m2 / gris / sin flete",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "google_sheets",
+        "arg": "MO002",
+        "estado": "Adjunto",
+        "cliente": "María García",
+        "origen": "EM",
+        "zona": "Maldonado",
+        "informacion_extraida": {
+          "producto": "poliestireno",
+          "espesor": "75mm",
+          "dimensiones": {
+            "tipo": "area",
+            "area": 50,
+            "unidad": "m2"
+          },
+          "servicios": {
+            "flete": true,
+            "instalacion": false,
+            "accesorios": false
+          },
+          "color": "gris",
+          "completo": false,
+          "urgente": false
+        }
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "cliente_id": "sistema_sheets",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Lana de roca 100mm / galpón 9m x 7m x 5m / instalación completa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "sheets_TNT003",
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "cliente_id": "099888999",
+      "tipo_interaccion": "cotizacion_sheets",
+      "mensaje_cliente": "Lana de roca 100mm / galpón 9m x 7m x 5m / instalación completa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "google_sheets",
+        "arg": "TNT003",
+        "estado": "Listo",
+        "cliente": "Carlos López",
+        "origen": "LO",
+        "zona": "Rivera",
+        "informacion_extraida": {
+          "producto": "lana de roca",
+          "espesor": "100mm",
+          "dimensiones": {
+            "tipo": "volumen",
+            "largo": 9,
+            "ancho": 7,
+            "alto": 5,
+            "unidad": "m"
+          },
+          "servicios": {
+            "flete": false,
+            "instalacion": true,
+            "accesorios": false
+          },
+          "color": null,
+          "completo": false,
+          "urgente": false
+        }
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": null
+    }
+  ],
+  "patrones_venta": [],
+  "conocimiento_productos": {
+    "isodec": {
+      "producto_id": "isodec",
+      "nombre": "Isodec",
+      "caracteristicas_base": {
+        "tipo": "Panel aislante térmico",
+        "nucleo": "EPS",
+        "conductividad_termica": "0.035 W/mK",
+        "densidad": "15-20 kg/m³"
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {},
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [],
+      "fecha_ultima_actualizacion": "2025-10-24 04:27:53.886317"
+    }
+  },
+  "metricas_evolucion": {
+    "fecha_actualizacion": "2025-10-24T04:27:55.904501",
+    "interacciones_hoy": 14,
+    "interacciones_semana": 14,
+    "ventas_hoy": 0,
+    "ventas_semana": 0,
+    "satisfaccion_promedio": 0,
+    "total_interacciones": 14,
+    "total_patrones": 0,
+    "total_insights": 14
+  },
+  "insights_automaticos": [
+    {
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.393968",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio",
+        "negocio:descuento"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.400721",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": []
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902855",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902910",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903001",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903346",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": []
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": []
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": []
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": []
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ]
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ]
+    }
+  ],
+  "fecha_exportacion": "2025-10-24T04:27:55.904810"
+}

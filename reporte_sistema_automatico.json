@@ -1,0 +1,26 @@
+{
+  "fecha": "2025-11-26 20:33:09",
+  "tests": {
+    "api_shopify": {
+      "estado": "OK",
+      "resultado": 30
+    },
+    "mapeador": {
+      "estado": "OK",
+      "resultado": 5
+    },
+    "sistema_cotizaciones": {
+      "estado": "OK",
+      "resultado": 1
+    }
+  },
+  "archivos": {
+    "mapeador_productos_web.py": true,
+    "sistema_cotizaciones.py": true,
+    "chat_interactivo.py": true,
+    "background_agent.py": true,
+    ".github/workflows/auto-update-products.yml": true,
+    "productos_mapeados.json": true
+  },
+  "estado": "OK"
+}

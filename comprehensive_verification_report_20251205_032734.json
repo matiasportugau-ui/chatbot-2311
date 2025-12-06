@@ -1,0 +1,164 @@
+{
+  "timestamp": "2025-12-05T03:27:34.265401",
+  "summary": {
+    "total_checks": 10,
+    "passed": 9,
+    "failed": 0,
+    "warnings": 1,
+    "skipped": 0,
+    "success_rate": "90.0%"
+  },
+  "results": [
+    {
+      "name": "Environment Variables",
+      "status": "pass",
+      "message": "Variables encontradas: OpenAI | Faltantes: Groq, Gemini, Grok/xAI",
+      "details": {
+        "found": [
+          "OpenAI"
+        ],
+        "missing": [
+          "Groq",
+          "Gemini",
+          "Grok/xAI"
+        ]
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Dependencies",
+      "status": "warning",
+      "message": "6/7 dependencias instaladas",
+      "details": {
+        "found": [
+          "openai",
+          "groq",
+          "google.genai",
+          "pymongo",
+          "fastapi",
+          "uvicorn"
+        ],
+        "missing": [
+          "python-dotenv"
+        ]
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Required Files",
+      "status": "pass",
+      "message": "Todos los archivos presentes (5)",
+      "details": {
+        "found": [
+          "ia_conversacional_integrada.py",
+          "model_integrator.py",
+          "sistema_cotizaciones.py",
+          "base_conocimiento_dinamica.py",
+          "ejecutor_completo.py"
+        ],
+        "missing": []
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Model Integrator",
+      "status": "pass",
+      "message": "Modelos disponibles: openai, openai",
+      "details": {
+        "models": [
+          {
+            "model_id": "openai_gpt-4o-mini",
+            "provider": "openai",
+            "model_name": "gpt-4o-mini",
+            "enabled": true,
+            "cost_input_per_1k": 0.00015,
+            "cost_output_per_1k": 0.0006,
+            "speed_rating": 9,
+            "quality_rating": 8
+          },
+          {
+            "model_id": "openai_gpt-4o",
+            "provider": "openai",
+            "model_name": "gpt-4o",
+            "enabled": true,
+            "cost_input_per_1k": 0.0025,
+            "cost_output_per_1k": 0.01,
+            "speed_rating": 8,
+            "quality_rating": 10
+          }
+        ]
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Provider openai",
+      "status": "pass",
+      "message": "openai responde correctamente",
+      "details": {
+        "response": "ERROR: COMPLETIONS.CREATE() GOT AN UNEXPECTED KEYW"
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Provider groq",
+      "status": "pass",
+      "message": "groq responde correctamente",
+      "details": {
+        "response": "ERROR: COMPLETIONS.CREATE() GOT AN UNEXPECTED KEYW"
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Provider gemini",
+      "status": "pass",
+      "message": "gemini responde correctamente",
+      "details": {
+        "response": "ERROR: COMPLETIONS.CREATE() GOT AN UNEXPECTED KEYW"
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Provider grok",
+      "status": "pass",
+      "message": "grok responde correctamente",
+      "details": {
+        "response": "ERROR: COMPLETIONS.CREATE() GOT AN UNEXPECTED KEYW"
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Bot Integration",
+      "status": "pass",
+      "message": "Bot integrado correctamente con IA",
+      "details": {
+        "has_integrator": true,
+        "has_openai_fallback": false
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    },
+    {
+      "name": "Bot Fluency",
+      "status": "pass",
+      "message": "Bot responde fluidamente",
+      "details": {
+        "response_length": 55,
+        "preview": "\u00bfSobre qu\u00e9 producto espec\u00edfico te gustar\u00eda informaci\u00f3n?"
+      },
+      "fix_applied": false,
+      "fix_message": ""
+    }
+  ],
+  "fixes_applied": [],
+  "recommendations": [
+    "Sistema en buen estado. Continuar monitoreo."
+  ]
+}

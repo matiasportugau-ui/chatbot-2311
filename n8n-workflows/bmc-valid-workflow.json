@@ -1,0 +1,102 @@
+{
+  "name": "BMC Quote Valid",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bmc-quote",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-1",
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "bmc-quote-webhook"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3000/api/integrated-quote",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "process"
+            },
+            {
+              "name": "consulta",
+              "value": "={{ $json.body.message }}"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.body.from }}"
+            },
+            {
+              "name": "userName",
+              "value": "Cliente WhatsApp"
+            }
+          ]
+        }
+      },
+      "id": "http-1",
+      "name": "Process Quote",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Cotización procesada\",\n  \"data\": $json\n} }}"
+      },
+      "id": "respond-1",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Quote": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-12-20T10:00:00.000Z",
+  "versionId": "1"
+}

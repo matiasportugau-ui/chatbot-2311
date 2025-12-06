@@ -1,0 +1,87 @@
+{
+  "name": "BMC Chatbot Development",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-vscode.vscode-typescript-next"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": false,
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true
+        },
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/*.pyc": true,
+          "**/.pytest_cache": true
+        }
+      }
+    }
+  },
+
+  "forwardPorts": [3000, 8000, 5678, 27017, 6333, 6334],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js Dashboard",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "8000": {
+      "label": "FastAPI Server",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "5678": {
+      "label": "n8n Workflows",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "27017": {
+      "label": "MongoDB",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    },
+    "6333": {
+      "label": "Qdrant REST API",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    },
+    "6334": {
+      "label": "Qdrant gRPC",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "bash .devcontainer/start-services.sh",
+
+  "remoteUser": "vscode",
+  "remoteEnv": {
+    "PYTHONUNBUFFERED": "1",
+    "NODE_ENV": "development"
+  },
+
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+}
