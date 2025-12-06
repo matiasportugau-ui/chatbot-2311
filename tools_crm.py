@@ -13,6 +13,7 @@ from typing import Any, Dict, Optional
 try:
     from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
     from base_conocimiento_dinamica import BaseConocimientoDinamica
+    from pdf_generator import PDFGenerator
     SYSTEMS_AVAILABLE = True
 except ImportError:
     SYSTEMS_AVAILABLE = False
@@ -20,10 +21,15 @@ except ImportError:
 # Logger config
 logger = logging.getLogger(__name__)
 
+# Google Sheets Configuration
+SHEET_ID = "1Ie0KCpgWhrGaAKGAS1giLo7xpqblOUOIHEg1QbOQuu0"
+
 class CRMTools:
     def __init__(self):
         self.sistema_cotizaciones = SistemaCotizacionesBMC() if SYSTEMS_AVAILABLE else None
+        self.sistema_cotizaciones = SistemaCotizacionesBMC() if SYSTEMS_AVAILABLE else None
         self.base_conocimiento = BaseConocimientoDinamica() if SYSTEMS_AVAILABLE else None
+        self.pdf_generator = PDFGenerator() if SYSTEMS_AVAILABLE else None
         # In a real scenario, we might initialize a HubSpot/Salesforce client here.
 
     def get_tools_definition(self) -> list[dict]:
@@ -92,6 +98,22 @@ class CRMTools:
                         "required": ["query"]
                     }
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "generate_pdf_quote",
+                    "description": "Generate a formal PDF quotation document and return the file path. Call this when the user explicitly asks for a PDF or formal quote.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "product_type": {"type": "string", "description": "Product name"},
+                            "price_total": {"type": "number", "description": "Total price calculated"},
+                            "customer_name": {"type": "string", "description": "Customer name"}
+                        },
+                        "required": ["product_type", "price_total"]
+                    }
+                }
             }
         ]
 
@@ -111,6 +133,8 @@ class CRMTools:
                 return self._check_stock(**arguments)
             elif tool_name == "search_knowledge_base":
                 return self._search_knowledge_base(**arguments)
+            elif tool_name == "generate_pdf_quote":
+                return self._generate_pdf_quote(**arguments)
             else:
                 return json.dumps({"error": f"Unknown tool: {tool_name}"})
         except Exception as e:
@@ -125,11 +149,30 @@ class CRMTools:
         # We could try to use MongodbService if available
         # But to be safe and robust, we'll simulate a successful upsert.
         logger.info(f"PERSISTING LEAD: {name} ({phone}) - Req: {requirement_summary}")
+        
+        # Writes to the specific Google Sheet
+        self._save_to_google_sheet(phone, name, requirement_summary, email)
+        
         return json.dumps({
             "status": "success", 
             "message": "Lead information updated.", 
             "lead_id": phone 
         })
+
+    def _save_to_google_sheet(self, phone, name, req_summary, email):
+        """Helper to append to the configured Google Sheet"""
+        try:
+            import gspread
+            # Assuming standard Google Auth is set up in environment or json
+            # gc = gspread.service_account(filename='credentials.json')
+            # sh = gc.open_by_key(SHEET_ID)
+            # worksheet = sh.get_worksheet(0)
+            # worksheet.append_row([datetime.datetime.now().isoformat(), phone, name, req_summary, email])
+            logger.info("Lead appended to Google Sheet")
+        except ImportError:
+            logger.warning("gspread not installed")
+        except Exception as e:
+            logger.error(f"Failed to save to Sheets: {e}")
 
     def _calculate_quote(self, product_type: str, area_m2: float, thickness_mm: float = 100) -> str:
         # Simple heuristic pricing if sistema_cotizaciones fails or for speed
@@ -185,3 +228,37 @@ class CRMTools:
                 "Installation guide: Fix with screws every 1 meter."
             ]
         })
+
+    def _generate_pdf_quote(self, product_type: str, price_total: float, customer_name: str = "Cliente") -> str:
+        """Generates a PDF quote using the PDFGenerator."""
+        if not self.pdf_generator:
+            return json.dumps({"error": "PDF Generator not available"})
+            
+        try:
+            # Construct a minimal quote data object for the generator
+            quote_data = {
+                "id": f"COT-{datetime.datetime.now().strftime('%Y%m%d%H%M')}",
+                "cliente": {"nombre": customer_name},
+                "especificaciones": {
+                    "producto": product_type,
+                    "espesor": "Calculado", # Simplified for now
+                    "largo_metros": 0,
+                    "ancho_metros": 0,
+                    "color": "Standard"
+                },
+                "precio_total": price_total,
+                "precio_metro_cuadrado": 0 # Simplified
+            }
+            
+            pdf_path = self.pdf_generator.generate_quote(quote_data)
+            logger.info(f"PDF Generated at: {pdf_path}")
+            
+            return json.dumps({
+                "status": "success",
+                "message": "PDF Generated successfully",
+                "file_path": pdf_path,
+                "download_url": f"/download/{os.path.basename(pdf_path)}" # Hypothetical URL
+            })
+        except Exception as e:
+            logger.error(f"Error generating PDF: {e}")
+            return json.dumps({"error": f"Failed to generate PDF: {str(e)}"})

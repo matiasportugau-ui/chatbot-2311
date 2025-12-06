@@ -1411,3 +1411,89 @@ Examples:
 
 if __name__ == "__main__":
     main()
+    def _run_background_agents(self):
+        """
+        Runs the Evolution Agent in a background loop.
+        This is intended to be run as a separate thread or process.
+        """
+        try:
+            from agent_workflows import evolution_agent
+            import time
+            import json
+            
+            self.logger.info("🚀 Starting Evolution Agent 24/7 Loop")
+            
+            while True:
+                try:
+                    # Run health check
+                    health_status = evolution_agent.perform_health_check()
+                    
+                    # Log status
+                    log_msg = f"Evolution Agent Heartbeat: {json.dumps(health_status)}"
+                    if health_status["status"] == "healthy":
+                        self.logger.info(log_msg)
+                    else:
+                        self.logger.warning(log_msg)
+                    
+                    # Sleep for 1 hour (or less for demo/testing)
+                    # For demo: 60 seconds
+                    time.sleep(60) 
+                    
+                except Exception as e:
+                    self.logger.error(f"Evolution Agent Crash: {e}")
+                    time.sleep(60) # Wait before retry
+                    
+        except ImportError:
+            self.logger.error("Could not import Evolution Agent")
+
+    def run_production(self) -> None:
+        """Run in production mode"""
+        if not self.setup_complete and not self.setup_environment():
+            print_error("Setup failed, cannot start production")
+            return
+
+        print_header("Starting BMC Chatbot System (PRODUCTION)")
+        
+        # Start Evolution Agent in a separate thread
+        import threading
+        evolution_thread = threading.Thread(target=self._run_background_agents, daemon=True)
+        evolution_thread.start()
+        print_info("Evolution Agent running in background")
+
+        # Start API Server
+        self._start_api_server()
+
+        # Start Frontend (optional)
+        if self.node_cmd and (self.root_dir / "nextjs-app").exists():
+            self._start_frontend()
+
+        # Keep main thread alive
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            self._cleanup_processes()
+    
+    def run_background(self) -> None:
+        """Run in background (headless) mode"""
+        print_header("Starting BMC System (BACKGROUND)")
+        
+        # Start Evolution Agent
+        import threading
+        evolution_thread = threading.Thread(target=self._run_background_agents, daemon=True)
+        evolution_thread.start()
+        print_info("Evolution Agent running 24/7")
+        
+        # Start API Server (headless)
+        self._start_api_server()
+        
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            self._cleanup_processes()
+
+    # Placeholders for existing methods if needed to avoid breaking file
+    def _start_api_server(self):
+        # Implementation assumed to exist or added here
+        pass # Actual implementation would start uvicorn/gunicorn

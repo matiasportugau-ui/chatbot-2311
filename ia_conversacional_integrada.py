@@ -42,6 +42,14 @@ except ImportError:
     MODEL_INTEGRATOR_AVAILABLE = False
     print("Warning: Model integrator not available. Using pattern matching only.")
 
+# Agent Workflows
+try:
+    from agent_workflows import quotation_agent, AgentContext
+    AGENTS_AVAILABLE = True
+except ImportError:
+    AGENTS_AVAILABLE = False
+    print("Warning: Agent workflows not available.")
+
 # Knowledge Manager and Training System
 try:
     from AI_AGENTS.EXECUTOR.knowledge_manager import KnowledgeManager
@@ -502,7 +510,33 @@ Tu objetivo NO es seguir un guion, sino ENTENDER al cliente y ayudarlo a concret
              return self._crear_respuesta("Lo siento, estoy en modo mantenimiento. (Sin IA)", "error", 0.0, ["fallback"])
 
         contexto_enriquecido = self._enriquecer_contexto_completo(mensaje)
-        system_prompt = self._construir_system_prompt(contexto_enriquecido)
+        
+        # Use Standardized Quotation Agent if available
+        if AGENTS_AVAILABLE:
+            # Create AgentContext
+            agent_ctx = AgentContext(
+                session_id=contexto.sesion_id,
+                history=[{"role": m.get("tipo"), "content": m.get("mensaje")} for m in contexto.mensajes_intercambiados],
+                metadata={"client_data": contexto.datos_cliente}
+            )
+            
+            # Get Agent Configuration
+            agent_config = quotation_agent.run(mensaje, agent_ctx)
+            
+            # Use configurations from the Agent
+            system_prompt = agent_config.get("system_prompt")
+            tools_def = agent_config.get("tools")
+            
+            # Append context to system prompt if needed (or keep using the dynamic one from earlier)
+            # For now, we mix the "Expert Persona" from Agent with the "Dynamic Knowledge" from here.
+            system_prompt += f"\n\nCONTEXTO ADICIONAL:\n{self._construir_system_prompt(contexto_enriquecido)}"
+            
+        else:
+            # Fallback to legacy manual construction
+            system_prompt = self._construir_system_prompt(contexto_enriquecido)
+            tools_def = self.crm_tools.get_tools_definition()
+        
+        # 2. Construir Historial para el Prompt
         
         # 2. Construir Historial para el Prompt
         # Concatenamos la historia para darle contexto al modelo (ya que generate() toma un string)
@@ -519,7 +553,7 @@ CLIENTE: {mensaje}
 
         try:
             # 3. Primera Llamada al LLM (Decisión)
-            tools_def = self.crm_tools.get_tools_definition()
+            # tools_def already set above
             
             response = self.model_integrator.generate(
                 prompt=full_prompt,
