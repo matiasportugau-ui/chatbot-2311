@@ -58,6 +58,7 @@ def test_quotation_validation():
     print("\n📋 Test 3: Crear cotización válida")
     try:
         sistema = SistemaCotizacionesBMC()
+        sistema.actualizar_precio_producto("isodec", Decimal("150.00"))
         
         cliente = Cliente(
             nombre="Juan",
@@ -126,10 +127,99 @@ def test_quotation_products():
         import traceback
         traceback.print_exc()
 
+def test_complex_calculation():
+    """Prueba cálculos con múltiples factores"""
+    print("\n" + "="*60)
+    print("🧪 PRUEBA: Cálculo Complejo de Cotizaciones")
+    print("="*60 + "\n")
+    
+    sistema = SistemaCotizacionesBMC()
+    # Precio base para Isodec: $100
+    sistema.actualizar_precio_producto("isodec", Decimal("100.00"))
+    
+    try:
+        # Caso 1: Factores que aumentan precio
+        # Espesor 150mm -> factor 1.2
+        # Color Personalizado -> factor 1.15
+        # Terminación Hormigón -> +0.1
+        print("📋 Test 1: Factores de aumento")
+        
+        especificaciones = EspecificacionCotizacion(
+            producto="isodec",
+            espesor="150mm",  # Factor 1.2
+            relleno="EPS",
+            largo_metros=Decimal("10"),
+            ancho_metros=Decimal("1"), # 10 m2
+            color="Personalizado", # Factor 1.15
+            termina_front="Hormigón", # +0.1
+            anclajes="Incluido", # 1.0
+            traslado="Incluido" # 1.0
+        )
+        
+        # Base: 100
+        # Factor espesor: 1.2 -> 120
+        # Factor color: 1.15 -> 120 * 1.15 = 138
+        # Factor terminación: 1.0 + 0.1 = 1.1 -> 138 * 1.1 = 151.8
+        
+        # Cálculo esperado según código:
+        # precio_metro_cuadrado * factor_espesor * factor_color * factor_terminaciones * factor_anclajes * factor_traslado
+        # 100 * 1.2 * 1.15 * 1.1 * 1.0 * 1.0 = 151.8
+        
+        precio_total, precio_m2 = sistema.calcular_precio_cotizacion(especificaciones)
+        
+        expected_m2 = Decimal("100") * Decimal("1.2") * Decimal("1.15") * Decimal("1.1")
+        
+        print(f"   Precio m² calculado: ${precio_m2}")
+        print(f"   Precio m² esperado:  ${expected_m2}")
+        
+        if abs(precio_m2 - expected_m2) < Decimal("0.01"):
+            print("✅ Test 1 PASADO")
+        else:
+            print(f"❌ Test 1 FALLIDO: Diferencia de {abs(precio_m2 - expected_m2)}")
+
+        # Caso 2: Factores de descuento
+        # 50mm -> 0.8
+        # Anclajes no incluido -> 0.95
+        # Traslado no incluido -> 0.9
+        print("\n📋 Test 2: Factores de descuento")
+        
+        especificaciones_desc = EspecificacionCotizacion(
+            producto="isodec",
+            espesor="50mm",  # Factor 0.8
+            relleno="EPS",
+            largo_metros=Decimal("10"),
+            ancho_metros=Decimal("1"),
+            color="Blanco", # 1.0
+            anclajes="No incluido", # 0.95
+            traslado="No incluido" # 0.9
+        )
+        
+        # 100 * 0.8 * 1.0 * 1.0 (term default) * 0.95 * 0.9
+        # 80 * 0.95 = 76
+        # 76 * 0.9 = 68.4
+        
+        precio_total_desc, precio_m2_desc = sistema.calcular_precio_cotizacion(especificaciones_desc)
+        
+        expected_m2_desc = Decimal("100") * Decimal("0.8") * Decimal("0.95") * Decimal("0.9")
+        
+        print(f"   Precio m² calculado: ${precio_m2_desc}")
+        print(f"   Precio m² esperado:  ${expected_m2_desc}")
+        
+        if abs(precio_m2_desc - expected_m2_desc) < Decimal("0.01"):
+            print("✅ Test 2 PASADO")
+        else:
+             print(f"❌ Test 2 FALLIDO: Diferencia de {abs(precio_m2_desc - expected_m2_desc)}")
+             
+    except Exception as e:
+        print(f"❌ Error en las pruebas: {e}")
+        import traceback
+        traceback.print_exc()
+
 if __name__ == "__main__":
     try:
         test_quotation_validation()
         test_quotation_products()
+        test_complex_calculation()
         print("\n✅ Todas las pruebas completadas exitosamente!\n")
         sys.exit(0)
     except Exception as e:

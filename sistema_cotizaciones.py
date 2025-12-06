@@ -132,6 +132,10 @@ class SistemaCotizacionesBMC:
         # Asignaciones del sistema
         self.asignaciones = ["MA", "MO", "RA", "SPRT", "Ref."]
 
+    def obtener_productos_disponibles(self) -> list[Producto]:
+        """Retorna la lista de productos disponibles"""
+        return list(self.productos.values())
+
     def agregar_producto(self, producto: Producto):
         """Agrega un nuevo producto al sistema"""
         self.productos[producto.codigo] = producto

@@ -127,7 +127,7 @@ sistema_cotizaciones = SistemaCotizacionesBMC()
 
 # Periodic cleanup task to prevent memory leaks
 import asyncio
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 async def periodic_cleanup():
     """Periodically cleanup old conversations to prevent memory growth"""
@@ -318,7 +318,8 @@ async def log_requests(
 
     # Record metrics
     # Request counter is incremented at the end of the request
-    pass
+    method = request.method
+    endpoint = request.url.path
 
     # Log structured request
     if UTILS_AVAILABLE:
@@ -388,10 +389,10 @@ async def log_requests(
             error_data = {
                 "request_id": request_id,
                 "error": str(e),
-            "timestamp": datetime.now().isoformat(),
-            "type": "error",
-        }
-        logger.error(f"Error: {json.dumps(error_data)}")
+                "timestamp": datetime.now().isoformat(),
+                "type": "error",
+            }
+            logger.error(f"Error: {json.dumps(error_data)}")
 
         # Record error metric
         if PROMETHEUS_AVAILABLE:
@@ -829,10 +830,7 @@ async def get_conversations(request: Request, limit: int = 50) -> dict[str, Any]
             db = client.get_database()
             conversations_col = db.conversations
 
-        client = MongoClient(mongodb_uri)
-        db = client.get_database()
-        conversations_col = db.conversations
-
+        
         # Get recent conversations
         conversations: list[dict[str, Any]] = list(
             conversations_col.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
