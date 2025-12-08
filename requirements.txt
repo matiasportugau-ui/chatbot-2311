@@ -61,8 +61,7 @@ google-auth-httplib2>=0.1.0
 # Para rate limiting
 slowapi>=0.1.9
 
-# Para Vector Database (Qdrant)
-qdrant-client>=1.7.0
+
 
 # Para caching y sesiones (Redis)
 redis>=5.0.0

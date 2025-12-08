@@ -110,6 +110,10 @@ class MongoDBService:
         """
         return self.db[collection_name]
 
+    def get_database(self) -> Database:
+        """Get the database object"""
+        return self.db
+
 
 def get_mongodb_service() -> MongoDBService | None:
     """

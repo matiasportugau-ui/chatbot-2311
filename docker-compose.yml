@@ -1,92 +1,22 @@
+version: '3.8'
+
 services:
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: bmc-n8n
-    restart: unless-stopped
-    ports:
-      - '5678:5678'
-    environment:
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}
-      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
-      - N8N_HOST=localhost
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - WEBHOOK_URL=http://localhost:5678/
-      - GENERIC_TIMEZONE=America/Montevideo
-      - PY_CHAT_SERVICE_URL=http://chat-api:8000
+  agent-core:
+    build: .
+    container_name: bmc_agent_autopilot
+    restart: always  # Critical for 24/7 Autopilot
+    env_file:
+      - .env
     volumes:
-      - n8n_data:/home/node/.n8n
-    networks:
-      - bmc-network
-    depends_on:
-      - chat-api
-      - mongodb
-      - qdrant
-
-  chat-api:
-    build:
-      context: .
-      dockerfile: Dockerfile.python
-    container_name: bmc-chat-api
-    restart: unless-stopped
-    ports:
-      - '8000:8000'
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
-      - MONGODB_URI=mongodb://mongodb:27017/bmc_chat
-      - QDRANT_URL=http://qdrant:6333
-      - QDRANT_API_KEY=${QDRANT_API_KEY:-}
-      - PORT=8000
-      - HOST=0.0.0.0
-    volumes:
-      - ./:/app
-      - chat_data:/app/data
-    networks:
-      - bmc-network
-    depends_on:
-      - mongodb
-      - qdrant
-
-  mongodb:
-    image: mongo:7.0
-    container_name: bmc-mongodb
-    restart: unless-stopped
-    ports:
-      - '27017:27017'
-    environment:
-      - MONGO_INITDB_DATABASE=bmc_chat
-    volumes:
-      - mongodb_data:/data/db
-      - ./mongodb-init.js:/docker-entrypoint-initdb.d/mongodb-init.js:ro
-    networks:
-      - bmc-network
-
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: bmc-qdrant
-    restart: unless-stopped
-    ports:
-      - "6333:6333"  # REST API
-      - "6334:6334"  # gRPC
-    volumes:
-      - qdrant_data:/qdrant/storage
-    networks:
-      - bmc-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-volumes:
-  n8n_data:
-  chat_data:
-  mongodb_data:
-  qdrant_data:
-
-networks:
-  bmc-network:
-    driver: bridge
+      - ./data:/app/data  # Persist Knowledge Base and Learned Patterns
+      - ./logs:/app/logs  # Persist Logs
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

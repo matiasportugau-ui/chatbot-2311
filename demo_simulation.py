@@ -1,119 +1,99 @@
 #!/usr/bin/env python3
 """
-Simulación de Chatbot de Cotizaciones (Modo Demo)
-Este script simula una conversación completa entre un usuario y el agente
-utilizando la lógica interna del sistema, sin depender de APIs externas.
+Simulación de Chatbot con IA Real (Modo Demo)
+Este script simula una conversación donde el USUARIO está guionado
+pero el AGENTE es la IA real del sistema (IAConversacionalIntegrada).
 """
 import sys
 import time
-from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
-from utils_cotizaciones import obtener_datos_faltantes, formatear_mensaje_faltantes
+import os
 
-class DemoChatbot:
+# Ensure we can import from the current directory
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+try:
+    from ia_conversacional_integrada import IAConversacionalIntegrada
+except ImportError as e:
+    print(f"Error: No se pudo importar IAConversacionalIntegrada: {e}")
+    sys.exit(1)
+
+class DemoSimulationAI:
     def __init__(self):
-        self.sistema = SistemaCotizacionesBMC()
-        # Configurar precios
-        self.sistema.actualizar_precio_producto("isodec", 150)
-        self.sistema.actualizar_precio_producto("poliestireno", 120)
-        self.sistema.actualizar_precio_producto("lana_roca", 140)
-        
-        self.datos_cliente = {}
-        self.datos_producto = {}
-        
+        print("⏳ Inicializando IA Conversacional...")
+        try:
+            self.ia = IAConversacionalIntegrada()
+            self.session_id = f"demo_sim_{int(time.time())}"
+            self.client_id = "simulated_user_01"
+            print("✅ IA Inicializada correctamente")
+        except Exception as e:
+            print(f"❌ Error inicializando IA: {e}")
+            sys.exit(1)
+
     def print_agent(self, msg):
-        print(f"\n🤖 AGENTE: {msg}")
-        time.sleep(1)
+        print(f"\n🤖 AGENTE (IA): {msg}")
+        # Small delay to simulate reading/thinking time
+        time.sleep(1.5)
 
     def print_user(self, msg):
-        print(f"\n👤 USUARIO: {msg}")
+        print(f"\n👤 USUARIO (Simulado): {msg}")
         time.sleep(1)
 
     def run_simulation(self):
         print("="*60)
-        print(" INICIANDO SIMULACIÓN DE CHAT DE COTIZACIONES")
+        print(" INICIANDO SIMULACIÓN CON IA REAL")
+        print("="*60)
+        print(f"Sesión ID: {self.session_id}")
+        
+        # Guion del usuario (User Script)
+        # Diseñado para fluir naturalmente con la IA
+        conversation_flow = [
+            "Hola buenas",
+            "Quisiera cotizar Isodec",
+            "Necesito cubrir 50 metros cuadrados. Son 10 metros de largo por 5 de ancho.",
+            "En 100mm de espesor",
+            "Color Blanco",
+            "Terminación con Gotero",
+            "Me llamo Juan Pérez",
+            "Mi celular es 099123456",
+            "Sí, confirmar cotización"
+        ]
+
+        # Mensaje inicial del sistema (si lo hubiera) o iniciamos con el usuario
+        
+        for user_msg in conversation_flow:
+            self.print_user(user_msg)
+            
+            try:
+                # Get real response from AI
+                # procesar_mensaje returns a RespuestaIA object
+                start_time = time.time()
+                response_obj = self.ia.procesar_mensaje(
+                    mensaje=user_msg,
+                    cliente_id=self.client_id,
+                    sesion_id=self.session_id
+                )
+                duration = time.time() - start_time
+                
+                # The response object has .mensaje attribute
+                if hasattr(response_obj, 'mensaje'):
+                    ai_msg = response_obj.mensaje
+                    
+                    # Optional: Print metadata if useful for debugging/demo
+                    # print(f"[DEBUG] Intención: {getattr(response_obj, 'tipo_respuesta', 'unknown')} | Confianza: {getattr(response_obj, 'confianza', 0.0):.2f} | Tiempo: {duration:.2f}s")
+                    
+                    self.print_agent(ai_msg)
+                else:
+                    print(f"\n⚠️ Error: Respuesta de IA sin mensaje: {response_obj}")
+            
+            except Exception as e:
+                print(f"\n❌ Error procesando mensaje '{user_msg}': {e}")
+                import traceback
+                traceback.print_exc()
+
+        print("\n" + "="*60)
+        print(" FIN DE LA SIMULACIÓN")
         print("="*60)
 
-        # 1. Saludo
-        self.print_user("Hola, quisiera cotizar")
-        self.print_agent("¡Hola! 👋 Soy tu asistente de BMC Uruguay. Para cotizar, necesito algunos datos. Primero, ¿cuál es tu nombre y apellido?")
-        
-        # 2. Nombre
-        self.print_user("Juan Pérez")
-        self.datos_cliente['nombre'] = "Juan"
-        self.datos_cliente['apellido'] = "Pérez"
-        self.print_agent(f"Gracias Juan. ¿Me podrías dar un número de teléfono para contactarte?")
-
-        # 3. Telefono
-        self.print_user("099123456")
-        self.datos_cliente['telefono'] = "099123456"
-        self.print_agent("¡Perfecto! ¿Qué producto te interesa? Trabajamos con Isodec, Poliestireno y Lana de Roca.")
-
-        # 4. Producto
-        self.print_user("Me interesa el Isodec")
-        self.datos_producto['producto'] = 'isodec'
-        self.print_agent("Excelente elección. El Isodec es un panel aislante con núcleo EPS. ¿Qué espesor necesitas? (50mm, 75mm, 100mm, 125mm, 150mm)")
-
-        # 5. Espesor
-        self.print_user("100mm")
-        self.datos_producto['espesor'] = '100mm'
-        self.print_agent("Bien, 100mm. Ahora necesito las dimensiones. ¿Cuál es el largo y ancho en metros?")
-
-        # 6. Dimensiones
-        self.print_user("Serían 10 metros de largo y 5 de ancho")
-        self.datos_producto['largo'] = 10
-        self.datos_producto['ancho'] = 5
-        self.print_agent("Entendido, 50 m². ¿Qué color prefieres? (Blanco, Gris, Personalizado)")
-
-        # 7. Color
-        self.print_user("Blanco")
-        self.datos_producto['color'] = 'Blanco'
-        self.print_agent("¿Qué terminación necesitas? (Gotero, Hormigón, Aluminio)")
-        
-        # 8. Terminaciones
-        self.print_user("Gotero")
-        self.datos_producto['terminacion'] = 'Gotero'
-        
-        # Generar cotización
-        self.print_agent("¡Perfecto! Generando tu cotización...")
-        time.sleep(1)
-        
-        # Lógica real
-        try:
-            cliente = Cliente(
-                nombre=f"{self.datos_cliente['nombre']} {self.datos_cliente['apellido']}",
-                telefono=self.datos_cliente['telefono'],
-                direccion="Montevideo (Simulado)"
-            )
-            
-            specs = EspecificacionCotizacion(
-                producto=self.datos_producto['producto'],
-                espesor=self.datos_producto['espesor'],
-                relleno="EPS",
-                largo_metros=self.datos_producto['largo'],
-                ancho_metros=self.datos_producto['ancho'],
-                color=self.datos_producto['color'],
-                termina_front=self.datos_producto['terminacion'],
-                termina_sup="Gotero",
-                termina_lat_1="Gotero",
-                termina_lat_2="Gotero",
-                anclajes="Incluido",
-                traslado="Incluido"
-            )
-            
-            cotizacion = self.sistema.crear_cotizacion(cliente, specs, "Simulación")
-            
-            reporte = self.sistema.generar_reporte_cotizacion(cotizacion)
-            print("\n" + "-"*40)
-            print(reporte)
-            print("-" * 40)
-            
-            self.print_agent("¿Te sirve esta cotización?")
-            self.print_user("Sí, está perfecta. Gracias.")
-            self.print_agent("¡Excelente! Un asesor se pondrá en contacto contigo pronto. ¡Hasta luego!")
-
-        except Exception as e:
-            print(f"Error en simulación: {e}")
-
 if __name__ == "__main__":
-    sim = DemoChatbot()
+    sim = DemoSimulationAI()
     sim.run_simulation()

@@ -5,6 +5,7 @@ Sistema de cotizaciones con integración WhatsApp Business API
 """
 
 import datetime
+import os
 
 import json
 
@@ -49,9 +50,9 @@ class IntegracionWhatsApp:
 
 
         # Configuración WhatsApp
-        self.whatsapp_token = "TU_WHATSAPP_TOKEN"  # Reemplazar con token real
-        self.whatsapp_phone_id = "TU_PHONE_ID"  # Reemplazar con phone ID real
-        self.webhook_verify_token = "TU_VERIFY_TOKEN"  # Reemplazar con token de verificación
+        self.whatsapp_token = os.getenv("WHATSAPP_ACCESS_TOKEN")
+        self.whatsapp_phone_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
+        self.webhook_verify_token = os.getenv("WHATSAPP_VERIFY_TOKEN")
 
         # URL base de WhatsApp API
         self.whatsapp_api_url = (
@@ -174,8 +175,12 @@ class IntegracionWhatsApp:
             # Procesar con IA
             respuesta = self.ia.procesar_mensaje(text, from_number)
 
-            # Enviar respuesta
-            self.enviar_respuesta_whatsapp(from_number, respuesta.mensaje)
+            # Enviar respuesta solo si NO estamos en modo solo escucha
+            listen_only = os.getenv("LISTEN_ONLY_MODE", "false").lower() == "true"
+            if not listen_only:
+                self.enviar_respuesta_whatsapp(from_number, respuesta.mensaje)
+            else:
+                print(f"🔇 MODO ESCUCHA: Respuesta generada pero no enviada a {from_number}")
 
             # Registrar interacción
             self.registrar_interaccion_whatsapp(
@@ -282,7 +287,7 @@ class IntegracionWhatsApp:
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    def iniciar_servidor(self, host="0.0.0.0", port=5000, debug=False):
+    def iniciar_servidor(self, host="0.0.0.0", port=5001, debug=False):
 
         """Inicia el servidor Flask"""
         print(f"🚀 Iniciando servidor WhatsApp en {host}:{port}")

@@ -80,6 +80,19 @@ class BaseConocimientoDinamica:
         self.config_conocimiento = self._cargar_configuracion_conocimiento()
         self.archivo_conocimiento_cargado = None
         self.cargar_conocimiento_inicial()
+        
+        # Initialize OpenAI for Embeddings (Real-time Learning)
+        self.openai_client = None
+        try:
+            # Check env var directly to avoid waiting for load_dotenv if not called
+            if os.getenv("OPENAI_API_KEY"):
+                from openai import OpenAI
+                self.openai_client = OpenAI()
+        except ImportError:
+            print("⚠️ OpenAI not installed, vector embeddings disabled.")
+        except Exception as e:
+            print(f"⚠️ OpenAI init failed: {e}")
+
         self.cargar_conocimiento_entrenado()
 
     def cargar_conocimiento_inicial(self):
@@ -194,6 +207,11 @@ class BaseConocimientoDinamica:
         """Carga conocimiento entrenado desde archivos o MongoDB"""
         config_carga = self.config_conocimiento.get("carga_conocimiento", {})
         config_logging = self.config_conocimiento.get("logging", {})
+        # PRIORIDAD: Intentar MongoDB primero (Estrategia unificada)
+        if config_carga.get("intentar_mongodb", True):
+            if self._cargar_desde_mongodb(config_carga.get("mongodb_uri")):
+                return True
+
         if not config_carga.get("habilitada", True):
             return False
 
@@ -214,9 +232,6 @@ class BaseConocimientoDinamica:
                         return True
                 except Exception as e:
                     print(f"⚠️  Error cargando {ruta.name}: {e}")
-
-        if not conocimiento_cargado and config_carga.get("intentar_mongodb", False):
-            return self._cargar_desde_mongodb(config_carga.get("mongodb_uri"))
 
         return conocimiento_cargado
 
@@ -280,6 +295,10 @@ class BaseConocimientoDinamica:
     def registrar_interaccion(self, interaccion: InteraccionCliente):
         """Registra una nueva interacción"""
         self.interacciones.append(interaccion)
+        
+        # Persist to MongoDB with Vector Embedding (Real-time RAG)
+        self._persistir_interaccion_mongo(interaccion)
+        
         self.analizar_interaccion(interaccion)
         self.actualizar_conocimiento()
 
@@ -518,6 +537,43 @@ class BaseConocimientoDinamica:
         }
 
         self.insights_automaticos.append(insight)
+
+    def _persistir_interaccion_mongo(self, interaccion: InteraccionCliente):
+        """Guarda la interacción en MongoDB con embedding vectorial"""
+        try:
+            config_carga = self.config_conocimiento.get("carga_conocimiento", {})
+            uri = config_carga.get("mongodb_uri")
+            if not uri:
+                return
+
+            from pymongo import MongoClient
+            client = MongoClient(uri, serverSelectionTimeoutMS=2000)
+            db_name = uri.rsplit("/", 1)[-1] if "/" in uri else "bmc_chat"
+            db_name = db_name.split("?")[0]
+            db = client.get_database(db_name)
+            col = db["kb_interactions"]
+
+            # Generate Embedding
+            embedding = []
+            if self.openai_client and interaccion.mensaje_cliente:
+                try:
+                    text = interaccion.mensaje_cliente.replace("\n", " ")
+                    embedding = self.openai_client.embeddings.create(
+                        input=[text], 
+                        model="text-embedding-3-small"
+                    ).data[0].embedding
+                except Exception as e:
+                    print(f"⚠️ Embedding generation failed: {e}")
+
+            doc = asdict(interaccion)
+            doc["embedding"] = embedding
+            
+            # Upsert
+            col.replace_one({"id": interaccion.id}, doc, upsert=True)
+            client.close()
+        except Exception as e:
+             # Fail silently to not impact main flow
+            print(f"⚠️ Failed to persist interaction to Mongo: {e}")
 
     def actualizar_conocimiento(self):
         """Actualiza el conocimiento general del sistema"""

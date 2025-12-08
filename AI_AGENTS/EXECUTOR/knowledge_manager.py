@@ -17,6 +17,13 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import re
+import os
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    print("Warning: openai not installed.")
 
 # Add project root to path
 _current_dir = Path(__file__).parent
@@ -40,13 +47,125 @@ class KnowledgeManager:
         self.documentation_cache = {}
         self.conversations_cache = []
         
-        # Inicializar MongoDB si está disponible
-        self.mongodb_service = None
         if MONGODB_AVAILABLE:
             try:
-                self.mongodb_service = MongoDBService()
+                # Use factory function to ensure connection
+                import mongodb_service
+                self.mongodb_service = mongodb_service.get_mongodb_service()
             except Exception as e:
                 print(f"[WARNING] MongoDB no disponible: {e}")
+        
+        # Initialize OpenAI for Embeddings
+        self.openai_client = None
+        if OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY"):
+            try:
+                self.openai_client = OpenAI()
+            except Exception as e:
+                 print(f"[WARNING] OpenAI client init failed: {e}")
+
+    def generate_embedding(self, text: str) -> List[float]:
+        """Generates embedding for given text using OpenAI"""
+        if not self.openai_client:
+            return []
+        try:
+            text = text.replace("\n", " ")
+            return self.openai_client.embeddings.create(input=[text], model="text-embedding-3-small").data[0].embedding
+        except Exception as e:
+            print(f"[ERROR] Embedding generation failed: {e}")
+            return []
+
+    def buscar_informacion_relevante(self, query: str, max_results: int = 5) -> Dict:
+        """Busca información relevante usando Vector Search (si disponible) o Fallback"""
+        resultados = {
+            'productos': [],
+            'documentacion': [],
+            'conversaciones': []
+        }
+        
+        # 1. Try Vector Search first
+        if self.mongodb_service and self.openai_client:
+            try:
+                vector = self.generate_embedding(query)
+                if vector:
+                    db = self.mongodb_service.get_database()
+                    col = db["kb_interactions"] 
+                    
+                    # Atlas Vector Search Pipeline
+                    pipeline = [
+                        {
+                            "$vectorSearch": {
+                                "index": "vector_index",
+                                "path": "embedding",
+                                "queryVector": vector,
+                                "numCandidates": max_results * 10,
+                                "limit": max_results
+                            }
+                        },
+                        {
+                            "$project": {
+                                "_id": 1,
+                                "mensaje_cliente": 1,
+                                "respuesta_agente": 1, # Normalizado name
+                                "respuesta_bot": 1, # Legacy name
+                                "intencion": 1,
+                                "score": { "$meta": "vectorSearchScore" }
+                            }
+                        }
+                    ]
+                    
+                    cursor = col.aggregate(pipeline)
+                    semantic_results = list(cursor)
+                    
+                    if semantic_results:
+                        # Normalize results
+                        for res in semantic_results:
+                            resultados['conversaciones'].append({
+                                'mensaje_cliente': res.get('mensaje_cliente'),
+                                'respuesta_bot': res.get('respuesta_agente') or res.get('respuesta_bot'),
+                                'score': res.get('score')
+                            })
+                        # If we found good semantic matches, we might return early or mix with keyword search
+                        # For now, let's keep keyword search as fallback/augmentation for products
+            except Exception as e:
+                print(f"[WARNING] Vector Search failed: {e}")
+
+        # 2. Legacy Keyword Search (Fallback & Augmentation)
+        query_lower = query.lower()
+        
+        # Buscar en productos
+        productos = self.cargar_base_conocimiento_productos()
+        for nombre, info in productos.items():
+            if nombre.startswith('_'):
+                continue
+            contenido = json.dumps(info, default=str).lower()
+            if any(palabra in contenido for palabra in query_lower.split()):
+                # Avoid duplicates if found by vector search (though vector search populates 'conversaciones', not 'productos')
+                resultados['productos'].append(info)
+                if len(resultados['productos']) >= max_results:
+                    break
+        
+        # Buscar en documentación
+        doc = self.cargar_documentacion_proyecto()
+        for doc_item in doc:
+            contenido_lower = doc_item['contenido'].lower()
+            if any(palabra in contenido_lower for palabra in query_lower.split()):
+                resultados['documentacion'].append(doc_item)
+                if len(resultados['documentacion']) >= max_results:
+                    break
+        
+        # Buscar en conversaciones (si no hay resultados semánticos)
+        # Note: Vector search adds to 'conversaciones'. If we strictly want fallback, we check if empty.
+        # But for now, let's mix or ensure we have something.
+        if not resultados['conversaciones']:
+            conversaciones = self.cargar_conversaciones_historicas(limit=50)
+            for conv in conversaciones:
+                mensaje_lower = conv.get('mensaje_cliente', '').lower()
+                if any(palabra in mensaje_lower for palabra in query_lower.split()):
+                    resultados['conversaciones'].append(conv)
+                    if len(resultados['conversaciones']) >= max_results:
+                        break
+                        
+        return resultados
     
     def cargar_base_conocimiento_productos(self) -> Dict:
         """Carga la base de conocimiento de productos desde conocimiento_consolidado.json"""
@@ -172,15 +291,8 @@ class KnowledgeManager:
             print(f"[WARNING] Error cargando conversaciones históricas: {e}")
             return []
     
-    def buscar_informacion_relevante(self, query: str, max_results: int = 5) -> Dict:
-        """Busca información relevante basada en una consulta"""
-        resultados = {
-            'productos': [],
-            'documentacion': [],
-            'conversaciones': []
-        }
-        
-        query_lower = query.lower()
+        # Continue with Product Search (Keyword based for now until products are also embedded)
+        # Buscar en productos
         
         # Buscar en productos
         productos = self.cargar_base_conocimiento_productos()

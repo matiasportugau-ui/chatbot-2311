@@ -102,4 +102,7 @@ secrets.json
 .env.unified
 secrets_dump.json
 .envvars.sh
-.env.template
+# .env.template
+Chatbot 812
+*.pem
+.cursor/plans/.env

@@ -428,19 +428,7 @@ async def health_check(request: Request):
         health_data["dependencies"]["mongodb"] = {"status": "unhealthy", "connected": False, "error": str(e)}
         health_data["status"] = "degraded"
 
-    # Check Qdrant connectivity
-    try:
-        qdrant_url = os.getenv("QDRANT_URL", "http://qdrant:6333")
-        import requests
-        response = requests.get(f"{qdrant_url}/", timeout=2)
-        if response.status_code == 200:
-            health_data["dependencies"]["qdrant"] = {"status": "healthy", "connected": True}
-        else:
-            health_data["dependencies"]["qdrant"] = {"status": "unhealthy", "connected": False, "error": f"HTTP {response.status_code}"}
-            health_data["status"] = "degraded"
-    except Exception as e:
-        health_data["dependencies"]["qdrant"] = {"status": "unhealthy", "connected": False, "error": str(e)}
-        health_data["status"] = "degraded"
+
 
     # Check OpenAI API (basic check - just verify key is set)
     openai_key = os.getenv("OPENAI_API_KEY")
