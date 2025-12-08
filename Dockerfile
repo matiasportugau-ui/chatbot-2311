@@ -28,4 +28,4 @@ RUN useradd -m appuser && chown -R appuser /app
 USER appuser
 
 # Run cloud_runner.py when the container launches
-CMD ["python", "unified_launcher.py"]
+CMD ["python", "api_server.py"]
