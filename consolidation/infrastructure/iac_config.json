@@ -1,0 +1,8 @@
+{
+  "phase": 10,
+  "timestamp": "2025-12-03T20:54:35.746965",
+  "iac_tool": "terraform",
+  "config_files": [],
+  "resources_defined": [],
+  "status": "pending"
+}

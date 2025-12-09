@@ -1,0 +1,317 @@
+[
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024041943",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:43.911934",
+    "question": "Hola, necesito información sobre Isodec para mi casa",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024041945",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:45.548316",
+    "question": "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024041946",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:46.574467",
+    "question": "Perfecto, me parece bien el precio. ¿Incluye instalación?",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024041947",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:47.582581",
+    "question": "Excelente, procedo con la compra",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "demo_1",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:48.589232",
+    "question": "El precio de Isodec es muy caro",
+    "answer": "Entiendo tu preocupación. Te explico el valor a largo plazo...",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "demo_2",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:48.590193",
+    "question": "Necesito información técnica sobre Isodec",
+    "answer": "Isodec es un panel aislante con núcleo EPS...",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "demo_3",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:19:48.590531",
+    "question": "¿Cuánto tiempo tarda la instalación?",
+    "answer": "La instalación tarda entre 1-2 días dependiendo del tamaño...",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024035137",
+    "product_id": "",
+    "timestamp": "2025-10-24 03:51:37.944602",
+    "question": "Hola, necesito información sobre Isodec para mi casa",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024035138",
+    "product_id": "",
+    "timestamp": "2025-10-24 03:51:38.947367",
+    "question": "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024035139",
+    "product_id": "",
+    "timestamp": "2025-10-24 03:51:39.952631",
+    "question": "Perfecto, me parece bien el precio. ¿Incluye instalación?",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024035140",
+    "product_id": "",
+    "timestamp": "2025-10-24 03:51:40.957797",
+    "question": "Excelente, procedo con la compra",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024042753",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:53.888763",
+    "question": "Hola, necesito información sobre Isodec para mi casa",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024042754",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:54.898374",
+    "question": "El precio me parece caro, ¿hay descuentos?",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "ia_20251024042755",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:55.904166",
+    "question": "Lana de roca 100mm / galpón 9m x 7m x 5m / instalación completa",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta_ia"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "wa_sim_20251024042755",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:55.903096",
+    "question": "¿Cuál es el precio de poliestireno 75mm?",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "whatsapp"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "sheets_RA001",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:55.903644",
+    "question": "Isodec 100mm / 8 p de 10 m / paneles blancos / completo + flete",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "cotizacion_sheets"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "sheets_MO002",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:55.903978",
+    "question": "Poliestireno 75mm / techo de 50 m2 / gris / sin flete",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "cotizacion_sheets"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "sheets_TNT003",
+    "product_id": "",
+    "timestamp": "2025-10-24 04:27:55.904448",
+    "question": "Lana de roca 100mm / galpón 9m x 7m x 5m / instalación completa",
+    "answer": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+    "status": "exitoso",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "cotizacion_sheets"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "meli_1",
+    "product_id": "ITEM123",
+    "timestamp": "2024-11-01T10:00:00",
+    "question": "¿Tienen stock?",
+    "answer": "Sí, disponible",
+    "status": "respondido",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "meli_2",
+    "product_id": "ITEM456",
+    "timestamp": "2024-11-02T09:30:00",
+    "question": "Precio del de 8cm?",
+    "answer": "",
+    "status": "pendiente",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": "consulta"
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "consolidated_-1039978267495809613",
+    "product_id": "",
+    "timestamp": "2025-12-06T06:36:41.534532",
+    "question": "",
+    "answer": "",
+    "status": "",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "data/raw_sample/conocimiento_consolidado.json",
+      "tipo_interaccion": ""
+    }
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "task_id": "T0.1",
+  "agent_type": "RepositoryAgent",
+  "agent_name": "RepositoryAgent",
+  "task_config": {
+    "type": "analyze_repositories",
+    "repositories": [
+      "bmc-cotizacion-inteligente",
+      "chatbot-2311",
+      "ChatBOT",
+      "background-agents",
+      "Dashboard-bmc"
+    ]
+  },
+  "created_at": "2025-12-02T17:19:32.742831",
+  "status": "pending"
+}

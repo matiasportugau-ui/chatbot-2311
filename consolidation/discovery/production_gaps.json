@@ -1,0 +1,11 @@
+{
+  "critical_blockers": [
+    "WhatsApp credentials needed",
+    "Qdrant not configured"
+  ],
+  "improvements": [
+    "Security hardening",
+    "Monitoring setup"
+  ],
+  "priority": "P0"
+}

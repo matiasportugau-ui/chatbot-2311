@@ -1,0 +1,12 @@
+import os
+from openai import OpenAI
+
+try:
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": "Hello"}]
+    )
+    print("OpenAI Success:", response.choices[0].message.content)
+except Exception as e:
+    print("OpenAI Error:", e)

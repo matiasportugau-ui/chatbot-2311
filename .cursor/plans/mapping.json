@@ -1,0 +1,16 @@
+{
+  "NEXT_PUBLIC_API_URL": {"source":"env"},
+  "NEXT_PUBLIC_WS_URL": {"source":"env"},
+  "PY_CHAT_SERVICE_URL": {"source":"env"},
+  "NEXTAUTH_URL": {"source":"env"},
+  "NEXTAUTH_SECRET": {"source":"json","file":"secrets.json","key":"NEXTAUTH_SECRET"},
+  "DATABASE_URL": {"source":"env"},
+  "MONGODB_URI": {"source":"env"},
+  "WHATSAPP_VERIFY_TOKEN": {"source":"json","file":"secrets.json","key":"WHATSAPP_VERIFY_TOKEN"},
+  "WHATSAPP_ACCESS_TOKEN": {"source":"json","file":"secrets.json","key":"WHATSAPP_ACCESS_TOKEN"},
+  "OPENAI_API_KEY": {"source":"env"},
+  "XAI_API_KEY": {"source":"env"},
+  "GOOGLE_SHEETS_API_KEY": {"source":"json","file":"secrets.json","key":"GOOGLE_SHEETS_API_KEY"},
+  "SENTRY_DSN": {"source":"json","file":"secrets.json","key":"SENTRY_DSN"},
+  "N8N_API_KEY": {"source":"json","file":"secrets.json","key":"N8N_API_KEY"}
+}

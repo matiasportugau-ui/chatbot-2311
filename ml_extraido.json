@@ -1,0 +1,48 @@
+[
+  {
+    "source": "mercado_libre",
+    "question_id": "meli_1",
+    "product_id": "ITEM123",
+    "buyer_id": "mercadolibre_cliente",
+    "timestamp": "2024-11-01T10:00:00",
+    "question": "¿Tienen stock?",
+    "answer": "Sí, disponible",
+    "status": "respondido",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "conocimiento_mercadolibre.json",
+      "tipo_interaccion": "consulta",
+      "contexto": {
+        "canal": "mercadolibre",
+        "item_id": "ITEM123",
+        "estado_pregunta": "ANSWERED",
+        "estado_respuesta": "UNANSWERED",
+        "seller_id": ""
+      }
+    }
+  },
+  {
+    "source": "mercado_libre",
+    "question_id": "meli_2",
+    "product_id": "ITEM456",
+    "buyer_id": "mercadolibre_cliente",
+    "timestamp": "2024-11-02T09:30:00",
+    "question": "Precio del de 8cm?",
+    "answer": "",
+    "status": "pendiente",
+    "product_title": "",
+    "metadata": {
+      "source": "file",
+      "file": "conocimiento_mercadolibre.json",
+      "tipo_interaccion": "consulta",
+      "contexto": {
+        "canal": "mercadolibre",
+        "item_id": "ITEM456",
+        "estado_pregunta": "UNANSWERED",
+        "estado_respuesta": "UNANSWERED",
+        "seller_id": ""
+      }
+    }
+  }
+]

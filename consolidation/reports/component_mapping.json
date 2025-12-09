@@ -1,0 +1,482 @@
+{
+  "core_services": [
+    {
+      "name": "api_server.py",
+      "path": "api_server.py",
+      "category": "API",
+      "type": "FastAPI Server",
+      "imports": [
+        "os",
+        "json",
+        "logging",
+        "uuid",
+        "datetime",
+        "typing",
+        "decimal",
+        "fastapi",
+        "fastapi.middleware.cors",
+        "fastapi.responses",
+        "pydantic",
+        "uvicorn",
+        "ia_conversacional_integrada",
+        "sistema_cotizaciones",
+        "utils.request_tracking",
+        "utils.structured_logger",
+        "utils.rate_limit_monitor",
+        "sys",
+        "pathlib",
+        "shared_context_service",
+        "pymongo",
+        "pymongo"
+      ],
+      "dependencies": [
+        "os",
+        "json",
+        "logging",
+        "uuid",
+        "datetime",
+        "typing",
+        "decimal",
+        "fastapi",
+        "fastapi.middleware.cors",
+        "fastapi.responses",
+        "pydantic",
+        "uvicorn",
+        "ia_conversacional_integrada",
+        "sistema_cotizaciones",
+        "utils.request_tracking",
+        "utils.structured_logger",
+        "utils.rate_limit_monitor",
+        "sys",
+        "pathlib",
+        "shared_context_service",
+        "pymongo",
+        "pymongo"
+      ]
+    },
+    {
+      "name": "ia_conversacional_integrada.py",
+      "path": "ia_conversacional_integrada.py",
+      "category": "AI",
+      "type": "Conversational AI",
+      "imports": [
+        "json",
+        "datetime",
+        "re",
+        "os",
+        "typing",
+        "dataclasses",
+        "decimal",
+        "random",
+        "base_conocimiento_dinamica",
+        "motor_analisis_conversiones",
+        "sistema_cotizaciones",
+        "utils_cotizaciones",
+        "model_integrator",
+        "openai",
+        "sys",
+        "pathlib",
+        "shared_context_service"
+      ],
+      "dependencies": [
+        "json",
+        "datetime",
+        "re",
+        "os",
+        "typing",
+        "dataclasses",
+        "decimal",
+        "random",
+        "base_conocimiento_dinamica",
+        "motor_analisis_conversiones",
+        "sistema_cotizaciones",
+        "utils_cotizaciones",
+        "model_integrator",
+        "openai",
+        "sys",
+        "pathlib",
+        "shared_context_service"
+      ]
+    },
+    {
+      "name": "sistema_cotizaciones.py",
+      "path": "sistema_cotizaciones.py",
+      "category": "Business Logic",
+      "type": "Quotation Engine",
+      "imports": [
+        "json",
+        "datetime",
+        "typing",
+        "dataclasses",
+        "decimal"
+      ],
+      "dependencies": [
+        "json",
+        "datetime",
+        "typing",
+        "dataclasses",
+        "decimal"
+      ]
+    },
+    {
+      "name": "base_conocimiento_dinamica.py",
+      "path": "base_conocimiento_dinamica.py",
+      "category": "Knowledge Base",
+      "type": "Dynamic KB",
+      "imports": [
+        "json",
+        "datetime",
+        "hashlib",
+        "typing",
+        "dataclasses",
+        "decimal",
+        "statistics",
+        "re",
+        "pathlib",
+        "pymongo"
+      ],
+      "dependencies": [
+        "json",
+        "datetime",
+        "hashlib",
+        "typing",
+        "dataclasses",
+        "decimal",
+        "statistics",
+        "re",
+        "pathlib",
+        "pymongo"
+      ]
+    }
+  ],
+  "integrations": [
+    {
+      "name": "integracion_whatsapp.py",
+      "path": "integracion_whatsapp.py",
+      "type": "WhatsApp Business API",
+      "imports": [
+        "json",
+        "datetime",
+        "requests",
+        "typing",
+        "flask",
+        "threading",
+        "time",
+        "ia_conversacional_integrada",
+        "base_conocimiento_dinamica",
+        "sys"
+      ],
+      "dependencies": [
+        "json",
+        "datetime",
+        "requests",
+        "typing",
+        "flask",
+        "threading",
+        "time",
+        "ia_conversacional_integrada",
+        "base_conocimiento_dinamica",
+        "sys"
+      ]
+    },
+    {
+      "name": "n8n_integration.py",
+      "path": "n8n_integration.py",
+      "type": "n8n Workflows",
+      "imports": [
+        "sys",
+        "json",
+        "datetime",
+        "decimal",
+        "typing",
+        "ia_conversacional_integrada",
+        "sistema_cotizaciones",
+        "base_conocimiento_dinamica",
+        "motor_analisis_conversiones"
+      ],
+      "dependencies": [
+        "sys",
+        "json",
+        "datetime",
+        "decimal",
+        "typing",
+        "ia_conversacional_integrada",
+        "sistema_cotizaciones",
+        "base_conocimiento_dinamica",
+        "motor_analisis_conversiones"
+      ]
+    },
+    {
+      "name": "mongodb_service.py",
+      "path": "mongodb_service.py",
+      "type": "MongoDB Database",
+      "imports": [
+        "logging",
+        "os",
+        "pymongo",
+        "pymongo.database",
+        "pymongo.errors"
+      ],
+      "dependencies": [
+        "logging",
+        "os",
+        "pymongo",
+        "pymongo.database",
+        "pymongo.errors"
+      ]
+    },
+    {
+      "name": "model_integrator.py",
+      "path": "model_integrator.py",
+      "type": "AI Model Integration",
+      "imports": [
+        "os",
+        "json",
+        "logging",
+        "typing",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "time",
+        "utils.request_tracking",
+        "utils.structured_logger",
+        "utils.rate_limit_monitor",
+        "utils.debugging",
+        "openai",
+        "groq",
+        "google",
+        "google.genai",
+        "google.generativeai",
+        "httpx",
+        "google.genai",
+        "google",
+        "google.generativeai",
+        "google.generativeai"
+      ],
+      "dependencies": [
+        "os",
+        "json",
+        "logging",
+        "typing",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "time",
+        "utils.request_tracking",
+        "utils.structured_logger",
+        "utils.rate_limit_monitor",
+        "utils.debugging",
+        "openai",
+        "groq",
+        "google",
+        "google.genai",
+        "google.generativeai",
+        "httpx",
+        "google.genai",
+        "google",
+        "google.generativeai",
+        "google.generativeai"
+      ]
+    }
+  ],
+  "utilities": [
+    {
+      "name": "debugging.py",
+      "path": "utils/debugging.py",
+      "imports": [
+        "json",
+        "typing",
+        "datetime",
+        "traceback"
+      ]
+    },
+    {
+      "name": "structured_logger.py",
+      "path": "utils/structured_logger.py",
+      "imports": [
+        "json",
+        "logging",
+        "sys",
+        "typing",
+        "datetime",
+        "pathlib",
+        "utils.request_tracking",
+        "os"
+      ]
+    },
+    {
+      "name": "rate_limit_monitor.py",
+      "path": "utils/rate_limit_monitor.py",
+      "imports": [
+        "time",
+        "threading",
+        "typing",
+        "datetime",
+        "dataclasses"
+      ]
+    },
+    {
+      "name": "request_tracking.py",
+      "path": "utils/request_tracking.py",
+      "imports": [
+        "uuid",
+        "threading",
+        "time",
+        "typing",
+        "datetime",
+        "dataclasses",
+        "re",
+        "logging"
+      ]
+    }
+  ],
+  "data_models": [],
+  "api_endpoints": [],
+  "dependencies": {
+    "external": [
+      "dataclasses",
+      "datetime",
+      "decimal",
+      "enum",
+      "fastapi",
+      "fastapi.middleware.cors",
+      "fastapi.responses",
+      "flask",
+      "google",
+      "google.genai",
+      "google.generativeai",
+      "groq",
+      "hashlib",
+      "httpx",
+      "json",
+      "logging",
+      "motor_analisis_conversiones",
+      "openai",
+      "os",
+      "pathlib",
+      "pydantic",
+      "pymongo",
+      "pymongo.database",
+      "pymongo.errors",
+      "random",
+      "re",
+      "requests",
+      "shared_context_service",
+      "statistics",
+      "sys",
+      "threading",
+      "time",
+      "typing",
+      "utils.debugging",
+      "utils.rate_limit_monitor",
+      "utils.request_tracking",
+      "utils.structured_logger",
+      "utils_cotizaciones",
+      "uuid",
+      "uvicorn"
+    ],
+    "internal": [
+      "base_conocimiento_dinamica",
+      "ia_conversacional_integrada",
+      "model_integrator",
+      "sistema_cotizaciones"
+    ]
+  },
+  "relationships": [
+    {
+      "from": "api_server",
+      "to": "ia_conversacional_integrada",
+      "type": "imports"
+    },
+    {
+      "from": "api_server",
+      "to": "sistema_cotizaciones",
+      "type": "imports"
+    },
+    {
+      "from": "api_server",
+      "to": "request_tracking",
+      "type": "imports"
+    },
+    {
+      "from": "api_server",
+      "to": "structured_logger",
+      "type": "imports"
+    },
+    {
+      "from": "api_server",
+      "to": "rate_limit_monitor",
+      "type": "imports"
+    },
+    {
+      "from": "ia_conversacional_integrada",
+      "to": "base_conocimiento_dinamica",
+      "type": "imports"
+    },
+    {
+      "from": "ia_conversacional_integrada",
+      "to": "sistema_cotizaciones",
+      "type": "imports"
+    },
+    {
+      "from": "ia_conversacional_integrada",
+      "to": "model_integrator",
+      "type": "imports"
+    },
+    {
+      "from": "integracion_whatsapp",
+      "to": "ia_conversacional_integrada",
+      "type": "imports"
+    },
+    {
+      "from": "integracion_whatsapp",
+      "to": "base_conocimiento_dinamica",
+      "type": "imports"
+    },
+    {
+      "from": "n8n_integration",
+      "to": "ia_conversacional_integrada",
+      "type": "imports"
+    },
+    {
+      "from": "n8n_integration",
+      "to": "sistema_cotizaciones",
+      "type": "imports"
+    },
+    {
+      "from": "n8n_integration",
+      "to": "base_conocimiento_dinamica",
+      "type": "imports"
+    },
+    {
+      "from": "model_integrator",
+      "to": "request_tracking",
+      "type": "imports"
+    },
+    {
+      "from": "model_integrator",
+      "to": "structured_logger",
+      "type": "imports"
+    },
+    {
+      "from": "model_integrator",
+      "to": "rate_limit_monitor",
+      "type": "imports"
+    },
+    {
+      "from": "model_integrator",
+      "to": "debugging",
+      "type": "imports"
+    }
+  ],
+  "phase": 1,
+  "task": "T1.3 - Component Mapping",
+  "timestamp": "2025-12-02T19:03:17.093068+00:00",
+  "summary": {
+    "core_services": 4,
+    "integrations": 4,
+    "utilities": 4,
+    "relationships": 17,
+    "external_dependencies": 40
+  }
+}

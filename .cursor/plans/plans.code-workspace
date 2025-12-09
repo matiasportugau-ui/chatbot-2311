@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"name": "plans",
+			"path": "."
+		},
+		{
+			"name": "Projects",
+			"path": "../../../../Projects"
+		},
+		{
+			"name": "Master_TEMP",
+			"path": "../../../../Master_TEMP"
+		},
+		{
+			"name": "Downloads",
+			"path": "../../../../Downloads"
+		},
+		{
+			"name": "bmc-chat",
+			"path": "../../../../Documents/GitHub/master-knowledge-analysis/backups/backup_20251025_031411/sistema_cotizaciones/src/app/bmc-chat"
+		},
+		{
+			"name": "GitHub",
+			"path": "../../../../Documents/GitHub"
+		}
+	],
+	"settings": {}
+}

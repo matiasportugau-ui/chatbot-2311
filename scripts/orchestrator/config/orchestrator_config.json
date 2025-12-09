@@ -1,0 +1,13 @@
+{
+  "max_retries": 3,
+  "retry_delay": 60,
+  "backoff_multiplier": 2,
+  "phase_timeout": 3600,
+  "github": {
+    "token": null,
+    "repo": "chatbot-2311",
+    "owner": null
+  },
+  "execution_mode": "automated",
+  "log_level": "INFO"
+}
