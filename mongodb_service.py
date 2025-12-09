@@ -114,6 +114,14 @@ class MongoDBService:
         """Get the database object"""
         return self.db
 
+    def is_connected(self) -> bool:
+        """Check if connection is active"""
+        try:
+            self.db.client.admin.command('ping')
+            return True
+        except Exception:
+            return False
+
 
 def get_mongodb_service() -> MongoDBService | None:
     """

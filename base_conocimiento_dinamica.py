@@ -7,6 +7,7 @@ Sistema que evoluciona constantemente basado en interacciones y ventas
 import datetime
 import hashlib
 import json
+import os
 import statistics
 from dataclasses import asdict, dataclass
 from decimal import Decimal
