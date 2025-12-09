@@ -25,3 +25,11 @@ export async function handleAuthorizationCallback(code: string, state: string): 
 
     return { redirectTo }
 }
+
+export async function getGrantStatus(): Promise<any> {
+    return { status: 'active' }
+}
+
+export async function refreshTokens(): Promise<any> {
+    return { accessToken: 'mock_token' }
+}

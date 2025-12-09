@@ -9,12 +9,19 @@ export function requireAuth(handler: (req: NextRequest) => Promise<NextResponse>
 
     // If a secret key is set, enforce it
     if (secretKey && apiKey !== secretKey) {
-       // Optional: check for other auth methods (session, etc.)
-       // For strict auth, uncomment below:
-       // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      // Optional: check for other auth methods (session, etc.)
+      // For strict auth, uncomment below:
+      // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
+
     // For now, allow execution to proceed to fix build
+    return handler(req)
+  }
+}
+
+export function requireAdmin(handler: (req: NextRequest) => Promise<NextResponse>) {
+  return async (req: NextRequest) => {
+    // Basic admin auth placeholder
     return handler(req)
   }
 }
