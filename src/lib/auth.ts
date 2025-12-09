@@ -25,3 +25,13 @@ export function requireAdmin(handler: (req: NextRequest) => Promise<NextResponse
     return handler(req)
   }
 }
+
+export async function validateToken(token: string | null) {
+  // Mock validation
+  if (!token) return null
+  return { id: 'user_1', role: 'admin' }
+}
+
+export function checkAdminRole(user: any) {
+  return user && user.role === 'admin'
+}

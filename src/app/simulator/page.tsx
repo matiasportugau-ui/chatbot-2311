@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,11 +37,9 @@ export default function SimulatorPage() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.PY_CHAT_SERVICE_URL || 'http://localhost:8000';
 
-  useEffect(() => {
-    loadConversations();
-  }, []);
 
-  const loadConversations = async () => {
+
+  const loadConversations = useCallback(async () => {
     // For now, conversations are stored in MongoDB
     // This would require a new endpoint to fetch from MongoDB
     // For simulation, we'll use local state
@@ -56,7 +54,12 @@ export default function SimulatorPage() {
       // If endpoint doesn't exist, that's ok for simulation mode
       console.log('Conversations endpoint not available, using local state');
     }
-  };
+  }, [apiUrl]);
+
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
+
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -89,7 +92,7 @@ export default function SimulatorPage() {
       }
 
       const data = await response.json();
-      
+
       if (data.sesion_id && !sessionId) {
         setSessionId(data.sesion_id);
       }
@@ -195,11 +198,10 @@ export default function SimulatorPage() {
                     className={`mb-4 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        msg.role === 'user'
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-white border border-gray-200'
-                      }`}
+                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.role === 'user'
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white border border-gray-200'
+                        }`}
                     >
                       <p className="text-sm">{msg.content}</p>
                       {msg.type && (
@@ -246,9 +248,8 @@ export default function SimulatorPage() {
                 {conversations.map((conv) => (
                   <div
                     key={conv.sessionId}
-                    className={`p-3 border rounded-lg cursor-pointer hover:bg-gray-50 ${
-                      selectedConversation === conv.sessionId ? 'bg-blue-50 border-blue-300' : ''
-                    }`}
+                    className={`p-3 border rounded-lg cursor-pointer hover:bg-gray-50 ${selectedConversation === conv.sessionId ? 'bg-blue-50 border-blue-300' : ''
+                      }`}
                     onClick={() => loadConversation(conv.sessionId)}
                   >
                     <div className="flex justify-between items-start">

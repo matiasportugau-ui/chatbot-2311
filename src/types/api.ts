@@ -44,3 +44,17 @@ export const RATE_LIMITS: RateLimits = {
   },
 }
 
+
+export interface ErrorResponse {
+  success: boolean
+  error: string
+  message?: string
+  code?: string
+  details?: any
+}
+
+export interface SuccessResponse<T> {
+  data: T
+  success: boolean
+  message?: string
+}

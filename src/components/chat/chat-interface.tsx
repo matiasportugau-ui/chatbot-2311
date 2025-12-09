@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Send, 
-  Bot, 
-  User, 
-  RefreshCw, 
+import {
+  Send,
+  Bot,
+  User,
+  RefreshCw,
   AlertTriangle,
   CheckCircle,
   MessageSquare,
@@ -56,40 +56,9 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
   }, [messages])
 
   // Inicializar sesión al montar el componente
-  useEffect(() => {
-    initializeSession()
-  }, [])
 
-  const initializeSession = async () => {
-    try {
-      const response = await fetch('/api/context', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'create_session',
-          user_phone: userPhone,
-          message: 'Hola, necesito ayuda con una cotización'
-        })
-      })
-      
-      const data = await response.json()
-      if (data.session_id) {
-        setSession({
-          session_id: data.session_id,
-          user_phone: userPhone,
-          current_intent: 'greeting',
-          token_count: 0,
-          context_summary: '',
-          status: 'active'
-        })
-        
-        // Agregar mensaje de bienvenida
-        addMessage('assistant', '¡Hola! Soy tu asistente de cotizaciones. ¿En qué puedo ayudarte hoy?', 'greeting')
-      }
-    } catch (error) {
-      console.error('Error initializing session:', error)
-    }
-  }
+
+
 
   const addMessage = (type: 'user' | 'assistant' | 'system', content: string, intent?: string) => {
     const newMessage: Message = {
@@ -101,6 +70,41 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
     }
     setMessages(prev => [...prev, newMessage])
   }
+
+  const initializeSession = useCallback(async () => {
+    try {
+      const response = await fetch('/api/context', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_session',
+          user_phone: userPhone,
+          message: 'Hola, necesito ayuda con una cotización'
+        })
+      })
+
+      const data = await response.json()
+      if (data.session_id) {
+        setSession({
+          session_id: data.session_id,
+          user_phone: userPhone,
+          current_intent: 'greeting',
+          token_count: 0,
+          context_summary: '',
+          status: 'active'
+        })
+
+        // Agregar mensaje de bienvenida
+        addMessage('assistant', '¡Hola! Soy tu asistente de cotizaciones. ¿En qué puedo ayudarte hoy?', 'greeting')
+      }
+    } catch (error) {
+      console.error('Error initializing session:', error)
+    }
+  }, [userPhone])
+
+  useEffect(() => {
+    initializeSession()
+  }, [initializeSession])
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || !session) return
@@ -135,12 +139,12 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
         'Gracias por tu consulta. Aquí tienes la respuesta.',
         'Entendido. Te ayudo con los detalles.'
       ]
-      
+
       const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-      
+
       // Simular delay de procesamiento
       await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000))
-      
+
       addMessage('assistant', randomResponse, 'assistant_response')
 
       // Actualizar contexto
@@ -262,8 +266,8 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
                 <span>Uso de Contexto</span>
                 <span className="font-medium">{Math.round(contextUsage)}%</span>
               </div>
-              <Progress 
-                value={contextUsage} 
+              <Progress
+                value={contextUsage}
                 className="h-2"
               />
               <div className="flex items-center gap-2">
@@ -300,23 +304,20 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex items-start gap-3 ${
-                  message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
-                }`}
+                className={`flex items-start gap-3 ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
+                  }`}
               >
                 <div className={`p-2 rounded-full ${getMessageColor(message.type)}`}>
                   {getMessageIcon(message.type)}
                 </div>
-                <div className={`flex-1 max-w-xs ${
-                  message.type === 'user' ? 'text-right' : 'text-left'
-                }`}>
-                  <div className={`p-3 rounded-lg ${
-                    message.type === 'user' 
-                      ? 'bg-blue-500 text-white' 
-                      : message.type === 'assistant'
+                <div className={`flex-1 max-w-xs ${message.type === 'user' ? 'text-right' : 'text-left'
+                  }`}>
+                  <div className={`p-3 rounded-lg ${message.type === 'user'
+                    ? 'bg-blue-500 text-white'
+                    : message.type === 'assistant'
                       ? 'bg-gray-100 text-gray-900'
                       : 'bg-yellow-100 text-yellow-900'
-                  }`}>
+                    }`}>
                     <p className="text-sm">{message.content}</p>
                     {message.intent && message.intent !== 'user_input' && (
                       <Badge variant="outline" className="text-xs mt-1">
@@ -359,8 +360,8 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               disabled={isLoading || !session}
             />
-            <Button 
-              onClick={sendMessage} 
+            <Button
+              onClick={sendMessage}
               disabled={isLoading || !inputMessage.trim() || !session}
               className="px-4"
             >
