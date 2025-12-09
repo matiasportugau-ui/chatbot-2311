@@ -1,0 +1,14 @@
+{
+  "whatsapp": {
+    "status": "pending_credentials"
+  },
+  "n8n": {
+    "status": "configured"
+  },
+  "qdrant": {
+    "status": "not_configured"
+  },
+  "chatwoot": {
+    "status": "unknown"
+  }
+}

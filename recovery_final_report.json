@@ -1,0 +1,139 @@
+{
+  "generated_at": "2025-12-01T18:16:13.063900",
+  "recovery_summary": {
+    "total_items_recovered": 4941,
+    "recovery_success_rate": "HIGH",
+    "primary_recovery_channels": [
+      "cursor_chat_db",
+      "git_history"
+    ],
+    "next_steps": [
+      "Review recovered chat sessions",
+      "Review git stashes",
+      "Commit current work"
+    ]
+  },
+  "channels": [
+    {
+      "name": "cursor_chat_db",
+      "likelihood": "HIGH",
+      "notes": "Found 5 recent chat sessions. Databases accessible and previous extraction successful.",
+      "items_recovered": 5
+    },
+    {
+      "name": "composer_unsaved_buffers",
+      "likelihood": "MEDIUM",
+      "notes": "Found 4919 composer items. Some may contain unsaved code edits.",
+      "items_recovered": 4919
+    },
+    {
+      "name": "git_history",
+      "likelihood": "HIGH",
+      "notes": "Active git repository with 60 modified files and 3 stashes available.",
+      "items_recovered": 60
+    },
+    {
+      "name": "local_history_timeline",
+      "likelihood": "MEDIUM",
+      "notes": "Requires manual check via Cursor's Timeline feature for each modified file.",
+      "items_recovered": 0
+    },
+    {
+      "name": "temporary_files",
+      "likelihood": "LOW",
+      "notes": "No temporary or backup files found in project directory or system caches.",
+      "items_recovered": 0
+    },
+    {
+      "name": "sqlite_wal_journal",
+      "likelihood": "LOW",
+      "notes": "No WAL or journal files found. Databases appear to be in consistent state.",
+      "items_recovered": 0
+    }
+  ],
+  "recovered_items": [
+    {
+      "type": "chat_sessions",
+      "count": 5,
+      "location": "recovery_recent_chats.json",
+      "description": "Recent chat conversations from Cursor sessions"
+    },
+    {
+      "type": "composer_data",
+      "count": 4919,
+      "location": "recovery_composer_data.json",
+      "description": "Composer state and potential unsaved buffer data"
+    },
+    {
+      "type": "file_references",
+      "count": 14,
+      "location": "recovery_reconstructed_context.json",
+      "description": "Files referenced in conversations"
+    },
+    {
+      "type": "git_stashes",
+      "count": 3,
+      "location": "recovery_stash_contents.txt",
+      "description": "Git stashes containing potentially lost work"
+    }
+  ],
+  "irrecoverable_items": [
+    {
+      "type": "unsaved_buffers_never_written",
+      "reason": "Code typed but never saved to disk and not captured in chat history or composer state"
+    },
+    {
+      "type": "ram_only_state",
+      "reason": "In-memory state that was not persisted to disk before crash"
+    },
+    {
+      "type": "deleted_files_no_git_history",
+      "reason": "Files deleted and not tracked by git (if any)"
+    },
+    {
+      "type": "recent_edits_not_autosaved",
+      "reason": "Edits made in crashed session that were not auto-saved by Cursor"
+    }
+  ],
+  "statistics": {
+    "recent_chat_sessions": 5,
+    "composer_items": 4919,
+    "unique_files_referenced": 14,
+    "code_blocks_found": 0,
+    "git_modified_files": 60,
+    "git_stashes": 3,
+    "databases_analyzed": 8
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Review recovered chat sessions",
+      "description": "Check recovery_recent_chats.json and recovery_recent_chats.md for 5 recent chat sessions"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Review git stashes",
+      "description": "Check recovery_stash_contents.txt for 3 git stashes that may contain lost work"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Check Cursor Timeline",
+      "description": "Manually check Cursor Timeline feature for each modified file to recover previous versions"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Review composer data",
+      "description": "Check recovery_composer_data.json for 4919 composer items that may contain unsaved edits"
+    },
+    {
+      "priority": "LOW",
+      "action": "Check Time Machine (if enabled)",
+      "description": "If Time Machine is enabled, check for snapshots of project folder from before crash"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Commit current work",
+      "description": "Commit 60 modified files to prevent future data loss"
+    }
+  ]
+}

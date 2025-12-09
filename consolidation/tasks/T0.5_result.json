@@ -1,0 +1,13 @@
+{
+  "task_id": "T0.5",
+  "agent_type": "QuotationAgent",
+  "agent_name": "QuotationAgent",
+  "result": {
+    "status": "completed",
+    "products_supported": 3,
+    "zones_supported": 4,
+    "completeness": 0.85
+  },
+  "completed_at": "2025-12-02T17:19:32.758112",
+  "status": "completed"
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "T0.4",
+  "agent_type": "IntegrationAgent",
+  "agent_name": "IntegrationAgent",
+  "result": {
+    "integrations": {
+      "whatsapp": {
+        "status": "pending_credentials",
+        "configured": false
+      },
+      "n8n": {
+        "status": "configured",
+        "configured": true
+      },
+      "qdrant": {
+        "status": "configured",
+        "configured": true
+      },
+      "chatwoot": {
+        "status": "configured",
+        "configured": true
+      }
+    },
+    "status": "completed"
+  },
+  "completed_at": "2025-12-02T17:19:32.754252",
+  "status": "completed"
+}

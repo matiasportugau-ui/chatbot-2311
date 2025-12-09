@@ -1,0 +1,68 @@
+{
+    "mcpServers": {
+        "mongodb": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@mongodb-js/mcp-mongodb-server"
+            ],
+            "env": {
+                "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017"
+            }
+        },
+        "redis": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-redis"
+            ],
+            "env": {
+                "REDIS_URL": "redis://localhost:6379"
+            }
+        },
+        "github": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-github"
+            ],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_GITHUB_TOKEN>"
+            }
+        },
+        "sequential-thinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ]
+        },
+        "google-maps": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@google-maps/mcp-google-maps-platform-server"
+            ],
+            "env": {
+                "GOOGLE_MAPS_API_KEY": "<YOUR_GOOGLE_MAPS_API_KEY>"
+            }
+        },
+        "google-cloud": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@google-cloud/mcp-server-cloud"
+            ]
+        },
+        "google-sheets-crm": {
+            "command": "python3",
+            "args": [
+                "/Users/matias/chatbot2511/chatbot-2311/scripts/sheets_mcp_server.py"
+            ],
+            "env": {
+                "GOOGLE_SERVICE_ACCOUNT_EMAIL": "<YOUR_SERVICE_ACCOUNT_EMAIL>",
+                "GOOGLE_PRIVATE_KEY": "<YOUR_PRIVATE_KEY>"
+            }
+        }
+    }
+}

@@ -1,0 +1,782 @@
+{
+  "execution_id": "84f6801d-2b22-4107-acff-d93c189bd48d",
+  "created_at": "2025-12-02T06:13:00.327923",
+  "phases": {
+    "2": {
+      "phase": 2,
+      "context": {
+        "inherited_from_phase": 1,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.014899,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/reports/component_mapping.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/reports/component_mapping.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.031563"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.195982",
+      "last_updated": "2025-12-02T20:19:33.034714"
+    },
+    "3": {
+      "phase": 3,
+      "context": {
+        "inherited_from_phase": 2,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006602,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/merge_strategy.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/merge_strategy.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.045640"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.211267",
+      "last_updated": "2025-12-02T20:19:33.046423"
+    },
+    "4": {
+      "phase": 4,
+      "context": {
+        "inherited_from_phase": 3,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.008839,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/conflict_resolution.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/conflict_resolution.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.059849"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.233956",
+      "last_updated": "2025-12-02T20:19:33.060710"
+    },
+    "5": {
+      "phase": 5,
+      "context": {
+        "inherited_from_phase": 4,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006311,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/testing_results.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/testing_results.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.074375"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.264703",
+      "last_updated": "2025-12-02T20:19:33.076849"
+    },
+    "6": {
+      "phase": 6,
+      "context": {
+        "inherited_from_phase": 5,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.010418,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/documentation.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/documentation.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.090071"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.287749",
+      "last_updated": "2025-12-02T20:19:33.090940"
+    },
+    "7": {
+      "phase": 7,
+      "context": {
+        "inherited_from_phase": 6,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.004205,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/integration_tests.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/integration_tests.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.099676"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.311805",
+      "last_updated": "2025-12-02T20:19:33.100556"
+    },
+    "8": {
+      "phase": 8,
+      "context": {
+        "inherited_from_phase": 7,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006657,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/final_validation.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/final_validation.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.114166"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.315538",
+      "last_updated": "2025-12-02T20:19:33.115113"
+    },
+    "9": {
+      "phase": 9,
+      "context": {
+        "inherited_from_phase": 8,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.012083,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/security/security_hardening.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/security/security_hardening.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.131140"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.339241",
+      "last_updated": "2025-12-02T20:19:33.132111"
+    },
+    "10": {
+      "phase": 10,
+      "context": {
+        "inherited_from_phase": 9,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.024034,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/infrastructure/iac_config.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/infrastructure/iac_config.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.159233"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.361840",
+      "last_updated": "2025-12-02T20:19:33.160385"
+    },
+    "11": {
+      "phase": 11,
+      "context": {
+        "inherited_from_phase": 10,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006292,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/observability/monitoring_setup.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/observability/monitoring_setup.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.170034"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.370409",
+      "last_updated": "2025-12-02T20:19:33.170981"
+    },
+    "12": {
+      "phase": 12,
+      "context": {
+        "inherited_from_phase": 11,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.003973,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/performance/load_test_results.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/performance/load_test_results.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.177502"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.393337",
+      "last_updated": "2025-12-02T20:19:33.178457"
+    },
+    "13": {
+      "phase": 13,
+      "context": {
+        "inherited_from_phase": 12,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.00694,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/cicd/pipeline_config.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/cicd/pipeline_config.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.192619"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.395723",
+      "last_updated": "2025-12-02T20:19:33.193594"
+    },
+    "14": {
+      "phase": 14,
+      "context": {
+        "inherited_from_phase": 13,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.008237,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/disaster_recovery/recovery_plan.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/disaster_recovery/recovery_plan.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.210875"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.397947",
+      "last_updated": "2025-12-02T20:19:33.211995"
+    },
+    "15": {
+      "phase": 15,
+      "context": {
+        "inherited_from_phase": 14,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.007769,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/validation/final_production_validation.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/validation/final_production_validation.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.255085"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T14:44:17.400209",
+      "last_updated": "2025-12-02T20:19:33.256152"
+    },
+    "0": {
+      "phase": 0,
+      "context": {
+        "execution_completed": true,
+        "execution_duration_seconds": 0.280795,
+        "output_count": 7,
+        "outputs": [
+          "consolidation/discovery/repository_analysis.json",
+          "consolidation/discovery/workspace_analysis.json",
+          "consolidation/discovery/bmc_inventory.json",
+          "consolidation/discovery/integrations_status.json",
+          "consolidation/discovery/quotation_assessment.json",
+          "consolidation/discovery/production_gaps.json",
+          "consolidation/discovery/production_baseline.json"
+        ],
+        "planning_agent_analysis": {
+          "pr_number": 35,
+          "analysis": {
+            "phase": 1,
+            "task_1.1": {
+              "error": "Unknown task type: extract_pr_metadata"
+            },
+            "task_1.2": {
+              "error": "Unknown task type: analyze_changed_files"
+            },
+            "task_1.3": {
+              "primary_objective": "",
+              "description": "Create a comprehensive multi-agent deployment plan and instructions for the BMC Uruguay system to facilitate its production launch.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.sv",
+              "objectives": [
+                ""
+              ],
+              "business_domain": "deployment_orchestration",
+              "related_phases": [],
+              "acceptance_criteria": [],
+              "dependencies": [],
+              "related_issues": []
+            },
+            "task_1.4": {
+              "new_dependencies": [],
+              "updated_dependencies": [],
+              "removed_dependencies": [],
+              "conflicts": [],
+              "compatibility": {
+                "python": "3.10+",
+                "compatible": true
+              },
+              "breaking_changes": false,
+              "migration_required": false
+            },
+            "analysis_complete": true
+          },
+          "impact": {
+            "phase": 2,
+            "task_2.1": {
+              "affected_components": [],
+              "service_boundaries": "no_change",
+              "api_contracts": "no_change",
+              "data_models": "no_change",
+              "integration_points": {
+                "whatsapp": "no_impact",
+                "n8n": "no_impact",
+                "qdrant": "no_impact",
+                "chatwoot": "no_impact"
+              },
+              "consolidation_alignment": "high",
+              "architectural_changes_required": false
+            },
+            "task_2.2": {
+              "primary_phase": null,
+              "affected_phases": [],
+              "phase_updates_required": [],
+              "new_phase_required": false,
+              "conflicts": [],
+              "dependencies": []
+            },
+            "task_2.3": {
+              "error": "Unknown task type: assess_bmc_domain_impact"
+            },
+            "task_2.4": {
+              "security_impact": "low",
+              "production_readiness_impact": "documentation_only",
+              "security_hardening_required": false,
+              "phase_9_updates": []
+            },
+            "assessment_complete": true
+          },
+          "strategy": {
+            "phase": 3,
+            "task_3.1": {
+              "merge_strategy": "direct_merge",
+              "target_branch": "main",
+              "conflicts_expected": false,
+              "conflict_resolution": "not_required",
+              "pre_merge_testing": [
+                "documentation_review"
+              ],
+              "rollback_plan": "git_revert"
+            },
+            "task_3.2": {
+              "test_updates_required": false,
+              "integration_testing": {
+                "required": false,
+                "scenarios": []
+              },
+              "bmc_testing": {
+                "required": false,
+                "scenarios": []
+              },
+              "regression_testing": {
+                "required": false,
+                "scope": []
+              },
+              "performance_testing": {
+                "required": false
+              },
+              "uat_required": false
+            },
+            "task_3.3": {
+              "documentation_updates": [],
+              "new_documentation": [],
+              "diagram_updates": false
+            },
+            "strategy_complete": true
+          },
+          "plan": {
+            "phase": 4,
+            "task_4.1": [],
+            "task_4.2": {
+              "tasks_by_phase": {},
+              "phase_executor_updates": [],
+              "new_phase_required": false,
+              "orchestrator_config_updates": []
+            },
+            "task_4.3": {
+              "total_estimated_duration": "0 hours",
+              "critical_path": [],
+              "parallel_opportunities": [],
+              "milestones": [
+                {
+                  "milestone": "Documentation Review Complete",
+                  "tasks": [],
+                  "estimated_completion": "0 hours"
+                }
+              ],
+              "dependencies_resolved": true,
+              "buffer_time": "30 minutes"
+            },
+            "task_4.4": {
+              "risks": [],
+              "blockers": [],
+              "assumptions": [
+                "PR changes are documentation-only",
+                "No code changes required"
+              ],
+              "constraints": [
+                "Must maintain compatibility with existing orchestrator system"
+              ],
+              "rollback_procedures": [
+                "Revert documentation changes if conflicts arise"
+              ]
+            },
+            "plan_complete": true
+          },
+          "outputs": {
+            "analysis_report": "consolidation/pr_analysis/pr_35_analysis.json",
+            "task_list": "consolidation/pr_analysis/pr_35_tasks.md",
+            "integration_checklist": "consolidation/pr_analysis/pr_35_integration_checklist.md"
+          }
+        }
+      },
+      "outputs": [
+        {
+          "path": "consolidation/discovery/repository_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.966201"
+        },
+        {
+          "path": "consolidation/discovery/workspace_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.981377"
+        },
+        {
+          "path": "consolidation/discovery/bmc_inventory.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.981794"
+        },
+        {
+          "path": "consolidation/discovery/integrations_status.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.985493"
+        },
+        {
+          "path": "consolidation/discovery/quotation_assessment.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.985914"
+        },
+        {
+          "path": "consolidation/discovery/production_gaps.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.986322"
+        },
+        {
+          "path": "consolidation/discovery/production_baseline.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.986690"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T20:19:32.966195",
+      "last_updated": "2025-12-02T22:21:05.118651"
+    },
+    "1": {
+      "phase": 1,
+      "context": {
+        "inherited_from_phase": 0,
+        "previous_context_summary": {
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.023607,
+        "output_count": 2,
+        "outputs": [
+          "consolidation/reports/repository_analysis.json",
+          "consolidation/reports/workspace_analysis.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/reports/repository_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.012651"
+        },
+        {
+          "path": "consolidation/reports/workspace_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.013126"
+        }
+      ],
+      "artifacts": {},
+      "dependencies_met": [],
+      "created_at": "2025-12-02T20:19:32.990258",
+      "last_updated": "2025-12-02T20:19:33.013911"
+    }
+  },
+  "global_context": {},
+  "shared_artifacts": {},
+  "agent_handoffs": [
+    {
+      "from_phase": 0,
+      "to_phase": 1,
+      "handoff_file": "consolidation/handoffs/handoff_phase_1.json",
+      "timestamp": "2025-12-02T20:19:32.988536"
+    },
+    {
+      "from_phase": 1,
+      "to_phase": 2,
+      "handoff_file": "consolidation/handoffs/handoff_phase_2.json",
+      "timestamp": "2025-12-02T20:19:33.016154"
+    },
+    {
+      "from_phase": 2,
+      "to_phase": 3,
+      "handoff_file": "consolidation/handoffs/handoff_phase_3.json",
+      "timestamp": "2025-12-02T20:19:33.037837"
+    },
+    {
+      "from_phase": 3,
+      "to_phase": 4,
+      "handoff_file": "consolidation/handoffs/handoff_phase_4.json",
+      "timestamp": "2025-12-02T20:19:33.047346"
+    },
+    {
+      "from_phase": 4,
+      "to_phase": 5,
+      "handoff_file": "consolidation/handoffs/handoff_phase_5.json",
+      "timestamp": "2025-12-02T20:19:33.061580"
+    },
+    {
+      "from_phase": 5,
+      "to_phase": 6,
+      "handoff_file": "consolidation/handoffs/handoff_phase_6.json",
+      "timestamp": "2025-12-02T20:19:33.077763"
+    },
+    {
+      "from_phase": 6,
+      "to_phase": 7,
+      "handoff_file": "consolidation/handoffs/handoff_phase_7.json",
+      "timestamp": "2025-12-02T20:19:33.091939"
+    },
+    {
+      "from_phase": 7,
+      "to_phase": 8,
+      "handoff_file": "consolidation/handoffs/handoff_phase_8.json",
+      "timestamp": "2025-12-02T20:19:33.101600"
+    },
+    {
+      "from_phase": 8,
+      "to_phase": 9,
+      "handoff_file": "consolidation/handoffs/handoff_phase_9.json",
+      "timestamp": "2025-12-02T20:19:33.117510"
+    },
+    {
+      "from_phase": 9,
+      "to_phase": 10,
+      "handoff_file": "consolidation/handoffs/handoff_phase_10.json",
+      "timestamp": "2025-12-02T20:19:33.133670"
+    },
+    {
+      "from_phase": 10,
+      "to_phase": 11,
+      "handoff_file": "consolidation/handoffs/handoff_phase_11.json",
+      "timestamp": "2025-12-02T20:19:33.161432"
+    },
+    {
+      "from_phase": 11,
+      "to_phase": 12,
+      "handoff_file": "consolidation/handoffs/handoff_phase_12.json",
+      "timestamp": "2025-12-02T20:19:33.171968"
+    },
+    {
+      "from_phase": 12,
+      "to_phase": 13,
+      "handoff_file": "consolidation/handoffs/handoff_phase_13.json",
+      "timestamp": "2025-12-02T20:19:33.179446"
+    },
+    {
+      "from_phase": 13,
+      "to_phase": 14,
+      "handoff_file": "consolidation/handoffs/handoff_phase_14.json",
+      "timestamp": "2025-12-02T20:19:33.201002"
+    },
+    {
+      "from_phase": 14,
+      "to_phase": 15,
+      "handoff_file": "consolidation/handoffs/handoff_phase_15.json",
+      "timestamp": "2025-12-02T20:19:33.245500"
+    }
+  ],
+  "last_updated": "2025-12-02T22:21:05.118668"
+}

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: Standalone Chat Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700&family=Trirong:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .preview-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .preview-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-family: 'Trirong', serif;
+            font-size: 2rem;
+        }
+
+        .preview-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Chat Container Styles */
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #E3F2FD;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #2196F3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .chat-title {
+            font-family: 'Trirong', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn, .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #888;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #4caf50;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            max-width: 100%;
+        }
+
+        .message-wrapper.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message-icon.bot {
+            background-color: #2196F3;
+        }
+
+        .message-icon.user {
+            background-color: #007aff;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: #e5e5ea;
+            color: #000;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            background-color: #007aff;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quick-action-btn {
+            background-color: #BBDEFB;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: #1976D2;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background-color: #90CAF9;
+        }
+
+        .chat-input-area {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-top: 1px solid #ddd;
+            background-color: #ffffff;
+            gap: 8px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 8px 12px;
+        }
+
+        .mic-icon {
+            color: #888;
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: transparent;
+        }
+
+        .send-btn {
+            background: #FF6B35;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .description {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .description h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .description ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .description li {
+            padding: 5px 0;
+            color: #666;
+        }
+
+        .description li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1 class="preview-title">Standalone Chat Interface Preview</h1>
+        
+        <div class="preview-wrapper">
+            <div>
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="header-left">
+                            <div class="profile-icon bot">S</div>
+                            <span class="chat-title">Chat with Superchapita</span>
+                        </div>
+                        <div class="header-right">
+                            <div class="connection-status">
+                                <span class="status-dot"></span>
+                                <span>Connected</span>
+                            </div>
+                            <button class="menu-btn">⋯</button>
+                            <button class="close-btn">×</button>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages">
+                        <div class="welcome-message">
+                            👋 ¡Hola! Soy Superchapita, tu asistente virtual de BMC Uruguay. ¿En qué puedo ayudarte?
+                        </div>
+                        
+                        <div class="message-wrapper bot">
+                            <div class="message-icon bot">S</div>
+                            <div class="message bot-message">
+                                <div class="message-content">¡Hola! ¿Necesitas una cotización para tu proyecto?</div>
+                                <div class="timestamp">10:30</div>
+                            </div>
+                        </div>
+
+                        <div class="message-wrapper user">
+                            <div class="message-icon user">U</div>
+                            <div class="message user-message">
+                                <div class="message-content">Sí, necesito Isodec para un galpón de 50m²</div>
+                                <div class="timestamp">10:31</div>
+                            </div>
+                        </div>
+
+                        <div class="message-wrapper bot">
+                            <div class="message-icon bot">S</div>
+                            <div class="message bot-message">
+                                <div class="message-content">Perfecto, te puedo ayudar con eso. ¿Qué espesor necesitas?</div>
+                                <div class="timestamp">10:31</div>
+                                <div class="quick-actions">
+                                    <button class="quick-action-btn">100mm</button>
+                                    <button class="quick-action-btn">75mm</button>
+                                    <button class="quick-action-btn">50mm</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="message-wrapper user">
+                            <div class="message-icon user">U</div>
+                            <div class="message user-message">
+                                <div class="message-content">100mm por favor</div>
+                                <div class="timestamp">10:32</div>
+                            </div>
+                        </div>
+
+                        <div class="message-wrapper bot">
+                            <div class="message-icon bot">S</div>
+                            <div class="message bot-message">
+                                <div class="message-content">Excelente. Para 50m² de Isodec 100mm, el precio estimado es $60,000. ¿Te parece bien?</div>
+                                <div class="timestamp">10:32</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <div class="input-wrapper">
+                            <span class="mic-icon">🎤</span>
+                            <input type="text" class="chat-input" placeholder="Ask Superchapita anything about roofing...." />
+                        </div>
+                        <button class="send-btn">✈</button>
+                    </div>
+                </div>
+
+                <div class="description">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>WhatsApp/iMessage style design</li>
+                        <li>Real-time connection status</li>
+                        <li>Quick action buttons</li>
+                        <li>Message history persistence</li>
+                        <li>Settings panel (menu button)</li>
+                        <li>Responsive mobile design</li>
+                        <li>Error handling with retry</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

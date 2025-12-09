@@ -1,0 +1,20 @@
+404c632 HEAD@{0}: checkout: moving from new-branch to cursor/design-data-recovery-implementation-plan-claude-4.5-sonnet-thinking-1fba
+d7a7c3a HEAD@{1}: reset: moving to HEAD
+d7a7c3a HEAD@{2}: commit: feat: Replace word-by-word delay with true streaming
+346c560 HEAD@{3}: commit: chore: Update .gitignore with WhatsApp temp directory exclusion
+20d15c0 HEAD@{4}: commit: feat: Implement WhatsApp chat sync functionality
+ef7ab8e HEAD@{5}: commit: docs: Update documentation with recovery improvements
+db0ad95 HEAD@{6}: commit: docs: Add recovery artifacts and analysis documentation
+939a617 HEAD@{7}: commit: feat: Add comprehensive agent instructions and configuration files
+907d957 HEAD@{8}: commit: feat: Complete setup and installation enhancement implementation
+666f21a HEAD@{9}: commit: feat: Add knowledge consolidation step to unified launcher setup
+377cfa1 HEAD@{10}: commit: docs: Add documentation update summary
+1c68b53 HEAD@{11}: commit: docs: Add QUICK_ACCESS.md for easy reference
+068ce69 HEAD@{12}: commit: docs: Update all documentation to feature Unified Launcher as primary entry point
+fae97bd HEAD@{13}: commit: chore: Add trailing newline to Order.ts
+7637cb9 HEAD@{14}: merge consolidate/workspace-into-main-20251129: Merge made by the 'ort' strategy.
+902e06e HEAD@{15}: checkout: moving from consolidate/workspace-into-main-20251129 to new-branch
+abfeb0a HEAD@{16}: commit: Add remaining workspace changes: Order model, API updates, and security docs
+0165119 HEAD@{17}: commit (merge): Merge backup-2025-11-27 into consolidation branch
+902e06e HEAD@{18}: reset: moving to HEAD
+902e06e HEAD@{19}: checkout: moving from new-branch to consolidate/workspace-into-main-20251129

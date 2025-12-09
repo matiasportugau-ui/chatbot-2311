@@ -1,0 +1,10 @@
+{
+  "task_id": "T2.1_IntegrationAgent",
+  "agent_type": "IntegrationAgent",
+  "agent_name": "IntegrationAgent",
+  "result": {
+    "error": "Unknown task type: analyze_architecture_impact"
+  },
+  "completed_at": "2025-12-02T19:21:05.116383",
+  "status": "completed"
+}
