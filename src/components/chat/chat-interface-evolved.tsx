@@ -2,17 +2,17 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 // @ts-ignore - AI SDK v5 exports useChat from main package
-import { useChat } from 'ai'
+import { useChat } from 'ai/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Send, 
-  Bot, 
-  User, 
-  RefreshCw, 
+import {
+  Send,
+  Bot,
+  User,
+  RefreshCw,
   AlertTriangle,
   CheckCircle,
   MessageSquare,
@@ -28,26 +28,26 @@ interface ChatInterfaceEvolvedProps {
   sessionId?: string
 }
 
-export function ChatInterfaceEvolved({ 
-  userPhone = '+59891234567', 
+export function ChatInterfaceEvolved({
+  userPhone = '+59891234567',
   className,
-  sessionId: initialSessionId 
+  sessionId: initialSessionId
 }: ChatInterfaceEvolvedProps) {
   const [sessionId, setSessionId] = useState<string | null>(initialSessionId || null)
   const [contextUsage, setContextUsage] = useState(0)
   const [quoteMetadata, setQuoteMetadata] = useState<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  
+
   // Use refs to track latest values for reliable request data
   // This fixes Bug 1 & 2: body parameter doesn't update and may not be sent reliably
   const sessionIdRef = useRef<string | null>(initialSessionId || null)
   const userPhoneRef = useRef<string>(userPhone)
-  
+
   // Update refs when state changes
   useEffect(() => {
     sessionIdRef.current = sessionId
   }, [sessionId])
-  
+
   useEffect(() => {
     userPhoneRef.current = userPhone
   }, [userPhone])
@@ -71,22 +71,22 @@ export function ChatInterfaceEvolved({
       let requestBody: any = {}
       if (init?.body) {
         try {
-          requestBody = typeof init.body === 'string' 
-            ? JSON.parse(init.body) 
+          requestBody = typeof init.body === 'string'
+            ? JSON.parse(init.body)
             : init.body
         } catch (e) {
           // If parsing fails, use empty object
           requestBody = {}
         }
       }
-      
+
       // Always inject latest sessionId and userPhone into data property
       // This ensures Bug 1 & 2 are fixed: data is always current and reliably sent
       requestBody.data = {
         userPhone: userPhoneRef.current,
         sessionId: sessionIdRef.current || undefined,
       }
-      
+
       // Create new request with updated body
       return fetch(input, {
         ...init,
@@ -102,7 +102,7 @@ export function ChatInterfaceEvolved({
       const quoteType = response.headers.get('X-Quote-Type')
       const confidence = response.headers.get('X-Confidence')
       const sessionIdHeader = response.headers.get('X-Session-Id')
-      
+
       if (sessionIdHeader) {
         setSessionId(sessionIdHeader)
         sessionIdRef.current = sessionIdHeader
@@ -119,7 +119,7 @@ export function ChatInterfaceEvolved({
             confianzaValue = parsed
           }
         }
-        
+
         setQuoteMetadata({
           tipo: quoteType,
           confianza: confianzaValue,
@@ -147,12 +147,12 @@ export function ChatInterfaceEvolved({
           message: 'Hola, necesito ayuda con una cotización'
         })
       })
-      
+
       const data = await response.json()
       if (data.session_id) {
         setSessionId(data.session_id)
         sessionIdRef.current = data.session_id
-        
+
         // Add welcome message if no messages exist
         if (messages.length === 0) {
           setMessages([{
@@ -257,7 +257,7 @@ export function ChatInterfaceEvolved({
   // Custom submit handler to add metadata and ensure latest session data
   const handleCustomSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
+
     // Save message to context API using latest sessionId from ref
     const currentSessionId = sessionIdRef.current
     if (currentSessionId && input.trim()) {
@@ -315,8 +315,8 @@ export function ChatInterfaceEvolved({
                 <span>Uso de Contexto</span>
                 <span className="font-medium">{Math.round(contextUsage)}%</span>
               </div>
-              <Progress 
-                value={contextUsage} 
+              <Progress
+                value={contextUsage}
                 className="h-2"
               />
               <div className="flex items-center gap-2">
@@ -374,35 +374,32 @@ export function ChatInterfaceEvolved({
             {messages.map((message: any) => (
               <div
                 key={message.id}
-                className={`flex items-start gap-3 ${
-                  message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                }`}
+                className={`flex items-start gap-3 ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                  }`}
               >
                 <div className={`p-2 rounded-full ${getMessageColor(message.role)}`}>
                   {getMessageIcon(message.role)}
                 </div>
-                <div className={`flex-1 max-w-xs ${
-                  message.role === 'user' ? 'text-right' : 'text-left'
-                }`}>
-                  <div className={`p-3 rounded-lg ${
-                    message.role === 'user' 
-                      ? 'bg-blue-500 text-white' 
-                      : message.role === 'assistant'
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'bg-yellow-100 text-yellow-900'
+                <div className={`flex-1 max-w-xs ${message.role === 'user' ? 'text-right' : 'text-left'
                   }`}>
+                  <div className={`p-3 rounded-lg ${message.role === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : message.role === 'assistant'
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'bg-yellow-100 text-yellow-900'
+                    }`}>
                     <div className="text-sm whitespace-pre-wrap">
                       {message.content}
                     </div>
-                    {message.role === 'assistant' && quoteMetadata && 
-                     typeof quoteMetadata.confianza === 'number' && 
-                     !isNaN(quoteMetadata.confianza) && 
-                     isFinite(quoteMetadata.confianza) &&
-                     quoteMetadata.confianza > 0 && (
-                      <Badge variant="outline" className="text-xs mt-2">
-                        Confianza: {(quoteMetadata.confianza * 100).toFixed(1)}%
-                      </Badge>
-                    )}
+                    {message.role === 'assistant' && quoteMetadata &&
+                      typeof quoteMetadata.confianza === 'number' &&
+                      !isNaN(quoteMetadata.confianza) &&
+                      isFinite(quoteMetadata.confianza) &&
+                      quoteMetadata.confianza > 0 && (
+                        <Badge variant="outline" className="text-xs mt-2">
+                          Confianza: {(quoteMetadata.confianza * 100).toFixed(1)}%
+                        </Badge>
+                      )}
                   </div>
                   {message.createdAt && (
                     <p className="text-xs text-gray-500 mt-1">
@@ -441,7 +438,7 @@ export function ChatInterfaceEvolved({
               disabled={isLoading || !sessionId}
               className="flex-1"
             />
-            <Button 
+            <Button
               type="submit"
               disabled={isLoading || !input.trim() || !sessionId}
               className="px-4"

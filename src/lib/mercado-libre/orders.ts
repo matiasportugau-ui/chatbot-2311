@@ -17,3 +17,7 @@ export async function acknowledgeOrder(orderId: number): Promise<any> {
 export async function markOrderReadyToShip(orderId: number, trackingNumber?: string): Promise<any> {
     return { id: orderId, status: 'ready_to_ship', tracking_number: trackingNumber }
 }
+
+export async function syncOrderById(orderId: number): Promise<any> {
+    return { id: orderId, synced: true }
+}

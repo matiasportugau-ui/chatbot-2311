@@ -99,14 +99,22 @@ async def startup_event():
     try:
         mongodb_uri = os.getenv("MONGODB_URI")
         if mongodb_uri:
+            # Mask URI for logging
+            if "@" in mongodb_uri:
+                log_uri = mongodb_uri.split("@")[-1]
+            else:
+                log_uri = "localhost/local_db" if "localhost" in mongodb_uri else "non-credential-uri"
+                
+            logger.info(f"🔌 Attempting to connect to MongoDB at: {log_uri}")
+            
             from pymongo import MongoClient
             client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)
-            client.server_info()
-            logger.info("✅ MongoDB connection successful")
+            server_info = client.server_info()
+            logger.info(f"✅ MongoDB connection successful. Server version: {server_info.get('version')}")
         else:
             logger.warning("⚠️  MONGODB_URI not set - using in-memory storage")
     except Exception as e:
-        logger.error(f"❌ MongoDB connection failed: {e}")
+        logger.error(f"❌ MongoDB connection failed: {type(e).__name__}: {e}")
         logger.warning("⚠️  Continuing with in-memory storage")
     
     logger.info("✅ BMC Quote System API started successfully")

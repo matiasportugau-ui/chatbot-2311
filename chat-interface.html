@@ -555,7 +555,7 @@
             <h3 id="settingsTitle">Settings</h3>
             <div class="settings-item">
                 <label for="apiUrlInput">API URL:</label>
-                <input type="text" id="apiUrlInput" value="https://web-production-b896.up.railway.app/chat/process"
+                <input type="text" id="apiUrlInput" value="https://web-production-b896.up.railway.app/api/chat"
                     aria-describedby="apiUrlDesc">
                 <small id="apiUrlDesc">Backend API endpoint</small>
             </div>
@@ -871,9 +871,9 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        mensaje: message,
-                        telefono: DEFAULT_PHONE,
-                        sesionId: sessionId
+                        message: message,
+                        phone: DEFAULT_PHONE,
+                        session_id: sessionId
                     })
                 });
 
@@ -884,8 +884,8 @@
                 const data = await response.json();
 
                 // Update session ID if provided
-                if (data.sesion_id) {
-                    sessionId = data.sesion_id;
+                if (data.session_id) {
+                    sessionId = data.session_id;
                     localStorage.setItem('bmc_chat_session_id', sessionId);
                 }
 
@@ -895,8 +895,8 @@
                 updateSendButtonState(false);
                 retryCount = 0;
 
-                // Display bot response
-                const botMessage = data.mensaje || 'No response received';
+                // Display bot response (New API uses 'response' field)
+                const botMessage = data.response || data.mensaje || 'No response received';
                 displayMessage(botMessage, 'bot');
                 addToHistory(botMessage, 'bot', data.acciones || []);
 
