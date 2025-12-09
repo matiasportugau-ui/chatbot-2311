@@ -1,0 +1,28 @@
+name: Validate Knowledge Base
+
+on:
+  push:
+    paths:
+      - '**/*.json'
+      - 'validate_knowledge.py'
+      - '.github/workflows/validate-knowledge.yml'
+  pull_request:
+    paths:
+      - '**/*.json'
+      - 'validate_knowledge.py'
+
+jobs:
+  validate-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Validate Knowledge Base JSONs
+        run: |
+          python validate_knowledge.py conocimiento_consolidado.json conocimiento_mercadolibre.json
