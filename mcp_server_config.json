@@ -7,7 +7,7 @@
                 "@mongodb-js/mcp-mongodb-server"
             ],
             "env": {
-                "MONGODB_CONNECTION_STRING": "mongodb://localhost:27017"
+                "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017"
             }
         },
         "redis": {

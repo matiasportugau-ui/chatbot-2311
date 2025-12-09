@@ -431,11 +431,35 @@ class UnifiedModelIntegrator:
                 if gemini_configs:
                     api_key = gemini_configs[0][1].api_key
                     # Use new google-genai SDK if available
+                    # Use new google-genai SDK if available
                     if GEMINI_AVAILABLE and not GEMINI_USE_OLD_SDK:
                         from google import genai
-                        self.clients[ModelProvider.GEMINI.value] = genai.Client(api_key=api_key)
+                        project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
+                        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+                        
+                        if project_id and api_key:
+                            # SDK doesn't support both vertexai=True and api_key simultaneously
+                            # We'll use manual REST API for this configuration
+                            self.gemini_use_vertex_rest = True
+                            self.gemini_project_id = project_id
+                            self.gemini_location = location
+                            self.gemini_api_key = api_key
+                            # We still set a dummy client to avoid "gemini client not initialized" errors in checks
+                            self.clients[ModelProvider.GEMINI.value] = "vertex_rest_placeholder"
+                            structured_logger.info(f"✅ Gemini configured (Vertex AI REST API - project: {project_id})")
+                        elif project_id:
+                            self.clients[ModelProvider.GEMINI.value] = genai.Client(
+                                vertexai=True, 
+                                project=project_id, 
+                                location=location, 
+                                api_key=api_key 
+                            )
+                            structured_logger.info(f"✅ Gemini client initialized (Vertex AI SDK - project: {project_id})")
+                        else:
+                            self.clients[ModelProvider.GEMINI.value] = genai.Client(api_key=api_key)
+                            structured_logger.info("✅ Gemini client initialized (Google AI Studio)")
+                            
                         self.gemini_use_new_sdk = True
-                        structured_logger.info("✅ Gemini client initialized (new SDK - google-genai)")
                     else:
                         # Fallback to old SDK
                         import google.generativeai as genai_old
@@ -885,10 +909,83 @@ class UnifiedModelIntegrator:
         self, prompt: str, system_prompt: Optional[str], model: str,
         temperature: float, max_tokens: int, **kwargs
     ) -> Dict[str, Any]:
-        """Generate using Google Gemini (supports both new and old SDK)"""
-        genai_client = self.clients["gemini"]
+        """Generate using Google Gemini (supports both new and old SDK, and Vertex REST)"""
+        genai_client = self.clients.get("gemini")
         use_new_sdk = getattr(self, 'gemini_use_new_sdk', False)
+        use_vertex_rest = getattr(self, 'gemini_use_vertex_rest', False)
         
+        if use_vertex_rest:
+            # Manual REST API call for Vertex AI with API Key
+            try:
+                import requests
+                
+                project_id = self.gemini_project_id
+                location = self.gemini_location
+                api_key = self.gemini_api_key
+                
+                # Format: https://{location}-aiplatform.googleapis.com/v1/projects/{project}/locations/{location}/publishers/google/models/{model}:generateContent
+                base_url = f"https://{location}-aiplatform.googleapis.com/v1/projects/{project_id}/locations/{location}/publishers/google/models/{model}:generateContent"
+                
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                
+                # Construct payload
+                # Vertex AI generateContent format
+                payload = {
+                    "contents": [{
+                        "role": "user",
+                        "parts": [{"text": prompt}]
+                    }],
+                    "generationConfig": {
+                        "temperature": temperature,
+                        "maxOutputTokens": max_tokens
+                    }
+                }
+                
+                if system_prompt:
+                    payload["systemInstruction"] = {
+                        "parts": [{"text": system_prompt}]
+                    }
+                
+                # Add query param for API Key
+                url = f"{base_url}?key={api_key}"
+                
+                response = requests.post(url, headers=headers, json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                
+                # Extract content
+                # Response structure: candidates[0].content.parts[0].text
+                content_text = ""
+                if "candidates" in result and result["candidates"]:
+                    candidate = result["candidates"][0]
+                    if "content" in candidate and "parts" in candidate["content"]:
+                        parts = candidate["content"]["parts"]
+                        if parts:
+                            content_text = parts[0].get("text", "")
+                
+                # Extract usage
+                tokens_input = 0
+                tokens_output = 0
+                if "usageMetadata" in result:
+                    usage = result["usageMetadata"]
+                    tokens_input = usage.get("promptTokenCount", 0)
+                    tokens_output = usage.get("candidatesTokenCount", 0)
+                
+                return {
+                    "content": content_text,
+                    "tokens_input": tokens_input,
+                    "tokens_output": tokens_output,
+                }
+                
+            except Exception as e:
+                logger.error(f"Error with Gemini Vertex REST: {e}")
+                if hasattr(e, 'response') and e.response:
+                    logger.error(f"Response: {e.response.text}")
+                raise e
+
         if use_new_sdk:
             # New google-genai SDK
             from google.genai import types

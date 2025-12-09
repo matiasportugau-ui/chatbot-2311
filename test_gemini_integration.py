@@ -58,7 +58,7 @@ try:
     response = integrator.generate(
         prompt="Hola, ¿estás usando Gemini? Responde brevemente.",
         system_prompt="Eres un asistente útil",
-        model_id="gemini_gemini-1.5-flash",
+        model_id="gemini_gemini-2.5-flash",
         temperature=0.7,
         max_tokens=200
     )

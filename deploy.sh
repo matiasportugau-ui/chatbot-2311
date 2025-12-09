@@ -79,17 +79,8 @@ echo "Region: $REGION"
 # --allow-unauthenticated makes it a public website
 CMD="$GCLOUD_PATH run deploy $SERVICE_NAME --source . --region $REGION --allow-unauthenticated --port 8000"
 
-if [ ! -z "$ENV_VARS" ]; then
-    # We use --set-env-vars for a few explicit sensitive ones if needed, 
-    # but passing ALL from .env can be tricky with escaping. 
-    # For now, let's try reading the .env file format Cloud Run expects or just raw string.
-    # Cloud Run accepts comma sensitive list.
-    
-    # WARNING: If values contain commas, this simple parsing breaks. 
-    # For a robust solution, we often use --env-vars-file (beta) or manual entry.
-    # Let's use the simplest robust method: --set-env-vars
-    
-    CMD="$CMD --set-env-vars \"$ENV_VARS\""
+if [ -f ".env" ]; then
+    CMD="$CMD --env-vars-file .env"
 fi
 
 echo "Executing deployment..."
