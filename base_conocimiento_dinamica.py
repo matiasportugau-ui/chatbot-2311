@@ -138,7 +138,7 @@ class BaseConocimientoDinamica:
                 ],
                 "cargar_primer_archivo_encontrado": True,
                 "intentar_mongodb": True,
-                "mongodb_uri": "mongodb://localhost:27017/bmc_chat"
+                "mongodb_uri": os.getenv("MONGODB_URI")
             },
             "consolidacion": {
                 "habilitada": False,
