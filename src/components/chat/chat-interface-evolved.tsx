@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-// @ts-ignore - AI SDK v5 exports useChat from main package
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,7 +65,7 @@ export function ChatInterfaceEvolved({
     api: '/api/chat/stream',
     // Note: body parameter may not be reliably sent in AI SDK v5.0.78
     // We use a custom fetch function to ensure data is always sent correctly
-    fetch: async (input, init) => {
+    fetch: async (input: any, init: any) => {
       // Parse existing body if present
       let requestBody: any = {}
       if (init?.body) {
@@ -133,7 +132,7 @@ export function ChatInterfaceEvolved({
       // Update context usage after message
       updateContextUsage()
     },
-  })
+  } as any) as any
 
   // Initialize session function (after useChat to access messages and setMessages)
   const initializeSession = useCallback(async () => {
@@ -260,7 +259,7 @@ export function ChatInterfaceEvolved({
 
     // Save message to context API using latest sessionId from ref
     const currentSessionId = sessionIdRef.current
-    if (currentSessionId && input.trim()) {
+    if (currentSessionId && (input || '').trim()) {
       try {
         await fetch('/api/context', {
           method: 'POST',
@@ -383,10 +382,10 @@ export function ChatInterfaceEvolved({
                 <div className={`flex-1 max-w-xs ${message.role === 'user' ? 'text-right' : 'text-left'
                   }`}>
                   <div className={`p-3 rounded-lg ${message.role === 'user'
-                      ? 'bg-blue-500 text-white'
-                      : message.role === 'assistant'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'bg-yellow-100 text-yellow-900'
+                    ? 'bg-blue-500 text-white'
+                    : message.role === 'assistant'
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'bg-yellow-100 text-yellow-900'
                     }`}>
                     <div className="text-sm whitespace-pre-wrap">
                       {message.content}
@@ -440,7 +439,7 @@ export function ChatInterfaceEvolved({
             />
             <Button
               type="submit"
-              disabled={isLoading || !input.trim() || !sessionId}
+              disabled={isLoading || !(input || '').trim() || !sessionId}
               className="px-4"
             >
               <Send className="w-4 h-4" />

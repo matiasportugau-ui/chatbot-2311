@@ -12,7 +12,7 @@ export function withRateLimit(handler: (req: NextRequest) => Promise<NextRespons
         // Prune expired entries cleanup (probability based to avoid overhead)
         if (Math.random() < 0.05) {
             const now = Date.now()
-            for (const [key, value] of rateLimitMap.entries()) {
+            for (const [key, value] of Array.from(rateLimitMap.entries())) {
                 if (now > value.resetTime) {
                     rateLimitMap.delete(key)
                 }
