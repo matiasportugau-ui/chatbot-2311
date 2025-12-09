@@ -4,14 +4,18 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["gru1", "iad1"],
+  "regions": [
+    "gru1",
+    "iad1"
+  ],
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
   },
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_API_URL": "https://web-production-b896.up.railway.app"
   },
   "headers": [
     {
