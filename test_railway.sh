@@ -4,6 +4,7 @@
 
 API_URL="https://web-production-b896.up.railway.app"
 
+
 echo "🔍 Testing Railway Deployment..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""

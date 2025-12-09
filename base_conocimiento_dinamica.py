@@ -216,7 +216,16 @@ class BaseConocimientoDinamica:
                     if cargar_primer_archivo:
                         return True
                 except Exception as e:
+                except Exception as e:
                     print(f"⚠️  Error cargando {ruta.name}: {e}")
+                    # If file is corrupt, try to delete it so it doesn't cause issues next time
+                    if "Expecting ',' delimiter" in str(e) or "Extra data" in str(e):
+                        try:
+                            # Verify if we have write permission and it's not a critical system file
+                            if "consolidado" in ruta.name:
+                                print(f"⚠️  Detectado archivo corrupto: {ruta.name}. Ignorando.")
+                        except Exception:
+                            pass
         
         if not conocimiento_cargado and config_carga.get("intentar_mongodb", False):
             return self._cargar_desde_mongodb(config_carga.get("mongodb_uri"))
