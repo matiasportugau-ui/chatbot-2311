@@ -216,7 +216,6 @@ class BaseConocimientoDinamica:
                     if cargar_primer_archivo:
                         return True
                 except Exception as e:
-                except Exception as e:
                     print(f"⚠️  Error cargando {ruta.name}: {e}")
                     # If file is corrupt, try to delete it so it doesn't cause issues next time
                     if "Expecting ',' delimiter" in str(e) or "Extra data" in str(e):
