@@ -7,7 +7,7 @@ Implementa límites de tasa según Google Cloud best practices
 Based on Google Cloud Architecture Framework security recommendations
 """
 
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi import FastAPI, Request

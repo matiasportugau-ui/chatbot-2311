@@ -106,7 +106,7 @@ class SecureChatMessage(BaseModel):
         description="Session identifier for conversation tracking"
     )
     
-    @field_validator('message', mode='before')
+    @field_validator('message')
     @classmethod
     def sanitize_message(cls, v):
         """Sanitize and validate message content"""
@@ -189,7 +189,7 @@ class SecureQuoteRequest(BaseModel):
         description="Additional observations"
     )
     
-    @field_validator('customer_name', mode='before')
+    @field_validator('customer_name')
     @classmethod
     def sanitize_name(cls, v):
         """Sanitize and validate customer name"""
@@ -240,7 +240,7 @@ class SecureQuoteRequest(BaseModel):
             )
         return v
     
-    @field_validator('address', 'zone', 'observations', mode='before')
+    @field_validator('address', 'zone', 'observations')
     @classmethod
     def sanitize_optional_fields(cls, v):
         """Sanitize optional text fields"""

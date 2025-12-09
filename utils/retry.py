@@ -108,9 +108,18 @@ def retry_with_backoff(
         
         @wraps(func)
         def sync_wrapper(*args, **kwargs) -> Any:
-            return asyncio.get_event_loop().run_until_complete(
-                async_wrapper(*args, **kwargs)
-            )
+            # For sync functions, we need to run in an async context
+            # Note: This is a convenience wrapper. For production, prefer using async functions directly
+            try:
+                loop = asyncio.get_running_loop()
+                # If we're already in an async context, create a task
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as pool:
+                    future = pool.submit(asyncio.run, async_wrapper(*args, **kwargs))
+                    return future.result()
+            except RuntimeError:
+                # No running loop, safe to use asyncio.run
+                return asyncio.run(async_wrapper(*args, **kwargs))
         
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
