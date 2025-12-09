@@ -29,8 +29,13 @@ def ensure_mongodb_connected() -> bool:
 
     try:
         if _client is None:
-            default_uri = "mongodb://localhost:27017/bmc_chat"
-            mongodb_uri = os.getenv("MONGODB_URI", default_uri)
+            # Use environment variable or None - do not default to localhost in production
+            mongodb_uri = os.getenv("MONGODB_URI")
+            
+            if not mongodb_uri:
+                logger.warning("⚠️  MONGODB_URI not set. Connection skipped.")
+                return False
+
             # Log connection without credentials
             if "@" in mongodb_uri:
                 log_uri = mongodb_uri.split("@")[-1]
