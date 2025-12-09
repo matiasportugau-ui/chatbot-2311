@@ -47,7 +47,7 @@ interface ContextMetrics {
 }
 
 // Mock data for demonstration - moved outside component to avoid dependency issues
-const mockSessions: SessionData[] = [
+const MOCK_SESSIONS: SessionData[] = [
   {
     sessionId: 'sess_001',
     userPhone: '+59891234567',
@@ -108,7 +108,7 @@ export function ContextManagement({ className }: ContextManagementProps) {
 
 
   useEffect(() => {
-    setSessions(mockSessions)
+    setSessions(MOCK_SESSIONS)
   }, [])
 
   const getStatusColor = (status: string) => {
