@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { 
-  Bell, 
-  BellOff, 
-  Settings, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Bell,
+  BellOff,
+  Settings,
+  CheckCircle,
+  AlertTriangle,
   Info,
   X,
   Filter
@@ -43,11 +43,11 @@ interface NotificationsProps {
 }
 
 const topicMapping: Record<string, { type: Notification['type']; priority: Notification['priority'] }> =
-  {
-    orders: { type: 'info', priority: 'medium' },
-    items: { type: 'success', priority: 'low' },
-    shipments: { type: 'warning', priority: 'high' }
-  }
+{
+  orders: { type: 'info', priority: 'medium' },
+  items: { type: 'success', priority: 'low' },
+  shipments: { type: 'warning', priority: 'high' }
+}
 
 export function Notifications({ className }: NotificationsProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -72,7 +72,7 @@ export function Notifications({ className }: NotificationsProps) {
     })
   }
 
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -88,13 +88,13 @@ export function Notifications({ className }: NotificationsProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadEvents()
     const interval = setInterval(loadEvents, 30000)
     return () => clearInterval(interval)
-  }, [])
+  }, [loadEvents])
 
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'all') return true
@@ -205,7 +205,7 @@ export function Notifications({ className }: NotificationsProps) {
 
             {filteredNotifications.map((notification) => {
               const TypeIcon = typeIcons[notification.type]
-              
+
               return (
                 <div
                   key={notification.id}

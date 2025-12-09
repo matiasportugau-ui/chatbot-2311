@@ -8,15 +8,28 @@ export interface MessageOptions {
     message_type?: string
 }
 
+export interface Message {
+    role: string
+    content: string
+    timestamp: Date
+    intent?: string
+    message_type?: string
+}
+
 export interface SharedContext {
     session_id: string
     user_phone: string
     intent: string
-    messages: any[]
+    messages: Message[]
     context_summary: string
     token_count: number
     last_updated: Date
+    // Allow extra properties for compatibility
+    quote_state?: any
+    entities?: any
 }
+
+export type ConversationContext = SharedContext
 
 class SharedContextService {
     private sessions: Map<string, SharedContext> = new Map()
@@ -39,7 +52,7 @@ class SharedContextService {
         return session_id
     }
 
-    async addMessage(session_id: string, message: string, role: string, options: MessageOptions = {}): Promise<void> {
+    async addMessage(session_id: string, message: string, role: string, options: MessageOptions = {}): Promise<boolean> {
         const session = this.sessions.get(session_id)
         if (session) {
             session.messages.push({
@@ -51,11 +64,30 @@ class SharedContextService {
             session.token_count += Math.ceil(message.length / 4)
             session.last_updated = new Date()
             if (options.intent) session.intent = options.intent
+            return true
         }
+        return false
     }
 
     async getContext(session_id: string, user_phone: string): Promise<SharedContext | null> {
         return this.sessions.get(session_id) || null
+    }
+
+    async getSession(session_id: string): Promise<SharedContext | null> {
+        return this.sessions.get(session_id) || null
+    }
+
+    async saveContext(session_id: string, context: SharedContext): Promise<boolean> {
+        this.sessions.set(session_id, context)
+        return true
+    }
+
+    async listSessions(user_phone?: string, limit: number = 50): Promise<SharedContext[]> {
+        let sessions = Array.from(this.sessions.values())
+        if (user_phone) {
+            sessions = sessions.filter(s => s.user_phone === user_phone)
+        }
+        return sessions.slice(0, limit)
     }
 }
 

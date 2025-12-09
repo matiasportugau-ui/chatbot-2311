@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Database, 
-  Activity, 
-  Zap, 
-  RefreshCw, 
+import {
+  Database,
+  Activity,
+  Zap,
+  RefreshCw,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -46,6 +46,50 @@ interface ContextMetrics {
   avgSessionDuration: number
 }
 
+// Mock data for demonstration - moved outside component to avoid dependency issues
+const mockSessions: SessionData[] = [
+  {
+    sessionId: 'sess_001',
+    userPhone: '+59891234567',
+    currentIntent: 'quote_request',
+    tokenCount: 3200,
+    messageCount: 15,
+    lastActivity: '2024-12-19T10:30:00Z',
+    status: 'active',
+    contextSummary: 'Cliente interesado en paneles solares 2x3, necesita cotización urgente'
+  },
+  {
+    sessionId: 'sess_002',
+    userPhone: '+59898765432',
+    currentIntent: 'product_inquiry',
+    tokenCount: 1800,
+    messageCount: 8,
+    lastActivity: '2024-12-19T11:15:00Z',
+    status: 'active',
+    contextSummary: 'Consulta sobre inversores 3kW, comparando opciones'
+  },
+  {
+    sessionId: 'sess_003',
+    userPhone: '+59887654321',
+    currentIntent: 'completed',
+    tokenCount: 4500,
+    messageCount: 22,
+    lastActivity: '2024-12-19T09:45:00Z',
+    status: 'archived',
+    contextSummary: 'Cotización completada para sistema 5kW, cliente satisfecho'
+  },
+  {
+    sessionId: 'sess_004',
+    userPhone: '+59876543210',
+    currentIntent: 'error',
+    tokenCount: 0,
+    messageCount: 0,
+    lastActivity: '2024-12-19T08:20:00Z',
+    status: 'error',
+    contextSummary: 'Error en procesamiento de mensaje'
+  }
+]
+
 export function ContextManagement({ className }: ContextManagementProps) {
   const [sessions, setSessions] = useState<SessionData[]>([])
   const [metrics, setMetrics] = useState<ContextMetrics>({
@@ -61,49 +105,7 @@ export function ContextManagement({ className }: ContextManagementProps) {
   const [loading, setLoading] = useState(false)
   const [selectedSession, setSelectedSession] = useState<string | null>(null)
 
-  // Mock data for demonstration
-  const mockSessions: SessionData[] = [
-    {
-      sessionId: 'sess_001',
-      userPhone: '+59891234567',
-      currentIntent: 'quote_request',
-      tokenCount: 3200,
-      messageCount: 15,
-      lastActivity: '2024-12-19T10:30:00Z',
-      status: 'active',
-      contextSummary: 'Cliente interesado en paneles solares 2x3, necesita cotización urgente'
-    },
-    {
-      sessionId: 'sess_002',
-      userPhone: '+59898765432',
-      currentIntent: 'product_inquiry',
-      tokenCount: 1800,
-      messageCount: 8,
-      lastActivity: '2024-12-19T11:15:00Z',
-      status: 'active',
-      contextSummary: 'Consulta sobre inversores 3kW, comparando opciones'
-    },
-    {
-      sessionId: 'sess_003',
-      userPhone: '+59887654321',
-      currentIntent: 'completed',
-      tokenCount: 4500,
-      messageCount: 22,
-      lastActivity: '2024-12-19T09:45:00Z',
-      status: 'archived',
-      contextSummary: 'Cotización completada para sistema 5kW, cliente satisfecho'
-    },
-    {
-      sessionId: 'sess_004',
-      userPhone: '+59876543210',
-      currentIntent: 'error',
-      tokenCount: 0,
-      messageCount: 0,
-      lastActivity: '2024-12-19T08:20:00Z',
-      status: 'error',
-      contextSummary: 'Error en procesamiento de mensaje'
-    }
-  ]
+
 
   useEffect(() => {
     setSessions(mockSessions)
@@ -137,7 +139,7 @@ export function ContextManagement({ className }: ContextManagementProps) {
     const now = new Date()
     const time = new Date(timestamp)
     const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60))
-    
+
     if (diffInMinutes < 1) return 'Ahora'
     if (diffInMinutes < 60) return `${diffInMinutes}m`
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`
@@ -153,8 +155,8 @@ export function ContextManagement({ className }: ContextManagementProps) {
 
   const handleCompressContext = async (sessionId: string) => {
     // Simulate context compression
-    setSessions(prev => prev.map(session => 
-      session.sessionId === sessionId 
+    setSessions(prev => prev.map(session =>
+      session.sessionId === sessionId
         ? { ...session, tokenCount: Math.floor(session.tokenCount * 0.7) }
         : session
     ))
@@ -187,8 +189,8 @@ export function ContextManagement({ className }: ContextManagementProps) {
             Monitoreo y optimización de sesiones de conversación
           </p>
         </div>
-        <Button 
-          onClick={handleRefreshSessions} 
+        <Button
+          onClick={handleRefreshSessions}
           disabled={loading}
           className="flex items-center gap-2"
         >
@@ -292,13 +294,12 @@ export function ContextManagement({ className }: ContextManagementProps) {
         <CardContent>
           <div className="space-y-4">
             {sessions.map((session) => (
-              <div 
+              <div
                 key={session.sessionId}
-                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                  selectedSession === session.sessionId 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
+                className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedSession === session.sessionId
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-200 hover:border-gray-300'
+                  }`}
                 onClick={() => setSelectedSession(
                   selectedSession === session.sessionId ? null : session.sessionId
                 )}
@@ -318,7 +319,7 @@ export function ContextManagement({ className }: ContextManagementProps) {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className={`text-sm font-medium ${getTokenUsageColor(session.tokenCount)}`}>
@@ -348,23 +349,23 @@ export function ContextManagement({ className }: ContextManagementProps) {
                           {session.contextSummary}
                         </p>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <div className="flex-1">
                           <div className="flex items-center justify-between text-xs mb-1">
                             <span>Uso de Tokens</span>
                             <span>{Math.round((session.tokenCount / 8000) * 100)}%</span>
                           </div>
-                          <Progress 
-                            value={(session.tokenCount / 8000) * 100} 
+                          <Progress
+                            value={(session.tokenCount / 8000) * 100}
                             className="h-2"
                           />
                         </div>
                       </div>
 
                       <div className="flex gap-2">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={(e) => {
                             e.stopPropagation()
@@ -375,8 +376,8 @@ export function ContextManagement({ className }: ContextManagementProps) {
                           <Zap className="w-3 h-3 mr-1" />
                           Comprimir
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={(e) => {
                             e.stopPropagation()
@@ -423,7 +424,7 @@ export function ContextManagement({ className }: ContextManagementProps) {
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <h4 className="font-medium">Estadísticas de Rendimiento</h4>
               <div className="space-y-2">
