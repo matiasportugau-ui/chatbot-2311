@@ -118,6 +118,18 @@ class IntegracionGoogleSheets:
             print("[INFO] Usando modo simulado")
             self.credenciales = None
     
+    def _obtener_hoja(self, spreadsheet, nombre_buscado: str):
+        """Busca una hoja ignorando espacios extra al inicio o final"""
+        try:
+            return spreadsheet.worksheet(nombre_buscado)
+        except gspread.exceptions.WorksheetNotFound:
+            # Intentar buscar normalizando nombres
+            for ws in spreadsheet.worksheets():
+                if ws.title.strip() == nombre_buscado.strip():
+                    print(f"[INFO] Se encontro '{ws.title}' buscando '{nombre_buscado}'")
+                    return ws
+            raise
+
     def conectar_google_sheets(self):
         """Conecta con Google Sheets"""
         if not self.credenciales:
@@ -128,9 +140,11 @@ class IntegracionGoogleSheets:
         try:
             self.cliente_gspread = gspread.authorize(self.credenciales)
             spreadsheet = self.cliente_gspread.open_by_key(self.sheet_id)
-            self.hoja_principal = spreadsheet.worksheet("Admin.")
-            self.hoja_enviados = spreadsheet.worksheet("Enviados")
-            self.hoja_confirmados = spreadsheet.worksheet("Confirmado")
+            
+            # Usar metodo robusto para encontrar hojas
+            self.hoja_principal = self._obtener_hoja(spreadsheet, "Admin.")
+            self.hoja_enviados = self._obtener_hoja(spreadsheet, "Enviados")
+            self.hoja_confirmados = self._obtener_hoja(spreadsheet, "Confirmado")
             
             self.conectado = True
             print("[OK] Conectado a Google Sheets exitosamente")

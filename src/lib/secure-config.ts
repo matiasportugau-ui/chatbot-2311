@@ -5,7 +5,7 @@ export class SecureConfig {
   private static instance: SecureConfig
   private isInitialized = false
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstance(): SecureConfig {
     if (!SecureConfig.instance) {
@@ -94,6 +94,17 @@ export class SecureConfig {
       apiBaseUrl: config.api_base_url,
       scopes: config.scopes,
       pkceEnabled: config.pkce_enabled
+    }
+  }
+
+  // Obtener configuración de Dropbox
+  getDropboxConfig() {
+    const config = credentialsManager.getDropbox()
+    return {
+      appKey: config.app_key,
+      appSecret: config.app_secret,
+      accessToken: config.access_token,
+      refreshToken: config.refresh_token
     }
   }
 

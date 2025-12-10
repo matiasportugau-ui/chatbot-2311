@@ -45,6 +45,12 @@ interface Credentials {
     scopes: string[]
     pkce_enabled: boolean
   }
+  dropbox: {
+    app_key: string
+    app_secret: string
+    access_token: string
+    refresh_token: string
+  }
   system: {
     environment: string
     max_context_tokens: number
@@ -62,7 +68,7 @@ class CredentialsManager {
 
   constructor() {
     // Usar clave de encriptación del sistema o generar una
-    this.encryptionKey = process.env.CREDENTIALS_ENCRYPTION_KEY || 
+    this.encryptionKey = process.env.CREDENTIALS_ENCRYPTION_KEY ||
       'bmc-default-encryption-key-32-chars'
   }
 
@@ -156,6 +162,12 @@ class CredentialsManager {
           .filter(Boolean),
         pkce_enabled: (process.env.MERCADO_LIBRE_PKCE_ENABLED || 'true').toLowerCase() !== 'false'
       },
+      dropbox: {
+        app_key: process.env.DROPBOX_APP_KEY || '',
+        app_secret: process.env.DROPBOX_APP_SECRET || '',
+        access_token: process.env.DROPBOX_ACCESS_TOKEN || '',
+        refresh_token: process.env.DROPBOX_REFRESH_TOKEN || ''
+      },
       system: {
         environment: process.env.NODE_ENV || 'development',
         max_context_tokens: parseInt(process.env.MAX_CONTEXT_TOKENS || '8000'),
@@ -198,6 +210,11 @@ class CredentialsManager {
     return this.credentials!.mercado_libre
   }
 
+  getDropbox() {
+    this.ensureLoaded()
+    return this.credentials!.dropbox
+  }
+
   getSystem() {
     this.ensureLoaded()
     return this.credentials!.system
@@ -206,7 +223,7 @@ class CredentialsManager {
   // Verificar si todas las credenciales están configuradas
   validateCredentials(): { isValid: boolean; missing: string[] } {
     this.ensureLoaded()
-    
+
     const missing: string[] = []
     const creds = this.credentials!
 
@@ -263,7 +280,7 @@ class CredentialsManager {
   // Obtener resumen de credenciales (sin datos sensibles)
   getCredentialsSummary() {
     this.ensureLoaded()
-    
+
     return {
       openai: {
         model: this.credentials!.openai.model,
@@ -288,6 +305,11 @@ class CredentialsManager {
         pkce_enabled: this.credentials!.mercado_libre.pkce_enabled,
         scopes: this.credentials!.mercado_libre.scopes
       },
+      dropbox: {
+        has_app_key: !!this.credentials!.dropbox.app_key,
+        has_app_secret: !!this.credentials!.dropbox.app_secret,
+        has_tokens: !!(this.credentials!.dropbox.access_token || this.credentials!.dropbox.refresh_token)
+      },
       n8n: {
         webhook_url: this.credentials!.n8n.webhook_url,
         has_api_key: !!this.credentials!.n8n.api_key
@@ -306,7 +328,7 @@ export const credentialsManager = new CredentialsManager()
 // Función de conveniencia para inicializar credenciales
 export async function initializeCredentials(credentialsPath?: string): Promise<void> {
   await credentialsManager.loadCredentials(credentialsPath)
-  
+
   const validation = credentialsManager.validateCredentials()
   if (!validation.isValid) {
     console.warn('⚠️ Credenciales faltantes:', validation.missing)
