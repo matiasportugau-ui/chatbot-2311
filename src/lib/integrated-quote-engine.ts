@@ -75,7 +75,7 @@ class MotorCotizacionIntegrado {
     const config = secureConfig.getOpenAIConfig()
     this.openai = new OpenAI({ apiKey: config.apiKey })
     this.quoteService = new QuoteService()
-    
+
     // Inicializar base de conocimiento
     this.inicializarBaseConocimiento()
   }
@@ -86,16 +86,16 @@ class MotorCotizacionIntegrado {
   private async inicializarBaseConocimiento() {
     try {
       await connectDB()
-      
+
       // Cargar patrones de venta existentes
       await this.cargarPatronesVenta()
-      
+
       // Cargar conocimiento de productos
       await this.cargarConocimientoProductos()
-      
+
       // Cargar interacciones históricas
       await this.cargarInteraccionesHistoricas()
-      
+
       console.log('✅ Base de conocimiento inicializada correctamente')
     } catch (error) {
       console.error('❌ Error inicializando base de conocimiento:', error)
@@ -109,13 +109,13 @@ class MotorCotizacionIntegrado {
     try {
       // 1. Parsear consulta con IA
       const parsed = await parseQuoteConsulta(consulta)
-      
+
       // 2. Analizar contexto y patrones
       const contexto = await this.analizarContexto(consulta, userPhone)
-      
+
       // 3. Generar respuesta inteligente
       const respuesta = await this.generarRespuestaInteligente(consulta, parsed, contexto)
-      
+
       // 4. Registrar interacción para aprendizaje
       await this.registrarInteraccion({
         id: this.generarId(),
@@ -128,7 +128,7 @@ class MotorCotizacionIntegrado {
         timestamp: new Date(),
         lecciones_aprendidas: []
       })
-      
+
       return respuesta
     } catch (error) {
       console.error('Error procesando consulta:', error)
@@ -149,13 +149,13 @@ class MotorCotizacionIntegrado {
   private async analizarContexto(consulta: string, userPhone: string): Promise<any> {
     // Buscar patrones similares en interacciones anteriores
     const patronesSimilares = this.buscarPatronesSimilares(consulta)
-    
+
     // Analizar perfil del cliente
     const perfilCliente = await this.analizarPerfilCliente(userPhone)
-    
+
     // Identificar tipo de consulta
     const tipoConsulta = this.identificarTipoConsulta(consulta)
-    
+
     return {
       patronesSimilares,
       perfilCliente,
@@ -168,11 +168,11 @@ class MotorCotizacionIntegrado {
    * 🤖 Generar Respuesta Inteligente
    */
   private async generarRespuestaInteligente(
-    consulta: string, 
-    parsed: ParsedQuote, 
+    consulta: string,
+    parsed: ParsedQuote,
     contexto: any
   ): Promise<RespuestaInteligente> {
-    
+
     const prompt = `Eres un experto en ventas de productos de construcción (BMC Uruguay) con acceso a una base de conocimiento que aprende y evoluciona.
 
 CONSULTA DEL CLIENTE: "${consulta}"
@@ -211,14 +211,14 @@ Responde en formato JSON:
 }`
 
     const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
       temperature: 0.3
     })
 
     const respuesta = JSON.parse(completion.choices[0].message.content || '{}')
-    
+
     // Si es cotización, calcular precios reales
     if (respuesta.tipo === 'cotizacion' && parsed.producto) {
       const cotizacionReal = calculateFullQuote({
@@ -241,7 +241,7 @@ Responde en formato JSON:
    * 🔍 Buscar Patrones Similares
    */
   private buscarPatronesSimilares(consulta: string): PatronVenta[] {
-    return this.patronesVenta.filter(patron => 
+    return this.patronesVenta.filter(patron =>
       this.calcularSimilitud(consulta, patron.patron) > 0.7
     )
   }
@@ -252,7 +252,7 @@ Responde en formato JSON:
   private async analizarPerfilCliente(userPhone: string): Promise<any> {
     // Buscar interacciones anteriores del cliente
     const interaccionesCliente = this.interacciones.filter(i => i.telefono === userPhone)
-    
+
     if (interaccionesCliente.length === 0) {
       return { tipo: 'nuevo_cliente', confianza: 0.5 }
     }
@@ -286,19 +286,19 @@ Responde en formato JSON:
    */
   private identificarTipoConsulta(consulta: string): string {
     const consultaLower = consulta.toLowerCase()
-    
+
     if (consultaLower.includes('precio') || consultaLower.includes('cuesta') || consultaLower.includes('cotizar')) {
       return 'cotizacion'
     }
-    
+
     if (consultaLower.includes('que es') || consultaLower.includes('como funciona') || consultaLower.includes('caracteristicas')) {
       return 'informacion'
     }
-    
+
     if (consultaLower.includes('muy caro') || consultaLower.includes('no me convence') || consultaLower.includes('problema')) {
       return 'objeccion'
     }
-    
+
     return 'seguimiento'
   }
 
@@ -307,17 +307,17 @@ Responde en formato JSON:
    */
   private calcularConfianza(patrones: PatronVenta[], perfil: any): number {
     let confianza = 0.5 // Base
-    
+
     // Aumentar confianza con patrones similares
     if (patrones.length > 0) {
       confianza += 0.2
     }
-    
+
     // Aumentar confianza con perfil del cliente
     if (perfil.tipo === 'cliente_recurrente') {
       confianza += 0.3
     }
-    
+
     return Math.min(1.0, confianza)
   }
 
@@ -326,7 +326,7 @@ Responde en formato JSON:
    */
   private async registrarInteraccion(interaccion: InteraccionCliente) {
     this.interacciones.push(interaccion)
-    
+
     // Guardar en base de datos
     try {
       await this.quoteService.createQuote({
@@ -351,13 +351,13 @@ Responde en formato JSON:
     try {
       // Analizar nuevas interacciones
       await this.analizarNuevasInteracciones()
-      
+
       // Actualizar patrones de venta
       await this.actualizarPatronesVenta()
-      
+
       // Actualizar conocimiento de productos
       await this.actualizarConocimientoProductos()
-      
+
       console.log('✅ Base de conocimiento actualizada')
     } catch (error) {
       console.error('❌ Error actualizando base de conocimiento:', error)
@@ -372,7 +372,7 @@ Responde en formato JSON:
     const cotizacionesGeneradas = this.interacciones.filter(i => i.cotizacion_generada).length
     const conversiones = this.interacciones.filter(i => i.conversion).length
     const tasaConversion = conversiones / cotizacionesGeneradas || 0
-    
+
     return {
       total_interacciones: totalInteracciones,
       cotizaciones_generadas: cotizacionesGeneradas,
@@ -399,14 +399,14 @@ Responde en formato JSON:
 
   private extraerProductosDeConsulta(consulta: string): string[] {
     const productos = Object.keys(PRODUCTOS)
-    return productos.filter(producto => 
+    return productos.filter(producto =>
       consulta.toLowerCase().includes(producto.toLowerCase())
     )
   }
 
   private extraerServiciosDeConsulta(consulta: string): string[] {
     const servicios = Object.keys(SERVICIOS_ADICIONALES)
-    return servicios.filter(servicio => 
+    return servicios.filter(servicio =>
       consulta.toLowerCase().includes(servicio.toLowerCase())
     )
   }
