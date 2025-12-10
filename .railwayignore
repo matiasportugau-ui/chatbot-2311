@@ -99,3 +99,4 @@ node_modules/
 .next/
 .agent/
 .venv/
+Dockerfile
