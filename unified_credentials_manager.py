@@ -138,6 +138,28 @@ ALL_CREDENTIALS = {
         'description': 'API Key de N8N',
         'required_for': ['n8n_integration']
     },
+
+    # Dropbox
+    'DROPBOX_APP_KEY': {
+        'description': 'App Key de Dropbox',
+        'required_for': ['dropbox_integration'],
+        'source': 'https://www.dropbox.com/developers/apps'
+    },
+    'DROPBOX_APP_SECRET': {
+        'description': 'App Secret de Dropbox',
+        'required_for': ['dropbox_integration'],
+        'source': 'https://www.dropbox.com/developers/apps'
+    },
+    'DROPBOX_ACCESS_TOKEN': {
+        'description': 'Access Token de Dropbox',
+        'required_for': ['dropbox_integration'],
+        'source': 'https://www.dropbox.com/developers/apps'
+    },
+    'DROPBOX_REFRESH_TOKEN': {
+        'description': 'Refresh Token de Dropbox (para acceso offline)',
+        'required_for': ['dropbox_integration'],
+        'source': 'https://www.dropbox.com/developers/apps'
+    },
     
     # Otros
     'BMC_MASTER_PASSWORD': {

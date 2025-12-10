@@ -39,9 +39,13 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
      NOTE: Simplified implementation to ensure reliability.
      Using standard useChat fetch and passing body data via append options.
   */
-  const { messages, append, isLoading, setMessages } = useChat({
-    api: '/api/chat/stream',
-    onResponse: (response: Response) => {
+  const { messages, append, isLoading, reload, setMessages } = useChat({
+    api: '/api/chat',
+    body: {
+      sessionId: sessionIdRef.current,
+      userPhone
+    },
+    onResponse: (response: any) => {
       const confidenceHeader = response.headers.get('X-Confidence')
       const sourceHeader = response.headers.get('X-Source')
 
