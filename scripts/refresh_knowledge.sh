@@ -8,7 +8,9 @@ LOG_DIR="${ROOT_DIR}/logs/automation"
 mkdir -p "${LOG_DIR}"
 INGEST_LOG="${LOG_DIR}/ingestion_$(date +"%Y%m%d_%H%M%S").log"
 
-if [ -d "${VENV_DIR}" ]; then
+if [ "${SKIP_VENV_CHECK:-false}" = "true" ]; then
+  echo "Environment variable SKIP_VENV_CHECK is set. Skipping venv activation."
+elif [ -d "${VENV_DIR}" ]; then
   echo "🐍 Activando entorno virtual .venv"
   # shellcheck disable=SC1090
   source "${VENV_DIR}/bin/activate"
