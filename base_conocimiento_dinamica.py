@@ -6,6 +6,7 @@ Sistema que evoluciona constantemente basado en interacciones y ventas
 """
 
 import json
+import os
 import datetime
 import hashlib
 from typing import Dict, List, Any, Optional
