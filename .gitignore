@@ -69,7 +69,7 @@ htmlcov/
 # Data files
 *.csv
 *.xlsx
-!matriz_precios.json
+# !matriz_precios.json
 
 # Temporary files
 tmp/
@@ -77,7 +77,8 @@ temp/
 *.tmp
 *.bak
 
-node_modules
+# node_modules
+node_modules/
 
 # Next.js
 .next/
@@ -87,3 +88,7 @@ build/
 
 # Vercel
 .vercel/
+
+# Large files
+quotes.zip
+data/quotes/
