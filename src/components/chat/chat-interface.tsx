@@ -207,9 +207,9 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
 
   const createNewChat = async () => {
     try {
-      await initializeSession()
       setMessages([])
       setContextUsage(0)
+      await initializeSession()
       addMessage('system', 'Nueva conversación iniciada.', 'new_chat')
     } catch (error) {
       console.error('Error creating new chat:', error)
