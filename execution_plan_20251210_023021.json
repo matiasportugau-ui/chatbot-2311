@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-12-10T02:30:21.609213",
+  "repo_path": "/Users/matias/chatbot-2311",
+  "analysis_summary": {
+    "branches": 80,
+    "commits": 100,
+    "issues": 4,
+    "improvements": 0
+  },
+  "execution_phases": [
+    {
+      "phase": 1,
+      "name": "Configuración de Remotes",
+      "description": "Agregar remote de backup para redundancia",
+      "risk_level": "low",
+      "estimated_time": "5 minutos",
+      "actions": [
+        {
+          "id": "add_backup_remote",
+          "type": "git_remote_add",
+          "description": "Agregar remote de backup (requiere URL)",
+          "command": "git remote add backup <URL>",
+          "requires_input": true,
+          "input_prompt": "URL del repositorio de backup (o Enter para omitir)",
+          "safe": true,
+          "can_rollback": true
+        }
+      ]
+    }
+  ],
+  "actions": [],
+  "estimated_time": "5-15 minutos",
+  "risks": [
+    "Ningún riesgo significativo identificado"
+  ],
+  "rollback_plan": {
+    "before_execution": "Crear backup del estado actual",
+    "commands": [
+      "git remote remove backup"
+    ],
+    "manual_steps": []
+  }
+}

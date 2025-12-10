@@ -13,7 +13,7 @@ const KNOWLEDGE_BASE = {
 function buscarProductos(consulta: string) {
   const consultaLower = consulta.toLowerCase()
   const results = []
-  
+
   for (const [key, producto] of Object.entries(PRODUCTOS)) {
     if (consultaLower.includes(key) || consultaLower.includes(producto.nombre.toLowerCase())) {
       results.push({
@@ -24,22 +24,38 @@ function buscarProductos(consulta: string) {
       })
     }
   }
-  
+
   return results
 }
 
 // Helper function to generate quote
 function generarCotizacion(parsed: any, zona?: string) {
   try {
+    // Handle area_m2 directly if specified
+    let ancho = 1, largo = 1
+    if (parsed.dimensiones?.area_m2) {
+      // If only area is specified, use it as width (ancho) and 1m as length
+      ancho = parsed.dimensiones.area_m2
+      largo = 1
+    } else if (parsed.dimensiones?.ancho && parsed.dimensiones?.largo) {
+      // If both dimensions are specified
+      ancho = parsed.dimensiones.ancho
+      largo = parsed.dimensiones.largo
+    } else if (parsed.dimensiones?.ancho) {
+      // If only width is specified, assume it's area
+      ancho = parsed.dimensiones.ancho
+      largo = 1
+    }
+
     return calculateFullQuote({
-      producto: parsed.producto || 'isodec',
+      producto: parsed.producto?.tipo || 'isodec',
       dimensiones: {
-        ancho: parsed.ancho || 1,
-        largo: parsed.largo || 1,
-        espesor: parsed.espesor || 100
+        ancho,
+        largo,
+        espesor: parsed.producto?.grosor ? parseInt(parsed.producto.grosor) : 100
       },
       servicios: parsed.servicios || [],
-      cantidad: parsed.cantidad || 1
+      cantidad: parsed.producto?.cantidad || 1
     })
   } catch (error) {
     throw new Error('Error generando cotización: ' + (error instanceof Error ? error.message : String(error)))
@@ -73,26 +89,26 @@ export interface QuoteResponse {
 
 export class QuoteEngine {
   private knowledgeBase = KNOWLEDGE_BASE
-  
+
   // Procesar consulta y generar respuesta inteligente
   async procesarConsulta(consulta: string, telefono?: string): Promise<QuoteResponse> {
     try {
       // 1. Parsear consulta con IA
       const parsed = await parseQuoteConsulta(consulta)
-      
+
       // 2. Determinar tipo de consulta
       const tipoConsulta = this.determinarTipoConsulta(consulta, parsed)
-      
+
       switch (tipoConsulta) {
         case 'cotizacion':
           return await this.generarRespuestaCotizacion(parsed, telefono)
-        
+
         case 'informacion':
           return await this.generarRespuestaInformacion(consulta)
-        
+
         case 'pregunta':
           return await this.generarRespuestaPregunta(consulta)
-        
+
         default:
           return this.generarRespuestaError(consulta)
       }
@@ -101,58 +117,58 @@ export class QuoteEngine {
       return this.generarRespuestaError(consulta, error.message)
     }
   }
-  
+
   // Determinar tipo de consulta
   private determinarTipoConsulta(consulta: string, parsed: any): 'cotizacion' | 'informacion' | 'pregunta' {
     const consultaLower = consulta.toLowerCase()
-    
+
     // Palabras clave para cotización
     const palabrasCotizacion = [
       'cotizar', 'precio', 'costo', 'cuanto', 'presupuesto', 'cotización',
       'isodec', 'isoroof', 'isopanel', 'isowall', 'chapa', 'calameria',
       'panel', 'techo', 'pared', 'galpón', 'galpon', 'm2', 'metro'
     ]
-    
+
     // Palabras clave para información
     const palabrasInformacion = [
       'que es', 'como funciona', 'caracteristicas', 'especificaciones',
       'diferencia', 'ventajas', 'beneficios', 'aplicaciones'
     ]
-    
+
     // Palabras clave para preguntas
     const palabrasPregunta = [
       'como', 'cuando', 'donde', 'por que', 'que', 'cual', 'cuanto tiempo',
       'garantia', 'instalacion', 'flete', 'entrega'
     ]
-    
+
     if (palabrasCotizacion.some(palabra => consultaLower.includes(palabra))) {
       return 'cotizacion'
     }
-    
+
     if (palabrasInformacion.some(palabra => consultaLower.includes(palabra))) {
       return 'informacion'
     }
-    
+
     if (palabrasPregunta.some(palabra => consultaLower.includes(palabra))) {
       return 'pregunta'
     }
-    
+
     // Si tiene información de producto parseada, es cotización
     if (parsed.producto?.tipo) {
       return 'cotizacion'
     }
-    
+
     return 'pregunta'
   }
-  
+
   // Generar respuesta de cotización
   private async generarRespuestaCotizacion(parsed: any, telefono?: string): Promise<QuoteResponse> {
     // Detectar zona por teléfono (simplificado)
     const zona = this.detectarZonaPorTelefono(telefono)
-    
+
     // Generar cotización
     const cotizacion = generarCotizacion(parsed, zona)
-    
+
     if (!cotizacion.producto) {
       return {
         tipo: 'error',
@@ -160,28 +176,30 @@ export class QuoteEngine {
         productos_sugeridos: this.obtenerProductosSugeridos(parsed.consulta_original || '')
       }
     }
-    
+
     // Generar código único
     const codigo = this.generarCodigoCotizacion(telefono)
-    
+
     // Construir mensaje de respuesta
     let mensaje = `🏗️ **COTIZACIÓN BMC** - Código: ${codigo}\n\n`
     mensaje += `📋 **${cotizacion.producto}**\n\n`
     mensaje += `💰 **Detalle de Precios:**\n`
-    mensaje += `• Producto: $${cotizacion.precioFinal.toLocaleString()}\n`
-    
+    mensaje += `• Área: ${cotizacion.dimensiones}\n`
+    mensaje += `• Precio unitario: $${cotizacion.precioUnitario?.toFixed(2) || '0'}/m²\n`
+    mensaje += `• Subtotal: $${cotizacion.subtotal?.toFixed(2) || '0'}\n`
+
     if (parsed.servicios?.instalacion || parsed.servicios?.flete || parsed.servicios?.accesorios) {
       mensaje += `• Servicios adicionales incluidos\n`
     }
-    
-    mensaje += `\n🎯 **TOTAL: $${cotizacion.precioFinal.toLocaleString()}**\n\n`
-    
+
+    mensaje += `\n🎯 **TOTAL: $${cotizacion.precioFinal?.toFixed(2) || '0'}**\n\n`
+
     mensaje += `📞 **Próximos pasos:**\n`
     mensaje += `• Confirmar dimensiones exactas\n`
     mensaje += `• Coordinar visita técnica (si es necesario)\n`
     mensaje += `• Definir fecha de entrega\n\n`
     mensaje += `¿Te interesa esta cotización? ¡Contáctanos para más detalles! 🚀`
-    
+
     return {
       tipo: 'cotizacion',
       mensaje,
@@ -202,11 +220,11 @@ export class QuoteEngine {
       ]
     }
   }
-  
+
   // Generar respuesta informativa
   private async generarRespuestaInformacion(consulta: string): Promise<QuoteResponse> {
     const productos = buscarProductos(consulta)
-    
+
     if (productos.length === 0) {
       return {
         tipo: 'informacion',
@@ -225,18 +243,18 @@ Te puedo ayudar con información sobre nuestros productos principales:
         productos_sugeridos: this.obtenerProductosSugeridos(consulta)
       }
     }
-    
+
     const producto = productos[0]
     let mensaje = `📋 **${producto.nombre}**\n\n`
     mensaje += `${producto.descripcion}\n\n`
-    
+
     mensaje += `💰 **Precios disponibles:**\n`
     for (const [espesor, precio] of Object.entries(producto.precios)) {
       mensaje += `• ${espesor}: $${precio}/m²\n`
     }
-    
+
     mensaje += `\n¿Te interesa cotizar este producto? ¡Dime las dimensiones de tu proyecto! 📐`
-    
+
     return {
       tipo: 'informacion',
       mensaje,
@@ -248,11 +266,11 @@ Te puedo ayudar con información sobre nuestros productos principales:
       }))
     }
   }
-  
+
   // Generar respuesta a preguntas frecuentes
   private async generarRespuestaPregunta(consulta: string): Promise<QuoteResponse> {
     const preguntasFrecuentes = this.obtenerPreguntasFrecuentes(consulta)
-    
+
     if (preguntasFrecuentes.length > 0) {
       return {
         tipo: 'pregunta',
@@ -260,7 +278,7 @@ Te puedo ayudar con información sobre nuestros productos principales:
         preguntas_frecuentes: preguntasFrecuentes
       }
     }
-    
+
     return {
       tipo: 'pregunta',
       mensaje: `Hola! 👋 
@@ -275,7 +293,7 @@ No estoy seguro de entender tu pregunta. Te puedo ayudar con:
       preguntas_frecuentes: this.obtenerPreguntasFrecuentes('general')
     }
   }
-  
+
   // Generar respuesta de error
   private generarRespuestaError(consulta: string, error?: string): QuoteResponse {
     return {
@@ -287,11 +305,11 @@ ${error ? `Error: ${error}` : 'Por favor, intenta reformular tu pregunta.'}
 Puedes contactarnos directamente al 📞 [teléfono] o escribirnos de nuevo con más detalles.`
     }
   }
-  
+
   // Detectar zona por teléfono (simplificado)
   private detectarZonaPorTelefono(telefono?: string): string {
     if (!telefono) return 'montevideo'
-    
+
     // Códigos de área de Uruguay (simplificado)
     const codigos: { [key: string]: string } = {
       '2': 'montevideo',    // Montevideo
@@ -299,18 +317,18 @@ Puedes contactarnos directamente al 📞 [teléfono] o escribirnos de nuevo con 
       '5': 'fray_bentos',   // Río Negro
       '6': 'colonia'        // Colonia
     }
-    
+
     const codigoArea = telefono.slice(0, 1)
     return codigos[codigoArea] || 'montevideo'
   }
-  
+
   // Generar código único de cotización
   private generarCodigoCotizacion(telefono?: string): string {
     const timestamp = Date.now().toString().slice(-6)
     const telefonoSuffix = telefono ? telefono.slice(-3) : '000'
     return `BMC${timestamp}${telefonoSuffix}`
   }
-  
+
   // Obtener productos sugeridos
   private obtenerProductosSugeridos(consulta: string) {
     const productos = buscarProductos(consulta)
@@ -321,7 +339,7 @@ Puedes contactarnos directamente al 📞 [teléfono] o escribirnos de nuevo con 
       aplicaciones: []
     }))
   }
-  
+
   // Obtener preguntas frecuentes
   private obtenerPreguntasFrecuentes(consulta: string) {
     const faqs = [
@@ -346,9 +364,9 @@ Puedes contactarnos directamente al 📞 [teléfono] o escribirnos de nuevo con 
         respuesta: 'Aceptamos efectivo, transferencia bancaria, tarjeta de crédito y débito. Para proyectos grandes ofrecemos financiación a través de bancos conveniados. Consulta por planes de pago especiales.'
       }
     ]
-    
+
     const consultaLower = consulta.toLowerCase()
-    return faqs.filter(faq => 
+    return faqs.filter(faq =>
       faq.pregunta.toLowerCase().includes(consultaLower) ||
       faq.respuesta.toLowerCase().includes(consultaLower)
     )

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest } from 'next/server'
-import { quoteEngine } from '@/lib/quote-engine'
+import { getMotorCotizacionIntegrado } from '@/lib/integrated-quote-engine'
 import { parseQuoteConsulta } from '@/lib/quote-parser'
 import { initializeBMCSystem } from '@/lib/initialize-system'
 
@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
   let sessionId: string | null = null
   try {
     await ensureSystemInitialized()
-    
+
     const { messages, data } = await request.json()
-    
+
     // Get the last user message
     const lastMessage = messages[messages.length - 1]
     if (!lastMessage || !lastMessage.content) {
@@ -60,9 +60,10 @@ export async function POST(request: NextRequest) {
     const userPhone = data?.userPhone || '+59891234567'
     sessionId = data?.sessionId || null
 
-    // Process message with quote engine
-    const quoteResponse = await quoteEngine.procesarConsulta(userMessage, userPhone)
-    
+    // Process message with integrated quote engine
+    const motorCotizacionIntegrado = await getMotorCotizacionIntegrado()
+    const quoteResponse = await motorCotizacionIntegrado.procesarConsulta(userMessage, userPhone)
+
     // Parse quote data if it's a quote request
     let parsedData = null
     if (quoteResponse.tipo === 'cotizacion') {
@@ -93,6 +94,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Add product suggestions if available
+    /* TODO: Restore when interface is updated
     if (quoteResponse.productos_sugeridos && quoteResponse.productos_sugeridos.length > 0) {
       responseText += `\n\n🏗️ **Productos Sugeridos:**\n`
       quoteResponse.productos_sugeridos.forEach((producto, index) => {
@@ -106,35 +108,38 @@ export async function POST(request: NextRequest) {
         responseText += '\n'
       })
     }
+    */
 
     // Add FAQs if available
+    /* TODO: Restore when interface is updated
     if (quoteResponse.preguntas_frecuentes && quoteResponse.preguntas_frecuentes.length > 0) {
       responseText += `\n\n❓ **Preguntas Relacionadas:**\n`
       quoteResponse.preguntas_frecuentes.forEach((faq, index) => {
         responseText += `${index + 1}. ${faq.pregunta}\n   ${faq.respuesta}\n`
       })
     }
+    */
 
     // Return streaming response with metadata
     const headers: Record<string, string> = {
       'X-Quote-Type': quoteResponse.tipo,
       'X-Session-Id': sessionId || '',
     }
-    
+
     // Add confidence header if available from parsed data
     if (parsedData && typeof parsedData.confianza === 'number' && !isNaN(parsedData.confianza) && isFinite(parsedData.confianza)) {
       headers['X-Confidence'] = parsedData.confianza.toString()
     }
-    
+
     return createStreamResponse(responseText, headers)
   } catch (error) {
     console.error('Error in streaming chat API:', error)
-    
+
     // Return error message
-    const errorMessage = error instanceof Error 
-      ? error.message 
+    const errorMessage = error instanceof Error
+      ? error.message
       : 'Lo siento, hubo un problema procesando tu mensaje. Por favor, intenta de nuevo.'
-    
+
     return createStreamResponse(
       `Lo siento, hubo un error al procesar tu consulta: ${errorMessage}\n\nPor favor, intenta reformular tu pregunta o contacta con soporte.`,
       {

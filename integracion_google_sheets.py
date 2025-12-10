@@ -46,7 +46,7 @@ class IntegracionGoogleSheets:
     def __init__(self, ia_conversacional: Optional[IAConversacionalIntegrada] = None):
         self.ia = ia_conversacional
         # Leer Sheet ID de variable de entorno o usar el por defecto
-        self.sheet_id = os.getenv('GOOGLE_SHEET_ID', '1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0')
+        self.sheet_id = os.getenv('GOOGLE_SHEET_ID', '1-c834pOUNnUWn7Q-Bc4kDHJGCQo0LKI05dXaLgqcXgI')
         self.credenciales = None
         self.cliente_gspread = None
         self.hoja_principal = None

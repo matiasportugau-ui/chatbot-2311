@@ -6,6 +6,8 @@
  */
 
 import { OpenAI } from 'openai'
+import * as fs from 'fs'
+import * as path from 'path'
 import { secureConfig, initializeSecureConfig } from './secure-config'
 import { connectDB } from './mongodb'
 import { QuoteService } from './quote-service'
@@ -60,7 +62,7 @@ export interface RespuestaInteligente {
 }
 
 class MotorCotizacionIntegrado {
-  private openai: OpenAI
+  private openai: OpenAI | null
   private quoteService: QuoteService
   private baseConocimiento: Map<string, any> = new Map()
   private patronesVenta: PatronVenta[] = []
@@ -73,7 +75,12 @@ class MotorCotizacionIntegrado {
     }
 
     const config = secureConfig.getOpenAIConfig()
-    this.openai = new OpenAI({ apiKey: config.apiKey })
+    if (!config.apiKey || config.apiKey.includes('***') || config.apiKey.toLowerCase().includes('your-openai')) {
+      console.warn('⚠️ OpenAI API key no configurada o inválida. Respuestas con IA deshabilitadas; usando respuestas básicas.')
+      this.openai = null
+    } else {
+      this.openai = new OpenAI({ apiKey: config.apiKey })
+    }
     this.quoteService = new QuoteService()
 
     // Inicializar base de conocimiento
@@ -95,6 +102,9 @@ class MotorCotizacionIntegrado {
 
       // Cargar interacciones históricas
       await this.cargarInteraccionesHistoricas()
+
+      // Cargar conocimiento de Mercado Libre
+      await this.cargarConocimientoMercadoLibre()
 
       console.log('✅ Base de conocimiento inicializada correctamente')
     } catch (error) {
@@ -173,6 +183,10 @@ class MotorCotizacionIntegrado {
     contexto: any
   ): Promise<RespuestaInteligente> {
 
+    if (!this.openai) {
+      return this.generarRespuestaFallback(consulta, parsed, contexto)
+    }
+
     const prompt = `Eres un experto en ventas de productos de construcción (BMC Uruguay) con acceso a una base de conocimiento que aprende y evoluciona.
 
 CONSULTA DEL CLIENTE: "${consulta}"
@@ -210,31 +224,97 @@ Responde en formato JSON:
   "recomendaciones": ["recomendacion1", "recomendacion2"]
 }`
 
-    const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
-      temperature: 0.3
-    })
-
-    const respuesta = JSON.parse(completion.choices[0].message.content || '{}')
-
-    // Si es cotización, calcular precios reales
-    if (respuesta.tipo === 'cotizacion' && parsed.producto) {
-      const cotizacionReal = calculateFullQuote({
-        producto: parsed.producto.tipo,
-        dimensiones: {
-          ancho: parsed.dimensiones?.ancho || 1,
-          largo: parsed.dimensiones?.largo || 1,
-          espesor: parseInt(parsed.producto.grosor || '100')
-        },
-        servicios: [],
-        cantidad: parsed.producto.cantidad || 1
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
+        temperature: 0.3
       })
-      respuesta.cotizacion = cotizacionReal
+
+      const respuesta = JSON.parse(completion.choices[0].message.content || '{}')
+
+      // Si es cotización, calcular precios reales
+      if (respuesta.tipo === 'cotizacion' && parsed.producto) {
+        const cotizacionReal = calculateFullQuote({
+          producto: parsed.producto.tipo,
+          dimensiones: {
+            ancho: parsed.dimensiones?.ancho || 1,
+            largo: parsed.dimensiones?.largo || 1,
+            espesor: parseInt(parsed.producto.grosor || '100')
+          },
+          servicios: [],
+          cantidad: parsed.producto.cantidad || 1
+        })
+        respuesta.cotizacion = cotizacionReal
+      }
+
+      return respuesta
+    } catch (error) {
+      console.warn('⚠️ Error generando respuesta con IA, usando fallback:', error)
+      return this.generarRespuestaFallback(consulta, parsed, contexto)
+    }
+  }
+
+  /**
+   * 🛟 Respuesta básica cuando OpenAI no está disponible
+   */
+  private generarRespuestaFallback(
+    consulta: string,
+    parsed: ParsedQuote,
+    contexto: any
+  ): RespuestaInteligente {
+    const recomendaciones: string[] = []
+
+    if (!parsed.producto?.tipo || parsed.producto.tipo === 'Desconocido') {
+      recomendaciones.push('Indicar el tipo de producto (ej: Isoroof, Isodec, chapa).')
+    }
+    if (!parsed.producto?.grosor) {
+      recomendaciones.push('Confirmar el grosor del panel (50mm, 100mm, etc.).')
+    }
+    if (!parsed.producto?.cantidad) {
+      recomendaciones.push('Aclarar la cantidad o los metros cuadrados aproximados.')
+    }
+    if (!parsed.dimensiones?.largo || !parsed.dimensiones?.ancho) {
+      recomendaciones.push('Compartir medidas de largo y ancho para estimar mejor la cotización.')
     }
 
-    return respuesta
+    let cotizacionBase: any
+    try {
+      if (parsed.producto?.tipo && parsed.producto.tipo !== 'Desconocido') {
+        cotizacionBase = calculateFullQuote({
+          producto: parsed.producto.tipo,
+          dimensiones: {
+            ancho: parsed.dimensiones?.ancho || 1,
+            largo: parsed.dimensiones?.largo || 1,
+            espesor: parseInt(parsed.producto.grosor || '100') || 100
+          },
+          servicios: [],
+          cantidad: parsed.producto.cantidad || 1
+        })
+      }
+    } catch (error) {
+      console.warn('No se pudo calcular la cotización base en modo fallback:', error)
+    }
+
+    const mensajeBase = [
+      'Estamos procesando tu solicitud con un modo básico porque falta la configuración válida de OpenAI.',
+      `Consulta: "${consulta}"`,
+      `Perfil detectado: ${contexto?.tipoConsulta || 'general'}${contexto?.perfilCliente ? ` | Cliente: ${contexto.perfilCliente.tipo}` : ''}`,
+      cotizacionBase
+        ? 'Preparamos un estimado inicial con la información disponible.'
+        : 'Necesitamos algunos datos adicionales para preparar una cotización completa.'
+    ]
+
+    return {
+      tipo: cotizacionBase ? 'cotizacion' : 'informacion',
+      mensaje: mensajeBase.join(' '),
+      cotizacion: cotizacionBase,
+      confianza: cotizacionBase ? 0.55 : 0.35,
+      patrones_aplicados: [],
+      conocimiento_utilizado: ['fallback_sin_openai'],
+      recomendaciones
+    }
   }
 
   /**
@@ -457,6 +537,53 @@ Responde en formato JSON:
 
   private async actualizarConocimientoProductos() {
     // Implementar actualización de conocimiento
+  }
+
+  /**
+   * 🛒 Cargar Conocimiento de Mercado Libre
+   */
+  private async cargarConocimientoMercadoLibre() {
+    try {
+      const meliPath = path.join(process.cwd(), 'conocimiento_mercadolibre.json')
+
+      if (!fs.existsSync(meliPath)) {
+        console.warn('⚠️ Archivo conocimiento_mercadolibre.json no encontrado. Iniciando sin datos de Mercado Libre.')
+        return
+      }
+
+      const fileContent = fs.readFileSync(meliPath, 'utf-8')
+      const data = JSON.parse(fileContent)
+
+      if (data.interacciones && Array.isArray(data.interacciones)) {
+        const nuevasInteracciones: InteraccionCliente[] = data.interacciones.map((i: any) => ({
+          id: i.id,
+          telefono: 'MERCADOLIBRE', // Placeholder para canal
+          nombre: i.cliente_id,
+          consulta: i.mensaje_cliente,
+          respuesta: i.respuesta_agente,
+          cotizacion_generada: false, // Asumimos false por ahora
+          conversion: false,
+          timestamp: new Date(i.timestamp),
+          satisfaccion: 0.5,
+          lecciones_aprendidas: []
+        }))
+
+        // Evitar duplicados si ya existen
+        const existentesIds = new Set(this.interacciones.map(i => i.id))
+        let agregadas = 0
+
+        for (const interaccion of nuevasInteracciones) {
+          if (!existentesIds.has(interaccion.id)) {
+            this.interacciones.push(interaccion)
+            agregadas++
+          }
+        }
+
+        console.log(`✅ ${agregadas} interacciones de Mercado Libre cargadas a la base de conocimiento.`)
+      }
+    } catch (error) {
+      console.error('❌ Error cargando conocimiento de Mercado Libre:', error)
+    }
   }
 }
 

@@ -20,7 +20,7 @@ logger = logging.getLogger("QuoteMatcher")
 
 # Configuration
 DATA_DIR = Path("data/quotes")
-SHEET_ID = "1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0" # From integracion_google_sheets.py
+SHEET_ID = "1-c834pOUNnUWn7Q-Bc4kDHJGCQo0LKI05dXaLgqcXgI" # Updated Sheet ID
 SHEET_NAME = "Admin."
 
 class QuoteMatcher:
@@ -103,7 +103,9 @@ class QuoteMatcher:
                  return False
 
         except Exception as e:
+            import traceback
             logger.error(f"Failed to connect to sheets: {e}")
+            logger.error(traceback.format_exc())
             return False
 
     def find_best_match(self, client_name: str, target_date: Optional[str] = None) -> Optional[Dict]:
@@ -157,7 +159,37 @@ class QuoteMatcher:
                 {"Arg": "3", "Cliente": "Jorge Piriz", "Fecha": "26-03", "Consulta": "", "Estado": "Pendiente"},
             ]
         else:
-            sheet_rows = self.sheet.get_all_records()
+            # get_all_records fails if there are duplicate or empty headers
+            # We use get_all_values and manually construct dictionaries
+            all_values = self.sheet.get_all_values()
+            if not all_values:
+                logger.warning("Sheet is empty.")
+                sheet_rows = []
+            else:
+                # Automatic header detection
+                header_row_index = 0
+                for i, row in enumerate(all_values):
+                    # Check if any cell matches "Cliente" (fuzzy or stripped)
+                    if any("cliente" in str(cell).lower() for cell in row):
+                        header_row_index = i
+                        break
+                
+                headers = [str(h).strip() for h in all_values[header_row_index]]
+                logger.info(f"Using Header Row {header_row_index} found with 'Cliente' column.")
+
+                sheet_rows = []
+                for row_idx, row in enumerate(all_values[header_row_index+1:]):
+                    # row is a list of strings
+                    row_dict = {}
+                    for col_idx, cell_value in enumerate(row):
+                        if col_idx < len(headers):
+                            header = headers[col_idx].strip()
+                            if header: # Only map if header is not empty
+                                row_dict[header] = cell_value
+                    
+                    # Store row index (1-based, starting after header) -> actual sheet row is row_idx + 2
+                    row_dict['_row_index'] = row_idx + 2 
+                    sheet_rows.append(row_dict)
 
         logger.info(f"Processing {len(sheet_rows)} rows from Sheet...")
 

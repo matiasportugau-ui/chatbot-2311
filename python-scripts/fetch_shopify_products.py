@@ -18,11 +18,14 @@ from typing import Any, Dict, List, Optional
 
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 SHOPIFY_STORE_URL = "https://bmcuruguay.com.uy"
-PRODUCTS_ENDPOINT = f"{SHOPIFY_STORE_URL}/products.json"
 DEFAULT_MAX_AGE_MINUTES = 60
+ADMIN_API_VERSION = "2024-10"
 
 
 def _int_from_env(var_name: str, default: int) -> int:
@@ -47,6 +50,8 @@ class ShopifyVariant:
     available: bool
     weight: float
     weight_unit: str
+    inventory_quantity: int = 0
+
 
 
 @dataclass
@@ -86,6 +91,11 @@ class ShopifyProductSync:
             "SHOPIFY_SYNC_MAX_AGE_MINUTES", DEFAULT_MAX_AGE_MINUTES
         )
         self.force_sync = os.getenv("SHOPIFY_FORCE_SYNC", "").lower() in {"1", "true", "yes"}
+        
+        # Admin API Config
+        self.access_token = os.getenv("SHOPIFY_ACCESS_TOKEN")
+        self.shop_domain = os.getenv("SHOPIFY_SHOP_DOMAIN", "bmcuruguay.myshopify.com")
+        self.use_admin_api = bool(self.access_token)
 
     def run(self) -> None:
         """Ejecuta la descarga y genera los archivos necesarios."""
@@ -102,7 +112,7 @@ class ShopifyProductSync:
 
         raw_payload = {
             "metadata": {
-                "source": PRODUCTS_ENDPOINT,
+                "source": "admin_api" if self.use_admin_api else "public_api",
                 "generated_at": timestamp,
                 "total_products": len(products),
             },
@@ -119,7 +129,15 @@ class ShopifyProductSync:
         )
 
     def _fetch_all_products(self) -> List[Dict[str, Any]]:
+        """Orquesta la descarga dependiendo del modo (Admin vs Public)."""
+        if self.use_admin_api:
+            return self._fetch_admin_products()
+        return self._fetch_public_products()
+
+    def _fetch_public_products(self) -> List[Dict[str, Any]]:
         """Recorre todas las páginas del endpoint público de Shopify."""
+        print("🌍 Modo Público: Usando endpoint products.json (sin inventario real)")
+        url = f"{SHOPIFY_STORE_URL}/products.json"
         page = 1
         products: List[Dict[str, Any]] = []
 
@@ -132,7 +150,7 @@ class ShopifyProductSync:
             )
             while True:
                 params = {"limit": self.per_page, "page": page}
-                response = session.get(PRODUCTS_ENDPOINT, params=params, timeout=30)
+                response = session.get(url, params=params, timeout=30)
                 response.raise_for_status()
                 data = response.json()
                 chunk = data.get("products", [])
@@ -141,6 +159,40 @@ class ShopifyProductSync:
                 products.extend(chunk)
                 print(f"  • Página {page}: {len(chunk)} productos")
                 page += 1
+
+        return products
+
+    def _fetch_admin_products(self) -> List[Dict[str, Any]]:
+        """Usa la Admin API para obtener productos con datos privados (inventario)."""
+        print(f"🔐 Modo Admin: Conectando a {self.shop_domain} (con inventario)")
+        url = f"https://{self.shop_domain}/admin/api/{ADMIN_API_VERSION}/products.json"
+        products: List[Dict[str, Any]] = []
+        
+        # Paginación basada en since_id es más robusta para scripts simples
+        last_id = 0
+        
+        with requests.Session() as session:
+            session.headers.update(
+                {
+                    "X-Shopify-Access-Token": self.access_token,
+                    "Content-Type": "application/json",
+                }
+            )
+            while True:
+                params = {"limit": self.per_page, "since_id": last_id}
+                response = session.get(url, params=params, timeout=30)
+                if response.status_code == 401:
+                    raise Exception("Error de autenticación: Token de Shopify inválido")
+                response.raise_for_status()
+                
+                data = response.json()
+                chunk = data.get("products", [])
+                if not chunk:
+                    break
+                
+                products.extend(chunk)
+                last_id = chunk[-1]["id"]
+                print(f"  • Lote recibido: {len(chunk)} productos (Total: {len(products)})")
 
         return products
 
@@ -159,6 +211,7 @@ class ShopifyProductSync:
                 available=variant.get("available", False),
                 weight=float(variant.get("grams", 0) or 0) / 1000.0,
                 weight_unit="kg",
+                inventory_quantity=variant.get("inventory_quantity", 0),
             )
             for variant in product.get("variants", [])
         ]
@@ -219,6 +272,9 @@ class ShopifyProductSync:
                 "respuestas_efectivas": [],
                 "casos_uso_exitosos": [],
                 "precios_competitivos": precios_competitivos,
+                "inventario": {
+                     v.title: v.inventory_quantity for v in product.variants
+                } if self.use_admin_api else {},
                 "tendencias_demanda": [],
                 "recomendaciones_venta": [
                     "Destacar disponibilidad a medida y fabricación nacional",

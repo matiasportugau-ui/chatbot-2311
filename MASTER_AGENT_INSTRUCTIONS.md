@@ -288,12 +288,27 @@ grep -r "NextResponse.json({ success:" src/app/api/chat/route.ts src/app/api/quo
 # Should return minimal matches (only if needed for special cases)
 ```
 
-**Phase 4 Completion Criteria:**
-
 - [ ] All 11 routes updated to use helper functions
 - [ ] All responses use standardized format
 - [ ] Linter passes on all updated files
 - [ ] Type check passes on all updated files
+
+---
+
+### **Phase 5: GitLab Duo Features (New Capabilities)**
+
+**Time:** Flexible  
+**Priority:** 🔵 **ENHANCEMENT**
+
+**Tools Available:**
+- **Root Cause Analysis (Agent X):** `python agents/root_cause_agent.py <log_file>`
+- **Code Explanation (Agent Y):** `python agents/code_explain_agent.py <file_path>`
+- **Security Scan (Agent Z):** `python agents/security_scan_agent.py`
+
+**Instructions:**
+1. Use `unified_launcher.py` option 'x' to analyze `logs/api_server.log` when errors occur.
+2. Use option 'y' to generate documentation for complex files.
+3. Use option 'z' to scan for vulnerabilities before deployment.
 
 ---
 

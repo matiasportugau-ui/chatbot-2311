@@ -1,0 +1,36 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../Library/CloudStorage/Dropbox/BMC - Uruguay/Cotizaciones"
+    },
+    {
+      "path": "../Documents/GitHub/sistema-cotizaciones-bmc"
+    },
+    {
+      "path": "../Documents/GitHub/BMC-Ecosystem/apps/sistema-cotizaciones"
+    },
+    {
+      "path": "../Documents/GitHub/master-knowledge-analysis/backups/backup_20251025_031642/sistema_cotizaciones"
+    },
+    {
+      "path": "../Documents/GitHub/master-knowledge-analysis/backups/backup_20251025_031411/sistema_cotizaciones"
+    },
+    {
+      "path": "../Documents/GitHub/master-knowledge-analysis/backups/backup_20251025_031420/sistema_cotizaciones"
+    },
+    {
+      "path": "../Library/CloudStorage/Dropbox/BMC - Interna (Conflicto de sincronización selectiva)/Paneles/Cotizaciones"
+    },
+    {
+      "path": "../Documents/GitHub/BMC-Ecosystem/packages/bmc/cotizacion"
+    }
+  ],
+  "settings": {
+    "files.readonlyInclude": {
+      "{**/.c4z/.extsrcs/*.PROTSYM.cbl,**/.c4z/.extsrcs/*.PROTSYM.listing}": true
+    }
+  }
+}

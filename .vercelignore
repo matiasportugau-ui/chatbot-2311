@@ -1,0 +1,54 @@
+# Python & Backend Scripts
+*.py
+__pycache__/
+venv/
+.venv/
+python-scripts/
+agents/
+AI_AGENTS/
+backup_system/
+consolidation/
+scripts/
+system/
+tests/
+test_scenarios/
+n8n-workflows/
+n8n_workflows/
+utils/
+docs/
+
+# Data & Large Files
+data/
+*.zip
+*.log
+*.tmp
+quotes.zip
+analisis_completo_ingesta.json
+module_analysis_results.json
+storage_cleanup_report_*.json
+recovery_*.json
+repo_analysis_report_*.json
+github_analysis_results.json
+conocimiento_*.json
+local_execution_*.json
+backend_*.json
+
+# Configs & Docs
+Dockerfile*
+docker-compose*.yml
+deploy.sh
+deploy-chatbot.sh
+README.md
+*.md
+LICENSE
+Makefile
+
+# JSON exclusions (Be careful to allow config files)
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!vercel.json
+!next.config.js
+!src/**/*.json
+!.env*

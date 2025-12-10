@@ -2,14 +2,18 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Bot, User, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import Image from 'next/image'
 
 interface MessageBubbleProps {
     role: 'user' | 'assistant' | 'system'
     content: string
     className?: string
+    confidence?: number
 }
 
-export function MessageBubble({ role, content, className }: MessageBubbleProps) {
+export function MessageBubble({ role, content, className, ...props }: MessageBubbleProps) {
     const [copied, setCopied] = React.useState(false)
 
     const copyToClipboard = () => {
@@ -23,35 +27,34 @@ export function MessageBubble({ role, content, className }: MessageBubbleProps) 
     return (
         <div
             className={cn(
-                "flex w-full items-start gap-4 p-4",
-                isUser ? "flex-row-reverse" : "flex-row",
+                "flex w-full mb-4",
+                isUser ? "justify-end" : "justify-start",
                 className
             )}
         >
-            <div
-                className={cn(
-                    "flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full border",
-                    isUser ? "bg-background" : "bg-primary text-primary-foreground"
-                )}
-            >
-                {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
-            </div>
-
-            <div className={cn("flex-1 space-y-2 overflow-hidden", isUser ? "text-right" : "text-left")}>
-                <div className={cn(
-                    "rounded-lg px-4 py-3 text-sm shadow-sm max-w-[85%] inline-block",
-                    isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-                )}>
-                    {/* Basic text rendering for now, can upgrade to Markdown later */}
-                    <div className="whitespace-pre-wrap">{content}</div>
+            <div className={cn(
+                "speech-bubble",
+                isUser ? "user-bubble" : ""
+            )}>
+                <div className="prose prose-sm dark:prose-invert max-w-none break-words">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {content}
+                    </ReactMarkdown>
                 </div>
 
-                {!isUser && (
-                    <div className="flex items-center gap-2">
+                {/* Metadata footer */}
+                <div className="flex items-center gap-3 mt-3 pt-2 border-t border-gray-100">
+                    {props.confidence !== undefined && (
+                        <div className="confidence-badge">
+                            <span className="confidence-indicator"></span>
+                            {(props.confidence * 100).toFixed(0)}%
+                        </div>
+                    )}
+                    {!isUser && (
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-7 w-7 ml-auto"
                             onClick={copyToClipboard}
                         >
                             {copied ? (
@@ -61,8 +64,8 @@ export function MessageBubble({ role, content, className }: MessageBubbleProps) 
                             )}
                             <span className="sr-only">Copy message</span>
                         </Button>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     )
