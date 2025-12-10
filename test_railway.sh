@@ -2,7 +2,7 @@
 # Railway Deployment Test Script
 # Tests the deployed chatbot API endpoints
 
-API_URL="https://web-production-b896.up.railway.app"
+API_URL="https://web-production-4b37a.up.railway.app"
 
 
 echo "🔍 Testing Railway Deployment..."

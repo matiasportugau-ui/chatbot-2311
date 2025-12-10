@@ -1,99 +1,42 @@
-export const dynamic = 'force-dynamic';
+import { NextRequest } from 'next/server';
 
-import { NextRequest, NextResponse } from 'next/server'
-import { quoteEngine } from '@/lib/quote-engine'
-import { parseQuoteConsulta } from '@/lib/quote-parser'
-import { initializeBMCSystem } from '@/lib/initialize-system'
+export const runtime = 'edge';
 
-// Inicializar sistema si no está listo
-let systemInitialized = false
-async function ensureSystemInitialized() {
-  if (!systemInitialized) {
-    const result = await initializeBMCSystem()
-    if (result.success) {
-      systemInitialized = true
-    } else {
-      throw new Error(`Sistema no inicializado: ${result.error}`)
-    }
-  }
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { message, sessionId, userPhone } = await request.json()
-    
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json({ 
-        success: false,
-        error: 'message is required and must be a string' 
-      }, { status: 400 })
-    }
-    
-    // Procesar mensaje con motor de cotización BMC
-    const response = await quoteEngine.procesarConsulta(message, userPhone)
-    
-    // Si es una cotización, también parsear para extraer datos estructurados
-    let parsedData = null
-    if (response.tipo === 'cotizacion') {
-      try {
-        parsedData = await parseQuoteConsulta(message)
-      } catch (error) {
-        console.log('Error parsing quote data:', error)
-      }
-    }
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        response,
-        parsedData,
-        sessionId,
-        userPhone,
-        timestamp: new Date().toISOString()
-      }
-    })
-  } catch (error) {
-    console.error('Error in chat API:', error)
-    return NextResponse.json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      data: {
-        tipo: 'error',
-        mensaje: 'Lo siento, hubo un problema procesando tu mensaje. Por favor, intenta de nuevo.'
-      }
-    }, { status: 500 })
-  }
-}
+    const { messages, sessionId } = await req.json();
 
-// Endpoint para obtener información de productos
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const query = searchParams.get('q')
-    const tipo = searchParams.get('tipo') || 'all'
-    
-    if (!query) {
-      return NextResponse.json({ 
-        success: false,
-        error: 'query parameter is required' 
-      }, { status: 400 })
+    // Call the Python backend
+    // Assuming the Python backend is running on port 8000 locally
+    // In production, this URL should be an environment variable
+    const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8000';
+
+    const response = await fetch(`${backendUrl}/api/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages,
+        sessionId: sessionId || 'default'
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return new Response(errorText, { status: response.status });
     }
-    
-    // Procesar consulta
-    const response = await quoteEngine.procesarConsulta(query)
-    
-    return NextResponse.json({
-      success: true,
-      data: response,
-      query,
-      tipo,
-      timestamp: new Date().toISOString()
-    })
+
+    // Pass the stream through
+    return new Response(response.body, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+      },
+    });
+
   } catch (error) {
-    console.error('Error in chat GET:', error)
-    return NextResponse.json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 })
+    console.error('Error in chat proxy:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 }

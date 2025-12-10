@@ -874,6 +874,48 @@ class IAConversacionalIntegrada:
             if respuesta.mensaje not in self.patrones_respuesta[tipo_respuesta]:
                 self.patrones_respuesta[tipo_respuesta].append(respuesta.mensaje)
 
+        # OpenAI configuration
+        self.use_ai = False
+        self.openai_client = None
+        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        
+        # Pinecone configuration
+        self.pinecone_index = None
+        self.use_rag = False
+
+        if OPENAI_AVAILABLE:
+            api_key = os.getenv("OPENAI_API_KEY")
+            if api_key:
+                try:
+                    self.openai_client = OpenAI(api_key=api_key)
+                    self.use_ai = True
+                    print("✅ OpenAI integration enabled")
+                    
+                    # Initialize Pinecone if OpenAI is working (needed for embeddings)
+                    pinecone_key = os.getenv("PINECONE_API_KEY")
+                    pinecone_index_name = os.getenv("PINECONE_INDEX_NAME", "chatbot-context")
+                    
+                    if pinecone_key:
+                        try:
+                            from pinecone import Pinecone
+                            pc = Pinecone(api_key=pinecone_key)
+                            self.pinecone_index = pc.Index(pinecone_index_name)
+                            self.use_rag = True
+                            print(f"✅ Pinecone RAG enabled (Index: {pinecone_index_name})")
+                        except Exception as e:
+                            print(f"⚠️ Error initializing Pinecone: {e}")
+                            self.use_rag = False
+                    
+                except Exception as e:
+                    print(f"⚠️ Error initializing OpenAI: {e}")
+                    self.use_ai = False
+            else:
+                print("⚠️ OPENAI_API_KEY not set, using pattern matching only")
+        else:
+            print("⚠️ OpenAI package not available, using pattern matching only")
+
+        self.cargar_configuracion_inicial()
+
     def procesar_mensaje_usuario(
         self, mensaje: str, telefono_cliente: str, sesion_id: str = None
     ) -> Dict[str, Any]:
@@ -925,7 +967,8 @@ class IAConversacionalIntegrada:
         )
 
         # Obtener información de productos y precios para enriquecer el contexto
-        info_productos = self._obtener_info_productos_para_prompt()
+        # UPDATED: Pass the message to perform semantic search
+        info_productos = self._obtener_info_productos_para_prompt(mensaje)
         estado_cotizacion = self._obtener_estado_cotizacion_para_prompt(contexto)
 
         # Construir historial de conversación para OpenAI
@@ -939,6 +982,7 @@ Tu trabajo es ayudar a los clientes con:
 3. Consultas técnicas
 4. Seguimiento de pedidos
 
+CONTEXTO RELEVANTE (RAG):
 {info_productos}
 
 {estado_cotizacion}
@@ -1015,8 +1059,41 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
             "timestamp": datetime.datetime.now().isoformat(),
         }
 
-    def _obtener_info_productos_para_prompt(self) -> str:
-        """Obtiene información de productos para enriquecer el prompt de OpenAI"""
+    def _obtener_info_productos_para_prompt(self, query: str = "") -> str:
+        """Obtiene información de productos para enriquecer el prompt de OpenAI
+           Usa RAG (Pinecone) si está disponible, sino usa lista estática.
+        """
+        
+        # 1. Try Vector Search (RAG)
+        if self.use_rag and self.pinecone_index and query:
+            try:
+                # Generate embedding
+                emb_response = self.openai_client.embeddings.create(
+                    input=query,
+                    model="text-embedding-3-small"
+                )
+                embedding = emb_response.data[0].embedding
+                
+                # Query Pinecone
+                results = self.pinecone_index.query(
+                    vector=embedding,
+                    top_k=3,
+                    include_metadata=True
+                )
+                
+                if results and results.matches:
+                    context_parts = ["INFORMACIÓN ENCONTRADA EN BASE DE CONOCIMIENTO:"]
+                    for match in results.matches:
+                        if match.metadata and "text" in match.metadata:
+                            context_parts.append(f"- {match.metadata['text']}")
+                    
+                    return "\n".join(context_parts)
+                    
+            except Exception as e:
+                print(f"⚠️ Error querying Pinecone: {e}")
+                # Fallback to static list below
+        
+        # 2. Static Fallback (Legacy)
         productos_info = []
 
         # Obtener precios actuales
@@ -1028,7 +1105,7 @@ El campo "necesita_datos" debe ser una lista de datos que faltan para completar 
             "lana_roca": self.sistema_cotizaciones.obtener_precio_producto("lana_roca"),
         }
 
-        productos_info.append("PRODUCTOS DISPONIBLES:")
+        productos_info.append("PRODUCTOS DISPONIBLES (Catalog Base):")
         productos_info.append("1. ISODEC - Panel aislante con núcleo EPS")
         productos_info.append(
             f"   Precio base: ${precios.get('isodec', 150):.2f} por m²"

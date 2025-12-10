@@ -36,6 +36,7 @@ schedule>=1.2.0
 
 # Para integración OpenAI
 openai>=1.0.0
+pinecone>=3.0.0
 python-dotenv>=1.0.0
 
 # Para API FastAPI
