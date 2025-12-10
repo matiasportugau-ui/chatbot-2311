@@ -4,9 +4,7 @@ import { getSharedContextService } from '@/lib/shared-context-service'
 import { NextRequest, NextResponse } from 'next/server'
 import { OpenAI } from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+
 
 // Use shared context service (with in-memory fallback)
 const sharedService = getSharedContextService()
@@ -137,8 +135,8 @@ async function addMessage(
     message_type === 'user'
       ? 'user'
       : message_type === 'assistant'
-      ? 'assistant'
-      : 'system'
+        ? 'assistant'
+        : 'system'
 
   // Add message to shared service
   try {
@@ -242,6 +240,9 @@ async function compressContext(session_id: string) {
 
   // Generar resumen usando OpenAI
   try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
     const recentMessages = history.slice(-5) // Últimos 5 mensajes
     const contextText = recentMessages
       .map(msg => `${msg.message_type}: ${msg.content}`)
