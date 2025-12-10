@@ -1,0 +1,25 @@
+{"timestamp":"2025-12-10T11:27:46Z","level":"info","step":"","message":"Deployment script started"}
+{"timestamp":"2025-12-10T11:27:46Z","level":"success","step":"prerequisites","message":"Prerequisites check passed"}
+{"timestamp":"2025-12-10T11:27:46Z","level":"info","step":"pre-deployment-checks","message":"Git working tree has uncommitted changes"}
+{"timestamp":"2025-12-10T11:28:11Z","level":"info","step":"","message":"Deployment script started"}
+{"timestamp":"2025-12-10T11:28:11Z","level":"success","step":"prerequisites","message":"Prerequisites check passed"}
+{"timestamp":"2025-12-10T11:28:11Z","level":"info","step":"pre-deployment-checks","message":"Git working tree has uncommitted changes"}
+{"timestamp":"2025-12-10T11:28:11Z","level":"warning","step":"pre-deployment-checks","message":".env.production may not be ignored"}
+{"timestamp":"2025-12-10T11:28:11Z","level":"info","step":"pre-deployment-checks","message":"Running build test..."}
+{"timestamp":"2025-12-10T11:28:28Z","level":"error","step":"pre-deployment-checks","message":"Build test failed. Check /tmp/build.log for details."}
+{"timestamp":"2025-12-10T11:28:28Z","level":"info","step":"pre-deployment-checks","message":"Running TypeScript check..."}
+{"timestamp":"2025-12-10T11:28:30Z","level":"success","step":"pre-deployment-checks","message":"TypeScript check passed"}
+{"timestamp":"2025-12-10T11:29:48Z","level":"info","step":"","message":"Deployment script started"}
+{"timestamp":"2025-12-10T11:29:48Z","level":"success","step":"prerequisites","message":"Prerequisites check passed"}
+{"timestamp":"2025-12-10T11:29:48Z","level":"info","step":"pre-deployment-checks","message":"Git working tree has uncommitted changes"}
+{"timestamp":"2025-12-10T11:29:48Z","level":"warning","step":"pre-deployment-checks","message":".env.production may not be ignored"}
+{"timestamp":"2025-12-10T11:29:48Z","level":"info","step":"pre-deployment-checks","message":"Running build test..."}
+{"timestamp":"2025-12-10T11:30:12Z","level":"success","step":"pre-deployment-checks","message":"Build test passed"}
+{"timestamp":"2025-12-10T11:30:12Z","level":"info","step":"pre-deployment-checks","message":"Running TypeScript check..."}
+{"timestamp":"2025-12-10T11:30:17Z","level":"success","step":"pre-deployment-checks","message":"TypeScript check passed"}
+{"timestamp":"2025-12-10T11:30:17Z","level":"success","step":"pre-deployment-checks","message":"All pre-deployment checks passed"}
+{"timestamp":"2025-12-10T11:30:39Z","level":"info","step":"","message":"Deployment script started"}
+{"timestamp":"2025-12-10T11:30:39Z","level":"info","step":"commit","message":"Staging       11 files..."}
+{"timestamp":"2025-12-10T11:32:01Z","level":"info","step":"commit","message":"Committing changes..."}
+{"timestamp":"2025-12-10T11:32:18Z","level":"info","step":"","message":"Deployment script started"}
+{"timestamp":"2025-12-10T11:32:19Z","level":"info","step":"commit","message":"Staging        1 files..."}

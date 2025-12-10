@@ -350,6 +350,26 @@ async def whatsapp_webhook(request: Request):
     Processes incoming WhatsApp messages and responds with AI
     """
     try:
+    try:
+        # Verify signature
+        if os.getenv("ENVIRONMENT") == "production":
+            signature = request.headers.get("X-Hub-Signature-256")
+            if not signature:
+                logger.warning("❌ Missing X-Hub-Signature-256 header")
+                raise HTTPException(status_code=401, detail="Missing signature")
+            
+            body_bytes = await request.body()
+            secret = os.getenv("WHATSAPP_WEBHOOK_SECRET")
+            
+            if not secret:
+                logger.error("❌ WHATSAPP_WEBHOOK_SECRET not configured")
+                raise HTTPException(status_code=500, detail="Server misconfiguration")
+
+            from utils.security.webhook_validation import verify_whatsapp_webhook_signature
+            if not verify_whatsapp_webhook_signature(body_bytes, signature, secret):
+                logger.warning("❌ Invalid WhatsApp signature")
+                raise HTTPException(status_code=403, detail="Invalid signature")
+
         data = await request.json()
         logger.info(f"WhatsApp webhook received: {data}")
         

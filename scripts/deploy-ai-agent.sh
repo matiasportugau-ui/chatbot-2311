@@ -33,11 +33,13 @@ EXIT_WARNING=2
 EXIT_HUMAN_REQUIRED=3
 
 # Initialize JSON output structure
-declare -A JSON_RESULT
-JSON_RESULT["status"]=""
-JSON_RESULT["step"]=""
-JSON_RESULT["exit_code"]=$EXIT_SUCCESS
-JSON_RESULT["timestamp"]="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+# Initialize JSON variables
+JSON_RESULT_STATUS=""
+JSON_RESULT_STEP=""
+JSON_RESULT_EXIT_CODE=$EXIT_SUCCESS
+JSON_RESULT_TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+JSON_RESULT_DATA="{}"
+
 
 # Functions
 
@@ -45,7 +47,7 @@ log_json() {
     local level=$1
     shift
     local message="$*"
-    echo "{\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"level\":\"$level\",\"step\":\"${JSON_RESULT[step]}\",\"message\":\"$message\"}" >> "$LOG_FILE"
+    echo "{\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"level\":\"$level\",\"step\":\"$JSON_RESULT_STEP\",\"message\":\"$message\"}" >> "$LOG_FILE"
 }
 
 log_info() {
@@ -90,27 +92,21 @@ output_json_result() {
     if [ "$JSON_OUTPUT" = true ]; then
         # Build JSON output manually
         local json="{"
-        local first=true
+        json+="\"status\":\"$JSON_RESULT_STATUS\","
+        json+="\"step\":\"$JSON_RESULT_STEP\","
+        json+="\"exit_code\":$JSON_RESULT_EXIT_CODE,"
+        json+="\"timestamp\":\"$JSON_RESULT_TIMESTAMP\","
         
-        for key in "${!JSON_RESULT[@]}"; do
-            if [ "$first" = false ]; then
-                json+=","
-            fi
-            first=false
-            json+="\"$key\":"
-            
-            # Check if value is already JSON (array/object) or needs quoting
-            local value="${JSON_RESULT[$key]}"
-            if [[ "$value" =~ ^\[.*\]$ ]] || [[ "$value" =~ ^\{.*\}$ ]]; then
-                json+="$value"
-            else
-                # Escape quotes and wrap in quotes
-                value="${value//\"/\\\"}"
-                json+="\"$value\""
-            fi
-        done
+        # Merge extra data
+        if [ "$JSON_RESULT_DATA" != "{}" ]; then
+            # Remove opening brace from data and comma-append
+            local inner_data="${JSON_RESULT_DATA:1}"
+            json+="$inner_data"
+        else
+            json="${json%,}}"
+            json+="}"
+        fi
         
-        json+="}"
         echo "$json"
     fi
 }
@@ -118,9 +114,12 @@ output_json_result() {
 exit_with_code() {
     local code=$1
     shift
-    JSON_RESULT["exit_code"]=$code
-    JSON_RESULT["status"]="error"
-    JSON_RESULT["message"]="$*"
+    JSON_RESULT_EXIT_CODE=$code
+    JSON_RESULT_STATUS="error"
+    # Append message to data
+    local msg="$*"
+    msg="${msg//\"/\\\"}"
+    JSON_RESULT_DATA="{\"message\":\"$msg\"}"
     
     if [ "$JSON_OUTPUT" = true ]; then
         output_json_result
@@ -130,8 +129,8 @@ exit_with_code() {
 }
 
 exit_success() {
-    JSON_RESULT["status"]="success"
-    JSON_RESULT["exit_code"]=$EXIT_SUCCESS
+    JSON_RESULT_STATUS="success"
+    JSON_RESULT_EXIT_CODE=$EXIT_SUCCESS
     
     if [ "$JSON_OUTPUT" = true ]; then
         output_json_result
@@ -142,7 +141,7 @@ exit_success() {
 
 # Check prerequisites
 check_prerequisites() {
-    JSON_RESULT["step"]="prerequisites"
+    JSON_RESULT_STEP="prerequisites"
     
     # Check Node.js
     if ! command -v node &> /dev/null; then
@@ -176,18 +175,19 @@ check_prerequisites() {
 
 # Pre-deployment checks
 pre_deployment_checks() {
-    JSON_RESULT["step"]="pre-deployment-checks"
+    JSON_RESULT_STEP="pre-deployment-checks"
     local checks_passed=true
-    declare -A checks
+    # Initialize checks string
+    local checks_json="{"
     
     cd "$PROJECT_ROOT"
     
     # Check git status
     if git diff --quiet && git diff --cached --quiet; then
-        checks["git_status"]="clean"
+        checks_json+="\"git_status\":\"clean\""
         log_info "Git working tree is clean"
     else
-        checks["git_status"]="dirty"
+        checks_json+="\"git_status\":\"dirty\""
         log_info "Git working tree has uncommitted changes"
     fi
     
@@ -204,19 +204,14 @@ pre_deployment_checks() {
         checks_passed=false
         log_error "credentials.json is tracked in git!"
     fi
-    
-    checks["sensitive_files"]="${sensitive_files[*]}"
-    
-    if [ ${#sensitive_files[@]} -gt 0 ]; then
-        exit_with_code $EXIT_ERROR "Sensitive files detected in git. Remove them before deploying."
-    fi
+    local sf_list="${sensitive_files[*]:-}"
     
     # Check .gitignore
     if grep -q "^\.env\.production$" .gitignore 2>/dev/null || grep -q "^\.env\.\*$" .gitignore 2>/dev/null; then
-        checks["gitignore"]="ok"
+        checks_json+=",\"gitignore\":\"ok\""
         log_success ".gitignore properly configured"
     else
-        checks["gitignore"]="warning"
+        checks_json+=",\"gitignore\":\"warning\""
         log_warning ".env.production may not be ignored"
     fi
     
@@ -224,10 +219,10 @@ pre_deployment_checks() {
     if [ "$SKIP_CHECKS" = false ]; then
         log_info "Running build test..."
         if npm run build > /tmp/build.log 2>&1; then
-            checks["build_test"]="passed"
+            checks_json+=",\"build_test\":\"passed\""
             log_success "Build test passed"
         else
-            checks["build_test"]="failed"
+            checks_json+=",\"build_test\":\"failed\""
             checks_passed=false
             log_error "Build test failed. Check /tmp/build.log for details."
         fi
@@ -235,31 +230,22 @@ pre_deployment_checks() {
         # Type check
         log_info "Running TypeScript check..."
         if npm run type-check > /tmp/typecheck.log 2>&1; then
-            checks["type_check"]="passed"
+            checks_json+=",\"type_check\":\"passed\""
             log_success "TypeScript check passed"
         else
-            checks["type_check"]="failed"
+            checks_json+=",\"type_check\":\"failed\""
             checks_passed=false
             log_error "TypeScript check failed. Check /tmp/typecheck.log for details."
         fi
     else
-        checks["build_test"]="skipped"
-        checks["type_check"]="skipped"
+        checks_json+=",\"build_test\":\"skipped\",\"type_check\":\"skipped\""
         log_warning "Checks skipped (--skip-checks flag)"
     fi
     
-    # Convert checks associative array to JSON
-    local checks_json="{"
-    local first_check=true
-    for key in "${!checks[@]}"; do
-        if [ "$first_check" = false ]; then
-            checks_json+=","
-        fi
-        first_check=false
-        checks_json+="\"$key\":\"${checks[$key]}\""
-    done
+    checks_json+=",\"sensitive_files\":\"$sf_list\""
     checks_json+="}"
-    JSON_RESULT["checks"]="$checks_json"
+    
+    JSON_RESULT_DATA="{\"checks\":$checks_json}"
     
     if [ "$checks_passed" = false ]; then
         exit_with_code $EXIT_ERROR "Pre-deployment checks failed"
@@ -270,7 +256,7 @@ pre_deployment_checks() {
 
 # Build test
 build_test() {
-    JSON_RESULT["step"]="build-test"
+    JSON_RESULT_STEP="build-test"
     local start_time=$(date +%s)
     
     cd "$PROJECT_ROOT"
@@ -279,45 +265,42 @@ build_test() {
     
     if [ "$DRY_RUN" = true ]; then
         log_info "[DRY RUN] Would run: npm run build"
-        JSON_RESULT["build_time"]=0
-        JSON_RESULT["status"]="success"
+        JSON_RESULT_DATA="{\"build_time\":0}"
+        JSON_RESULT_STATUS="success"
         return
     fi
     
     if npm run build > /tmp/build.log 2>&1; then
         local end_time=$(date +%s)
         local build_time=$((end_time - start_time))
-        JSON_RESULT["build_time"]=$build_time
-        JSON_RESULT["warnings"]="[]"
-        JSON_RESULT["errors"]="[]"
+        JSON_RESULT_DATA="{\"build_time\":$build_time,\"warnings\":[],\"errors\":[]}"
         log_success "Build completed in ${build_time}s"
     else
         local errors=$(grep -i "error" /tmp/build.log | head -5 || echo "[]")
-        JSON_RESULT["errors"]="$errors"
+        # Ensure errors is cleaner JSON string if simple grep
+        JSON_RESULT_DATA="{\"errors\":\"$errors\"}"
         exit_with_code $EXIT_ERROR "Build failed. Check /tmp/build.log for details."
     fi
 }
 
 # Commit changes
 commit_changes() {
-    JSON_RESULT["step"]="commit"
+    JSON_RESULT_STEP="commit"
     
     cd "$PROJECT_ROOT"
     
     # Check if there are changes to commit
     if git diff --quiet && git diff --cached --quiet; then
         log_info "No changes to commit"
-        JSON_RESULT["commit_hash"]=""
-        JSON_RESULT["files_changed"]=0
+        JSON_RESULT_DATA="{\"commit_hash\":\"\",\"files_changed\":0}"
         return
     fi
     
     local files_changed=$(git diff --name-only | wc -l)
-    JSON_RESULT["files_changed"]=$files_changed
     
     if [ "$DRY_RUN" = true ]; then
         log_info "[DRY RUN] Would commit $files_changed files"
-        JSON_RESULT["commit_hash"]="dry-run"
+        JSON_RESULT_DATA="{\"commit_hash\":\"dry-run\",\"files_changed\":$files_changed}"
         return
     fi
     
@@ -327,7 +310,7 @@ commit_changes() {
     log_info "Committing changes..."
     if git commit -m "$DEPLOY_COMMIT_MSG" > /tmp/commit.log 2>&1; then
         local commit_hash=$(git rev-parse --short HEAD)
-        JSON_RESULT["commit_hash"]=$commit_hash
+        JSON_RESULT_DATA="{\"commit_hash\":\"$commit_hash\",\"files_changed\":$files_changed}"
         log_success "Committed changes: $commit_hash"
     else
         exit_with_code $EXIT_ERROR "Commit failed. Check /tmp/commit.log for details."
@@ -336,7 +319,7 @@ commit_changes() {
 
 # Push to repository
 push_changes() {
-    JSON_RESULT["step"]="push"
+    JSON_RESULT_STEP="push"
     
     cd "$PROJECT_ROOT"
     
@@ -350,16 +333,13 @@ push_changes() {
     
     if [ "$commits_ahead" -eq 0 ]; then
         log_info "No commits to push"
-        JSON_RESULT["commits_pushed"]=0
+        JSON_RESULT_DATA="{\"commits_pushed\":0}"
         return
     fi
     
-    JSON_RESULT["branch"]="$DEPLOY_BRANCH"
-    JSON_RESULT["remote"]="origin"
-    JSON_RESULT["commits_pushed"]=$commits_ahead
-    
     if [ "$DRY_RUN" = true ]; then
         log_info "[DRY RUN] Would push $commits_ahead commits to $DEPLOY_BRANCH"
+        JSON_RESULT_DATA="{\"branch\":\"$DEPLOY_BRANCH\",\"remote\":\"origin\",\"commits_pushed\":$commits_ahead}"
         return
     fi
     
@@ -384,15 +364,15 @@ push_changes() {
 
 # Deploy to Vercel
 deploy_vercel() {
-    JSON_RESULT["step"]="deploy"
-    JSON_RESULT["target"]="vercel"
+    JSON_RESULT_STEP="deploy"
+    # JSON_RESULT["target"]="vercel" # Dropping intermediate value if not used or merging
+    # Let's include target in result data
     
     cd "$PROJECT_ROOT"
     
     if [ "$DRY_RUN" = true ]; then
         log_info "[DRY RUN] Would deploy to Vercel"
-        JSON_RESULT["deployment_url"]="dry-run"
-        JSON_RESULT["deployment_id"]="dry-run"
+        JSON_RESULT_DATA="{\"target\":\"vercel\",\"deployment_url\":\"dry-run\",\"deployment_id\":\"dry-run\"}"
         return
     fi
     
@@ -419,27 +399,30 @@ deploy_vercel() {
     local deployment_url=$(echo "$deploy_output" | grep -oP 'https://[^\s]+\.vercel\.app' | head -1 || echo "")
     local deployment_id=$(echo "$deploy_output" | grep -oP 'dpl_[a-zA-Z0-9]+' | head -1 || echo "")
     
-    JSON_RESULT["deployment_url"]="$deployment_url"
-    JSON_RESULT["deployment_id"]="$deployment_id"
+    # Store for next steps
+    CACHED_DEPLOYMENT_URL="$deployment_url"
+    CACHED_DEPLOYMENT_ID="$deployment_id"
+    
+    JSON_RESULT_DATA="{\"target\":\"vercel\",\"deployment_url\":\"$deployment_url\",\"deployment_id\":\"$deployment_id\"}"
     
     log_success "Deployed to Vercel: $deployment_url"
 }
 
 # Verify deployment
 verify_deployment() {
-    JSON_RESULT["step"]="verification"
+    JSON_RESULT_STEP="verification"
     local url="${1:-}"
     
     if [ -z "$url" ]; then
         # Try to get URL from previous deployment
-        url="${JSON_RESULT[deployment_url]:-}"
+        url="${CACHED_DEPLOYMENT_URL:-}"
     fi
     
     if [ -z "$url" ]; then
         exit_with_code $EXIT_ERROR "No deployment URL provided for verification"
     fi
     
-    JSON_RESULT["url"]="$url"
+    local verify_data="{\"url\":\"$url\""
     
     log_info "Verifying deployment at $url..."
     
@@ -447,10 +430,10 @@ verify_deployment() {
     local http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$url" || echo "000")
     
     if [ "$http_code" = "200" ]; then
-        JSON_RESULT["url_accessible"]=true
+        verify_data+=",\"url_accessible\":true"
         log_success "Deployment URL is accessible"
     else
-        JSON_RESULT["url_accessible"]=false
+        verify_data+=",\"url_accessible\":false"
         exit_with_code $EXIT_ERROR "Deployment URL returned HTTP $http_code"
     fi
     
@@ -467,25 +450,27 @@ verify_deployment() {
         fi
     done
     
-    JSON_RESULT["api_endpoints"]="$(IFS=','; echo "${accessible_endpoints[*]}")"
+    local ae_string="$(IFS=','; echo "${accessible_endpoints[*]}")"
+    verify_data+=",\"api_endpoints\":\"$ae_string\"}"
+    JSON_RESULT_DATA="$verify_data"
     
     log_success "Verification completed"
 }
 
 # Rollback deployment
 rollback_deployment() {
-    JSON_RESULT["step"]="rollback"
+    JSON_RESULT_STEP="rollback"
     local deployment_id="${1:-}"
     
     if [ -z "$deployment_id" ]; then
         exit_with_code $EXIT_ERROR "Deployment ID required for rollback"
     fi
     
-    JSON_RESULT["previous_deployment"]="$deployment_id"
+    JSON_RESULT_DATA="{\"previous_deployment\":\"$deployment_id\",\"rollback_complete\":false}"
     
     if [ "$DRY_RUN" = true ]; then
         log_info "[DRY RUN] Would rollback to $deployment_id"
-        JSON_RESULT["rollback_complete"]=true
+        JSON_RESULT_DATA="{\"previous_deployment\":\"$deployment_id\",\"rollback_complete\":true}"
         return
     fi
     
@@ -493,7 +478,7 @@ rollback_deployment() {
     
     # Vercel rollback
     if vercel rollback "$deployment_id" --yes > /tmp/rollback.log 2>&1; then
-        JSON_RESULT["rollback_complete"]=true
+        JSON_RESULT_DATA="{\"previous_deployment\":\"$deployment_id\",\"rollback_complete\":true}"
         log_success "Rollback completed"
     else
         exit_with_code $EXIT_ERROR "Rollback failed. Check /tmp/rollback.log for details."
@@ -503,7 +488,7 @@ rollback_deployment() {
 # Full deployment workflow
 full_deployment() {
     local start_time=$(date +%s)
-    JSON_RESULT["step"]="full-deployment"
+    JSON_RESULT_STEP="full-deployment"
     
     log_info "Starting full deployment workflow..."
     
@@ -535,12 +520,12 @@ full_deployment() {
     esac
     
     # Step 7: Verify
-    verify_deployment "${JSON_RESULT[deployment_url]}"
+    verify_deployment "$CACHED_DEPLOYMENT_URL"
     
     local end_time=$(date +%s)
     local duration=$((end_time - start_time))
-    JSON_RESULT["duration_seconds"]=$duration
-    JSON_RESULT["steps_completed"]="[\"prerequisites\",\"pre-deployment-checks\",\"build-test\",\"commit\",\"push\",\"deploy\",\"verification\"]"
+    
+    JSON_RESULT_DATA="{\"duration_seconds\":$duration,\"steps_completed\":[\"prerequisites\",\"pre-deployment-checks\",\"build-test\",\"commit\",\"push\",\"deploy\",\"verification\"]}"
     
     log_success "Full deployment completed in ${duration}s"
 }

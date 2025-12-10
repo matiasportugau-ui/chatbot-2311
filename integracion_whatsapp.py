@@ -70,6 +70,14 @@ class IntegracionWhatsApp:
     def procesar_mensaje_whatsapp(self):
         """Procesa mensajes entrantes de WhatsApp"""
         try:
+            # Verify signature if secret is present
+            if self.webhook_verify_token and request.headers.get('X-Hub-Signature-256'):
+                from utils.security.webhook_validation import validate_webhook_request
+                is_valid, error = validate_webhook_request(request, service='whatsapp')
+                if not is_valid:
+                    print(f"❌ Firma inválida: {error}")
+                    return jsonify({"status": "error", "message": "Invalid signature"}), 403
+
             data = request.get_json()
             
             if not data or 'entry' not in data:

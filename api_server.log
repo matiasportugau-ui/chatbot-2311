@@ -1,0 +1,13 @@
+2025-12-09 20:07:28,372 - __main__ - INFO - ✅ Removed conflicting /api/chat route from upstream app
+INFO:     Started server process [28327]
+INFO:     Waiting for application startup.
+2025-12-09 20:07:52,882 - sistema_completo_integrado - INFO - 🚀 Starting BMC Quote System API...
+2025-12-09 20:07:52,882 - sistema_completo_integrado - INFO -    Environment: development
+2025-12-09 20:07:52,882 - sistema_completo_integrado - INFO -    Port: 8000
+2025-12-09 20:07:52,882 - sistema_completo_integrado - INFO -    OpenAI Model: gpt-4o-mini
+2025-12-09 20:07:52,882 - sistema_completo_integrado - INFO - 🔌 Attempting to connect to MongoDB at: localhost/local_db
+2025-12-09 20:08:05,499 - sistema_completo_integrado - ERROR - ❌ MongoDB connection failed: ServerSelectionTimeoutError: No servers found yet, Timeout: 5.0s, Topology Description: <TopologyDescription id: 6938abce3021c24b902996c8, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None>]>
+2025-12-09 20:08:07,346 - sistema_completo_integrado - WARNING - ⚠️  Continuing with in-memory storage
+2025-12-09 20:08:07,346 - sistema_completo_integrado - INFO - ✅ BMC Quote System API started successfully
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)

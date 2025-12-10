@@ -95,7 +95,7 @@ async function getRecoveryHandler(request: NextRequest) {
         try {
           const collection = db.collection(collectionName)
           const count = await collection.countDocuments({})
-          
+
           if (count > 0) {
             const data = await collection
               .find({})
@@ -139,64 +139,22 @@ async function getRecoveryHandler(request: NextRequest) {
     }
 
     // Scan filesystem for backup files
+    // NOTE: Disabled for Vercel deployment to prevent massive bundle size (NFT issue with process.cwd())
+    /*
     try {
       const workspaceRoot = process.cwd()
       const backupDirs = ['backups', 'exportaciones', 'exports', '.']
-      const backupPatterns = [
-        /conversation.*\.json$/i,
-        /backup.*\.json$/i,
-        /export.*\.json$/i,
-        /.*_conversations\.json$/i,
-        /.*_export\.json$/i,
-      ]
-
-      for (const dir of backupDirs) {
-        try {
-          const dirPath = path.join(workspaceRoot, dir)
-          const files = await fs.readdir(dirPath, { withFileTypes: true })
-
-          for (const file of files) {
-            if (file.isFile() && backupPatterns.some((pattern) => pattern.test(file.name))) {
-              try {
-                const filePath = path.join(dirPath, file.name)
-                const content = await fs.readFile(filePath, 'utf-8')
-                const data = JSON.parse(content)
-
-                let conversations: any[] = []
-                if (Array.isArray(data)) {
-                  conversations = data
-                } else if (data.conversations && Array.isArray(data.conversations)) {
-                  conversations = data.conversations
-                } else if (data.messages && Array.isArray(data.messages)) {
-                  conversations = [data]
-                } else if (data.data && Array.isArray(data.data)) {
-                  conversations = data.data
-                }
-
-                if (conversations.length > 0) {
-                  report.filesystem.backups.push({
-                    source: 'filesystem',
-                    count: conversations.length,
-                    data: conversations.slice(0, 50),
-                  })
-                  report.filesystem.totalFound += conversations.length
-                  report.summary.totalConversations += conversations.length
-                }
-              } catch (err: any) {
-                // Skip files that can't be parsed
-                console.warn(`Error reading file ${file.name}:`, err.message)
-              }
-            }
-          }
-        } catch (err: any) {
-          // Directory might not exist, skip
-        }
-      }
+      // ... (scanning logic removed for deployment)
     } catch (error: any) {
-      report.summary.recommendations.push(
-        `Filesystem scan error: ${error.message}`
-      )
+        // ...
     }
+    */
+    // Return empty filesystem results
+    report.filesystem = {
+      backups: [],
+      exports: [],
+      totalFound: 0
+    };
 
     // Determine recovery status
     if (report.mongodb.totalFound > 0 || report.filesystem.totalFound > 0) {
@@ -275,7 +233,7 @@ async function createBackup() {
     const db = await connectDB()
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     const backupDir = path.join(process.cwd(), 'backups')
-    
+
     // Ensure backup directory exists
     try {
       await fs.mkdir(backupDir, { recursive: true })
@@ -326,7 +284,7 @@ async function restoreData(source: string, data: any[]) {
   try {
     const db = await connectDB()
     const targetCollection = db.collection('conversations')
-    
+
     let restored = 0
     let failed = 0
     const errors: string[] = []
@@ -335,7 +293,7 @@ async function restoreData(source: string, data: any[]) {
       try {
         // Remove _id to allow MongoDB to create new one
         const { _id, ...itemData } = item
-        
+
         // Ensure required fields
         if (!itemData.timestamp && !itemData.createdAt) {
           itemData.timestamp = new Date()

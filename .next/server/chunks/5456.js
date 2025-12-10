@@ -1,0 +1,1 @@
+"use strict";exports.id=5456,exports.ids=[5456],exports.modules={95456:(e,n,r)=>{function t(e){return async n=>(n.headers.get("x-api-key"),process.env.API_SECRET_KEY,e(n))}function s(e){return async n=>e(n)}async function i(e){return e?{id:"user_1",role:"admin"}:null}function o(e){return e&&"admin"===e.role}r.d(n,{checkAdminRole:()=>o,k:()=>s,m:()=>t,validateToken:()=>i})}};

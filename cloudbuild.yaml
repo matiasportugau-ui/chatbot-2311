@@ -1,0 +1,35 @@
+steps:
+  # 1. Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/chatbot-backend:$COMMIT_SHA', '-t', 'gcr.io/$PROJECT_ID/chatbot-backend:latest', '.']
+
+  # 2. Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/chatbot-backend:$COMMIT_SHA']
+
+  # 2b. Push the latest tag as well (optional but good for debugging)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/chatbot-backend:latest']
+
+  # 3. Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'chatbot-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/chatbot-backend:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8000'
+      - '--set-env-vars'
+      - 'SKIP_VENV_CHECK=true'
+
+images:
+  - 'gcr.io/$PROJECT_ID/chatbot-backend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/chatbot-backend:latest'
