@@ -28,7 +28,7 @@ services:
   chat-api:
     build:
       context: .
-      dockerfile: Dockerfile.python
+      dockerfile: Dockerfile
     container_name: bmc-chat-api
     restart: unless-stopped
     ports:
