@@ -8,7 +8,7 @@ function getOpenAIClient(): OpenAI {
   }
 
   const config = secureConfig.getOpenAIConfig()
-  return new OpenAI({ 
+  return new OpenAI({
     apiKey: config.apiKey
   })
 }
@@ -100,28 +100,28 @@ Responde SOLO con JSON válido siguiendo este esquema exacto:
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
       temperature: 0.1,
       max_tokens: 1000
     })
-    
+
     const content = completion.choices[0].message.content
     if (!content) {
       throw new Error('No se recibió respuesta de OpenAI')
     }
     const parsed = JSON.parse(content)
-    
+
     // Validar estructura básica
     if (!parsed.producto || !parsed.servicios || !parsed.estado_info) {
       throw new Error('Invalid response structure from OpenAI')
     }
-    
+
     return parsed as ParsedQuote
   } catch (error) {
     console.error('Error parsing quote consulta:', error)
-    
+
     // Fallback parsing básico sin IA
     return parseQuoteFallback(consultaText)
   }
@@ -130,7 +130,7 @@ Responde SOLO con JSON válido siguiendo este esquema exacto:
 // Parser de fallback sin IA
 function parseQuoteFallback(consultaText: string): ParsedQuote {
   const text = consultaText.toLowerCase()
-  
+
   // Detectar tipo de producto
   let tipo = 'Desconocido'
   if (text.includes('isodec')) tipo = 'Isodec'
@@ -139,16 +139,16 @@ function parseQuoteFallback(consultaText: string): ParsedQuote {
   else if (text.includes('isowall')) tipo = 'Isowall'
   else if (text.includes('chapa')) tipo = 'Chapas'
   else if (text.includes('calamería') || text.includes('calameria')) tipo = 'Calamería'
-  
+
   // Detectar grosor
   const grosorMatch = text.match(/(\d+)\s*mm/)
   const grosor = grosorMatch ? grosorMatch[1] + 'mm' : null
-  
+
   // Detectar servicios
   const flete = text.includes('flete') || text.includes('+ flete')
   const instalacion = text.includes('completo') || text.includes('instalación') || text.includes('instalacion')
   const accesorios = text.includes('accesorios') || text.includes('+ accesorios')
-  
+
   // Detectar estado
   let estado_info: 'completo' | 'pendiente_info' | 'ver_plano' = 'completo'
   if (text.includes('aguardo') || text.includes('espero') || text.includes('falta info')) {
@@ -156,7 +156,7 @@ function parseQuoteFallback(consultaText: string): ParsedQuote {
   } else if (text.includes('ver plano') || text.includes('plano')) {
     estado_info = 'ver_plano'
   }
-  
+
   // Detectar dimensiones básicas
   const dimensiones: any = {}
   const largoMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:largo|x\s*(\d+(?:\.\d+)?))/)
@@ -164,12 +164,12 @@ function parseQuoteFallback(consultaText: string): ParsedQuote {
     dimensiones.largo = parseFloat(largoMatch[1])
     if (largoMatch[2]) dimensiones.ancho = parseFloat(largoMatch[2])
   }
-  
+
   const areaMatch = text.match(/(\d+(?:\.\d+)?)\s*m2/)
   if (areaMatch) {
     dimensiones.area_m2 = parseFloat(areaMatch[1])
   }
-  
+
   return {
     producto: {
       tipo,
@@ -193,14 +193,14 @@ function parseQuoteFallback(consultaText: string): ParsedQuote {
 // Función para validar si una consulta es válida para cotización
 export function isValidQuoteRequest(consultaText: string): boolean {
   const text = consultaText.toLowerCase()
-  
+
   // Palabras clave que indican una consulta de cotización
   const keywords = [
     'isodec', 'isoroof', 'isopanel', 'isowall', 'chapa', 'calamería', 'calameria',
     'panel', 'techo', 'pared', 'galpón', 'galpon', 'cubierta', 'm2', 'metro',
     'precio', 'cotización', 'presupuesto', 'costo'
   ]
-  
+
   return keywords.some(keyword => text.includes(keyword))
 }
 
@@ -213,7 +213,7 @@ export function extractContactInfo(text: string): {
   const phoneMatch = text.match(/(\d{3,4}\s*\d{3,4}\s*\d{3,4})/)
   const emailMatch = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/)
   const nameMatch = text.match(/(?:soy|me llamo|nombre es)\s+([A-Za-z\s]+)/i)
-  
+
   return {
     phone: phoneMatch ? phoneMatch[1].replace(/\s/g, '') : undefined,
     email: emailMatch ? emailMatch[1] : undefined,
