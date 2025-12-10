@@ -21,16 +21,29 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ userPhone = '+59891234567', className }: ChatInterfaceProps) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, reload, setMessages } = useChat({
+  const { messages, append, isLoading, reload, setMessages } = useChat({
     api: '/api/chat',
     body: {
       sessionId: `session_${userPhone}_${Date.now()}`,
       userPhone
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Chat error:', error);
     }
-  });
+  } as any) as any;
+
+  const [input, setInput] = React.useState('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    append({ role: 'user', content: input });
+    setInput('');
+  };
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -97,7 +110,7 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
               </div>
             )}
 
-            {messages.map((message) => (
+            {messages.map((message: any) => (
               <MessageBubble
                 key={message.id}
                 role={message.role as 'user' | 'assistant' | 'system'}
