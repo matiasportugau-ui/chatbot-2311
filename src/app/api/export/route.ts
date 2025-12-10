@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { connectDB } from '@/lib/mongodb'
 import { NextRequest, NextResponse } from 'next/server'
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import { requireAuth } from '@/lib/auth'
 import { withRateLimit } from '@/lib/rate-limit'
 
@@ -56,18 +56,16 @@ async function exportHandler(request: NextRequest) {
       case 'conversations': {
         const conversations = db.collection('conversations')
         data = await conversations.find(query).toArray()
-        filename = `conversations_${
-          new Date().toISOString().split('T')[0]
-        }.${format.toLowerCase()}`
+        filename = `conversations_${new Date().toISOString().split('T')[0]
+          }.${format.toLowerCase()}`
         break
       }
 
       case 'quotes': {
         const quotes = db.collection('quotes')
         data = await quotes.find(query).toArray()
-        filename = `quotes_${
-          new Date().toISOString().split('T')[0]
-        }.${format.toLowerCase()}`
+        filename = `quotes_${new Date().toISOString().split('T')[0]
+          }.${format.toLowerCase()}`
         break
       }
 
@@ -89,9 +87,8 @@ async function exportHandler(request: NextRequest) {
             filters,
           },
         ]
-        filename = `analytics_${
-          new Date().toISOString().split('T')[0]
-        }.${format.toLowerCase()}`
+        filename = `analytics_${new Date().toISOString().split('T')[0]
+          }.${format.toLowerCase()}`
         break
       }
 
@@ -117,16 +114,33 @@ async function exportHandler(request: NextRequest) {
       }
 
       case 'EXCEL': {
-        // Generate Excel file using xlsx library
+        // Generate Excel file using ExcelJS library
         try {
-          const worksheet = XLSX.utils.json_to_sheet(data)
-          const workbook = XLSX.utils.book_new()
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Data')
-          const excelBuffer = XLSX.write(workbook, {
-            type: 'buffer',
-            bookType: 'xlsx',
-          })
-          exportData = excelBuffer
+          const workbook = new ExcelJS.Workbook()
+          const worksheet = workbook.addWorksheet('Data')
+
+          // Add data to worksheet
+          if (data.length > 0) {
+            // Get headers from first object
+            const headers = Object.keys(data[0])
+            worksheet.columns = headers.map(header => ({
+              header: header,
+              key: header,
+              width: 15
+            }))
+
+            // Add rows
+            data.forEach(row => {
+              worksheet.addRow(row)
+            })
+
+            // Style the header row
+            worksheet.getRow(1).font = { bold: true }
+          }
+
+          // Generate buffer
+          const excelBuffer = await workbook.xlsx.writeBuffer()
+          exportData = Buffer.from(excelBuffer)
           contentType =
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
           filename = filename.replace(/\.(json|excel)$/i, '.xlsx')
