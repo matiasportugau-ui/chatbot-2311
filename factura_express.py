@@ -1,7 +1,12 @@
 import os
 import hashlib
 import requests
+import logging
 from typing import List, Dict, Any, Optional
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 API_BASE = "https://cliente.facturaexpress.com.uy/StockApiRest/v1/"
 
@@ -20,21 +25,26 @@ def get_token() -> str:
     password_hash = os.getenv("FE_PASSWORD_HASH")
     if not all([emitter_id, username, password_hash]):
         raise EnvironmentError("Missing FacturaExpress credentials in environment variables.")
+    
     payload = {"idEmisor": emitter_id, "usuario": username, "clave": password_hash}
-    resp = requests.post(f"{API_BASE}login", json=payload)
-    if resp.status_code != 200:
-        print(f"Error Status: {resp.status_code}")
-        print(f"Error Body: {resp.text}")
-    resp.raise_for_status()
+    
+    # Optional: Log attempt (masking sensitive data)
+    logger.info(f"Authenticating to FacturaExpress (Emisor: {emitter_id}, User: {username})")
+
     try:
+        resp = requests.post(f"{API_BASE}login", json=payload, timeout=10)
+        resp.raise_for_status()
         data = resp.json()
+        token = data.get("token")
+        if not token:
+            raise RuntimeError("Token not found in response.")
+        return token
+    except requests.exceptions.JSONDecodeError:
+        logger.error(f"Failed to decode JSON from login response. Body: '{resp.text}'")
+        raise RuntimeError("Invalid JSON response from login endpoint.")
     except Exception as e:
-        print(f"JSON Decode Error Body: {resp.text}")
-        raise e
-    token = data.get("token")
-    if not token:
-        raise RuntimeError("Token not found in response.")
-    return token
+        logger.error(f"Login failed: {e}")
+        raise
 
 def obtener_productos(
     token: str,
@@ -59,6 +69,11 @@ def obtener_productos(
         params["fechaModificacion"] = fecha_modificacion
     if hora_modificacion:
         params["horaModificacion"] = hora_modificacion
-    resp = requests.get(f"{API_BASE}obtenerProductos", headers=headers, params=params)
-    resp.raise_for_status()
-    return resp.json().get("productos", [])
+    
+    try:
+        resp = requests.get(f"{API_BASE}obtenerProductos", headers=headers, params=params, timeout=30)
+        resp.raise_for_status()
+        return resp.json().get("productos", [])
+    except Exception as e:
+        logger.error(f"Error yielding products: {e}")
+        raise

@@ -931,25 +931,18 @@ class IAConversacionalIntegrada:
         # Análisis rápido de intención (sin procesar completamente)
         intencion_rapida = self._analizar_intencion(mensaje)
 
-        # Intenciones simples que no requieren IA
-        intenciones_simples = ["saludo", "despedida"]
-
-        # Si es intención simple, usar pattern matching (más rápido y eficiente)
-        if intencion_rapida in intenciones_simples:
-            return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
-
-        # Para intenciones complejas, usar OpenAI si está disponible
+        # Para todos los mensajes, intentamos usar OpenAI primero para mayor naturalidad
         if self.use_ai and self.openai_client:
             try:
                 return self._procesar_con_openai(mensaje, telefono_cliente, sesion_id)
             except Exception as e:
                 print(f"⚠️ Error con OpenAI, usando pattern matching: {e}")
-                # Fallback a pattern matching
+                # Fallback a pattern matching solo si falla la IA
                 return self._procesar_mensaje_patrones(
                     mensaje, telefono_cliente, sesion_id
                 )
         else:
-            # Si no hay IA, usar pattern matching
+            # Si no hay IA configurada, usar pattern matching
             return self._procesar_mensaje_patrones(mensaje, telefono_cliente, sesion_id)
 
     def _procesar_con_openai(
@@ -975,21 +968,30 @@ class IAConversacionalIntegrada:
         messages = [
             {
                 "role": "system",
-                "content": f"""Eres Superchapita, un asistente experto en ventas de productos de construcción de BMC Uruguay.
-Tu trabajo es ayudar a los clientes con:
-1. Información sobre productos de aislamiento térmico (Isodec, Poliestireno, Lana de Roca)
-2. Cotizaciones personalizadas
-3. Consultas técnicas
-4. Seguimiento de pedidos
+                "content": f"""Eres Superchapita, el asistente estrella de BMC Uruguay.
+Tu misión es ayudar a los clientes a concretar sus proyectos de construcción y aislamiento con entusiasmo y profesionalismo.
+
+TUS CAPACIDADES:
+1. Experto en productos: Isodec, Poliestireno, Lana de Roca.
+2. Generador de Cotizaciones: Pide los datos necesarios (producto, medidas, espesor) y guía al usuario.
+3. Asesor Técnico: Resuelve dudas sobre instalación y beneficios.
+
+PERSONALIDAD Y TONO:
+- Eres dinámico, servicial y proactivo.
+- EVITA RESPUESTAS ROBÓTICAS O REPETITIVAS.
+- No empieces siempre con "Hola" o "Soy Superchapita". Varía tus saludos y estructuras.
+- Usa emojis con naturalidad pero sin saturar (👍, 🏠, ✨).
+- Habla en español de Uruguay (puedes usar "tú" o "vos" según el contexto, pero mantén consistencia).
 
 CONTEXTO RELEVANTE (RAG):
 {info_productos}
 
 {estado_cotizacion}
 
-Responde de forma natural, conversacional y profesional en español de Uruguay.
-Si el cliente solicita una cotización, pide los datos necesarios: producto, dimensiones (largo x ancho), espesor, color.
-Sé conciso pero completo. Usa emojis moderadamente.
+INSTRUCCIONES DE RESPUESTA:
+- Si el usuario saluda, responde con algo diferente cada vez (ej: "¡Buenas! ¿En qué proyecto estás trabajando hoy?", "¡Hola! Listo para aislar tu hogar").
+- Si piden cotización, pide SOLO los datos que faltan. No pidas todo si ya te dieron algo.
+- Si detectas una duda (ej: "es caro"), explica el valor/retorno de inversión, no solo digas "es barato".
 
 IMPORTANTE: Debes responder SIEMPRE en formato JSON con esta estructura exacta:
 {{

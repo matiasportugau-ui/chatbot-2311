@@ -132,13 +132,15 @@ function parseQuoteFallback(consultaText: string): ParsedQuote {
   const text = consultaText.toLowerCase()
 
   // Detectar tipo de producto
-  let tipo = 'Desconocido'
-  if (text.includes('isodec')) tipo = 'Isodec'
-  else if (text.includes('isoroof')) tipo = 'Isoroof'
-  else if (text.includes('isopanel')) tipo = 'Isopanel'
-  else if (text.includes('isowall')) tipo = 'Isowall'
-  else if (text.includes('chapa')) tipo = 'Chapas'
-  else if (text.includes('calamería') || text.includes('calameria')) tipo = 'Calamería'
+  let tipo = 'isodec' // Default to isodec instead of Desconocido
+  if (text.includes('isodec')) tipo = 'isodec'
+  else if (text.includes('isoroof')) tipo = 'isoroof'
+  else if (text.includes('isopanel')) tipo = 'isopanel'
+  else if (text.includes('isowall')) tipo = 'isowall'
+  else if (text.includes('chapa')) tipo = 'chapa'
+  else if (text.includes('calamería') || text.includes('calameria')) tipo = 'calameria'
+  else if (text.includes('poliestireno') || text.includes('eps')) tipo = 'poliestireno'
+  else if (text.includes('lana')) tipo = 'lana_roca'
 
   // Detectar grosor
   const grosorMatch = text.match(/(\d+)\s*mm/)

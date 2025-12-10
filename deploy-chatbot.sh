@@ -123,7 +123,7 @@ preflight_checks() {
     # Check required files
     check_file "requirements.txt"
     check_file "sistema_completo_integrado.py"
-    check_file "nextjs-app/package.json"
+    check_file "package.json"
     
     echo ""
     
@@ -232,7 +232,7 @@ deploy_vercel() {
     fi
     
     # Navigate to Next.js app
-    cd nextjs-app
+    # cd nextjs-app
     
     # Install dependencies
     print_info "Installing dependencies..."
@@ -253,7 +253,7 @@ deploy_vercel() {
     print_info "Deploying to Vercel..."
     vercel --prod -e NEXT_PUBLIC_API_URL="$RAILWAY_URL"
     
-    cd ..
+    # cd ..
     
     print_success "Vercel deployment complete!"
     print_info "Your app is now live!"
@@ -267,7 +267,7 @@ deploy_cpanel() {
     print_header "Preparing Files for cPanel"
     
     # Navigate to Next.js app
-    cd nextjs-app
+    # cd nextjs-app
     
     # Update next.config.ts for static export
     print_info "Configuring Next.js for static export..."
@@ -310,16 +310,16 @@ EOF
         print_success "Build successful!"
     else
         print_error "Build failed"
-        cd ..
+        # cd ..
         return 1
     fi
     
-    cd ..
+    # cd ..
     
     # Create deployment directory
     print_info "Preparing deployment package..."
     mkdir -p deployment/cpanel
-    cp -r nextjs-app/out/* deployment/cpanel/
+    cp -r out/* deployment/cpanel/
     
     # Create .htaccess for cPanel
     cat > deployment/cpanel/.htaccess <<EOF

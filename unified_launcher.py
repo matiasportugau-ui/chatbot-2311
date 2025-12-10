@@ -612,11 +612,79 @@ class UnifiedLauncher:
             ("r", "Reset Setup", self._reset_setup),
             ("l", "View Logs", self._view_logs),
         ]
+        
+        print(f"\n{Colors.BOLD}GitLab Duo Features:{Colors.ENDC}\n")
+        duo_features = [
+             ("x", "Root Cause Analysis", self._run_root_cause),
+             ("y", "Code Explanation", self._run_code_explain),
+             ("z", "Security Scan", self._run_security_scan),
+        ]
+        
+        for key, name, _ in duo_features:
+            print(f"  {Colors.OKCYAN}{key}.{Colors.ENDC} {name}")
+            
+        # Combine all tools for the return map
+        dev_tools.extend(duo_features)
 
         for key, name, _ in dev_tools:
-            print(f"  {Colors.OKCYAN}{key}.{Colors.ENDC} {name}")
+            # Re-printing dev tools is redundant if we extended the list, 
+            # but the original code printed dev_tools loop separately. 
+            # We just append to dev_tools so the launcher main loop recognizes the keys.
+            pass
 
         return modes, dev_tools
+
+    def _run_root_cause(self):
+        """Run Root Cause Analysis Agent"""
+        print_header("Root Cause Analysis")
+        log_file = input("Enter path to log file (default: logs/api_server.log): ").strip()
+        if not log_file:
+            log_file = str(self.root_dir / "logs" / "api_server.log")
+        
+        agent_script = self.root_dir / "agents" / "root_cause_agent.py"
+        if not agent_script.exists():
+            print_error(f"Agent script not found: {agent_script}")
+            return
+
+        print_info(f"Analyzing {log_file}...")
+        try:
+            subprocess.run([self.python_cmd, str(agent_script), log_file], check=False)
+        except Exception as e:
+            print_error(f"Failed to run agent: {e}")
+            
+    def _run_code_explain(self):
+        """Run Code Explanation Agent"""
+        print_header("Code Explanation")
+        file_path = input("Enter path to file to explain: ").strip()
+        if not file_path:
+            print_warning("No file provided.")
+            return
+            
+        agent_script = self.root_dir / "agents" / "code_explain_agent.py"
+        if not agent_script.exists():
+            print_error(f"Agent script not found: {agent_script}")
+            return
+
+        print_info(f"Explaining {file_path}...")
+        try:
+            subprocess.run([self.python_cmd, str(agent_script), file_path], check=False)
+        except Exception as e:
+            print_error(f"Failed to run agent: {e}")
+
+    def _run_security_scan(self):
+        """Run Security Scan Agent"""
+        print_header("Security Scan")
+        
+        agent_script = self.root_dir / "agents" / "security_scan_agent.py"
+        if not agent_script.exists():
+            print_error(f"Agent script not found: {agent_script}")
+            return
+
+        print_info("Scanning dependencies...")
+        try:
+            subprocess.run([self.python_cmd, str(agent_script)], check=False)
+        except Exception as e:
+            print_error(f"Failed to run agent: {e}")
 
     def _run_fullstack(self):
         """Run API server and dashboard together"""

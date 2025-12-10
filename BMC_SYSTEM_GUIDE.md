@@ -3,6 +3,7 @@
 ## Descripción General
 
 Sistema completo de cotización automática para BMC Construcciones que integra:
+
 - **Motor de IA** para parsing de consultas
 - **Base de conocimiento** de productos BMC
 - **Integración Google Sheets** para gestión de cotizaciones
@@ -54,7 +55,8 @@ npm run dev
 
 El sistema incluye una base de conocimiento completa con:
 
-#### Productos Principales
+#### sProductos Principales
+
 - **Isodec EPS** - Paneles aislantes (50, 100, 150, 200mm)
 - **Isoroof** - Paneles para techos (30, 50, 80mm)
 - **Isopanel** - Paneles de uso general (50-250mm)
@@ -63,6 +65,7 @@ El sistema incluye una base de conocimiento completa con:
 - **Calamería** - Estructura metálica (1.5-2.5mm)
 
 #### Servicios Adicionales
+
 - **Instalación** - Precio base + por m²
 - **Flete** - Según zona geográfica
 - **Accesorios** - Babetas, goteros, remates, juntas
@@ -83,25 +86,28 @@ El sistema puede responder a:
 **Sheet ID**: `bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0`
 
 #### Pestañas
+
 - **Admin.** - Cotizaciones pendientes
 - **Enviados** - Cotizaciones con presupuesto entregado
 - **Confirmado** - Cotizaciones confirmadas
 
 #### Columnas
-| Col | Campo | Descripción |
-|-----|-------|-------------|
-| A | Arg | Código único de cotización |
-| B | Estado | Pendiente, Adjunto, Listo, Enviado, Asignado, Confirmado |
-| C | Fecha | Fecha de la consulta |
-| D | Cliente | Nombre del cliente |
-| E | Orig. | Origen: WA, LO, EM, CL |
-| F | Telefono | Número de contacto |
-| G | Direccion | Dirección/zona |
-| H | Consulta | **TEXTO COMPLETO PARA PARSING IA** |
+
+| Col | Campo     | Descripción                                             |
+| --- | --------- | -------------------------------------------------------- |
+| A   | Arg       | Código único de cotización                            |
+| B   | Estado    | Pendiente, Adjunto, Listo, Enviado, Asignado, Confirmado |
+| C   | Fecha     | Fecha de la consulta                                     |
+| D   | Cliente   | Nombre del cliente                                       |
+| E   | Orig.     | Origen: WA, LO, EM, CL                                   |
+| F   | Telefono  | Número de contacto                                      |
+| G   | Direccion | Dirección/zona                                          |
+| H   | Consulta  | **TEXTO COMPLETO PARA PARSING IA**                 |
 
 ### API Endpoints
 
 #### Sincronización con Sheets
+
 ```typescript
 // Leer todas las cotizaciones
 GET /api/sheets/sync
@@ -197,6 +203,7 @@ interface ParsedQuote {
 **Entrada**: "Isodec 100mm / 8 p de 10 m / paneles blancos / completo + flete"
 
 **Salida**:
+
 ```json
 {
   "producto": {
@@ -317,6 +324,7 @@ const ZONAS_FLETE = {
 ### Reglas de Cotización
 
 El sistema incluye reglas inteligentes para:
+
 - Galpones completos
 - Solo techos
 - Paredes exteriores

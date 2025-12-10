@@ -416,9 +416,9 @@
       "caracteristicas_aprendidas": {},
       "objeciones_comunes": [],
       "respuestas_efectivas": [
-        "Isodec es un panel aislante con núcleo EPS...",
         "La instalación tarda entre 1-2 días dependiendo del tamaño...",
-        "Entiendo tu preocupación. Te explico el valor a largo plazo..."
+        "Entiendo tu preocupación. Te explico el valor a largo plazo...",
+        "Isodec es un panel aislante con núcleo EPS..."
       ],
       "casos_uso_exitosos": [],
       "precios_competitivos": {},
@@ -6649,6 +6649,1286 @@
         "Resaltar opciones de espesor y terminaciones"
       ],
       "fecha_ultima_actualizacion": "2025-11-26T08:06:23.479649+00:00"
+    },
+    "chapa-trapezoidal-bc-35-prepintada": {
+      "nombre": "CHAPA TRAPEZOIDAL (BC-35) PREPINTADA",
+      "caracteristicas_base": {
+        "descripcion": "Chapa Trapezoidal (BC-35) Prepintada Precios por metro lineal. Detalles técnicos: - Espesores: - Calibre 26/ 0,41mm. - Calibre 24/ 0,50mm. - Ancho útil: 0,97 m. - Terminación: Prepintada. - Distancia entre apoyos: de 1m a 1,2m (Dependiendo del Calibre). - Pendiente minima recomendada: 10%. - Plazo de entrega: De 7 a 10 días hábiles. Sujeto a cambios según Fábrica. ----------------------------- Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional, más un revestimiento de pintura poliester de 4 capas, añadiendo mayor protección a las chapas y distinción a su techo con nuestra gran variedad de colores disponibles. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. --------------------------------------",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402481955130,
+            "product_id": 9912083939642,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-trapezoidal-bc-35-prepintada",
+        "variantes": [
+          {
+            "id": 51330721710394,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA TRAPEZOIDAL (BC-35) PREPINTADA - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-trapezoidal-bc-35-aluzinc": {
+      "nombre": "CHAPA TRAPEZOIDAL (BC-35) - ALUZINC",
+      "caracteristicas_base": {
+        "descripcion": "Chapa Trapezoidal (BC-35) Aluzinc. Precios por metro lineal. Detalles técnicos: - Espesores: - Calibre 33/ 0,23mm. - Calibre 31/ 0,31mm. - Calibre 26/ 0,41mm. - Calibre 24/ 0,50mm. - Calibre 22/ 0,70mm. - Ancho útil: - 0,97m. Calibre 31 - 26 - 24 - 22. - 0,70m. Calibre 33. - Terminación: Aluzinc. (Galvanizado de Aluminio, Zinc y Silicio) - Distancia entre apoyos: de 0,6m a 1,4m (Dependiendo del Calibre). - Pendiente minima recomendada: 10%. - Plazo de entrega: De 7 a 10 días hábiles. Sujeto a cambios según Fábrica. ----------------------------- Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. --------------------------- Detalles técnicos: Ancho útil: 0,97m. Calibre 31 - 26 - 24 - 22. 0,71m. Calibre 33. Terminación: Aluzinc. Distancia entre apoyos: Depende del Calibre. Consúltenos! Consulte por más detalles técnicos.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402481987898,
+            "product_id": 9912083972410,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-trapezoidal-bc-35-aluzinc",
+        "variantes": [
+          {
+            "id": 51330721743162,
+            "title": "Default Title",
+            "sku": "",
+            "price": "5.59",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA TRAPEZOIDAL (BC-35) - ALUZINC - Default Title": "5.59"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-sinuzoidal-bc-18-aluzinc": {
+      "nombre": "CHAPA SINUZOIDAL (BC-18) - ALUZINC",
+      "caracteristicas_base": {
+        "descripcion": "Chapa Ondulada (BC-18) Aluzinc. Precios por metro lineal. Detalles técnicos: - Espesores: - Calibre 33/ 0,23mm. - Calibre 31/ 0,31mm. - Calibre 26/ 0,41mm. - Calibre 24/ 0,50mm. - Calibre 22/ 0,70mm. - Ancho útil: - 1m. (Calibre 31 - 26 - 24 - 22.) - 0,8m. (Calibre 33.) - Terminación: Aluzinc. (Galvanizado de Aluminio, Zinc y Silicio) - Distancia entre apoyos: de 0,6m a 1,4m (Dependiendo del Calibre). - Pendiente minima recomendada: 10%. - Plazo de entrega: De 7 a 10 días hábiles. Sujeto a cambios según Fábrica. --------------------------- Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, zinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. ---------------------------",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482020666,
+            "product_id": 9912084005178,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-sinuzoidal-bc-18-aluzinc",
+        "variantes": [
+          {
+            "id": 51330721775930,
+            "title": "Default Title",
+            "sku": "",
+            "price": "5.59",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA SINUZOIDAL (BC-18) - ALUZINC - Default Title": "5.59"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-sinuzoidal-bc-18-prepintada": {
+      "nombre": "CHAPA Sinuzoidal (BC-18) PREPINTADA",
+      "caracteristicas_base": {
+        "descripcion": "Chapa Ondulada (BC-18) Aluzinc. Precios por metro lineal. Detalles técnicos: - Espesores: - Calibre 26/ 0,41mm. - Calibre 24/ 0,50mm. - Ancho útil: 1m. - Terminación: Prepintada. - Distancia entre apoyos: de 1m a 1,1m (Dependiendo del Calibre). - Pendiente minima recomendada: 10%. - Plazo de entrega: De 7 a 10 días hábiles. Sujeto a cambios según Fábrica. ----------------------------- Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional, más un revestimiento de pintura poliester de 4 capas, añadiendo mayor protección a las chapas y distinción a su techo con nuestra gran variedad de colores disponibles. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. ---------------------------",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482053434,
+            "product_id": 9912084037946,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-sinuzoidal-bc-18-prepintada",
+        "variantes": [
+          {
+            "id": 51330721874234,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA Sinuzoidal (BC-18) PREPINTADA - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-sinuzoidal-bc-18-aluzinc-con-variables": {
+      "nombre": "CHAPA SINUZOIDAL (BC-18) - ALUZINC con variables",
+      "caracteristicas_base": {
+        "descripcion": "¡Presentamos la Prueva Chapa Ondulada - Aluzinc! Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. --------------------------- Detalles técnicos: Ancho útil: 1m. Calibre 31 - 26 - 24 - 22. 0,80m. Calibre 33. Terminación: Aluzinc. Distancia entre apoyos: Depende del Calibre. Consúltenos! Consulte por más detalles técnicos.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482250042,
+            "product_id": 9912084234554,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-sinuzoidal-bc-18-aluzinc-con-variables",
+        "variantes": [
+          {
+            "id": 51330722267450,
+            "title": "Default Title",
+            "sku": "",
+            "price": "11.53",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA SINUZOIDAL (BC-18) - ALUZINC con variables - Default Title": "11.53"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-sinuzoidal-bc-18-prepintada-con-variantes": {
+      "nombre": "CHAPA Sinuzoidal (BC-18) PREPINTADA con variantes",
+      "caracteristicas_base": {
+        "descripcion": "¡Presentamos la Chapa Trapezoidal (BC-18) Prepintada! Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional, más un revestimiento de pintura poliester de 4 capas, añadiendo mayor protección a las chapas y distinción a su techo con nuestra gran variedad de colores disponibles. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. --------------------------- Detalles técnicos: Ancho útil: 1 m. Terminación: Prepintada. Distancia entre apoyos: Depende del Calibre. Consúltenos! Consulte por más detalles técnicos.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482282810,
+            "product_id": 9912084267322,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-sinuzoidal-bc-18-prepintada-con-variantes",
+        "variantes": [
+          {
+            "id": 51330722300218,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA Sinuzoidal (BC-18) PREPINTADA con variantes - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-trapezoidal-bc-35-aluzinc-con-variantes": {
+      "nombre": "CHAPA TRAPEZOIDAL (BC-35) - ALUZINC Con Variantes",
+      "caracteristicas_base": {
+        "descripcion": "¡Presentamos la Prueva Chapa Trapezoidal - Aluzinc! Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. --------------------------- Detalles técnicos: Ancho útil: 0,97m. Calibre 31 - 26 - 24 - 22. 0,71m. Calibre 33. Terminación: Aluzinc. Distancia entre apoyos: Depende del Calibre. Consúltenos! Consulte por más detalles técnicos.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482413882,
+            "product_id": 9912084398394,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-trapezoidal-bc-35-aluzinc-con-variantes",
+        "variantes": [
+          {
+            "id": 51330722627898,
+            "title": "Default Title",
+            "sku": "",
+            "price": "11.53",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA TRAPEZOIDAL (BC-35) - ALUZINC Con Variantes - Default Title": "11.53"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-trapezoidal-bc-35-prepintada-con-variantes": {
+      "nombre": "CHAPA TRAPEZOIDAL (BC-35) PREPINTADA con variantes",
+      "caracteristicas_base": {
+        "descripcion": "¡Presentamos la Chapa Trapezoidal (BC-35) Prepintada! Estas chapas están compuestas por un núcleo de acero y con un recubrimiento denominado Aluzinc, una aleación de aluminio, cinc y silicio que brinda una resistencia anti-corrosiva superior en comparación con el galvanizado convencional, más un revestimiento de pintura poliester de 4 capas, añadiendo mayor protección a las chapas y distinción a su techo con nuestra gran variedad de colores disponibles. Estas chapas son perfectas para todo tipo de techos y revestimientos verticales. Disponemos de variados Calibre y longitudes de hasta 12 metros de largo. Ya sea para uso residencial o industrial, nuestras chapas de aluzinc son la opción ideal para su proyecto de construcción. No busque más y adquiera la mejor calidad en materiales de construcción. --------------------------- Detalles técnicos: Ancho útil: 0,97m. Terminación: Prepintada Distancia entre apoyos: Depende del Calibre. Consúltenos! Consulte por más detalles técnicos.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482479418,
+            "product_id": 9912084463930,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-trapezoidal-bc-35-prepintada-con-variantes",
+        "variantes": [
+          {
+            "id": 51330722726202,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "CHAPA TRAPEZOIDAL (BC-35) PREPINTADA con variantes - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-lisa-galvanizada": {
+      "nombre": "Chapa Lisa Galvanizada",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482512186,
+            "product_id": 9912084496698,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-lisa-galvanizada",
+        "variantes": [
+          {
+            "id": 51330722758970,
+            "title": "Default Title",
+            "sku": "",
+            "price": "27.65",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapa Lisa Galvanizada - Default Title": "27.65"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-lisa-aluzinc": {
+      "nombre": "Chapa Lisa Aluzinc",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482577722,
+            "product_id": 9912084562234,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-lisa-aluzinc",
+        "variantes": [
+          {
+            "id": 51330722922810,
+            "title": "Default Title",
+            "sku": "",
+            "price": "5.59",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapa Lisa Aluzinc - Default Title": "5.59"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-prepintada-cal-24-esp-0-50-mm": {
+      "nombre": "Autoportante Prepintada Cal. 24 / Esp. 0.50 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482610490,
+            "product_id": 9912084595002,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-prepintada-cal-24-esp-0-50-mm",
+        "variantes": [
+          {
+            "id": 51330722988346,
+            "title": "Default Title",
+            "sku": "",
+            "price": "19.42",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Prepintada Cal. 24 / Esp. 0.50 mm - Default Title": "19.42"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-prepintada-cal-26-esp-0-41-mm": {
+      "nombre": "Autoportante Prepintada Cal. 26  / Esp. 0.41 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482643258,
+            "product_id": 9912084627770,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-prepintada-cal-26-esp-0-41-mm",
+        "variantes": [
+          {
+            "id": 51330723021114,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Prepintada Cal. 26  / Esp. 0.41 mm - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-galvanizado-bc-120-cal-19-esp-1-11-mm": {
+      "nombre": "Autoportante Galvanizado BC-120 Cal. 19 / Esp. 1.11 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482676026,
+            "product_id": 9912084660538,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-galvanizado-bc-120-cal-19-esp-1-11-mm",
+        "variantes": [
+          {
+            "id": 51330723053882,
+            "title": "Default Title",
+            "sku": "",
+            "price": "33.83",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Galvanizado BC-120 Cal. 19 / Esp. 1.11 mm - Default Title": "33.83"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-galvanizado-bc-120-cal-20-esp-0-89-mm": {
+      "nombre": "Autoportante Galvanizado BC-120 Cal. 20 / Esp. 0.89 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482708794,
+            "product_id": 9912084693306,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-galvanizado-bc-120-cal-20-esp-0-89-mm",
+        "variantes": [
+          {
+            "id": 51330723119418,
+            "title": "Default Title",
+            "sku": "",
+            "price": "27.65",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Galvanizado BC-120 Cal. 20 / Esp. 0.89 mm - Default Title": "27.65"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-aluzinc-bc-120-cal-22-esp-0-70-mm": {
+      "nombre": "Autoportante Aluzinc BC-120 Cal. 22 / Esp. 0.70 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482774330,
+            "product_id": 9912084758842,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-aluzinc-bc-120-cal-22-esp-0-70-mm",
+        "variantes": [
+          {
+            "id": 51330723184954,
+            "title": "Default Title",
+            "sku": "",
+            "price": "22.66",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Aluzinc BC-120 Cal. 22 / Esp. 0.70 mm - Default Title": "22.66"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-aluzinc-bc-120-cal-24-esp-0-50-mm": {
+      "nombre": "Autoportante Aluzinc BC-120 Cal. 24 / Esp. 0.50 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482807098,
+            "product_id": 9912084791610,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-aluzinc-bc-120-cal-24-esp-0-50-mm",
+        "variantes": [
+          {
+            "id": 51330723381562,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.13",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Aluzinc BC-120 Cal. 24 / Esp. 0.50 mm - Default Title": "14.13"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "autoportante-aluzinc-bc-120-cal-26-esp-0-41-mm": {
+      "nombre": "Autoportante Aluzinc BC-120 Cal. 26  / Esp. 0.41 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482839866,
+            "product_id": 9912084824378,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/autoportante-aluzinc-bc-120-cal-26-esp-0-41-mm",
+        "variantes": [
+          {
+            "id": 51330723447098,
+            "title": "Default Title",
+            "sku": "",
+            "price": "11.53",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Autoportante Aluzinc BC-120 Cal. 26  / Esp. 0.41 mm - Default Title": "11.53"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapateja-prepintada-cal-24-esp-0-50-mm": {
+      "nombre": "Chapateja Prepintada Cal. 24 / Esp. 0.50 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482872634,
+            "product_id": 9912084857146,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapateja-prepintada-cal-24-esp-0-50-mm",
+        "variantes": [
+          {
+            "id": 51330723479866,
+            "title": "Default Title",
+            "sku": "",
+            "price": "19.42",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapateja Prepintada Cal. 24 / Esp. 0.50 mm - Default Title": "19.42"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapateja-prepintada-cal-27-esp-0-41-mm": {
+      "nombre": "Chapateja Prepintada Cal. 27  / Esp. 0.41 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482905402,
+            "product_id": 9912084889914,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapateja-prepintada-cal-27-esp-0-41-mm",
+        "variantes": [
+          {
+            "id": 51330723512634,
+            "title": "Default Title",
+            "sku": "",
+            "price": "15.04",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapateja Prepintada Cal. 27  / Esp. 0.41 mm - Default Title": "15.04"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapateja-prepintada-cal-26-esp-0-41-mm": {
+      "nombre": "Chapateja Prepintada Cal. 26  / Esp. 0.41 mm",
+      "caracteristicas_base": {
+        "descripcion": "",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482938170,
+            "product_id": 9912084922682,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapateja-prepintada-cal-26-esp-0-41-mm",
+        "variantes": [
+          {
+            "id": 51330723578170,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapateja Prepintada Cal. 26  / Esp. 0.41 mm - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-prepintada-cal-24-bc18-bc30-bc35-esp-0-50-mm": {
+      "nombre": "Chapa Prepintada Cal. 24 - BC18 - BC30 - BC35 / Esp. 0.50 mm",
+      "caracteristicas_base": {
+        "descripcion": "Color: Blanco / Gris Piz. / Terracota / Negro",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402482970938,
+            "product_id": 9912084955450,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-prepintada-cal-24-bc18-bc30-bc35-esp-0-50-mm",
+        "variantes": [
+          {
+            "id": 51330723610938,
+            "title": "Default Title",
+            "sku": "",
+            "price": "19.42",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapa Prepintada Cal. 24 - BC18 - BC30 - BC35 / Esp. 0.50 mm - Default Title": "19.42"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "chapa-prepintada-cal-26-bc18-bc30-bc35-esp-0-41-mm": {
+      "nombre": "Chapa Prepintada Cal. 26 - BC18 - BC30 - BC35 / Esp. 0.41 mm",
+      "caracteristicas_base": {
+        "descripcion": "Colores: Azul / Gris Piz. / Terracota / Verde",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402483003706,
+            "product_id": 9912084988218,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/chapa-prepintada-cal-26-bc18-bc30-bc35-esp-0-41-mm",
+        "variantes": [
+          {
+            "id": 51330723643706,
+            "title": "Default Title",
+            "sku": "",
+            "price": "14.92",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "Chapa Prepintada Cal. 26 - BC18 - BC30 - BC35 / Esp. 0.41 mm - Default Title": "14.92"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "isofrig-®": {
+      "nombre": "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm)",
+      "caracteristicas_base": {
+        "descripcion": "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) Precio por m2. -------------------------------------- INFORMACIÓN TÉCNICA: Espesores: 40 mm - 60 mm - 80 mm - 100 mm - 120 mm - 150 mm - 180 mm. Ancho útil: 1,1 m. Largos: A medida. - Mínimos: 3,5m. - Máximos: 12 a 14 m. Terminaciones: - Exterior: Chapa Calibre 24 (0,55mm) Prepintada (Blanco) Liso o Tablillado. - Interior: Chapa Calibre 24 (0,55mm) Prepintada (Blanco) Liso. - Relleno: Espuma de Poliisocianurato (PIR) (de 30 a 45 kg / m³). * Imágenes Ilustrativas * -------------------------------------- Plazos de entrega: Todos los espesores: Entre 15 a 45 días. Sujeto a modificaciones de Fábrica. (Blanco) -------------------------------------- DESCRIPCIÓN: El Isofrig PIR (poliisocianurato) es un sistema constructivo moderno y eficiente para la construcción de cámaras Frigoríficas, que proporciona excelente aislamiento térmico , además de una alta resistencia estructural. Es utilizado en cámaras frigoríficas, tanto en techo como en paredes, con temperaturas controladas (positivas o negativas), en salas de elaboración, conservación, laboratorios, industria, agroalimentaria, etc. Está diseñado para aplicaciones de refrigeración, túneles, cámaras, procesado de alimentos, con un rango interno de temperaturas de -50ºC a +60ºC. Además de en cámaras Frigoríficas pueden utilizarse en: Viviendas unifamiliares o ampliaciones. Locales comerciales y oficinas. Galpones, depósitos y naves industriales. Construcciones modulares, contenedores y salas técnicas. ------------------------------------ Ventajas principales: Rápida instalación. Gran capacidad de aislación térmica. Solidez y seguridad ante estructural. Mayor estanqueidad frente al vapor de agua. Reduce las posibilidades de aparición de fugas de temperatura por dilatación. Enfriamiento continuo en línea de producción evitando deformaciones posteriores. Excelente comportamiento ante el fuego. ------------------------------------ Por opción en longitudes especiales, más información o para recibir un presupuesto a medida, contáctese con nuestro equipo de Ventas y Asesoramiento.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12516010295610,
+            "product_id": 9912085512506,
+            "name": "Espesor",
+            "position": 1,
+            "values": [
+              "40 mm",
+              "60 mm",
+              "80 mm",
+              "100 mm",
+              "120 mm",
+              "150 mm",
+              "180 mm"
+            ]
+          }
+        ],
+        "imagenes": [
+          "https://cdn.shopify.com/s/files/1/0946/4915/5898/files/ISOWALL_PIR.png?v=1755385123"
+        ],
+        "url_producto": "https://bmcuruguay.com.uy/products/isofrig-®",
+        "variantes": [
+          {
+            "id": 51823323414842,
+            "title": "40 mm",
+            "sku": "",
+            "price": "53.11",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 1000
+          },
+          {
+            "id": 51823323447610,
+            "title": "60 mm",
+            "sku": "",
+            "price": "57.83",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          },
+          {
+            "id": 51823323480378,
+            "title": "80 mm",
+            "sku": "",
+            "price": "63.80",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          },
+          {
+            "id": 51823323513146,
+            "title": "100 mm",
+            "sku": "",
+            "price": "70.77",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          },
+          {
+            "id": 51823323545914,
+            "title": "120 mm",
+            "sku": "",
+            "price": "84.59",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          },
+          {
+            "id": 51823323578682,
+            "title": "150 mm",
+            "sku": "",
+            "price": "85.85",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          },
+          {
+            "id": 51823323611450,
+            "title": "180 mm",
+            "sku": "",
+            "price": "105.33",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 40 mm": "53.11",
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 60 mm": "57.83",
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 80 mm": "63.80",
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 100 mm": "70.77",
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 120 mm": "84.59",
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 150 mm": "85.85",
+        "ISOFRIG® - Panel Frigorífico - (40 - 60 - 80 - 100 - 120 - 150 - 180 mm) - 180 mm": "105.33"
+      },
+      "inventario": {
+        "40 mm": 1000,
+        "60 mm": 0,
+        "80 mm": 0,
+        "100 mm": 0,
+        "120 mm": 0,
+        "150 mm": 0,
+        "180 mm": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
+    },
+    "pu20mm-gris-sin-cielorraso-pvc": {
+      "nombre": "PU20mm Gris sin Cielorraso ( PVC )",
+      "caracteristicas_base": {
+        "descripcion": "Este producto de Panel Sandwich PU20mm Gris sin Cielorraso (PVC) es una solución ideal para instalaciones en steel framing , sobretechos y galpones, donde ya esta previsto un cielorraso o en caso que se opte por funcionalidad y economia en lugar de estetica para un gelpon. Posee un núcleo aislante de Poliuretano Inyectado de 20 mm de grosor, sin cielorraso, y está revestido con lámina protectora de PVC. Es resistente, duradero y perfecto para una amplia variedad de proyectos de construcción.",
+        "tipo_producto": "",
+        "vendor": "My Store",
+        "tags": [],
+        "opciones": [
+          {
+            "id": 12402484871482,
+            "product_id": 9912086626618,
+            "name": "Title",
+            "position": 1,
+            "values": [
+              "Default Title"
+            ]
+          }
+        ],
+        "imagenes": [],
+        "url_producto": "https://bmcuruguay.com.uy/products/pu20mm-gris-sin-cielorraso-pvc",
+        "variantes": [
+          {
+            "id": 51330730885434,
+            "title": "Default Title",
+            "sku": "",
+            "price": "36.00",
+            "available": false,
+            "weight": 0.0,
+            "weight_unit": "kg",
+            "inventory_quantity": 0
+          }
+        ]
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [],
+      "casos_uso_exitosos": [],
+      "precios_competitivos": {
+        "PU20mm Gris sin Cielorraso ( PVC ) - Default Title": "36.00"
+      },
+      "inventario": {
+        "Default Title": 0
+      },
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Destacar disponibilidad a medida y fabricación nacional",
+        "Resaltar opciones de espesor y terminaciones"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-10T05:41:43.211841+00:00"
     }
   },
   "metricas_evolucion": {
@@ -9621,9 +10901,278 @@
         "negocio:instalación"
       ],
       "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:43.911934",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:45.548316",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:46.574467",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:47.582581",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.589232",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 5,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590193",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:19:48.590531",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:precio",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.393968",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:quiero"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio",
+        "negocio:descuento"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.400721",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902855",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.902910",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "emocional:necesito"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903001",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "tipo": "interaccion",
+      "descripcion": "Interacción whatsapp con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "negocio:precio"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903346",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903763",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta_ia con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
+    },
+    {
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "tipo": "interaccion",
+      "descripcion": "Interacción cotizacion_sheets con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": null,
+      "palabras_clave": [
+        "tecnico:instalación",
+        "negocio:instalación"
+      ],
+      "archivo_origen": "conocimiento_consolidado.json"
     }
   ],
-  "fecha_consolidacion": "2025-11-26T05:35:57.842552",
+  "fecha_consolidacion": "2025-12-10T02:41:43.268760",
   "archivos_consolidados": [
     "base_conocimiento_demo.json",
     "base_conocimiento_exportada.json",

@@ -21,7 +21,7 @@ class IntegracionGoogleSheets:
     
     def __init__(self, ia_conversacional: IAConversacionalIntegrada):
         self.ia = ia_conversacional
-        self.sheet_id = "1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0"  # ID del sheet real
+        self.sheet_id = "1-c834pOUNnUWn7Q-Bc4kDHJGCQo0LKI05dXaLgqcXgI"  # ID del sheet real
         self.credenciales = None
         self.cliente_gspread = None
         self.hoja_principal = None
