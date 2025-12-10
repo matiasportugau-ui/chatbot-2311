@@ -5,7 +5,8 @@
  * Sheet ID: bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0
  */
 
-import { google } from 'googleapis'
+import { sheets } from '@googleapis/sheets'
+import { GoogleAuth } from 'google-auth-library'
 import { secureConfig } from './secure-config'
 
 export interface AdminRow {
@@ -50,7 +51,7 @@ export interface QuoteData {
 export class GoogleSheetsEnhancedClient {
   private sheets: any
   private spreadsheetId: string
-  
+
   constructor() {
     if (!secureConfig.isReady()) {
       throw new Error('SecureConfig not initialized. Call initializeSecureConfig() first.')
@@ -63,17 +64,17 @@ export class GoogleSheetsEnhancedClient {
       throw new Error('Google Sheet ID is not configured')
     }
 
-    const auth = new google.auth.GoogleAuth({
+    const auth = new GoogleAuth({
       credentials: {
         client_email: config.serviceAccountEmail,
         private_key: config.privateKey?.replace(/\\n/g, '\n')
       },
       scopes: config.scopes
     })
-    
-    this.sheets = google.sheets({ version: 'v4', auth })
+
+    this.sheets = sheets({ version: 'v4', auth })
   }
-  
+
   /**
    * 📋 Leer pestaña "Admin." completa
    */
@@ -83,14 +84,14 @@ export class GoogleSheetsEnhancedClient {
         spreadsheetId: this.spreadsheetId,
         range: 'Admin.!A:H', // Columnas A-H
       })
-      
+
       return this.parseAdminRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Admin tab:', error)
       throw new Error(`Error reading Admin tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 📤 Leer pestaña "Enviados"
    */
@@ -100,14 +101,14 @@ export class GoogleSheetsEnhancedClient {
         spreadsheetId: this.spreadsheetId,
         range: 'Enviados!A:J', // Columnas A-J (incluye precio y fecha envío)
       })
-      
+
       return this.parseEnviadosRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Enviados tab:', error)
       throw new Error(`Error reading Enviados tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * ✅ Leer pestaña "Confirmado"
    */
@@ -117,14 +118,14 @@ export class GoogleSheetsEnhancedClient {
         spreadsheetId: this.spreadsheetId,
         range: 'Confirmado!A:J',
       })
-      
+
       return this.parseEnviadosRows(response.data.values || [])
     } catch (error) {
       console.error('Error reading Confirmado tab:', error)
       throw new Error(`Error reading Confirmado tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * ➕ Agregar nueva cotización a "Admin."
    */
@@ -140,21 +141,21 @@ export class GoogleSheetsEnhancedClient {
         quoteData.direccion,
         quoteData.consulta
       ]]
-      
+
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
         range: 'Admin.!A:H',
         valueInputOption: 'USER_ENTERED',
         resource: { values }
       })
-      
+
       console.log(`✅ Cotización agregada a Admin: ${quoteData.arg}`)
     } catch (error) {
       console.error('Error adding quote to Admin:', error)
       throw new Error(`Error adding quote to Admin: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 📤 Mover cotización de "Admin." a "Enviados"
    */
@@ -162,7 +163,7 @@ export class GoogleSheetsEnhancedClient {
     try {
       // 1. Leer la fila específica de Admin
       const row = await this.readSpecificRow('Admin.', rowNumber)
-      
+
       // 2. Preparar datos para Enviados
       const enviadosData = [
         row.arg,
@@ -176,7 +177,7 @@ export class GoogleSheetsEnhancedClient {
         additionalData?.precio || '',
         additionalData?.fechaEnvio || new Date().toLocaleDateString('es-UY')
       ]
-      
+
       // 3. Agregar a "Enviados"
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
@@ -184,17 +185,17 @@ export class GoogleSheetsEnhancedClient {
         valueInputOption: 'USER_ENTERED',
         resource: { values: [enviadosData] }
       })
-      
+
       // 4. Cambiar estado en "Admin." en lugar de eliminar
       await this.updateCellValue('Admin.', rowNumber, 'B', 'Enviado')
-      
+
       console.log(`✅ Cotización movida a Enviados: ${row.arg}`)
     } catch (error) {
       console.error('Error moving to Enviados:', error)
       throw new Error(`Error moving to Enviados: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * ✅ Mover cotización de "Enviados" a "Confirmado"
    */
@@ -202,7 +203,7 @@ export class GoogleSheetsEnhancedClient {
     try {
       // 1. Leer la fila específica de Enviados
       const row = await this.readSpecificRow('Enviados', rowNumber)
-      
+
       // 2. Preparar datos para Confirmado
       const confirmadoData = [
         row.arg,
@@ -217,7 +218,7 @@ export class GoogleSheetsEnhancedClient {
         row.fechaEnvio || '',
         additionalData?.fechaConfirmacion || new Date().toLocaleDateString('es-UY')
       ]
-      
+
       // 3. Agregar a "Confirmado"
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
@@ -225,17 +226,17 @@ export class GoogleSheetsEnhancedClient {
         valueInputOption: 'USER_ENTERED',
         resource: { values: [confirmadoData] }
       })
-      
+
       // 4. Cambiar estado en "Enviados"
       await this.updateCellValue('Enviados', rowNumber, 'B', 'Confirmado')
-      
+
       console.log(`✅ Cotización movida a Confirmado: ${row.arg}`)
     } catch (error) {
       console.error('Error moving to Confirmado:', error)
       throw new Error(`Error moving to Confirmado: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 🔍 Buscar cotización por teléfono
    */
@@ -250,7 +251,7 @@ export class GoogleSheetsEnhancedClient {
         this.readEnviadosTab(),
         this.readConfirmadoTab()
       ])
-      
+
       return {
         pendientes: adminRows.filter(r => r.telefono.includes(phone)),
         enviados: enviadosRows.filter(r => r.telefono.includes(phone)),
@@ -261,7 +262,7 @@ export class GoogleSheetsEnhancedClient {
       throw new Error(`Error finding by phone: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 🔍 Buscar cotización por código Arg
    */
@@ -276,7 +277,7 @@ export class GoogleSheetsEnhancedClient {
         this.readEnviadosTab(),
         this.readConfirmadoTab()
       ])
-      
+
       return {
         admin: adminRows.find(r => r.arg === arg),
         enviados: enviadosRows.find(r => r.arg === arg),
@@ -287,7 +288,7 @@ export class GoogleSheetsEnhancedClient {
       throw new Error(`Error finding by arg: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 📊 Obtener estadísticas del sistema
    */
@@ -305,24 +306,24 @@ export class GoogleSheetsEnhancedClient {
         this.readEnviadosTab(),
         this.readConfirmadoTab()
       ])
-      
+
       const totalPendientes = adminRows.length
       const totalEnviados = enviadosRows.length
       const totalConfirmados = confirmadosRows.length
       const totalCotizaciones = totalPendientes + totalEnviados + totalConfirmados
-      
+
       // Estadísticas por origen
       const cotizacionesPorOrigen: Record<string, number> = {}
-      ;[...adminRows, ...enviadosRows, ...confirmadosRows].forEach(row => {
-        cotizacionesPorOrigen[row.origen] = (cotizacionesPorOrigen[row.origen] || 0) + 1
-      })
-      
+        ;[...adminRows, ...enviadosRows, ...confirmadosRows].forEach(row => {
+          cotizacionesPorOrigen[row.origen] = (cotizacionesPorOrigen[row.origen] || 0) + 1
+        })
+
       // Estadísticas por estado
       const cotizacionesPorEstado: Record<string, number> = {}
-      ;[...adminRows, ...enviadosRows, ...confirmadosRows].forEach(row => {
-        cotizacionesPorEstado[row.estado] = (cotizacionesPorEstado[row.estado] || 0) + 1
-      })
-      
+        ;[...adminRows, ...enviadosRows, ...confirmadosRows].forEach(row => {
+          cotizacionesPorEstado[row.estado] = (cotizacionesPorEstado[row.estado] || 0) + 1
+        })
+
       return {
         totalPendientes,
         totalEnviados,
@@ -336,7 +337,7 @@ export class GoogleSheetsEnhancedClient {
       throw new Error(`Error getting statistics: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 🔧 Actualizar valor de una celda específica
    */
@@ -353,7 +354,7 @@ export class GoogleSheetsEnhancedClient {
       throw new Error(`Error updating cell value: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 📖 Leer fila específica
    */
@@ -363,9 +364,9 @@ export class GoogleSheetsEnhancedClient {
         spreadsheetId: this.spreadsheetId,
         range: `${sheetName}!A${rowNumber}:J${rowNumber}`,
       })
-      
+
       const row = response.data.values?.[0] || []
-      
+
       if (sheetName === 'Admin.') {
         return {
           arg: row[0] || '',
@@ -396,13 +397,13 @@ export class GoogleSheetsEnhancedClient {
       throw new Error(`Error reading specific row: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   /**
    * 🔄 Parsear filas de Admin
    */
   private parseAdminRows(rows: any[][]): AdminRow[] {
     if (!rows || rows.length === 0) return []
-    
+
     // Primera fila son headers, saltarla
     return rows.slice(1).map((row, index) => ({
       rowNumber: index + 2, // +2 porque Excel empieza en 1 y saltamos header
@@ -416,13 +417,13 @@ export class GoogleSheetsEnhancedClient {
       consulta: row[7] || '',
     }))
   }
-  
+
   /**
    * 🔄 Parsear filas de Enviados/Confirmado
    */
   private parseEnviadosRows(rows: any[][]): EnviadosRow[] {
     if (!rows || rows.length === 0) return []
-    
+
     return rows.slice(1).map((row, index) => ({
       rowNumber: index + 2,
       arg: row[0] || '',
@@ -437,7 +438,7 @@ export class GoogleSheetsEnhancedClient {
       fechaEnvio: row[9] || ''
     }))
   }
-  
+
   /**
    * 🆔 Generar código Arg único
    */

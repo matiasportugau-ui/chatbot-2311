@@ -1,4 +1,5 @@
-import { google } from 'googleapis'
+import { sheets } from '@googleapis/sheets'
+import { GoogleAuth } from 'google-auth-library'
 import { secureConfig } from './secure-config'
 
 export interface AdminRow {
@@ -27,7 +28,7 @@ export interface QuoteData {
 export class GoogleSheetsClient {
   private sheets: any
   private spreadsheetId: string
-  
+
   constructor() {
     if (!secureConfig.isReady()) {
       throw new Error('SecureConfig not initialized. Call initializeSecureConfig() first.')
@@ -40,17 +41,17 @@ export class GoogleSheetsClient {
       throw new Error('Google Sheet ID is not configured')
     }
 
-    const auth = new google.auth.GoogleAuth({
+    const auth = new GoogleAuth({
       credentials: {
         client_email: config.serviceAccountEmail,
         private_key: config.privateKey?.replace(/\\n/g, '\n')
       },
       scopes: config.scopes
     })
-    
-    this.sheets = google.sheets({ version: 'v4', auth })
+
+    this.sheets = sheets({ version: 'v4', auth })
   }
-  
+
   // Leer pestaña "Admin." completa
   async readAdminTab(): Promise<AdminRow[]> {
     try {
@@ -64,7 +65,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to read Admin tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Leer pestaña "Enviados"
   async readEnviadosTab(): Promise<AdminRow[]> {
     try {
@@ -78,7 +79,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to read Enviados tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Leer pestaña "Confirmado"
   async readConfirmadoTab(): Promise<AdminRow[]> {
     try {
@@ -92,11 +93,11 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to read Confirmado tab: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Parsear filas del sheet
   private parseAdminRows(rows: any[][]): AdminRow[] {
     if (!rows || rows.length === 0) return []
-    
+
     // Primera fila son headers, saltarla
     return rows.slice(1).map((row, index) => ({
       rowNumber: index + 2, // +2 porque Excel empieza en 1 y saltamos header
@@ -110,7 +111,7 @@ export class GoogleSheetsClient {
       consulta: row[7] || '',
     }))
   }
-  
+
   // Agregar nueva cotización a "Admin."
   async addQuoteToAdmin(quoteData: QuoteData): Promise<void> {
     try {
@@ -124,7 +125,7 @@ export class GoogleSheetsClient {
         quoteData.direccion,
         quoteData.consulta
       ]]
-      
+
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
         range: 'Admin.!A:H',
@@ -136,7 +137,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to add quote to Admin: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Leer fila específica
   async readSpecificRow(sheetName: string, rowNumber: number): Promise<string[]> {
     try {
@@ -150,13 +151,13 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to read row ${rowNumber} from ${sheetName}: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Mover cotización de "Admin." a "Enviados"
   async moveToEnviados(rowNumber: number, additionalData?: any): Promise<void> {
     try {
       // 1. Leer la fila específica
       const row = await this.readSpecificRow('Admin.', rowNumber)
-      
+
       // 2. Agregar a "Enviados"
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
@@ -164,7 +165,7 @@ export class GoogleSheetsClient {
         valueInputOption: 'USER_ENTERED',
         resource: { values: [row] }
       })
-      
+
       // 3. Cambiar estado en "Admin." en lugar de eliminar
       await this.updateCellValue('Admin.', rowNumber, 'B', 'Enviado')
     } catch (error) {
@@ -172,13 +173,13 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to move to Enviados: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Mover cotización de "Enviados" a "Confirmado"
   async moveToConfirmado(rowNumber: number): Promise<void> {
     try {
       // 1. Leer la fila específica de Enviados
       const row = await this.readSpecificRow('Enviados', rowNumber)
-      
+
       // 2. Agregar a "Confirmado"
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
@@ -186,7 +187,7 @@ export class GoogleSheetsClient {
         valueInputOption: 'USER_ENTERED',
         resource: { values: [row] }
       })
-      
+
       // 3. Cambiar estado en "Enviados"
       await this.updateCellValue('Enviados', rowNumber, 'B', 'Confirmado')
     } catch (error) {
@@ -194,7 +195,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to move to Confirmado: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Actualizar valor de una celda específica
   async updateCellValue(sheetName: string, row: number, column: string, value: string): Promise<void> {
     try {
@@ -209,7 +210,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to update cell: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Buscar cotización por teléfono
   async findByPhone(phone: string): Promise<{
     pendientes: AdminRow[]
@@ -222,7 +223,7 @@ export class GoogleSheetsClient {
         this.readEnviadosTab(),
         this.readConfirmadoTab()
       ])
-      
+
       return {
         pendientes: adminRows.filter(r => r.telefono.includes(phone)),
         enviados: enviadosRows.filter(r => r.telefono.includes(phone)),
@@ -233,7 +234,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to find by phone: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Obtener estadísticas generales
   async getStats(): Promise<{
     totalPendientes: number
@@ -247,7 +248,7 @@ export class GoogleSheetsClient {
         this.readEnviadosTab(),
         this.readConfirmadoTab()
       ])
-      
+
       return {
         totalPendientes: adminRows.length,
         totalEnviados: enviadosRows.length,
@@ -259,7 +260,7 @@ export class GoogleSheetsClient {
       throw new Error(`Failed to get stats: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   // Generar código Arg automático
   generateArgCode(phone: string, origen: string = 'WA'): string {
     const prefix = phone.slice(-4)
