@@ -585,6 +585,18 @@ Para soporte técnico o consultas sobre el sistema:
 
 ## 📚 Referencias Rápidas
 
+### Google Cloud Architecture Framework
+Para mejores prácticas y mejoras basadas en el Framework de Arquitectura de Google Cloud:
+- **[GOOGLE_CLOUD_ARCHITECTURE_FRAMEWORK_IMPROVEMENTS.md](./docs/GOOGLE_CLOUD_ARCHITECTURE_FRAMEWORK_IMPROVEMENTS.md)** - Análisis completo y recomendaciones
+- **[GOOGLE_CLOUD_IMPLEMENTATION_GUIDE.md](./docs/GOOGLE_CLOUD_IMPLEMENTATION_GUIDE.md)** - Guía de implementación práctica con código
+
+Incluye mejoras para:
+- 🔐 **Seguridad**: Rate limiting, validación de entrada, autenticación
+- 📊 **Observabilidad**: Métricas, logging estructurado, Four Golden Signals
+- 🔄 **Fiabilidad**: Circuit breaker, retry con backoff, graceful degradation
+- 💰 **Optimización de Costos**: Cache, selección inteligente de modelos
+- ⚡ **Rendimiento**: Conexiones optimizadas, compresión, cache multinivel
+
 ### Cheat Sheet CLI
 Para comandos rápidos de Git, Node.js, deployment y más, consulta:
 - **[CHEAT_SHEET_CLI.md](./CHEAT_SHEET_CLI.md)** - Guía completa de comandos CLI

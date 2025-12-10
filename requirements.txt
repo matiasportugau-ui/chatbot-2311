@@ -49,6 +49,12 @@ pymongo>=4.5.0
 # Para métricas y observabilidad
 prometheus_client>=0.17.0
 
+# Para rate limiting (Google Cloud Architecture Framework - Security)
+slowapi>=0.1.9
+
+# Para caché (Google Cloud Architecture Framework - Performance)
+aiocache>=0.12.0
+
 # Para Google Sheets API
 gspread>=5.0.0
 google-auth>=2.0.0
