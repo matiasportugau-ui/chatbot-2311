@@ -96,3 +96,6 @@ data/quotes/
 *.zip
 node_modules/
 *.zip
+.next/
+.agent/
+.venv/
