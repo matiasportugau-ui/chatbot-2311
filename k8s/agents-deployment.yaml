@@ -1,0 +1,165 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agents
+  namespace: bmc-chatbot
+  labels:
+    app.kubernetes.io/name: agents
+    app.kubernetes.io/component: background-workers
+    app.kubernetes.io/part-of: bmc-chatbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agents
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agents
+        app.kubernetes.io/component: background-workers
+        app.kubernetes.io/part-of: bmc-chatbot
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: bmc-chatbot-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: agents
+        image: us-central1-docker.pkg.dev/PROJECT_ID/bmc-chatbot/agents:latest
+        imagePullPolicy: Always
+        command: ["python", "-u", "automated_agent_system.py"]
+        env:
+        # Application Configuration
+        - name: ENVIRONMENT
+          value: "production"
+        - name: LOG_LEVEL
+          value: "INFO"
+        
+        # OpenAI Configuration
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: OPENAI_API_KEY
+        - name: OPENAI_MODEL
+          value: "gpt-4o-mini"
+        
+        # Alternative LLM Providers
+        - name: GROQ_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: GROQ_API_KEY
+              optional: true
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: GEMINI_API_KEY
+              optional: true
+        
+        # Database Configuration
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: MONGODB_URI
+        
+        # PostgreSQL (for analytics/logs if needed)
+        - name: POSTGRES_URI
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: POSTGRES_URI
+              optional: true
+        
+        # WhatsApp Configuration
+        - name: WHATSAPP_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: WHATSAPP_ACCESS_TOKEN
+              optional: true
+        - name: WHATSAPP_VERIFY_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: WHATSAPP_VERIFY_TOKEN
+              optional: true
+        - name: WHATSAPP_PHONE_NUMBER_ID
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: WHATSAPP_PHONE_NUMBER_ID
+              optional: true
+        
+        # N8N Integration
+        - name: N8N_WEBHOOK_URL
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: N8N_WEBHOOK_URL
+              optional: true
+        - name: N8N_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: N8N_API_KEY
+              optional: true
+        
+        # Google Sheets
+        - name: GOOGLE_SHEETS_CREDENTIALS
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: GOOGLE_SHEETS_CREDENTIALS
+              optional: true
+        - name: GOOGLE_SHEET_ID
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: GOOGLE_SHEET_ID
+              optional: true
+        
+        # Admin Credentials
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: bmc-chatbot-secrets
+              key: ADMIN_PASSWORD
+        
+        # Resource limits for GKE Autopilot
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+            ephemeral-storage: "2Gi"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+            ephemeral-storage: "4Gi"
+        
+        # Security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+        
+        # Liveness probe - check if process is running
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - ps aux | grep -v grep | grep -q automated_agent_system.py
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 5
+          failureThreshold: 3
