@@ -262,118 +262,66 @@ kubectl get all -n bmc-chatbot
 
 You need to build three container images:
 
-#### 1. API Server Image
+#### Using the Build Script
 
 ```bash
-# Build API server image
+# Set environment variables
+export PROJECT_ID="your-gcp-project-id"
+export REGION="us-central1"
+export VERSION="v1.0.0"  # or "latest"
+
+# Run from repository root directory
+./k8s/build-and-push.sh
+```
+
+The script will:
+1. Check requirements (gcloud, docker)
+2. Configure Docker authentication
+3. Build all three images
+4. Push to Artifact Registry
+
+#### Manual Build
+
+If you prefer to build images manually:
+
+```bash
+# Build API server image (run from repository root)
 docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/api-server:latest \
-    -f Dockerfile.api .
+    -f k8s/Dockerfile.api .
 
 # Push to Artifact Registry
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/api-server:latest
 ```
 
-**Dockerfile.api** (create this):
+**Note:** All Dockerfiles are in the `k8s/` directory but should be built from the repository root to include all source files.
 
-```dockerfile
-FROM python:3.11-slim
+#### Image Descriptions
 
-WORKDIR /app
+**1. API Server** (`k8s/Dockerfile.api`)
+- Based on Python 3.11 slim
+- Runs FastAPI application via `api_server.py`
+- Exposes port 8000
+- Includes health check endpoint
+- Non-root user (uid 1000)
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+**2. Background Agents** (`k8s/Dockerfile.agents`)
+- Based on Python 3.11 slim
+- Runs `automated_agent_system.py`
+- Includes git for repository operations
+- Non-root user (uid 1000)
+- Can be overridden for specific agent tasks
 
-# Copy application code
-COPY . .
+**3. Webhooks** (`k8s/Dockerfile.webhooks`)
+- Based on Python 3.11 slim
+- Runs `sistema_completo_integrado.py` on port 8080
+- Includes health check endpoint
+- Non-root user (uid 1000)
 
-# Create non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Expose port
-EXPOSE 8000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=2)" || exit 1
-
-# Run application
-CMD ["python", "-u", "api_server.py"]
-```
-
-#### 2. Agents Image
-
-```bash
-# Build agents image
-docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/agents:latest \
-    -f Dockerfile.agents .
-
-# Push to Artifact Registry
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/agents:latest
-```
-
-**Dockerfile.agents** (create this):
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Default command (can be overridden)
-CMD ["python", "-u", "automated_agent_system.py"]
-```
-
-#### 3. Webhooks Image
-
-```bash
-# Build webhooks image
-docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/webhooks:latest \
-    -f Dockerfile.webhooks .
-
-# Push to Artifact Registry
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/webhooks:latest
-```
-
-**Dockerfile.webhooks** (create this):
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Expose port
-EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=2)" || exit 1
-
-# Run webhook server
-CMD ["python", "-u", "sistema_completo_integrado.py"]
-```
+All Dockerfiles include:
+- Multi-stage caching for faster builds
+- Security best practices (non-root user, minimal packages)
+- Health checks where applicable
+- Optimized layer ordering
 
 ### Setting Up DNS
 

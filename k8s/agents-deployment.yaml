@@ -153,13 +153,15 @@ spec:
           readOnlyRootFilesystem: false
         
         # Liveness probe - check if process is running
+        # Note: Agents run continuously. Consider implementing a health endpoint
+        # in automated_agent_system.py for more reliable health checks
         livenessProbe:
           exec:
             command:
             - /bin/sh
             - -c
-            - ps aux | grep -v grep | grep -q automated_agent_system.py
+            - pgrep -f automated_agent_system.py > /dev/null
           initialDelaySeconds: 60
           periodSeconds: 60
           timeoutSeconds: 5
-          failureThreshold: 3
+          failureThreshold: 5

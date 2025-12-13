@@ -84,9 +84,9 @@ build_and_push() {
     
     print_info "Building ${service} image..."
     
-    # Build image
+    # Build image (from parent directory)
     docker build \
-        -f "k8s/${dockerfile}" \
+        -f "${dockerfile}" \
         -t "${image_name}" \
         --platform linux/amd64 \
         . || {
@@ -145,16 +145,22 @@ main() {
     print_info "Building and pushing images..."
     echo ""
     
+    # Change to parent directory if we're in k8s/
+    if [[ "$(basename $(pwd))" == "k8s" ]]; then
+        cd ..
+        print_info "Changed to parent directory: $(pwd)"
+    fi
+    
     # API Server
-    build_and_push "api-server" "Dockerfile.api" "$VERSION"
+    build_and_push "api-server" "k8s/Dockerfile.api" "$VERSION"
     echo ""
     
     # Agents
-    build_and_push "agents" "Dockerfile.agents" "$VERSION"
+    build_and_push "agents" "k8s/Dockerfile.agents" "$VERSION"
     echo ""
     
     # Webhooks
-    build_and_push "webhooks" "Dockerfile.webhooks" "$VERSION"
+    build_and_push "webhooks" "k8s/Dockerfile.webhooks" "$VERSION"
     echo ""
     
     print_success "All images built and pushed successfully!"

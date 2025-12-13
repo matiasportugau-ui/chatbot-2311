@@ -40,14 +40,13 @@ echo -n "your-password" | gcloud secrets create admin-password --data-file=- --p
 ## 🐳 Build & Push Images
 
 ```bash
-# Using the helper script
-cd k8s/
+# Using the helper script (run from repository root)
 export PROJECT_ID="your-gcp-project-id"
 export REGION="us-central1"
 export VERSION="v1.0.0"  # or "latest"
-./build-and-push.sh
+./k8s/build-and-push.sh
 
-# Manual build
+# Manual build (from repository root)
 docker build -f k8s/Dockerfile.api -t $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/api-server:latest .
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/bmc-chatbot/api-server:latest
 ```

@@ -216,12 +216,14 @@ sed -i "s/chatbot.yourdomain.com/your-actual-domain.com/g" ingress.yaml
 ### ☐ 13. Build Docker Images
 
 ```bash
-# Using helper script
+# Using helper script (run from repository root)
+export PROJECT_ID="your-gcp-project-id"
+export REGION="us-central1"
 export VERSION="v1.0.0"
-./build-and-push.sh
+./k8s/build-and-push.sh
 ```
 
-Or manually:
+Or manually (from repository root):
 
 ```bash
 # API Server
