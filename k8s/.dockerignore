@@ -1,0 +1,107 @@
+# Docker ignore file for BMC Chatbot
+# Excludes unnecessary files from Docker builds
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test files
+tests/
+test_*.py
+*_test.py
+pytest.ini
+.pytest_cache/
+
+# Documentation (not needed in container)
+*.md
+!README.md
+docs/
+AGENT*.md
+BMC*.md
+DEPLOYMENT*.md
+DOCKER*.md
+*.txt
+!requirements.txt
+
+# Data files
+*.json
+!config.json
+!package.json
+*.csv
+*.xlsx
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+*.tmp
+
+# Node modules (if any)
+node_modules/
+package-lock.json
+
+# Coverage reports
+.coverage
+htmlcov/
+.tox/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Deployment files (already in k8s/)
+docker-compose*.yml
+railway.json
+render.yaml
+vercel.json
+
+# Scripts (not needed in container)
+*.sh
+*.bat
+*.ps1
+
+# Specific large/unnecessary files
+recovery_*.json
+recovery_*.txt
+recovery_*.md
+workspace_*.json
+comprehensive_*.json
+execution_*.json
+analisis_*.json
+reporte_*.json
