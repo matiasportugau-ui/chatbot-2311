@@ -1,5 +1,17 @@
 # 🚀 Instrucciones de Deploy en Vercel
 
+## ⚠️ Important: Verified Commits Requirement
+
+Vercel may require **verified (GPG-signed) commits** for enhanced security. Before deploying:
+
+1. Review the [Git Verified Commits Setup Guide](docs/GIT_VERIFIED_COMMITS_SETUP.md)
+2. Configure GPG keys in GitHub Actions secrets if not already done
+3. Enable verified commits in Vercel project settings
+
+This ensures that only authenticated commits from trusted sources are deployed to production.
+
+---
+
 ## Opción 1: Deploy desde GitHub (RECOMENDADO)
 
 ### 1. Preparar repositorio
@@ -103,3 +115,13 @@ vercel env add NEXT_PUBLIC_APP_URL
 3. **Agregar métricas avanzadas**
 4. **Implementar notificaciones**
 5. **Optimizar performance**
+
+---
+
+## 🔐 Security: Verified Commits
+
+For enhanced security, Vercel supports verified commits. See [Git Verified Commits Setup](docs/GIT_VERIFIED_COMMITS_SETUP.md) for details on:
+- Configuring GPG keys for GitHub Actions
+- Enabling verified commits in Vercel
+- Signing commits locally
+

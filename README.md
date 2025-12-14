@@ -585,6 +585,12 @@ Para soporte técnico o consultas sobre el sistema:
 
 ## 📚 Referencias Rápidas
 
+### Git Verified Commits (Security)
+For enhanced security with Vercel deployments:
+- **[GIT_VERIFIED_COMMITS_SETUP.md](./docs/GIT_VERIFIED_COMMITS_SETUP.md)** - Complete guide for GPG commit signing
+- Ensures only authenticated commits are deployed
+- Provides cryptographic proof of commit authorship
+
 ### Google Cloud Architecture Framework
 Para mejores prácticas y mejoras basadas en el Framework de Arquitectura de Google Cloud:
 - **[GOOGLE_CLOUD_ARCHITECTURE_FRAMEWORK_IMPROVEMENTS.md](./docs/GOOGLE_CLOUD_ARCHITECTURE_FRAMEWORK_IMPROVEMENTS.md)** - Análisis completo y recomendaciones
