@@ -81,9 +81,14 @@ node_modules
 
 # Next.js
 .next/
-out/
 build/
 .env.local
 
 # Vercel
 .vercel/
+
+# Cloud Agent
+out/
+!env/.gitkeep
+!env/.env.unified.example
+!.env.example
