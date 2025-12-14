@@ -22,7 +22,6 @@ wheels/
 
 # Virtual Environment
 venv/
-env/
 ENV/
 .venv
 
@@ -45,14 +44,22 @@ backups/
 
 # Environment variables
 .env
+.env.*
 .env.local
 .env.*.local
 .env.production
+!.env.example
 credentials.json
 credentials-*.json
 *.pem
 *.key
 service-account-*.json
+
+# Cloud Agent env/ (keys-only placeholders)
+# Keep the directory in git, but ignore everything else.
+env/*
+!env/.gitkeep
+!env/.env.unified.example
 
 # Testing
 .pytest_cache/
