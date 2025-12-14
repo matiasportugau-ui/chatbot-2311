@@ -87,3 +87,10 @@ build/
 
 # Vercel
 .vercel/
+
+# Cloud Agent Blueprint
+out/
+.env.*
+!.env.example
+!env/.gitkeep
+!env/.env.unified.example
