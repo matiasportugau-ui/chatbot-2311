@@ -133,7 +133,7 @@ Once enabled, Vercel will only deploy commits that have a verified signature.
 
 - [Vercel Verified Commits Documentation](https://vercel.com/docs/project-configuration/git-settings#verified-commits)
 - [GitHub GPG Keys Documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification)
-- [crazy-max/ghaction-import-gpg Action](https://github.com/crazy-max/ghaction-import-gpg)
+- [crazy-max/ghaction-import-gpg Action (v6)](https://github.com/crazy-max/ghaction-import-gpg)
 
 ## Security Notes
 
