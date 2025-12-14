@@ -87,3 +87,7 @@ build/
 
 # Vercel
 .vercel/
+
+# Cloud Agent additions
+.env.*
+!.env.example
