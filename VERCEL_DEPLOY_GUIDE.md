@@ -4,11 +4,12 @@
 
 Vercel puede requerir **commits verificados (firmados con GPG)** para mayor seguridad. Antes de desplegar:
 
-1. Review the [Git Verified Commits Setup Guide](docs/GIT_VERIFIED_COMMITS_SETUP.md)
-2. Configure GPG keys in GitHub Actions secrets if not already done
-3. Enable verified commits in Vercel project settings
+1. **Setup rápido (20 min):** [docs/GPG_QUICK_SETUP.md](docs/GPG_QUICK_SETUP.md) 
+2. **Guía completa:** [docs/GIT_VERIFIED_COMMITS_SETUP.md](docs/GIT_VERIFIED_COMMITS_SETUP.md)
+3. Configurar claves GPG en GitHub Actions secrets
+4. Habilitar commits verificados en las opciones del proyecto Vercel (opcional)
 
-This ensures that only authenticated commits from trusted sources are deployed to production.
+Esto garantiza que solo commits autenticados de fuentes confiables sean desplegados a producción.
 
 ---
 

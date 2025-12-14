@@ -1,5 +1,11 @@
 # Git Verified Commits Setup for Vercel
 
+## Quick Setup
+
+**⏱️ Need to set this up quickly?** See [GPG_QUICK_SETUP.md](./GPG_QUICK_SETUP.md) for a streamlined 20-minute setup guide.
+
+---
+
 ## Overview
 
 Vercel supports **Verified Commits** as a security feature to ensure that all deployed commits are signed with GPG keys. This helps verify the authenticity of commits and protects against unauthorized code changes.
