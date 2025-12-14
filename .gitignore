@@ -87,3 +87,12 @@ build/
 
 # Vercel
 .vercel/
+
+# Cloud Agent
+# (EXPORT_SEAL v1 - cloud-agent-pack)
+# Note: env/ for Python venvs already excluded above (line 25)
+# Note: out/ for Next.js already excluded above (line 84)
+# Additional cloud agent specific exclusions:
+.env.*
+!.env.example
+!.env.unified.example
