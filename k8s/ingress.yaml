@@ -1,0 +1,150 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bmc-chatbot-ingress
+  namespace: bmc-chatbot
+  labels:
+    app.kubernetes.io/name: bmc-chatbot-ingress
+    app.kubernetes.io/part-of: bmc-chatbot
+  annotations:
+    # GKE Ingress Controller annotations
+    kubernetes.io/ingress.class: "gce"
+    
+    # Managed SSL Certificate
+    networking.gke.io/managed-certificates: "bmc-chatbot-cert"
+    
+    # Global static IP (create this first with: gcloud compute addresses create bmc-chatbot-ip --global)
+    kubernetes.io/ingress.global-static-ip-name: "bmc-chatbot-ip"
+    
+    # HTTPS redirect
+    networking.gke.io/v1beta1.FrontendConfig: "bmc-chatbot-frontend-config"
+    
+    # Backend configuration for health checks and timeouts
+    cloud.google.com/backend-config: '{"default": "bmc-chatbot-backend-config"}'
+    
+    # Cloud Armor security policy (optional)
+    # cloud.google.com/armor-config: '{"bmc-chatbot-security-policy": "bmc-chatbot-armor-policy"}'
+spec:
+  rules:
+  - host: chatbot.yourdomain.com  # Replace with your actual domain
+    http:
+      paths:
+      # API routes
+      - path: /api/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      
+      # Health check endpoint
+      - path: /health
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      
+      # Metrics endpoint (protected by ingress rules)
+      - path: /metrics
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      
+      # Webhook routes
+      - path: /webhooks/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: webhooks-service
+            port:
+              number: 80
+      
+      # Default route to API
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+---
+# Managed Certificate for SSL/TLS
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: bmc-chatbot-cert
+  namespace: bmc-chatbot
+spec:
+  domains:
+    - chatbot.yourdomain.com  # Replace with your actual domain
+---
+# Frontend configuration for HTTPS redirect
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: bmc-chatbot-frontend-config
+  namespace: bmc-chatbot
+spec:
+  redirectToHttps:
+    enabled: true
+    responseCodeName: "301"
+---
+# Backend configuration for health checks and timeouts
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: bmc-chatbot-backend-config
+  namespace: bmc-chatbot
+spec:
+  healthCheck:
+    checkIntervalSec: 10
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 3
+    type: HTTP
+    requestPath: /health
+    port: 80
+  
+  timeoutSec: 30
+  
+  connectionDraining:
+    drainingTimeoutSec: 60
+  
+  # Cloud CDN configuration (optional)
+  # cdn:
+  #   enabled: true
+  #   cachePolicy:
+  #     includeHost: true
+  #     includeProtocol: true
+  #     includeQueryString: false
+  
+  # Session affinity
+  sessionAffinity:
+    affinityType: "CLIENT_IP"
+    affinityCookieTtlSec: 3600
+  
+  # IAP configuration (optional, for additional security)
+  # iap:
+  #   enabled: true
+  #   oauthclientCredentials:
+  #     secretName: oauth-client-secret
+  
+  # Custom request/response headers (optional)
+  customRequestHeaders:
+    headers:
+    - "X-Client-Region:{client_region}"
+    - "X-Client-City:{client_city}"
+  
+  # Security headers
+  customResponseHeaders:
+    headers:
+    - "X-Frame-Options: DENY"
+    - "X-Content-Type-Options: nosniff"
+    - "X-XSS-Protection: 1; mode=block"
+    - "Strict-Transport-Security: max-age=31536000; includeSubDomains"

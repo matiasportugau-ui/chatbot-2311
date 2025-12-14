@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhooks-service
+  namespace: bmc-chatbot
+  labels:
+    app.kubernetes.io/name: webhooks-service
+    app.kubernetes.io/component: webhooks
+    app.kubernetes.io/part-of: bmc-chatbot
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: webhooks
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8080
