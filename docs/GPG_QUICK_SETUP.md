@@ -51,7 +51,9 @@ gpg --armor --export YOUR_KEY_ID > public-key.asc
 
 ## Step 4: Add Secrets to Repository (3 minutes)
 
-1. Go to your repository: `https://github.com/matiasportugau-ui/chatbot-2311`
+1. Go to your GitHub repository
+   - Example: `https://github.com/YOUR_USERNAME/YOUR_REPOSITORY`
+   - For this project: `https://github.com/matiasportugau-ui/chatbot-2311`
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
 3. Click **"New repository secret"**
 
