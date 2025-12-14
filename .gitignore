@@ -48,6 +48,7 @@ backups/
 .env.local
 .env.*.local
 .env.production
+!.env.example
 credentials.json
 credentials-*.json
 *.pem
@@ -81,9 +82,14 @@ node_modules
 
 # Next.js
 .next/
-out/
 build/
 .env.local
+
+# Cloud Agent outputs (keep unified example)
+out/
+.env.*
+!.env.example
+!.env.unified.example
 
 # Vercel
 .vercel/
