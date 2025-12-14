@@ -1,0 +1,152 @@
+# ============================================================
+# Cloud Agent Daily Workflow
+# - Research eCommerce opportunities (Uruguay)
+# - Scan .env files across all repos + branches (keys-only)
+# - Publish artifacts + daily issue
+# - Commit unified env template (optional PR)
+# ============================================================
+
+name: cloud-agent-daily
+
+on:
+  schedule:
+    # Runs daily at 11:15 UTC (8:15 AM Uruguay time)
+    - cron: "15 11 * * *"
+  workflow_dispatch:
+    inputs:
+      repo_filter:
+        description: 'Filter repos by name (substring match, empty = all)'
+        required: false
+        default: ''
+      branch_limit:
+        description: 'Max branches per repo (0 = unlimited)'
+        required: false
+        default: '50'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+env:
+  # Default focus for eCommerce research
+  FOCUS: "aislamiento, impermeabilización, construcción, techos, selladores"
+  MARKET: "Uruguay"
+  # Branch filtering regex (main branches only for performance)
+  BRANCH_ALLOW_REGEX: "^(main|master|develop|dev|staging|production|release/|hotfix/)"
+  # Default branch limit
+  BRANCH_LIMIT: "50"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout controller repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests PyYAML
+
+      - name: Research opportunities (stub)
+        env:
+          MARKET: ${{ env.MARKET }}
+          FOCUS: ${{ env.FOCUS }}
+        run: python cloud-agent/research_opportunities.py
+
+      - name: Scan env (all repos + branches) keys-only
+        env:
+          GH_OWNER: ${{ secrets.GH_OWNER }}
+          GH_SCAN_TOKEN: ${{ secrets.GH_SCAN_TOKEN }}
+          REPO_FILTER: ${{ github.event.inputs.repo_filter || '' }}
+          BRANCH_LIMIT: ${{ github.event.inputs.branch_limit || env.BRANCH_LIMIT }}
+          BRANCH_ALLOW_REGEX: ${{ env.BRANCH_ALLOW_REGEX }}
+        run: python cloud-agent/scan_env_all_repos.py
+
+      - name: Build Issue body
+        run: python cloud-agent/build_issue_body.py
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-agent-output
+          path: |
+            out/
+            env/.env.unified.example
+          retention-days: 30
+
+      - name: Create/Update daily issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TITLE="☁️ Cloud Agent Daily - $(date -u +%F)"
+          BODY_FILE="out/ISSUE_BODY.md"
+
+          if [ ! -f "$BODY_FILE" ]; then
+            echo "[warn] No issue body generated"
+            exit 0
+          fi
+
+          # Search for existing issue with same title
+          NUM="$(gh issue list --limit 200 --search "$TITLE in:title" --json number --jq '.[0].number' || true)"
+          
+          if echo "$NUM" | grep -qE '^[0-9]+$'; then
+            echo "[info] Updating existing issue #$NUM"
+            gh issue edit "$NUM" --title "$TITLE" --body-file "$BODY_FILE"
+          else
+            echo "[info] Creating new issue"
+            gh issue create --title "$TITLE" --body-file "$BODY_FILE" --label "cloud-agent,daily-report"
+          fi
+
+      # Commit updated unified env template (keys-only)
+      - name: Commit updated unified env template
+        run: |
+          set -euo pipefail
+          
+          # Configure git
+          git config user.name "cloud-agent[bot]"
+          git config user.email "cloud-agent[bot]@users.noreply.github.com"
+          
+          # Stage env template if it exists
+          if [ -f "env/.env.unified.example" ]; then
+            git add env/.env.unified.example
+          fi
+          
+          # Check if there are changes to commit
+          if git diff --cached --quiet; then
+            echo "[ok] No env template changes to commit"
+            exit 0
+          fi
+          
+          # Commit and push
+          git commit -m "chore(env): update unified env template (keys-only) [skip ci]"
+          git push
+
+# ============================================================
+# REQUIRED SECRETS (configure in Settings > Secrets > Actions):
+# - GH_OWNER: GitHub username or organization
+# - GH_SCAN_TOKEN: Fine-grained PAT with Contents:Read on target repos
+#
+# SECURITY NOTES:
+# - This workflow ONLY reads key names, NEVER secret values
+# - Use a read-only token with minimal permissions
+# - Rotate token if compromised
+# ============================================================
+
+# EXPORT_SEAL v1
+# project: bmc-uy
+# prompt_id: cloud-agent-pack
+# version: 1.0.0
+# file: .github/workflows/cloud-agent-daily.yml
+# lang: yaml
+# created_at: 2025-12-14T00:00:00Z
+# author: Matias Portugau
+# origin: github-cloud-agent-blueprint

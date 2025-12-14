@@ -54,6 +54,10 @@ credentials-*.json
 *.key
 service-account-*.json
 
+# Cloud Agent - keep example templates
+!env/.gitkeep
+!env/.env.*.example
+
 # Testing
 .pytest_cache/
 .coverage
