@@ -1,0 +1,93 @@
+name: cloud-agent-daily
+
+on:
+  schedule:
+    - cron: "15 11 * * *"  # 11:15 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout controller repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests PyYAML
+
+      - name: Research opportunities (stub)
+        env:
+          MARKET: "Uruguay"
+          FOCUS: "aislamiento, impermeabilización, construcción, techos, selladores"
+        run: python scripts/cloud-agent/research_opportunities.py
+
+      - name: Scan env (all repos + all branches) keys-only
+        env:
+          GH_OWNER: ${{ secrets.GH_OWNER }}
+          GH_SCAN_TOKEN: ${{ secrets.GH_SCAN_TOKEN }}
+          REPO_FILTER: ""                     # "" = todos los repos
+          BRANCH_LIMIT: "50"
+          BRANCH_ALLOW_REGEX: "^(main|master|develop|dev|staging|production|release/|hotfix/)"
+        run: python scripts/cloud-agent/scan_env_all_repos.py
+
+      - name: Build Issue body
+        run: python scripts/cloud-agent/build_issue_body.py
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-agent-output
+          path: |
+            out/
+            env/.env.unified.example
+
+      - name: Create/Update daily issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TITLE="Cloud Agent Daily - $(date -u +%F)"
+          BODY_FILE="out/ISSUE_BODY.md"
+
+          NUM="$(gh issue list --limit 200 --search "$TITLE in:title" --json number --jq '.[0].number' || true)"
+          if echo "$NUM" | grep -qE '^[0-9]+$'; then
+            gh issue edit "$NUM" --title "$TITLE" --body-file "$BODY_FILE"
+          else
+            gh issue create --title "$TITLE" --body-file "$BODY_FILE"
+          fi
+
+      # DEFAULT: commit directo (simple). Si preferís PR, reemplazá este step por create-pull-request.
+      - name: Commit updated unified env template (keys-only)
+        run: |
+          set -euo pipefail
+          git config user.name "cloud-agent"
+          git config user.email "cloud-agent@users.noreply.github.com"
+          git add env/.env.unified.example || true
+          if git diff --cached --quiet; then
+            echo "[ok] no env template changes"
+            exit 0
+          fi
+          git commit -m "chore(env): update unified env template (keys-only)"
+          git push
+
+# EXPORT_SEAL v1
+# project: bmc-uy
+# prompt_id: cloud-agent-pack
+# version: 1.0.0
+# file: .github/workflows/cloud-agent-daily.yml
+# lang: yaml
+# created_at: 2025-12-14T00:00:00Z
+# author: Matias Portugau
+# origin: github-cloud-agent-blueprint
+# body_sha256: TBD
+# notes: Daily research + env scan; publishes artifacts + issue; commits unified env template (keys-only).
