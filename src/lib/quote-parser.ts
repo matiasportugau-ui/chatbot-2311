@@ -9,7 +9,8 @@ function getOpenAIClient(): OpenAI {
 
   const config = secureConfig.getOpenAIConfig()
   return new OpenAI({
-    apiKey: config.apiKey
+    apiKey: config.apiKey,
+    baseURL: config.baseURL
   })
 }
 
@@ -100,7 +101,7 @@ Responde SOLO con JSON válido siguiendo este esquema exacto:
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: secureConfig.getOpenAIConfig().model,
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
       temperature: 0.1,
@@ -127,12 +128,16 @@ Responde SOLO con JSON válido siguiendo este esquema exacto:
   }
 }
 
+import { extractDimensions, extractPhone } from './regex-utils'
+
+// ... (existing imports)
+
 // Parser de fallback sin IA
 function parseQuoteFallback(consultaText: string): ParsedQuote {
   const text = consultaText.toLowerCase()
 
   // Detectar tipo de producto
-  let tipo = 'isodec' // Default to isodec instead of Desconocido
+  let tipo = 'isodec'
   if (text.includes('isodec')) tipo = 'isodec'
   else if (text.includes('isoroof')) tipo = 'isoroof'
   else if (text.includes('isopanel')) tipo = 'isopanel'
@@ -159,17 +164,19 @@ function parseQuoteFallback(consultaText: string): ParsedQuote {
     estado_info = 'ver_plano'
   }
 
-  // Detectar dimensiones básicas
+  // Detectar dimensiones con regex robusto
   const dimensiones: any = {}
-  const largoMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:largo|x\s*(\d+(?:\.\d+)?))/)
-  if (largoMatch) {
-    dimensiones.largo = parseFloat(largoMatch[1])
-    if (largoMatch[2]) dimensiones.ancho = parseFloat(largoMatch[2])
-  }
+  const extractedDims = extractDimensions(consultaText) // Pass original text for case sensitivity if needed, though regex handles it? Regex uses /i
 
-  const areaMatch = text.match(/(\d+(?:\.\d+)?)\s*m2/)
-  if (areaMatch) {
-    dimensiones.area_m2 = parseFloat(areaMatch[1])
+  if (extractedDims) {
+    dimensiones.largo = extractedDims.largo
+    dimensiones.ancho = extractedDims.ancho
+  } else {
+    // Fallback to searching just for m2
+    const areaMatch = text.match(/(\d+(?:\.\d+)?)\s*m2/)
+    if (areaMatch) {
+      dimensiones.area_m2 = parseFloat(areaMatch[1])
+    }
   }
 
   return {
@@ -212,12 +219,12 @@ export function extractContactInfo(text: string): {
   email?: string
   name?: string
 } {
-  const phoneMatch = text.match(/(\d{3,4}\s*\d{3,4}\s*\d{3,4})/)
+  const phone = extractPhone(text)
   const emailMatch = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/)
   const nameMatch = text.match(/(?:soy|me llamo|nombre es)\s+([A-Za-z\s]+)/i)
 
   return {
-    phone: phoneMatch ? phoneMatch[1].replace(/\s/g, '') : undefined,
+    phone: phone || undefined,
     email: emailMatch ? emailMatch[1] : undefined,
     name: nameMatch ? nameMatch[1].trim() : undefined
   }

@@ -28,12 +28,28 @@ export class SecureConfig {
     }
   }
 
-  // Obtener configuración de OpenAI
+  // Obtener configuración de OpenAI / xAI
   getOpenAIConfig() {
     const config = credentialsManager.getOpenAI()
+
+    // Support xAI (Grok) via standard OpenAI SDK compatibility
+    const xaiKey = process.env.XAI_API_KEY;
+
+    if (xaiKey) {
+      return {
+        apiKey: xaiKey,
+        baseURL: process.env.XAI_BASE_URL || 'https://api.x.ai/v1',
+        model: process.env.XAI_MODEL || 'grok-beta',
+        maxTokens: config.max_tokens,
+        temperature: config.temperature
+      }
+    }
+
+    // Default to OpenAI
     return {
       apiKey: config.api_key,
-      model: config.model,
+      baseURL: 'https://api.openai.com/v1', // Standard OpenAI URL
+      model: config.model || 'gpt-4o',
       maxTokens: config.max_tokens,
       temperature: config.temperature
     }

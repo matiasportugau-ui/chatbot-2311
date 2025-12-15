@@ -24,23 +24,30 @@ sleep 3
 echo
 
 # Function to find Python 3.11+
+# Function to find Python 3.11+
 find_python() {
     local python_cmd=""
+    # Temporarily disable exit-on-error for the check loop
+    set +e
     for cmd in python3 python; do
         if command -v "$cmd" &> /dev/null; then
             version=$("$cmd" -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))" 2>/dev/null)
-            major=$(echo "$version" | cut -d. -f1)
-            minor=$(echo "$version" | cut -d. -f2)
-            # Check for Python 4+ first, then for Python 3.11+
-            if [[ "$major" -gt 3 ]] || [[ "$major" -eq 3 && "$minor" -ge 11 ]]; then
-                python_cmd="$cmd"
-                break
+            if [[ -n "$version" ]]; then
+                major=$(echo "$version" | cut -d. -f1)
+                minor=$(echo "$version" | cut -d. -f2)
+                # Check for Python 4+ first, then for Python 3.11+
+                if [[ "$major" -gt 3 ]] || [[ "$major" -eq 3 && "$minor" -ge 11 ]]; then
+                    python_cmd="$cmd"
+                    break
+                fi
             fi
         fi
     done
+    set -e
     echo "$python_cmd"
 }
 
+# Function to run a Python script
 # Function to run a Python script
 run_python_script() {
     local script="$1"
@@ -56,9 +63,13 @@ run_python_script() {
     fi
     
     echo "$description..."
-    "$PYTHON_CMD" "$script"
+    if ! "$PYTHON_CMD" "$script"; then
+        echo
+        echo "❌ An error occurred while running $script."
+        echo "Please review the messages above for more details."
+        exit 1
+    fi
     echo
-}
 
 # Change to script directory
 cd "$(dirname "$0")"

@@ -1,0 +1,107 @@
+{
+    "system_benchmarks": {
+        "load_testing": {
+            "concurrent_users": 10,
+            "requests_per_user": 5,
+            "timeout_seconds": 10,
+            "success_rate_threshold": 0.8
+        },
+        "performance_targets": {
+            "api_response_time_ms": 200,
+            "page_load_time_s": 3.0,
+            "lighthouse_score_min": 90,
+            "deployment_time_min": 5
+        }
+    },
+    "agent_roles": {
+        "orchestrator": {
+            "title": "Senior Full-Stack Engineer / Tech Lead",
+            "focus": "Coordination, Architecture, Decision Making",
+            "tools": [
+                "GitHub Projects",
+                "Slack",
+                "Discord"
+            ]
+        },
+        "infrastructure": {
+            "title": "DevOps Engineer",
+            "focus": "Cloud Infrastructure, CI/CD, Reliability",
+            "stack": [
+                "Vercel",
+                "MongoDB Atlas",
+                "GitHub Actions"
+            ]
+        },
+        "backend": {
+            "title": "Python/API Specialist",
+            "focus": "API Routes, AI Engine, Business Logic",
+            "stack": [
+                "Python 3.11+",
+                "FastAPI",
+                "OpenAI API",
+                "MongoDB"
+            ]
+        },
+        "frontend": {
+            "title": "Next.js/React Specialist",
+            "focus": "UI/UX, Dashboard, Chat Components",
+            "stack": [
+                "Next.js 13+",
+                "React 18+",
+                "TypeScript",
+                "Tailwind CSS"
+            ]
+        },
+        "integration": {
+            "title": "Systems Integration Specialist",
+            "focus": "Third-party Integrations, Webhooks",
+            "stack": [
+                "WhatsApp API",
+                "Google Sheets API",
+                "MercadoLibre API",
+                "N8N"
+            ]
+        },
+        "qa": {
+            "title": "Quality Assurance Engineer",
+            "focus": "Testing, Validation, Gates",
+            "stack": [
+                "Cypress",
+                "Playwright",
+                "Jest",
+                "Postman"
+            ]
+        },
+        "documentation": {
+            "title": "Technical Writer",
+            "focus": "Guides, Runbooks, Knowledge Transfer",
+            "stack": [
+                "Markdown",
+                "Mermaid",
+                "Notion"
+            ]
+        }
+    },
+    "recovery_configuration": {
+        "enabled": true,
+        "recovery_sources": [
+            "Cursor Timeline (Local History)",
+            "Time Machine Backups",
+            "Git Stashes",
+            "Git Commit History"
+        ],
+        "backup_retention_days": 30,
+        "critical_files": [
+            ".env",
+            "unified_config.json",
+            "requirements.txt",
+            "package.json"
+        ]
+    },
+    "feature_flags": {
+        "enable_ai_insights": true,
+        "enable_real_time_monitoring": true,
+        "enable_export_import": true,
+        "enable_automated_recovery": true
+    }
+}

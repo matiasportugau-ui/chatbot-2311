@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { connectDB } from '@/lib/mongodb'
+import { connectDB } from '../mongodb'
 import { MercadoLibreGrant } from './types'
 
 const COLLECTION = 'mercado_libre_grants'

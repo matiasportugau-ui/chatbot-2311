@@ -31,6 +31,7 @@ export interface MercadoLibreGrant {
   expiresAt: Date
   createdAt: Date
   updatedAt: Date
+  apiBaseUrl?: string
 }
 
 export interface MercadoLibreAuthState {

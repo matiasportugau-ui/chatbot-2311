@@ -29,7 +29,7 @@ function buscarProductos(consulta: string) {
 }
 
 // Helper function to generate quote
-function generarCotizacion(parsed: any, zona?: string) {
+async function generarCotizacion(parsed: any, zona?: string) {
   try {
     // Handle area_m2 directly if specified
     let ancho = 1, largo = 1
@@ -47,7 +47,7 @@ function generarCotizacion(parsed: any, zona?: string) {
       largo = 1
     }
 
-    return calculateFullQuote({
+    return await calculateFullQuote({
       producto: parsed.producto?.tipo || 'isodec',
       dimensiones: {
         ancho,
@@ -167,7 +167,7 @@ export class QuoteEngine {
     const zona = this.detectarZonaPorTelefono(telefono)
 
     // Generar cotización
-    const cotizacion = generarCotizacion(parsed, zona)
+    const cotizacion = await generarCotizacion(parsed, zona)
 
     if (!cotizacion.producto) {
       return {

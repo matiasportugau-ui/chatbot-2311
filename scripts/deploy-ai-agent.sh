@@ -396,8 +396,8 @@ deploy_vercel() {
     fi
     
     # Extract deployment URL and ID from output
-    local deployment_url=$(echo "$deploy_output" | grep -oP 'https://[^\s]+\.vercel\.app' | head -1 || echo "")
-    local deployment_id=$(echo "$deploy_output" | grep -oP 'dpl_[a-zA-Z0-9]+' | head -1 || echo "")
+    local deployment_url=$(echo "$deploy_output" | grep -oE 'https://[^[:space:]]+\.vercel\.app' | head -1 || echo "")
+    local deployment_id=$(echo "$deploy_output" | grep -oE 'dpl_[a-zA-Z0-9]+' | head -1 || echo "")
     
     # Store for next steps
     CACHED_DEPLOYMENT_URL="$deployment_url"
