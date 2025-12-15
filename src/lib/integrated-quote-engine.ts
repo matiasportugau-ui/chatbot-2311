@@ -13,6 +13,7 @@ import { connectDB } from './mongodb'
 import { QuoteService } from './quote-service'
 import { parseQuoteConsulta, ParsedQuote } from './quote-parser'
 import { PRODUCTOS, SERVICIOS_ADICIONALES, ZONAS_FLETE, calculateFullQuote } from './knowledge-base'
+import { processQuoteWithCRM } from './crm/integrations'
 
 // Interfaces para el sistema integrado
 export interface InteraccionCliente {
@@ -76,10 +77,13 @@ class MotorCotizacionIntegrado {
 
     const config = secureConfig.getOpenAIConfig()
     if (!config.apiKey || config.apiKey.includes('***') || config.apiKey.toLowerCase().includes('your-openai')) {
-      console.warn('⚠️ OpenAI API key no configurada o inválida. Respuestas con IA deshabilitadas; usando respuestas básicas.')
+      console.warn('⚠️ xAI/OpenAI API key no configurada o inválida. Respuestas con IA deshabilitadas; usando respuestas básicas.')
       this.openai = null
     } else {
-      this.openai = new OpenAI({ apiKey: config.apiKey })
+      this.openai = new OpenAI({
+        apiKey: config.apiKey,
+        baseURL: config.baseURL
+      })
     }
     this.quoteService = new QuoteService()
 
@@ -126,7 +130,17 @@ class MotorCotizacionIntegrado {
       // 3. Generar respuesta inteligente
       const respuesta = await this.generarRespuestaInteligente(consulta, parsed, contexto)
 
-      // 4. Registrar interacción para aprendizaje
+      // 4. Integrar con CRM si se generó una cotización
+      if (respuesta.tipo === 'cotizacion' && respuesta.cotizacion) {
+        try {
+          await this.integrarConCRM(respuesta.cotizacion, userPhone, userName || 'Cliente', consulta)
+        } catch (crmError) {
+          console.error('Error integrando con CRM (no crítico):', crmError)
+          // No fallar la cotización si el CRM falla
+        }
+      }
+
+      // 5. Registrar interacción para aprendizaje
       await this.registrarInteraccion({
         id: this.generarId(),
         telefono: userPhone,
@@ -151,6 +165,97 @@ class MotorCotizacionIntegrado {
         recomendaciones: []
       }
     }
+  }
+
+  /**
+   * 🔗 Integrar con CRM
+   * Crea o actualiza el cliente en el CRM y registra la cotización
+   */
+  private async integrarConCRM(
+    cotizacion: any,
+    userPhone: string,
+    userName: string,
+    consulta: string
+  ): Promise<void> {
+    try {
+      // Convertir teléfono a email placeholder para CRM
+      const customerEmail = this.phoneToEmail(userPhone)
+
+      // Generar número de cotización único
+      const quoteNumber = `WA-${Date.now()}`
+
+      // Preparar items de la cotización
+      const items = []
+
+      // Agregar producto principal
+      if (cotizacion.producto) {
+        items.push({
+          name: `${cotizacion.producto} ${cotizacion.grosor || ''}`.trim(),
+          quantity: cotizacion.cantidad || 1,
+          unitPrice: cotizacion.precio_unitario || 0,
+          total: cotizacion.subtotal_producto || 0
+        })
+      }
+
+      // Agregar servicios adicionales
+      if (cotizacion.servicios) {
+        if (cotizacion.servicios.flete && cotizacion.servicios.flete.precio > 0) {
+          items.push({
+            name: `Flete - ${cotizacion.servicios.flete.descripcion || 'Servicio de entrega'}`,
+            quantity: 1,
+            unitPrice: cotizacion.servicios.flete.precio,
+            total: cotizacion.servicios.flete.precio
+          })
+        }
+
+        if (cotizacion.servicios.instalacion && cotizacion.servicios.instalacion.precio > 0) {
+          items.push({
+            name: 'Instalación',
+            quantity: 1,
+            unitPrice: cotizacion.servicios.instalacion.precio,
+            total: cotizacion.servicios.instalacion.precio
+          })
+        }
+
+        if (cotizacion.servicios.accesorios && cotizacion.servicios.accesorios.precio > 0) {
+          items.push({
+            name: 'Accesorios',
+            quantity: 1,
+            unitPrice: cotizacion.servicios.accesorios.precio,
+            total: cotizacion.servicios.accesorios.precio
+          })
+        }
+      }
+
+      // Integrar con CRM
+      const result = await processQuoteWithCRM({
+        customerEmail,
+        customerName: userName,
+        customerPhone: userPhone,
+        quoteNumber,
+        items,
+        subtotal: cotizacion.subtotal || 0,
+        iva: cotizacion.iva || 0,
+        total: cotizacion.total || 0,
+        tags: ['whatsapp', 'auto-generated'],
+        notes: `Consulta original: ${consulta.substring(0, 200)}`,
+        source: 'whatsapp'
+      })
+
+      console.log(`✅ CRM: Cliente ${result.customerId} creado/actualizado con cotización ${quoteNumber}`)
+    } catch (error) {
+      console.error('Error en integración CRM:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 📱 Convertir teléfono a email placeholder
+   */
+  private phoneToEmail(phone: string): string {
+    // Limpiar el teléfono de caracteres especiales
+    const cleanPhone = phone.replace(/[^0-9+]/g, '')
+    return `${cleanPhone}@whatsapp.bmc.local`
   }
 
   /**
@@ -226,7 +331,7 @@ Responde en formato JSON:
 
     try {
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: secureConfig.getOpenAIConfig().model, // Uses grok-beta by default from config
         messages: [{ role: 'user', content: prompt }],
         response_format: { type: 'json_object' },
         temperature: 0.3
@@ -236,7 +341,7 @@ Responde en formato JSON:
 
       // Si es cotización, calcular precios reales
       if (respuesta.tipo === 'cotizacion' && parsed.producto) {
-        const cotizacionReal = calculateFullQuote({
+        const cotizacionReal = await calculateFullQuote({
           producto: parsed.producto.tipo,
           dimensiones: {
             ancho: parsed.dimensiones?.ancho || 1,
