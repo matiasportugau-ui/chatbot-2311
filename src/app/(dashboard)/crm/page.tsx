@@ -12,11 +12,11 @@ export default async function CRMDashboardPage() {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">CRM Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Welcome back, {user.name}! (Role: {user.role})
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground mt-2">
+          Welcome back, {user.name}!
         </p>
       </div>
 
@@ -78,10 +78,10 @@ export default async function CRMDashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <h3 className="font-semibold text-blue-900 dark:text-blue-100">Phase 2 Complete!</h3>
-        <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
-          Authentication system is now fully functional. Next up: Dashboard layout shell and Kanban board.
+      <div className="mt-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+        <h3 className="font-semibold text-green-900 dark:text-green-100">Phase 3 Complete!</h3>
+        <p className="text-sm text-green-800 dark:text-green-200 mt-1">
+          Dashboard layout with responsive sidebar and navigation is now ready. Next up: State management and Kanban board.
         </p>
       </div>
     </div>
