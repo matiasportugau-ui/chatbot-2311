@@ -1,4 +1,5 @@
 import { NextAuthProvider } from '@/components/providers/session-provider'
+import { QueryProvider } from '@/components/providers/query-provider'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 
 export default function CRMLayout({
@@ -8,7 +9,9 @@ export default function CRMLayout({
 }) {
   return (
     <NextAuthProvider>
-      <DashboardLayout>{children}</DashboardLayout>
+      <QueryProvider>
+        <DashboardLayout>{children}</DashboardLayout>
+      </QueryProvider>
     </NextAuthProvider>
   )
 }
