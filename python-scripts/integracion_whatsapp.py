@@ -8,6 +8,8 @@ Sistema de cotizaciones con integración WhatsApp Business API
 import json
 import datetime
 import requests
+import os
+import tempfile
 from typing import Dict, List, Any, Optional
 from flask import Flask, request, jsonify
 import threading
@@ -15,6 +17,7 @@ import time
 
 from ia_conversacional_integrada import IAConversacionalIntegrada
 from base_conocimiento_dinamica import InteraccionCliente
+from speech_to_text import SpeechToText, TranscriptionModel
 
 
 class IntegracionWhatsApp:
@@ -33,6 +36,14 @@ class IntegracionWhatsApp:
         
         # URL base de WhatsApp API
         self.whatsapp_api_url = f"https://graph.facebook.com/v18.0/{self.whatsapp_phone_id}/messages"
+        
+        # Inicializar Speech-to-Text si está disponible
+        self.stt = None
+        try:
+            self.stt = SpeechToText(model=TranscriptionModel.GPT_4O_MINI_TRANSCRIBE)
+            print("✅ Speech-to-Text habilitado")
+        except Exception as e:
+            print(f"⚠️ Speech-to-Text no disponible: {e}")
     
     def configurar_rutas(self):
         """Configura las rutas de la API Flask"""
@@ -102,9 +113,24 @@ class IntegracionWhatsApp:
             message_id = message['id']
             timestamp = message['timestamp']
             
-            # Extraer texto del mensaje
+            # Extraer texto del mensaje o transcribir audio
             if 'text' in message:
                 text = message['text']['body']
+            elif 'audio' in message or 'voice' in message:
+                # Procesar mensaje de audio
+                text = self.procesar_audio_whatsapp(message, value)
+                if not text:
+                    text = "No se pudo procesar el audio"
+            elif 'document' in message:
+                # Verificar si es un archivo de audio
+                doc = message['document']
+                mime_type = doc.get('mime_type', '')
+                if mime_type.startswith('audio/'):
+                    text = self.procesar_audio_whatsapp(message, value)
+                    if not text:
+                        text = "No se pudo procesar el archivo de audio"
+                else:
+                    text = "Tipo de archivo no soportado"
             else:
                 text = "Mensaje no soportado"
             
@@ -199,6 +225,80 @@ class IntegracionWhatsApp:
         except Exception as e:
             print(f"❌ Error registrando interacción: {e}")
     
+    def procesar_audio_whatsapp(self, message: Dict, value: Dict) -> Optional[str]:
+        """
+        Procesa mensajes de audio de WhatsApp y los transcribe
+        
+        Args:
+            message: Mensaje de WhatsApp con audio
+            value: Valor completo del cambio
+            
+        Returns:
+            Texto transcrito o None si falla
+        """
+        if not self.stt:
+            return None
+        
+        try:
+            # Obtener ID del audio
+            audio_id = None
+            if 'audio' in message:
+                audio_id = message['audio'].get('id')
+            elif 'voice' in message:
+                audio_id = message['voice'].get('id')
+            elif 'document' in message:
+                audio_id = message['document'].get('id')
+            
+            if not audio_id:
+                print("❌ No se encontró ID de audio en el mensaje")
+                return None
+            
+            # Descargar audio desde WhatsApp API
+            audio_url = f"https://graph.facebook.com/v18.0/{audio_id}"
+            headers = {
+                'Authorization': f'Bearer {self.whatsapp_token}'
+            }
+            
+            # Descargar archivo temporalmente
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.ogg') as temp_file:
+                temp_path = temp_file.name
+                
+                # Descargar audio
+                response = requests.get(audio_url, headers=headers, stream=True)
+                if response.status_code != 200:
+                    print(f"❌ Error descargando audio: {response.status_code}")
+                    return None
+                
+                # Guardar audio
+                for chunk in response.iter_content(chunk_size=8192):
+                    temp_file.write(chunk)
+            
+            try:
+                # Transcribir audio
+                print(f"🎤 Transcribiendo audio...")
+                result = self.stt.transcribe(
+                    temp_path,
+                    model=TranscriptionModel.GPT_4O_MINI_TRANSCRIBE,
+                    language="es",  # Español por defecto para Uruguay
+                    response_format="text"
+                )
+                
+                transcribed_text = result.text
+                print(f"✅ Audio transcrito: {transcribed_text[:100]}...")
+                
+                return transcribed_text
+                
+            finally:
+                # Limpiar archivo temporal
+                if os.path.exists(temp_path):
+                    os.unlink(temp_path)
+                    
+        except Exception as e:
+            print(f"❌ Error procesando audio WhatsApp: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+    
     def obtener_estado_sistema(self):
         """Obtiene el estado actual del sistema"""
         try:
@@ -209,6 +309,7 @@ class IntegracionWhatsApp:
                 "total_patrones": len(self.ia.base_conocimiento.patrones_venta),
                 "total_insights": len(self.ia.base_conocimiento.insights_automaticos),
                 "conversaciones_activas": len(self.ia.conversaciones_activas),
+                "speech_to_text_disponible": self.stt is not None,
                 "timestamp": datetime.datetime.now().isoformat()
             }
             
