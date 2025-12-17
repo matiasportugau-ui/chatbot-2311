@@ -1,0 +1,16 @@
+{
+  "corrections": [
+    {
+      "id": "9b896b075da3",
+      "timestamp": "2025-12-17 20:04:08.421361",
+      "session_id": "test_persist",
+      "user_id": "agent_test",
+      "original_query": "Test query",
+      "original_response": "Test response",
+      "correction_text": "Test correction",
+      "correction_type": "general",
+      "priority": 3
+    }
+  ],
+  "reformulated": []
+}

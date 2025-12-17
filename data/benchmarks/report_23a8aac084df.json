@@ -1,0 +1,25 @@
+{
+  "id": "23a8aac084df",
+  "timestamp": "2025-12-17 20:02:36.417866",
+  "period_start": "2025-12-16 20:02:36.417621",
+  "period_end": "2025-12-17 20:02:36.417627",
+  "total_tests": 5,
+  "tests_passed": 0,
+  "average_score": 46.666666666666664,
+  "improvement_rate": -16.666666666666657,
+  "category_scores": {
+    "cotizacion": 46.666666666666664,
+    "informacion": 66.66666666666666,
+    "objeciones": 50.0,
+    "tecnico": 50.0,
+    "validacion": 20.0
+  },
+  "recommendations": [
+    "🎯 Categoría 'cotizacion' necesita mejora (score: 46.7). Considera agregar más ejemplos de entrenamiento para esta categoría.",
+    "🎯 Categoría 'informacion' necesita mejora (score: 66.7). Considera agregar más ejemplos de entrenamiento para esta categoría.",
+    "🎯 Categoría 'objeciones' necesita mejora (score: 50.0). Considera agregar más ejemplos de entrenamiento para esta categoría.",
+    "🎯 Categoría 'tecnico' necesita mejora (score: 50.0). Considera agregar más ejemplos de entrenamiento para esta categoría.",
+    "🎯 Categoría 'validacion' necesita mejora (score: 20.0). Considera agregar más ejemplos de entrenamiento para esta categoría.",
+    "🚨 5 de 5 tests fallaron. Revisa los casos de falla y agrega correcciones específicas."
+  ]
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "session_id": "test_001",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:02:36.415949",
+    "end_time": "2025-12-17 20:02:36.416293",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
+  },
+  {
+    "session_id": "test_001",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:03:18.301858",
+    "end_time": "2025-12-17 20:03:18.302336",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
+  },
+  {
+    "session_id": "test_001",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:03:37.518355",
+    "end_time": "2025-12-17 20:03:37.518886",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
+  },
+  {
+    "session_id": "test_001",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:04:08.397862",
+    "end_time": "2025-12-17 20:04:08.398314",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
+  },
+  {
+    "session_id": "test_002",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:04:08.419810",
+    "end_time": "2025-12-17 20:04:08.420895",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
+  }
+]
