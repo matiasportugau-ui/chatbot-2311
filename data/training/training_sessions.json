@@ -53,5 +53,27 @@
     "responses_approved": 0,
     "responses_rejected": 0,
     "topics_covered": []
+  },
+  {
+    "session_id": "test_001",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:09:28.218895",
+    "end_time": "2025-12-17 20:09:28.219305",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
+  },
+  {
+    "session_id": "test_002",
+    "user_id": "agent_test",
+    "start_time": "2025-12-17 20:09:28.238888",
+    "end_time": "2025-12-17 20:09:28.239987",
+    "mode": "BotMode.TRAINING",
+    "corrections_made": 1,
+    "responses_approved": 0,
+    "responses_rejected": 0,
+    "topics_covered": []
   }
 ]

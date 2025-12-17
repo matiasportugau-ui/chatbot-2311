@@ -94,23 +94,24 @@ class TrainingIntegratedBot:
         
         elif message_upper in ["SALIR ENTRENAMIENTO", "FIN ENTRENAMIENTO", "FIN"]:
             result = self.training_system.end_training_session(session_id)
-            if result["success"]:
+            if result["success"] and "statistics" in result:
+                stats = result["statistics"]
                 stats_msg = f"""
 {result['message']}
 
 📊 **Estadísticas de la Sesión:**
-- Duración: {result['statistics']['duration_minutes']} minutos
-- Correcciones realizadas: {result['statistics']['corrections_made']}
-- Respuestas aprobadas: {result['statistics']['responses_approved']}
-- Respuestas rechazadas: {result['statistics']['responses_rejected']}
-- Tasa de aprobación: {result['statistics']['approval_rate']:.1f}%
+- Duración: {stats.get('duration_minutes', 0)} minutos
+- Correcciones realizadas: {stats.get('corrections_made', 0)}
+- Respuestas aprobadas: {stats.get('responses_approved', 0)}
+- Respuestas rechazadas: {stats.get('responses_rejected', 0)}
+- Tasa de aprobación: {stats.get('approval_rate', 0):.1f}%
 """
                 self.conversation_history[session_id].append({
                     "role": "assistant",
                     "content": stats_msg
                 })
                 return stats_msg
-            return result["message"]
+            return result.get("message", "Sesión finalizada")
         
         elif message_upper in ["ESTADÍSTICAS", "ESTADISTICAS", "STATS", "📊"]:
             result = self.training_system.get_session_statistics(session_id)

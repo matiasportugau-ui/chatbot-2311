@@ -519,6 +519,13 @@ CAMBIOS: [lista de cambios específicos, uno por línea]
             json.dump(asdict(update), f, ensure_ascii=False, default=str)
             f.write('\n')
     
+    def _calculate_approval_rate(self, approved: int, rejected: int) -> float:
+        """Calculate approval rate percentage"""
+        total = approved + rejected
+        if total == 0:
+            return 0.0
+        return (approved / total) * 100
+    
     def get_session_statistics(self, session_id: str) -> Dict[str, Any]:
         """Get statistics for a training session"""
         if session_id not in self.active_sessions:
@@ -539,11 +546,10 @@ CAMBIOS: [lista de cambios específicos, uno por línea]
             "corrections_made": session.corrections_made,
             "responses_approved": session.responses_approved,
             "responses_rejected": session.responses_rejected,
-            "approval_rate": (
-                session.responses_approved / (session.responses_approved + session.responses_rejected)
-                if (session.responses_approved + session.responses_rejected) > 0
-                else 0
-            ) * 100,
+            "approval_rate": self._calculate_approval_rate(
+                session.responses_approved,
+                session.responses_rejected
+            ),
             "topics_covered": session.topics_covered
         }
     
@@ -558,6 +564,7 @@ CAMBIOS: [lista de cambios específicos, uno por línea]
         session = self.active_sessions[session_id]
         session.end_time = datetime.datetime.now()
         
+        # Get statistics before removing from active
         stats = self.get_session_statistics(session_id)
         
         # Archive session
@@ -578,10 +585,25 @@ CAMBIOS: [lista de cambios específicos, uno por línea]
         if session_id in self.session_modes:
             del self.session_modes[session_id]
         
+        # Return flattened statistics structure
         return {
             "success": True,
             "message": "✅ Sesión de entrenamiento finalizada",
-            "statistics": stats
+            "session_id": stats.get("session_id"),
+            "duration_minutes": stats.get("duration_minutes", 0),
+            "corrections_made": stats.get("corrections_made", 0),
+            "responses_approved": stats.get("responses_approved", 0),
+            "responses_rejected": stats.get("responses_rejected", 0),
+            "approval_rate": stats.get("approval_rate", 0),
+            # Keep nested statistics for backward compatibility
+            "statistics": {
+                "session_id": stats.get("session_id"),
+                "duration_minutes": stats.get("duration_minutes", 0),
+                "corrections_made": stats.get("corrections_made", 0),
+                "responses_approved": stats.get("responses_approved", 0),
+                "responses_rejected": stats.get("responses_rejected", 0),
+                "approval_rate": stats.get("approval_rate", 0)
+            }
         }
 
 
