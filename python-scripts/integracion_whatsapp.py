@@ -8,31 +8,57 @@ Sistema de cotizaciones con integración WhatsApp Business API
 import json
 import datetime
 import requests
+import os
+import sys
 from typing import Dict, List, Any, Optional
 from flask import Flask, request, jsonify
-import threading
-import time
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from ia_conversacional_integrada import IAConversacionalIntegrada
 from base_conocimiento_dinamica import InteraccionCliente
+
+# Import audio handling modules
+try:
+    from services.audio_transcription import AudioTranscriptionService
+    from services.whatsapp_audio_handler import WhatsAppAudioIntegration, create_whatsapp_audio_integration
+    AUDIO_SUPPORT_ENABLED = True
+except ImportError:
+    AUDIO_SUPPORT_ENABLED = False
+    print("⚠️  Audio transcription not available. Install required dependencies.")
 
 
 class IntegracionWhatsApp:
     """Integración con WhatsApp Business API"""
     
-    def __init__(self, ia_conversacional: IAConversacionalIntegrada):
+    def __init__(self, ia_conversacional: IAConversacionalIntegrada, enable_audio: bool = True):
         self.ia = ia_conversacional
         self.app = Flask(__name__)
         self.configurar_rutas()
         self.webhook_verificado = False
         
         # Configuración WhatsApp
-        self.whatsapp_token = "TU_WHATSAPP_TOKEN"  # Reemplazar con token real
-        self.whatsapp_phone_id = "TU_PHONE_ID"     # Reemplazar con phone ID real
-        self.webhook_verify_token = "TU_VERIFY_TOKEN"  # Reemplazar con token de verificación
+        self.whatsapp_token = os.getenv("WHATSAPP_TOKEN", "TU_WHATSAPP_TOKEN")
+        self.whatsapp_phone_id = os.getenv("WHATSAPP_PHONE_ID", "TU_PHONE_ID")
+        self.webhook_verify_token = os.getenv("WEBHOOK_VERIFY_TOKEN", "TU_VERIFY_TOKEN")
         
         # URL base de WhatsApp API
         self.whatsapp_api_url = f"https://graph.facebook.com/v18.0/{self.whatsapp_phone_id}/messages"
+        
+        # Initialize audio handler if enabled
+        self.audio_integration = None
+        if enable_audio and AUDIO_SUPPORT_ENABLED:
+            try:
+                self.audio_integration = create_whatsapp_audio_integration(
+                    whatsapp_token=self.whatsapp_token,
+                    phone_id=self.whatsapp_phone_id,
+                    auto_reply=False  # We'll handle replies manually
+                )
+                print("✅ Audio transcription enabled")
+            except Exception as e:
+                print(f"⚠️  Could not enable audio transcription: {e}")
     
     def configurar_rutas(self):
         """Configura las rutas de la API Flask"""
@@ -101,16 +127,37 @@ class IntegracionWhatsApp:
             from_number = message['from']
             message_id = message['id']
             timestamp = message['timestamp']
-            
-            # Extraer texto del mensaje
-            if 'text' in message:
-                text = message['text']['body']
-            else:
-                text = "Mensaje no soportado"
+            message_type = message.get('type', 'text')
             
             # Extraer información del contacto
             contacts = value.get('contacts', [])
             contact_name = contacts[0]['profile']['name'] if contacts else "Cliente"
+            
+            # Handle different message types
+            text = None
+            
+            # Process audio/voice messages
+            if message_type in ['audio', 'voice'] and self.audio_integration:
+                print(f"🎤 {'Nota de voz' if message_type == 'voice' else 'Audio'} recibido de {contact_name} ({from_number})")
+                try:
+                    # Transcribe audio
+                    transcription = self.audio_integration.audio_handler.process_audio_message(message)
+                    if transcription:
+                        text = transcription.text
+                        print(f"📝 Transcripción: {text}")
+                    else:
+                        text = "[Audio no pudo ser transcrito]"
+                except Exception as e:
+                    print(f"❌ Error transcribiendo audio: {e}")
+                    text = "[Error procesando audio]"
+            
+            # Process text messages
+            elif 'text' in message:
+                text = message['text']['body']
+            
+            # Unsupported message type
+            else:
+                text = f"[Mensaje tipo '{message_type}' no soportado]"
             
             print(f"📱 Mensaje recibido de {contact_name} ({from_number}): {text}")
             
