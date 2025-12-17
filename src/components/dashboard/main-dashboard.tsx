@@ -24,7 +24,8 @@ import {
   Sun,
   Moon,
   Zap,
-  FileText
+  FileText,
+  Mic
 } from 'lucide-react'
 
 // Import all dashboard components
@@ -53,6 +54,7 @@ import { Sidebar } from './sidebar'
 import { Footer } from './footer'
 import { MercadoLibreListings } from './mercado-libre-listings'
 import { MercadoLibreOrders } from './mercado-libre-orders'
+import { SpeechToText } from './speech-to-text'
 
 interface MainDashboardProps {
   className?: string
@@ -73,6 +75,7 @@ export function MainDashboard({ className }: MainDashboardProps) {
     { id: 'integrated', label: 'Sistema Integrado', icon: Zap },
     { id: 'mercado-libre', label: 'Mercado Libre', icon: Globe },
     { id: 'sheets', label: 'Google Sheets', icon: FileText },
+    { id: 'speech-to-text', label: 'Speech to Text', icon: Mic },
     { id: 'trends', label: 'Trends', icon: Target },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'insights', label: 'AI Insights', icon: Database },
@@ -193,6 +196,8 @@ export function MainDashboard({ className }: MainDashboardProps) {
         )
       case 'sheets':
         return <GoogleSheetsDashboard />
+      case 'speech-to-text':
+        return <SpeechToText />
       case 'trends':
         return <TrendAnalysis trends={[
           {
