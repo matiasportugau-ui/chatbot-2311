@@ -3,7 +3,7 @@ PR Analyzer Module
 Implements Phase 1: PR/Change Analysis (Tasks 1.1-1.4)
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from pathlib import Path
 import sys
 

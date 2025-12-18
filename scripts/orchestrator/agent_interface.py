@@ -223,11 +223,19 @@ class AgentCoordinator:
     """Coordinates communication between agents"""
 
     def __init__(self):
+        # Lazy imports for optional/extended agents to avoid circular imports
+        # (e.g., OrchestratorAgent imports AgentInterface from this module).
+        try:
+            from scripts.orchestrator.orchestrator_agent import OrchestratorAgent
+        except Exception:
+            OrchestratorAgent = None
+
         self.agents = {
             "RepositoryAgent": RepositoryAgent(),
             "IntegrationAgent": IntegrationAgent(),
             "QuotationAgent": QuotationAgent(),
-            "PlanningAgent": PlanningAgent()
+            "PlanningAgent": PlanningAgent(),
+            **({"OrchestratorAgent": OrchestratorAgent()} if OrchestratorAgent else {})
         }
         self.task_dir = Path("consolidation/tasks")
         self.task_dir.mkdir(parents=True, exist_ok=True)

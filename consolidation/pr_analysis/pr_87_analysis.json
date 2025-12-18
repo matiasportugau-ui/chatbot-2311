@@ -1,0 +1,120 @@
+{
+  "pr_number": 87,
+  "analysis_date": "2025-12-18T01:16:58.760925",
+  "metadata": {
+    "error": "Unknown task type: extract_pr_metadata"
+  },
+  "files_changed": {
+    "error": "Unknown task type: analyze_changed_files"
+  },
+  "purpose": {
+    "primary_objective": "",
+    "description": "Adds production-ready training system enabling real-time bot improvement through emoji-triggered corrections (✏️, 🔧), response reformulation with reasoning, and automated benchmarking. Addresses need for collaborative pre-production refinement with knowledge persistence.\n\n## Core Implementation\n\n**Training System** (`training_evaluation_system.py`)\n- Dual mode operation (Training/Production) with session management\n- Correction detection via emojis or text triggers\n- AI-powered response reformul",
+    "objectives": [
+      ""
+    ],
+    "business_domain": "deployment_orchestration",
+    "related_phases": [
+      2
+    ],
+    "acceptance_criteria": [],
+    "dependencies": [],
+    "related_issues": []
+  },
+  "dependencies": {
+    "new_dependencies": [],
+    "updated_dependencies": [],
+    "removed_dependencies": [],
+    "conflicts": [],
+    "compatibility": {
+      "python": "3.10+",
+      "compatible": true
+    },
+    "breaking_changes": false,
+    "migration_required": false
+  },
+  "impact_assessment": {
+    "architecture": {
+      "affected_components": [],
+      "service_boundaries": "no_change",
+      "api_contracts": "no_change",
+      "data_models": "no_change",
+      "integration_points": {
+        "whatsapp": "no_impact",
+        "n8n": "no_impact",
+        "qdrant": "no_impact",
+        "chatwoot": "no_impact"
+      },
+      "consolidation_alignment": "high",
+      "architectural_changes_required": false
+    },
+    "consolidation_plan": {
+      "primary_phase": 2,
+      "affected_phases": [
+        2
+      ],
+      "phase_updates_required": [
+        {
+          "phase": 2,
+          "update_type": "documentation",
+          "tasks_to_add": []
+        }
+      ],
+      "new_phase_required": false,
+      "conflicts": [],
+      "dependencies": [],
+      "timestamp": "2025-12-18T01:16:58.759795"
+    },
+    "bmc_domain": {
+      "error": "Unknown task type: assess_bmc_domain_impact"
+    },
+    "security": {
+      "security_impact": "low",
+      "production_readiness_impact": "documentation_only",
+      "security_hardening_required": false,
+      "phase_9_updates": []
+    }
+  },
+  "integration_strategy": {
+    "merge_strategy": {
+      "merge_strategy": "direct_merge",
+      "target_branch": "main",
+      "conflicts_expected": false,
+      "conflict_resolution": "not_required",
+      "pre_merge_testing": [
+        "documentation_review"
+      ],
+      "rollback_plan": "git_revert"
+    },
+    "testing_strategy": {
+      "test_updates_required": false,
+      "integration_testing": {
+        "required": false,
+        "scenarios": []
+      },
+      "bmc_testing": {
+        "required": false,
+        "scenarios": []
+      },
+      "regression_testing": {
+        "required": false,
+        "scope": []
+      },
+      "performance_testing": {
+        "required": false
+      },
+      "uat_required": false
+    },
+    "documentation_updates": {
+      "documentation_updates": [
+        {
+          "file": ".cursor/plans/UNIFIED_CONSOLIDATION_PRODUCTION_PLAN.md",
+          "update_type": "reference",
+          "priority": "low"
+        }
+      ],
+      "new_documentation": [],
+      "diagram_updates": false
+    }
+  }
+}
