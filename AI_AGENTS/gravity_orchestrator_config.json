@@ -1,0 +1,245 @@
+{
+  "agent": {
+    "name": "GravityTrainingOrchestrator",
+    "version": "1.0.0",
+    "type": "orchestrator",
+    "mode": "gravity_agent",
+    "specialization": "training_system_integration"
+  },
+  "configuration": {
+    "workspace_path": "/workspace",
+    "auto_approve": true,
+    "execution_mode": "automated",
+    "output_directory": "consolidation/training_integration",
+    "logs_directory": "consolidation/training_integration/logs"
+  },
+  "pr_context": {
+    "pr_number": 87,
+    "title": "Implement training/evaluation system with emoji-based corrections and benchmark framework",
+    "state": "OPEN",
+    "repository": "matiasportugau-ui/chatbot-2311",
+    "additions": 4171,
+    "deletions": 0,
+    "files_count": 19
+  },
+  "components": [
+    {
+      "name": "Training Evaluation System",
+      "path": "training_evaluation_system.py",
+      "priority": 1,
+      "dependencies": [],
+      "description": "Sistema principal de entrenamiento con modos Training/Production"
+    },
+    {
+      "name": "Benchmark System",
+      "path": "benchmark_system.py",
+      "priority": 1,
+      "dependencies": ["Training Evaluation System"],
+      "description": "Sistema de evaluación automática con scoring y métricas"
+    },
+    {
+      "name": "Training Integrated Bot",
+      "path": "training_integrated_bot.py",
+      "priority": 2,
+      "dependencies": ["Training Evaluation System", "Benchmark System"],
+      "description": "Bot integrado con CLI y comandos de control"
+    },
+    {
+      "name": "WhatsApp Integration",
+      "path": "middleware/whatsapp_training_middleware.py",
+      "priority": 3,
+      "dependencies": ["Training Integrated Bot"],
+      "description": "Middleware para integración con WhatsApp"
+    },
+    {
+      "name": "Knowledge Base Integration",
+      "path": "base_conocimiento_dinamica.py",
+      "priority": 2,
+      "dependencies": ["Training Evaluation System"],
+      "description": "Integración con base de conocimiento dinámica"
+    },
+    {
+      "name": "Automated Monitoring",
+      "path": "services/training_monitor.py",
+      "priority": 4,
+      "dependencies": ["Training Integrated Bot", "Benchmark System"],
+      "description": "Sistema de monitoreo y alertas automatizado"
+    }
+  ],
+  "integration_phases": [
+    {
+      "phase_id": "phase_0",
+      "name": "Analysis & Planning",
+      "estimated_duration": "30 minutes",
+      "steps": [
+        "Analyze PR #87",
+        "Generate implementation plan",
+        "Validate dependencies",
+        "Create integration checklist"
+      ],
+      "validation_criteria": [
+        "Plan generado correctamente",
+        "Todas las dependencias identificadas",
+        "Checklist de integración completo"
+      ]
+    },
+    {
+      "phase_id": "phase_1",
+      "name": "Core System Integration",
+      "estimated_duration": "45 minutes",
+      "steps": [
+        "Verify file existence",
+        "Run unit tests",
+        "Validate data structures",
+        "Test core functionality"
+      ],
+      "validation_criteria": [
+        "Todos los tests pasando",
+        "Archivos de datos creados correctamente",
+        "Sistema de correcciones funcional"
+      ]
+    },
+    {
+      "phase_id": "phase_2",
+      "name": "Bot Integration",
+      "estimated_duration": "60 minutes",
+      "steps": [
+        "Integrate with main bot",
+        "Test CLI interface",
+        "Validate command processing",
+        "Test knowledge base updates"
+      ],
+      "validation_criteria": [
+        "Bot responde a comandos de entrenamiento",
+        "CLI funcional",
+        "Actualizaciones de conocimiento funcionan"
+      ]
+    },
+    {
+      "phase_id": "phase_3",
+      "name": "WhatsApp Integration",
+      "estimated_duration": "60 minutes",
+      "steps": [
+        "Create webhook middleware",
+        "Test emoji detection",
+        "Validate message flow",
+        "Test session management"
+      ],
+      "validation_criteria": [
+        "Webhook recibe mensajes",
+        "Emojis detectados correctamente",
+        "Sesiones manejadas correctamente"
+      ]
+    },
+    {
+      "phase_id": "phase_4",
+      "name": "Automation & Monitoring",
+      "estimated_duration": "45 minutes",
+      "steps": [
+        "Setup automated benchmarks",
+        "Configure alerts",
+        "Create monitoring dashboard",
+        "Test end-to-end flow"
+      ],
+      "validation_criteria": [
+        "Benchmarks ejecutándose automáticamente",
+        "Alertas configuradas",
+        "Dashboard funcional"
+      ]
+    },
+    {
+      "phase_id": "phase_5",
+      "name": "Production Validation",
+      "estimated_duration": "30 minutes",
+      "steps": [
+        "Run full test suite",
+        "Generate benchmark report",
+        "Validate production readiness",
+        "Create deployment guide"
+      ],
+      "validation_criteria": [
+        "Todos los tests pasando (16/16)",
+        "Score promedio ≥ 80",
+        "Sistema listo para producción"
+      ]
+    }
+  ],
+  "success_metrics": {
+    "tests_passing": "16/16",
+    "test_coverage": "100%",
+    "benchmark_score": ">=80",
+    "approval_rate": ">=75%",
+    "deviation": "<15"
+  },
+  "agent_handoff": {
+    "enabled": true,
+    "supported_agents": [
+      "PlanningAgent",
+      "IntegrationAgent",
+      "ValidationAgent",
+      "MonitoringAgent",
+      "WhatsAppIntegrationAgent"
+    ],
+    "handoff_directory": "consolidation/handoffs"
+  },
+  "orchestrator_integration": {
+    "enabled": true,
+    "components": {
+      "StateManager": true,
+      "ContextManager": true,
+      "PlanningAgent": true,
+      "MainOrchestrator": true,
+      "AgentHandoff": true,
+      "GitHubIntegration": true
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "[{timestamp}] [{level}] {message}",
+    "output": {
+      "console": true,
+      "file": true,
+      "file_path": "consolidation/training_integration/logs/{execution_id}.log"
+    }
+  },
+  "commands": {
+    "analyze": {
+      "command": "python AI_AGENTS/gravity_training_orchestrator.py --mode analyze",
+      "description": "Analyze PR #87 and generate implementation plan"
+    },
+    "execute": {
+      "command": "python AI_AGENTS/gravity_training_orchestrator.py --mode execute",
+      "description": "Execute full integration flow"
+    },
+    "execute_phase": {
+      "command": "python AI_AGENTS/gravity_training_orchestrator.py --mode execute --phase <phase_id>",
+      "description": "Execute specific integration phase"
+    },
+    "status": {
+      "command": "python AI_AGENTS/gravity_training_orchestrator.py --mode status",
+      "description": "Generate current status report"
+    },
+    "quick_start": {
+      "command": "python AI_AGENTS/run_gravity_orchestrator.py",
+      "description": "Run quick start workflow"
+    },
+    "interactive": {
+      "command": "python AI_AGENTS/run_gravity_orchestrator.py --interactive",
+      "description": "Run in interactive menu mode"
+    }
+  },
+  "documentation": {
+    "main_readme": "AI_AGENTS/GRAVITY_TRAINING_ORCHESTRATOR_README.md",
+    "pr_documentation": [
+      "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+      "TRAINING_SYSTEM_GUIDE.md",
+      "IMPLEMENTATION_PLAN_AGENTS.md",
+      "QUICK_REFERENCE_TRAINING.md"
+    ],
+    "orchestrator_docs": [
+      "scripts/orchestrator/README.md",
+      "scripts/orchestrator/AGENT_HANDOFF_GUIDE.md",
+      "scripts/orchestrator/QUICK_START.md"
+    ]
+  }
+}

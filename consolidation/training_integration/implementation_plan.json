@@ -1,0 +1,281 @@
+{
+  "phases": [
+    {
+      "phase_id": "phase_0",
+      "name": "Analysis & Planning",
+      "components": [
+        "All"
+      ],
+      "steps": [
+        {
+          "step": "Analyze PR #87",
+          "action": "analyze_pr",
+          "pr_number": 87
+        },
+        {
+          "step": "Generate implementation plan",
+          "action": "generate_plan"
+        },
+        {
+          "step": "Validate dependencies",
+          "action": "validate_deps"
+        },
+        {
+          "step": "Create integration checklist",
+          "action": "create_checklist"
+        }
+      ],
+      "validation_criteria": [
+        "Plan generado correctamente",
+        "Todas las dependencias identificadas",
+        "Checklist de integraci\u00f3n completo"
+      ],
+      "estimated_duration": "30 minutes",
+      "status": "in_progress"
+    },
+    {
+      "phase_id": "phase_1",
+      "name": "Core System Integration",
+      "components": [
+        "Training Evaluation System",
+        "Benchmark System"
+      ],
+      "steps": [
+        {
+          "step": "Verify file existence",
+          "action": "verify_files"
+        },
+        {
+          "step": "Run unit tests",
+          "action": "run_tests"
+        },
+        {
+          "step": "Validate data structures",
+          "action": "validate_data"
+        },
+        {
+          "step": "Test core functionality",
+          "action": "test_core"
+        }
+      ],
+      "validation_criteria": [
+        "Todos los tests pasando",
+        "Archivos de datos creados correctamente",
+        "Sistema de correcciones funcional"
+      ],
+      "estimated_duration": "45 minutes",
+      "status": "pending"
+    },
+    {
+      "phase_id": "phase_2",
+      "name": "Bot Integration",
+      "components": [
+        "Training Integrated Bot",
+        "Knowledge Base Integration"
+      ],
+      "steps": [
+        {
+          "step": "Integrate with main bot",
+          "action": "integrate_bot"
+        },
+        {
+          "step": "Test CLI interface",
+          "action": "test_cli"
+        },
+        {
+          "step": "Validate command processing",
+          "action": "validate_commands"
+        },
+        {
+          "step": "Test knowledge base updates",
+          "action": "test_kb_updates"
+        }
+      ],
+      "validation_criteria": [
+        "Bot responde a comandos de entrenamiento",
+        "CLI funcional",
+        "Actualizaciones de conocimiento funcionan"
+      ],
+      "estimated_duration": "60 minutes",
+      "status": "pending"
+    },
+    {
+      "phase_id": "phase_3",
+      "name": "WhatsApp Integration",
+      "components": [
+        "WhatsApp Integration"
+      ],
+      "steps": [
+        {
+          "step": "Create webhook middleware",
+          "action": "create_middleware"
+        },
+        {
+          "step": "Test emoji detection",
+          "action": "test_emoji"
+        },
+        {
+          "step": "Validate message flow",
+          "action": "validate_flow"
+        },
+        {
+          "step": "Test session management",
+          "action": "test_sessions"
+        }
+      ],
+      "validation_criteria": [
+        "Webhook recibe mensajes",
+        "Emojis detectados correctamente",
+        "Sesiones manejadas correctamente"
+      ],
+      "estimated_duration": "60 minutes",
+      "status": "pending"
+    },
+    {
+      "phase_id": "phase_4",
+      "name": "Automation & Monitoring",
+      "components": [
+        "Automated Monitoring"
+      ],
+      "steps": [
+        {
+          "step": "Setup automated benchmarks",
+          "action": "setup_benchmarks"
+        },
+        {
+          "step": "Configure alerts",
+          "action": "configure_alerts"
+        },
+        {
+          "step": "Create monitoring dashboard",
+          "action": "create_dashboard"
+        },
+        {
+          "step": "Test end-to-end flow",
+          "action": "test_e2e"
+        }
+      ],
+      "validation_criteria": [
+        "Benchmarks ejecut\u00e1ndose autom\u00e1ticamente",
+        "Alertas configuradas",
+        "Dashboard funcional"
+      ],
+      "estimated_duration": "45 minutes",
+      "status": "pending"
+    },
+    {
+      "phase_id": "phase_5",
+      "name": "Production Validation",
+      "components": [
+        "All"
+      ],
+      "steps": [
+        {
+          "step": "Run full test suite",
+          "action": "run_full_tests"
+        },
+        {
+          "step": "Generate benchmark report",
+          "action": "generate_report"
+        },
+        {
+          "step": "Validate production readiness",
+          "action": "validate_production"
+        },
+        {
+          "step": "Create deployment guide",
+          "action": "create_guide"
+        }
+      ],
+      "validation_criteria": [
+        "Todos los tests pasando (16/16)",
+        "Score promedio \u2265 80",
+        "Sistema listo para producci\u00f3n"
+      ],
+      "estimated_duration": "30 minutes",
+      "status": "pending"
+    }
+  ],
+  "components": [
+    {
+      "name": "Training Evaluation System",
+      "path": "training_evaluation_system.py",
+      "status": "pending",
+      "dependencies": [],
+      "tests": [
+        "test_training_system.py::TestTrainingSystem"
+      ],
+      "description": "Sistema principal de entrenamiento con modos Training/Production",
+      "priority": 1
+    },
+    {
+      "name": "Benchmark System",
+      "path": "benchmark_system.py",
+      "status": "pending",
+      "dependencies": [
+        "Training Evaluation System"
+      ],
+      "tests": [
+        "test_training_system.py::TestBenchmarkSystem"
+      ],
+      "description": "Sistema de evaluaci\u00f3n autom\u00e1tica con scoring y m\u00e9tricas",
+      "priority": 1
+    },
+    {
+      "name": "Training Integrated Bot",
+      "path": "training_integrated_bot.py",
+      "status": "pending",
+      "dependencies": [
+        "Training Evaluation System",
+        "Benchmark System"
+      ],
+      "tests": [
+        "test_training_system.py::TestIntegratedBot"
+      ],
+      "description": "Bot integrado con CLI y comandos de control",
+      "priority": 2
+    },
+    {
+      "name": "WhatsApp Integration",
+      "path": "middleware/whatsapp_training_middleware.py",
+      "status": "pending",
+      "dependencies": [
+        "Training Integrated Bot"
+      ],
+      "tests": [
+        "test_training_system.py::TestWhatsAppIntegration"
+      ],
+      "description": "Middleware para integraci\u00f3n con WhatsApp",
+      "priority": 3
+    },
+    {
+      "name": "Knowledge Base Integration",
+      "path": "base_conocimiento_dinamica.py",
+      "status": "pending",
+      "dependencies": [
+        "Training Evaluation System"
+      ],
+      "tests": [
+        "test_training_system.py::TestKnowledgeIntegration"
+      ],
+      "description": "Integraci\u00f3n con base de conocimiento din\u00e1mica",
+      "priority": 2
+    },
+    {
+      "name": "Automated Monitoring",
+      "path": "services/training_monitor.py",
+      "status": "pending",
+      "dependencies": [
+        "Training Integrated Bot",
+        "Benchmark System"
+      ],
+      "tests": [
+        "test_training_system.py::TestMonitoring"
+      ],
+      "description": "Sistema de monitoreo y alertas automatizado",
+      "priority": 4
+    }
+  ],
+  "execution_mode": "automated",
+  "auto_approve": true
+}

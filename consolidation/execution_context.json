@@ -452,7 +452,7 @@
           "consolidation/discovery/production_baseline.json"
         ],
         "planning_agent_analysis": {
-          "pr_number": 35,
+          "pr_number": 87,
           "analysis": {
             "phase": 1,
             "task_1.1": {
@@ -463,11 +463,11 @@
             },
             "task_1.3": {
               "primary_objective": "",
-              "description": "Create a comprehensive multi-agent deployment plan and instructions for the BMC Uruguay system to facilitate its production launch.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.sv",
+              "description": "",
               "objectives": [
                 ""
               ],
-              "business_domain": "deployment_orchestration",
+              "business_domain": "general",
               "related_phases": [],
               "acceptance_criteria": [],
               "dependencies": [],
@@ -600,9 +600,9 @@
             "plan_complete": true
           },
           "outputs": {
-            "analysis_report": "consolidation/pr_analysis/pr_35_analysis.json",
-            "task_list": "consolidation/pr_analysis/pr_35_tasks.md",
-            "integration_checklist": "consolidation/pr_analysis/pr_35_integration_checklist.md"
+            "analysis_report": "consolidation/pr_analysis/pr_87_analysis.json",
+            "task_list": "consolidation/pr_analysis/pr_87_tasks.md",
+            "integration_checklist": "consolidation/pr_analysis/pr_87_integration_checklist.md"
           }
         }
       },
@@ -646,7 +646,7 @@
       "artifacts": {},
       "dependencies_met": [],
       "created_at": "2025-12-02T20:19:32.966195",
-      "last_updated": "2025-12-02T22:21:05.118651"
+      "last_updated": "2025-12-18T01:18:37.322813"
     },
     "1": {
       "phase": 1,
@@ -778,5 +778,5 @@
       "timestamp": "2025-12-02T20:19:33.245500"
     }
   ],
-  "last_updated": "2025-12-02T22:21:05.118668"
+  "last_updated": "2025-12-18T01:18:37.322815"
 }
