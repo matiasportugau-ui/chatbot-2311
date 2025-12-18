@@ -1,0 +1,109 @@
+{
+  "pr_number": 87,
+  "status": "fallback",
+  "error": "name 'List' is not defined",
+  "metadata": {
+    "title": "Implement training/evaluation system with emoji-based corrections and benchmark framework",
+    "state": "OPEN",
+    "base": "new-branch",
+    "head": "copilot/create-evaluation-system-chatbot",
+    "url": "https://github.com/matiasportugau-ui/chatbot-2311/pull/87"
+  },
+  "files": [
+    {
+      "path": "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+      "additions": 313,
+      "deletions": 0
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN_AGENTS.md",
+      "additions": 716,
+      "deletions": 0
+    },
+    {
+      "path": "QUICK_REFERENCE_TRAINING.md",
+      "additions": 287,
+      "deletions": 0
+    },
+    {
+      "path": "TRAINING_SYSTEM_GUIDE.md",
+      "additions": 581,
+      "deletions": 0
+    },
+    {
+      "path": "base_conocimiento_dinamica.py",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "path": "benchmark_system.py",
+      "additions": 625,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_23a8aac084df.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_29537e591b55.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_c05d50ad5128.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_cf7b04ae38fa.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_ea78fef82c1f.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/test_results.json",
+      "additions": 3,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/test_suites.json",
+      "additions": 71,
+      "deletions": 0
+    },
+    {
+      "path": "data/training/corrections.json",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "path": "data/training/knowledge_updates.json",
+      "additions": 3,
+      "deletions": 0
+    },
+    {
+      "path": "data/training/training_sessions.json",
+      "additions": 79,
+      "deletions": 0
+    },
+    {
+      "path": "test_training_system.py",
+      "additions": 315,
+      "deletions": 0
+    },
+    {
+      "path": "training_evaluation_system.py",
+      "additions": 639,
+      "deletions": 0
+    },
+    {
+      "path": "training_integrated_bot.py",
+      "additions": 397,
+      "deletions": 0
+    }
+  ]
+}
