@@ -219,6 +219,55 @@ class PlanningAgent(AgentInterface):
             return {"error": f"Unknown task type: {task_type}"}
 
 
+class GravityOrchestratorAgent(AgentInterface):
+    """
+    Gravity Orchestrator Agent - Interprets and orchestrates automated development.
+
+    This is a thin wrapper that lazy-loads the actual implementation to avoid heavy imports
+    and keep the orchestrator agent registry lightweight.
+    """
+
+    def __init__(self):
+        super().__init__("GravityOrchestratorAgent", "GravityOrchestratorAgent")
+        self._impl = None
+
+    def _get_impl(self):
+        """Lazy load implementation to avoid circular dependencies"""
+        if self._impl is None:
+            from scripts.orchestrator.gravity_orchestrator_agent import (
+                GravityOrchestratorAgentImpl,
+            )
+            self._impl = GravityOrchestratorAgentImpl()
+        return self._impl
+
+    def execute_task(self, task_id: str, task_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Supported task types:
+        - orchestrate: {goal: str, pr_number?: int, repo?: str, constraints?: dict}
+        """
+        impl = self._get_impl()
+        task_type = task_config.get("type")
+
+        if task_type != "orchestrate":
+            return {"error": f"Unknown task type: {task_type}"}
+
+        # Normalize payload
+        from scripts.orchestrator.gravity_orchestrator_agent import GravityAgentInputs
+
+        inputs = GravityAgentInputs(
+            goal=task_config.get("goal", ""),
+            pr_number=task_config.get("pr_number"),
+            repo=task_config.get("repo"),
+            constraints=task_config.get("constraints"),
+        )
+
+        if not inputs.goal:
+            return {"error": "Missing required field: goal"}
+
+        result = impl.orchestrate(inputs)
+        return {"status": "completed", "result": result}
+
+
 class AgentCoordinator:
     """Coordinates communication between agents"""
 
@@ -227,7 +276,8 @@ class AgentCoordinator:
             "RepositoryAgent": RepositoryAgent(),
             "IntegrationAgent": IntegrationAgent(),
             "QuotationAgent": QuotationAgent(),
-            "PlanningAgent": PlanningAgent()
+            "PlanningAgent": PlanningAgent(),
+            "GravityOrchestratorAgent": GravityOrchestratorAgent(),
         }
         self.task_dir = Path("consolidation/tasks")
         self.task_dir.mkdir(parents=True, exist_ok=True)

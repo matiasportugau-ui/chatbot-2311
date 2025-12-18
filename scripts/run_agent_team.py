@@ -28,8 +28,8 @@ except ImportError:
 # Agent Team Configuration (12 Agents)
 AGENT_TEAM = {
     "nivel_1_core": {
-        "OrchestratorAgent": {
-            "description": "Master coordinator - coordinates all agents and phases",
+        "GravityOrchestratorAgent": {
+            "description": "Gravity (Grok-first) master coordinator - interprets intent and orchestrates automated development",
             "phases": "all",
             "responsibilities": [
                 "Coordination general",
