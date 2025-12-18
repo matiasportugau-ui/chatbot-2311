@@ -1,0 +1,323 @@
+{
+  "pr_number": 87,
+  "title": "Implement training/evaluation system with emoji-based corrections and benchmark framework",
+  "description": "Adds production-ready training system enabling real-time bot improvement through emoji-triggered corrections (✏️, 🔧), response reformulation with reasoning, and automated benchmarking. Addresses need for collaborative pre-production refinement with knowledge persistence.\n\n## Core Implementation\n\n**Training System** (`training_evaluation_system.py`)\n- Dual mode operation (Training/Production) with session management\n- Correction detection via emojis or text triggers\n- AI-powered response reformul",
+  "author": "app/copilot-swe-agent",
+  "status": "OPEN",
+  "base_branch": "new-branch",
+  "head_branch": "copilot/create-evaluation-system-chatbot",
+  "files_changed": [
+    {
+      "path": "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+      "additions": 313,
+      "deletions": 0,
+      "type": "documentation",
+      "component": "training",
+      "impact": "high"
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN_AGENTS.md",
+      "additions": 716,
+      "deletions": 0,
+      "type": "documentation",
+      "component": "agents",
+      "impact": "high"
+    },
+    {
+      "path": "QUICK_REFERENCE_TRAINING.md",
+      "additions": 287,
+      "deletions": 0,
+      "type": "documentation",
+      "component": "training",
+      "impact": "high"
+    },
+    {
+      "path": "TRAINING_SYSTEM_GUIDE.md",
+      "additions": 581,
+      "deletions": 0,
+      "type": "documentation",
+      "component": "training",
+      "impact": "high"
+    },
+    {
+      "path": "base_conocimiento_dinamica.py",
+      "additions": 1,
+      "deletions": 0,
+      "type": "python",
+      "component": "core",
+      "impact": "low"
+    },
+    {
+      "path": "benchmark_system.py",
+      "additions": 625,
+      "deletions": 0,
+      "type": "python",
+      "component": "training",
+      "impact": "high"
+    },
+    {
+      "path": "data/benchmarks/report_23a8aac084df.json",
+      "additions": 25,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/benchmarks/report_29537e591b55.json",
+      "additions": 25,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/benchmarks/report_c05d50ad5128.json",
+      "additions": 25,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/benchmarks/report_cf7b04ae38fa.json",
+      "additions": 25,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/benchmarks/report_ea78fef82c1f.json",
+      "additions": 25,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/benchmarks/test_results.json",
+      "additions": 3,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/benchmarks/test_suites.json",
+      "additions": 71,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "medium"
+    },
+    {
+      "path": "data/training/corrections.json",
+      "additions": 16,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/training/knowledge_updates.json",
+      "additions": 3,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "low"
+    },
+    {
+      "path": "data/training/training_sessions.json",
+      "additions": 79,
+      "deletions": 0,
+      "type": "configuration",
+      "component": "training",
+      "impact": "medium"
+    },
+    {
+      "path": "test_training_system.py",
+      "additions": 315,
+      "deletions": 0,
+      "type": "python",
+      "component": "training",
+      "impact": "high"
+    },
+    {
+      "path": "training_evaluation_system.py",
+      "additions": 639,
+      "deletions": 0,
+      "type": "python",
+      "component": "training",
+      "impact": "high"
+    },
+    {
+      "path": "training_integrated_bot.py",
+      "additions": 397,
+      "deletions": 0,
+      "type": "python",
+      "component": "training",
+      "impact": "high"
+    }
+  ],
+  "additions": 4171,
+  "deletions": 0,
+  "affected_components": [
+    "training",
+    "core",
+    "agents"
+  ],
+  "affected_phases": [
+    0,
+    1,
+    2,
+    7,
+    8
+  ],
+  "impact_level": "critical",
+  "recommendations": [
+    "⚠️ Requiere revisión detallada antes de merge",
+    "📋 Ejecutar suite completa de tests",
+    "📚 Actualizar documentación relacionada",
+    "⚙️ Verificar configuración en todos los ambientes",
+    "✅ Auto-aprobación habilitada según configuración"
+  ],
+  "tasks": [
+    {
+      "id": "T0.1",
+      "title": "Integrar cambios de training en Fase 0",
+      "phase": 0,
+      "component": "training",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T0.2",
+      "title": "Integrar cambios de core en Fase 0",
+      "phase": 0,
+      "component": "core",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T0.3",
+      "title": "Integrar cambios de agents en Fase 0",
+      "phase": 0,
+      "component": "agents",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T1.4",
+      "title": "Integrar cambios de training en Fase 1",
+      "phase": 1,
+      "component": "training",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T1.5",
+      "title": "Integrar cambios de core en Fase 1",
+      "phase": 1,
+      "component": "core",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T1.6",
+      "title": "Integrar cambios de agents en Fase 1",
+      "phase": 1,
+      "component": "agents",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T2.7",
+      "title": "Integrar cambios de training en Fase 2",
+      "phase": 2,
+      "component": "training",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T2.8",
+      "title": "Integrar cambios de core en Fase 2",
+      "phase": 2,
+      "component": "core",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T2.9",
+      "title": "Integrar cambios de agents en Fase 2",
+      "phase": 2,
+      "component": "agents",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T7.10",
+      "title": "Integrar cambios de training en Fase 7",
+      "phase": 7,
+      "component": "training",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T7.11",
+      "title": "Integrar cambios de core en Fase 7",
+      "phase": 7,
+      "component": "core",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T7.12",
+      "title": "Integrar cambios de agents en Fase 7",
+      "phase": 7,
+      "component": "agents",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T8.13",
+      "title": "Integrar cambios de training en Fase 8",
+      "phase": 8,
+      "component": "training",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T8.14",
+      "title": "Integrar cambios de core en Fase 8",
+      "phase": 8,
+      "component": "core",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    },
+    {
+      "id": "T8.15",
+      "title": "Integrar cambios de agents en Fase 8",
+      "phase": 8,
+      "component": "agents",
+      "priority": "P2",
+      "status": "pending",
+      "estimated_duration": "2-4 hours"
+    }
+  ],
+  "analyzed_at": "2025-12-18T01:18:06.863152"
+}

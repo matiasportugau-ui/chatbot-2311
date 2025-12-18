@@ -1,0 +1,594 @@
+{
+  "plan_id": "plan_20251218_011806",
+  "executed_phases": [
+    {
+      "phase": 0,
+      "total": 6,
+      "completed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T0.1",
+          "title": "Análisis de estructura del repositorio",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T0.1 executed successfully"
+        },
+        {
+          "task_id": "T0.2",
+          "title": "Identificación de componentes principales",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T0.2 executed successfully"
+        },
+        {
+          "task_id": "T0.3",
+          "title": "Documentación de dependencias",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T0.3 executed successfully"
+        },
+        {
+          "task_id": "T0.1",
+          "title": "Integrar cambios de training en Fase 0",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T0.1 executed successfully"
+        },
+        {
+          "task_id": "T0.2",
+          "title": "Integrar cambios de core en Fase 0",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T0.2 executed successfully"
+        },
+        {
+          "task_id": "T0.3",
+          "title": "Integrar cambios de agents en Fase 0",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T0.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 1,
+      "total": 6,
+      "completed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T1.1",
+          "title": "Unificación de estructura de directorios",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T1.1 executed successfully"
+        },
+        {
+          "task_id": "T1.2",
+          "title": "Consolidación de configuraciones",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T1.2 executed successfully"
+        },
+        {
+          "task_id": "T1.3",
+          "title": "Limpieza de archivos obsoletos",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T1.3 executed successfully"
+        },
+        {
+          "task_id": "T1.4",
+          "title": "Integrar cambios de training en Fase 1",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T1.4 executed successfully"
+        },
+        {
+          "task_id": "T1.5",
+          "title": "Integrar cambios de core en Fase 1",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T1.5 executed successfully"
+        },
+        {
+          "task_id": "T1.6",
+          "title": "Integrar cambios de agents en Fase 1",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T1.6 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 2,
+      "total": 6,
+      "completed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T2.1",
+          "title": "Integración de módulos core",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T2.1 executed successfully"
+        },
+        {
+          "task_id": "T2.2",
+          "title": "Resolución de conflictos",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T2.2 executed successfully"
+        },
+        {
+          "task_id": "T2.3",
+          "title": "Validación de imports",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T2.3 executed successfully"
+        },
+        {
+          "task_id": "T2.7",
+          "title": "Integrar cambios de training en Fase 2",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T2.7 executed successfully"
+        },
+        {
+          "task_id": "T2.8",
+          "title": "Integrar cambios de core en Fase 2",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T2.8 executed successfully"
+        },
+        {
+          "task_id": "T2.9",
+          "title": "Integrar cambios de agents en Fase 2",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T2.9 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T3.1",
+          "title": "Configuración de MongoDB",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T3.1 executed successfully"
+        },
+        {
+          "task_id": "T3.2",
+          "title": "Migraciones de datos",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T3.2 executed successfully"
+        },
+        {
+          "task_id": "T3.3",
+          "title": "Validación de esquemas",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T3.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 4,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T4.1",
+          "title": "Implementación de endpoints",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T4.1 executed successfully"
+        },
+        {
+          "task_id": "T4.2",
+          "title": "Validación de contratos",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T4.2 executed successfully"
+        },
+        {
+          "task_id": "T4.3",
+          "title": "Documentación de API",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T4.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T5.1",
+          "title": "Configuración de WhatsApp Business API",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T5.1 executed successfully"
+        },
+        {
+          "task_id": "T5.2",
+          "title": "Implementación de webhooks",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T5.2 executed successfully"
+        },
+        {
+          "task_id": "T5.3",
+          "title": "Testing de mensajería",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T5.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 6,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T6.1",
+          "title": "Integración con n8n workflows",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T6.1 executed successfully"
+        },
+        {
+          "task_id": "T6.2",
+          "title": "Configuración de Qdrant",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T6.2 executed successfully"
+        },
+        {
+          "task_id": "T6.3",
+          "title": "Setup de Chatwoot",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T6.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 7,
+      "total": 6,
+      "completed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T7.1",
+          "title": "Configuración de modelos NLU",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T7.1 executed successfully"
+        },
+        {
+          "task_id": "T7.2",
+          "title": "Setup de embeddings",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T7.2 executed successfully"
+        },
+        {
+          "task_id": "T7.3",
+          "title": "Optimización de prompts",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T7.3 executed successfully"
+        },
+        {
+          "task_id": "T7.10",
+          "title": "Integrar cambios de training en Fase 7",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T7.10 executed successfully"
+        },
+        {
+          "task_id": "T7.11",
+          "title": "Integrar cambios de core en Fase 7",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T7.11 executed successfully"
+        },
+        {
+          "task_id": "T7.12",
+          "title": "Integrar cambios de agents en Fase 7",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T7.12 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 8,
+      "total": 6,
+      "completed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T8.1",
+          "title": "Implementación de sistema de entrenamiento",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T8.1 executed successfully"
+        },
+        {
+          "task_id": "T8.2",
+          "title": "Setup de benchmarks",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T8.2 executed successfully"
+        },
+        {
+          "task_id": "T8.3",
+          "title": "Validación de correcciones",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T8.3 executed successfully"
+        },
+        {
+          "task_id": "T8.13",
+          "title": "Integrar cambios de training en Fase 8",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T8.13 executed successfully"
+        },
+        {
+          "task_id": "T8.14",
+          "title": "Integrar cambios de core en Fase 8",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T8.14 executed successfully"
+        },
+        {
+          "task_id": "T8.15",
+          "title": "Integrar cambios de agents en Fase 8",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T8.15 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 9,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T9.1",
+          "title": "Auditoría de seguridad",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T9.1 executed successfully"
+        },
+        {
+          "task_id": "T9.2",
+          "title": "Implementación de autenticación",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T9.2 executed successfully"
+        },
+        {
+          "task_id": "T9.3",
+          "title": "Gestión de secretos",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T9.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 10,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T10.1",
+          "title": "Configuración de Docker",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T10.1 executed successfully"
+        },
+        {
+          "task_id": "T10.2",
+          "title": "Setup de Kubernetes",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T10.2 executed successfully"
+        },
+        {
+          "task_id": "T10.3",
+          "title": "Definición de IaC",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T10.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 11,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T11.1",
+          "title": "Ejecución de tests unitarios",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T11.1 executed successfully"
+        },
+        {
+          "task_id": "T11.2",
+          "title": "Tests de integración",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T11.2 executed successfully"
+        },
+        {
+          "task_id": "T11.3",
+          "title": "Validación E2E",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T11.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 12,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T12.1",
+          "title": "Setup de dashboard",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T12.1 executed successfully"
+        },
+        {
+          "task_id": "T12.2",
+          "title": "Configuración de métricas",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T12.2 executed successfully"
+        },
+        {
+          "task_id": "T12.3",
+          "title": "Alertas y notificaciones",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T12.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 13,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T13.1",
+          "title": "Configuración de GitHub Actions",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T13.1 executed successfully"
+        },
+        {
+          "task_id": "T13.2",
+          "title": "Pipeline de deployment",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T13.2 executed successfully"
+        },
+        {
+          "task_id": "T13.3",
+          "title": "Validación automática",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T13.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 14,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T14.1",
+          "title": "Análisis de rendimiento",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T14.1 executed successfully"
+        },
+        {
+          "task_id": "T14.2",
+          "title": "Optimización de queries",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T14.2 executed successfully"
+        },
+        {
+          "task_id": "T14.3",
+          "title": "Load testing",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T14.3 executed successfully"
+        }
+      ]
+    },
+    {
+      "phase": 15,
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tasks": [
+        {
+          "task_id": "T15.1",
+          "title": "Deployment a producción",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T15.1 executed successfully"
+        },
+        {
+          "task_id": "T15.2",
+          "title": "Validación final",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T15.2 executed successfully"
+        },
+        {
+          "task_id": "T15.3",
+          "title": "Documentación de operaciones",
+          "status": "completed",
+          "duration": "simulated",
+          "output": "Task T15.3 executed successfully"
+        }
+      ]
+    }
+  ],
+  "completed_tasks": 63,
+  "failed_tasks": 0,
+  "skipped_tasks": 0,
+  "execution_log": []
+}
