@@ -1,0 +1,271 @@
+{
+  "timestamp": "2025-12-18T01:20:30.331592",
+  "project_root": "/workspace",
+  "overall_status": "phase_0_not_started",
+  "checks": {
+    "directory_structure": {
+      "status": "ok",
+      "directories": {
+        "consolidation": {
+          "exists": true,
+          "path": "/workspace/consolidation"
+        },
+        "consolidation/reports": {
+          "exists": true,
+          "path": "/workspace/consolidation/reports"
+        },
+        "scripts/orchestrator": {
+          "exists": true,
+          "path": "/workspace/scripts/orchestrator"
+        },
+        "scripts/discovery": {
+          "exists": true,
+          "path": "/workspace/scripts/discovery"
+        },
+        "agents": {
+          "exists": true,
+          "path": "/workspace/agents"
+        }
+      },
+      "all_exist": true
+    },
+    "orchestrator": {
+      "status": "ok",
+      "available": true,
+      "can_resume": true,
+      "current_phase": 16,
+      "overall_status": "in_progress",
+      "state_file_exists": true
+    },
+    "phase_status": {
+      "status": "ok",
+      "phases": {
+        "0": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:30.350550",
+          "completed_at": "2025-12-03T23:36:30.434023",
+          "approved": true
+        },
+        "1": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:30.443734",
+          "completed_at": "2025-12-03T23:36:58.513302",
+          "approved": true
+        },
+        "2": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.524533",
+          "completed_at": "2025-12-03T23:36:58.574105",
+          "approved": true
+        },
+        "3": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.577766",
+          "completed_at": "2025-12-03T23:36:58.608288",
+          "approved": true
+        },
+        "4": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.612018",
+          "completed_at": "2025-12-03T23:36:58.625787",
+          "approved": true
+        },
+        "5": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.626438",
+          "completed_at": "2025-12-03T23:36:58.632611",
+          "approved": true
+        },
+        "6": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.635713",
+          "completed_at": "2025-12-03T23:36:58.644880",
+          "approved": true
+        },
+        "7": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.648114",
+          "completed_at": "2025-12-03T23:36:58.663422",
+          "approved": true
+        },
+        "8": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.665174",
+          "completed_at": "2025-12-03T23:36:58.677791",
+          "approved": true
+        },
+        "9": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:36:58.679332",
+          "completed_at": "2025-12-03T23:37:01.176392",
+          "approved": true
+        },
+        "10": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:37:01.179707",
+          "completed_at": "2025-12-03T23:54:35.749826",
+          "approved": true
+        },
+        "11": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:37:01.315428",
+          "completed_at": "2025-12-03T23:54:36.261739",
+          "approved": true
+        },
+        "12": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:37:01.341705",
+          "completed_at": "2025-12-03T23:54:36.583714",
+          "approved": true
+        },
+        "13": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:37:01.352190",
+          "completed_at": "2025-12-03T23:54:36.875368",
+          "approved": true
+        },
+        "14": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:37:01.362324",
+          "completed_at": "2025-12-03T23:54:37.149193",
+          "approved": true
+        },
+        "15": {
+          "status": "approved",
+          "started_at": "2025-12-03T23:37:01.368868",
+          "completed_at": "2025-12-03T23:54:38.203165",
+          "approved": true
+        }
+      },
+      "summary": {
+        "total": 16,
+        "completed": 0,
+        "in_progress": 0,
+        "pending": 0,
+        "progress_percent": 0
+      }
+    },
+    "components": {
+      "status": "ok",
+      "components": {
+        "api_server": {
+          "exists": true,
+          "path": "/workspace/api_server.py",
+          "size": 686
+        },
+        "conversational_ai": {
+          "exists": true,
+          "path": "/workspace/ia_conversacional_integrada.py",
+          "size": 47259
+        },
+        "quotation_system": {
+          "exists": true,
+          "path": "/workspace/sistema_cotizaciones.py",
+          "size": 14837
+        },
+        "knowledge_base": {
+          "exists": true,
+          "path": "/workspace/base_conocimiento_dinamica.py",
+          "size": 40654
+        },
+        "whatsapp_integration": {
+          "exists": true,
+          "path": "/workspace/integracion_whatsapp.py",
+          "size": 11353
+        },
+        "n8n_integration": {
+          "exists": true,
+          "path": "/workspace/n8n_integration.py",
+          "size": 10562
+        },
+        "google_sheets": {
+          "exists": true,
+          "path": "/workspace/integracion_google_sheets.py",
+          "size": 23561
+        },
+        "docker_compose": {
+          "exists": true,
+          "path": "/workspace/docker-compose.yml",
+          "size": 1533
+        }
+      },
+      "all_exist": true
+    },
+    "integrations": {
+      "status": "partial",
+      "integrations": {
+        "whatsapp": {
+          "file_exists": true,
+          "status": "configured",
+          "config_required": [
+            "WHATSAPP_TOKEN",
+            "WHATSAPP_PHONE_ID"
+          ]
+        },
+        "n8n": {
+          "file_exists": true,
+          "status": "configured",
+          "config_required": [
+            "N8N_URL",
+            "N8N_API_KEY"
+          ]
+        },
+        "mongodb": {
+          "file_exists": true,
+          "status": "configured",
+          "config_required": [
+            "MONGODB_URI"
+          ]
+        },
+        "qdrant": {
+          "file_exists": false,
+          "status": "missing",
+          "config_required": [
+            "QDRANT_URL",
+            "QDRANT_API_KEY"
+          ]
+        }
+      }
+    },
+    "security": {
+      "status": "needs_review",
+      "items": {
+        "webhook_validation": {
+          "file_exists": true,
+          "status": "needs_review"
+        },
+        "secrets_management": {
+          "file_exists": false,
+          "status": "needs_review"
+        },
+        "cors_config": {
+          "file_exists": true,
+          "status": "needs_review"
+        }
+      },
+      "message": "Security items need manual review"
+    },
+    "documentation": {
+      "status": "ok",
+      "docs": {
+        "architecture_report": {
+          "exists": true,
+          "path": "/workspace/ARCHITECTURE_STATUS_REPORT.md"
+        },
+        "consolidation_plan": {
+          "exists": true,
+          "path": "/workspace/consolidation/PLAN_COMPLETO_REPOSITORIO_WORKSPACE.md"
+        },
+        "agent_architecture": {
+          "exists": true,
+          "path": "/workspace/AGENT_ARCHITECTURE.md"
+        },
+        "readme": {
+          "exists": true,
+          "path": "/workspace/README.md"
+        }
+      },
+      "all_exist": true
+    }
+  }
+}

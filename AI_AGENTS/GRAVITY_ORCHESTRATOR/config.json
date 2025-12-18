@@ -1,0 +1,135 @@
+{
+  "agent_info": {
+    "name": "GravityDevelopmentOrchestrator",
+    "version": "1.0.0",
+    "description": "Agente especializado en interpretar y orquestar el desarrollo automatizado del proyecto BMC Chatbot",
+    "author": "Gravity Agent Team",
+    "created_at": "2025-01-12"
+  },
+  "capabilities": {
+    "pr_analysis": true,
+    "phase_orchestration": true,
+    "agent_coordination": true,
+    "react_cycles": true,
+    "task_generation": true,
+    "state_management": true,
+    "automated_execution": true
+  },
+  "execution": {
+    "mode": "automated",
+    "auto_approval": true,
+    "require_manual_approval": false,
+    "max_retries": 3,
+    "retry_delay_seconds": 60,
+    "timeout_seconds": 600
+  },
+  "phases": {
+    "preliminary": {
+      "start": -8,
+      "end": -1,
+      "description": "Preliminary setup phases"
+    },
+    "main": {
+      "start": 0,
+      "end": 15,
+      "description": "Main development phases"
+    }
+  },
+  "agents": {
+    "core": [
+      "OrchestratorAgent",
+      "RepositoryAgent", 
+      "DiscoveryAgent"
+    ],
+    "consolidation": [
+      "MergeAgent",
+      "IntegrationAgent"
+    ],
+    "production": [
+      "SecurityAgent",
+      "InfrastructureAgent",
+      "ObservabilityAgent",
+      "PerformanceAgent"
+    ],
+    "deployment": [
+      "CICDAgent",
+      "DisasterRecoveryAgent",
+      "ValidationAgent"
+    ],
+    "domain": [
+      "NLUAgent",
+      "QuotationAgent"
+    ]
+  },
+  "phase_agent_mapping": {
+    "0": "DiscoveryAgent",
+    "1": "RepositoryAgent",
+    "2": "RepositoryAgent",
+    "3": "MergeAgent",
+    "4": "MergeAgent",
+    "5": "MergeAgent",
+    "6": "MergeAgent",
+    "7": "IntegrationAgent",
+    "8": "IntegrationAgent",
+    "9": "SecurityAgent",
+    "10": "InfrastructureAgent",
+    "11": "ObservabilityAgent",
+    "12": "PerformanceAgent",
+    "13": "CICDAgent",
+    "14": "DisasterRecoveryAgent",
+    "15": "ValidationAgent"
+  },
+  "bmc_domain": {
+    "products": [
+      "Isodec",
+      "Poliestireno Expandido",
+      "Lana de Roca",
+      "Isoroof",
+      "Isopanel"
+    ],
+    "thicknesses": ["50mm", "75mm", "100mm", "125mm", "150mm"],
+    "zones": ["Montevideo", "Canelones", "Maldonado", "Rivera"],
+    "services": ["Flete", "Instalación", "Anclajes"],
+    "tax_rate": 0.22
+  },
+  "integrations": {
+    "whatsapp": {
+      "enabled": true,
+      "api": "WhatsApp Business API"
+    },
+    "n8n": {
+      "enabled": true,
+      "workflows": ["WF_MAIN_orchestrator_v4.json"]
+    },
+    "qdrant": {
+      "enabled": true,
+      "use_case": "Vector embeddings for knowledge base"
+    },
+    "chatwoot": {
+      "enabled": true,
+      "use_case": "Customer support platform"
+    },
+    "mongodb": {
+      "enabled": true,
+      "collections": ["conversations", "quotes", "context", "analytics", "products", "settings"]
+    }
+  },
+  "ai_models": {
+    "primary": "openai/gpt-4o-mini",
+    "fallbacks": ["groq", "gemini", "xai/grok"],
+    "strategy": "balanced"
+  },
+  "output": {
+    "base_directory": "consolidation",
+    "pr_analysis_directory": "consolidation/pr_analysis",
+    "state_directory": "consolidation/state",
+    "reports_directory": "consolidation/reports",
+    "logs_directory": "system/logs"
+  },
+  "react_pattern": {
+    "max_iterations": 5,
+    "think_temperature": 0.3,
+    "act_timeout_seconds": 300,
+    "observe_temperature": 0.3
+  }
+}
