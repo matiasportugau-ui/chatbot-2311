@@ -2,9 +2,9 @@
   "metadata": {
     "version": "1.0.0",
     "created_at": "2025-12-21T08:30:00Z",
-    "last_updated": "2025-12-21T08:32:03.372198",
+    "last_updated": "2025-12-21T08:36:42.760660",
     "description": "Dynamic knowledge base with agent corrections - Priority Level 1",
-    "total_corrections": 2,
+    "total_corrections": 4,
     "total_conflicts": 0
   },
   "corrections": {
@@ -22,6 +22,18 @@
         ],
         "last_updated": "2025-12-21T08:31:56.162586",
         "source_agent": "agent_001"
+      },
+      "test_correction_isodec": {
+        "product": "Isodec",
+        "price": 1500.0,
+        "unit": "UYU/m²",
+        "keywords": [
+          "isodec",
+          "precio",
+          "test"
+        ],
+        "last_updated": "2025-12-21T08:36:42.724575",
+        "source_agent": "test_agent"
       }
     },
     "technical_specs": {},
@@ -45,6 +57,24 @@
         ],
         "last_updated": "2025-12-21T08:32:03.372193",
         "source_agent": "agent_001"
+      },
+      "agent_test_1766306202.760644": {
+        "original_response": "El precio es 1500 UYU",
+        "correction": "El precio correcto es 1800 UYU",
+        "parsed_data": {
+          "type": "general",
+          "content": "El precio correcto es 1800 UYU",
+          "summary": "El precio correcto es 1800 UYU"
+        },
+        "agent_id": "agent_test",
+        "timestamp": "2025-12-21T08:36:42.760278",
+        "keywords": [
+          "precio",
+          "correcto",
+          "1800"
+        ],
+        "last_updated": "2025-12-21T08:36:42.760657",
+        "source_agent": "agent_test"
       }
     }
   },
@@ -63,6 +93,20 @@
       "correction_type": "responses",
       "correction_id": "agent_001_1766305923.372171",
       "source_agent": "agent_001"
+    },
+    {
+      "timestamp": "2025-12-21T08:36:42.724589",
+      "action": "correction_added",
+      "correction_type": "prices",
+      "correction_id": "test_correction_isodec",
+      "source_agent": "test_agent"
+    },
+    {
+      "timestamp": "2025-12-21T08:36:42.760662",
+      "action": "correction_added",
+      "correction_type": "responses",
+      "correction_id": "agent_test_1766306202.760644",
+      "source_agent": "agent_test"
     }
   ]
 }

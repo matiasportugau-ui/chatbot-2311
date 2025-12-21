@@ -49,6 +49,14 @@ class MultimodalInput:
 class MultimodalProcessor:
     """Processes multimodal inputs and converts them to unified context"""
     
+    # Configuration constants
+    IMAGE_ANALYSIS_PROMPT = (
+        "Analiza esta imagen y describe qué productos, especificaciones técnicas, "
+        "o información relevante para una empresa de construcción (BMC Uruguay) puedes identificar. "
+        "Si es una foto de un producto, describe sus características. "
+        "Si es un documento técnico, extrae la información clave."
+    )
+    
     def __init__(self):
         self.openai_client = None
         if OPENAI_AVAILABLE:
@@ -188,11 +196,18 @@ class MultimodalProcessor:
         
         except Exception as e:
             print(f"❌ Error transcribing audio: {e}")
+            # Provide actionable guidance
+            error_msg = f"[Error transcribing audio: {str(e)}]"
+            if "api_key" in str(e).lower():
+                error_msg += " - Verify OPENAI_API_KEY is set correctly"
+            elif "file" in str(e).lower() or "format" in str(e).lower():
+                error_msg += " - Check audio file format (supported: mp3, mp4, m4a, wav, webm)"
+            
             return MultimodalInput(
                 input_type="audio",
-                content=f"[Error transcribing audio: {str(e)}]",
+                content=error_msg,
                 original_data=audio_data,
-                metadata={"error": str(e)},
+                metadata={"error": str(e), "error_type": type(e).__name__},
                 confidence=0.0,
                 processing_timestamp=datetime.now().isoformat()
             )
@@ -248,7 +263,7 @@ class MultimodalProcessor:
                         "content": [
                             {
                                 "type": "text",
-                                "text": "Analiza esta imagen y describe qué productos, especificaciones técnicas, o información relevante para una empresa de construcción (BMC Uruguay) puedes identificar. Si es una foto de un producto, describe sus características. Si es un documento técnico, extrae la información clave."
+                                "text": self.IMAGE_ANALYSIS_PROMPT
                             },
                             {
                                 "type": "image_url",
