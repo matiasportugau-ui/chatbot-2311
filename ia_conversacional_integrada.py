@@ -105,7 +105,38 @@ class IAConversacionalIntegrada:
         self.patrones_respuesta = {}
         self.entidades_reconocidas = {}
         
-        # Initialize Knowledge Manager and Training System
+        # Initialize Multimodal Processor
+        try:
+            from multimodal_processor import MultimodalProcessor
+            self.multimodal_processor = MultimodalProcessor()
+            print("✅ Multimodal Processor initialized")
+        except Exception as e:
+            self.multimodal_processor = None
+            print(f"⚠️ Multimodal processor not available: {e}")
+        
+        # Initialize Dynamic Knowledge Manager
+        try:
+            from dynamic_knowledge_manager import DynamicKnowledgeManager
+            from pathlib import Path
+            self.dynamic_knowledge_manager = DynamicKnowledgeManager(Path(__file__).parent)
+            print("✅ Dynamic Knowledge Manager initialized")
+        except Exception as e:
+            self.dynamic_knowledge_manager = None
+            print(f"⚠️ Dynamic knowledge manager not available: {e}")
+        
+        # Initialize Human-in-the-Loop Trainer
+        try:
+            from human_in_loop_trainer import HumanInLoopTrainer
+            if self.dynamic_knowledge_manager:
+                self.hitl_trainer = HumanInLoopTrainer(self.dynamic_knowledge_manager)
+                print("✅ Human-in-the-Loop Trainer initialized")
+            else:
+                self.hitl_trainer = None
+        except Exception as e:
+            self.hitl_trainer = None
+            print(f"⚠️ Human-in-the-Loop trainer not available: {e}")
+        
+        # Initialize Knowledge Manager and Training System (legacy)
         self.knowledge_manager = None
         self.training_system = None
         if KNOWLEDGE_SYSTEM_AVAILABLE:
@@ -386,6 +417,134 @@ Tu trabajo es ayudar a los clientes con:
                 print(f"Warning: Failed to save context to shared service: {e}")
 
         return respuesta
+
+    def procesar_mensaje_multimodal(
+        self,
+        mensaje: Any,
+        cliente_id: str,
+        sesion_id: str = None,
+        mensaje_tipo: str = "text",
+        metadata: Optional[dict[str, Any]] = None
+    ) -> RespuestaIA:
+        """
+        Procesa un mensaje multimodal (texto, audio, imagen, documento) con soporte de entrenamiento
+        
+        Args:
+            mensaje: Puede ser texto, bytes (audio/imagen), o ruta de archivo
+            cliente_id: ID del cliente/agente
+            sesion_id: ID de sesión
+            mensaje_tipo: "text", "audio", "image", "document", o "auto"
+            metadata: Metadata adicional
+        
+        Returns:
+            RespuestaIA con respuesta generada
+        """
+        metadata = metadata or {}
+        
+        # Check if this is a training command or feedback
+        if self.hitl_trainer and mensaje_tipo == "text":
+            # Get previous response from context
+            previous_response = self._get_previous_response(cliente_id, sesion_id)
+            
+            # Process with training system
+            training_result = self.hitl_trainer.process_message(
+                agent_id=cliente_id,
+                message=mensaje,
+                message_type=mensaje_tipo,
+                previous_response=previous_response
+            )
+            
+            # If it's a training-related action, return immediately
+            if training_result["action"] in [
+                "training_activated",
+                "training_deactivated",
+                "correction_received",
+                "correction_applied",
+                "correction_failed",
+                "request_correction",
+                "no_pending_correction"
+            ]:
+                return RespuestaIA(
+                    mensaje=training_result["response"],
+                    tipo_respuesta="training",
+                    acciones_sugeridas=[],
+                    confianza=1.0,
+                    fuentes_conocimiento=["training_system"],
+                    personalizacion=training_result["metadata"],
+                    timestamp=datetime.datetime.now()
+                )
+        
+        # Process multimodal input
+        if self.multimodal_processor and mensaje_tipo != "text":
+            try:
+                multimodal_input = self.multimodal_processor.process_input(mensaje, mensaje_tipo)
+                # Use processed text content
+                texto_procesado = multimodal_input.content
+                metadata.update({
+                    "multimodal_type": multimodal_input.input_type,
+                    "multimodal_confidence": multimodal_input.confidence,
+                    "multimodal_metadata": multimodal_input.metadata
+                })
+            except Exception as e:
+                print(f"⚠️ Error processing multimodal input: {e}")
+                texto_procesado = str(mensaje)
+        else:
+            texto_procesado = mensaje
+        
+        # Query dynamic knowledge if available
+        enhanced_context = {}
+        if self.dynamic_knowledge_manager:
+            try:
+                from dynamic_knowledge_manager import KnowledgeQuery
+                query = KnowledgeQuery(
+                    query_text=texto_procesado,
+                    query_type="general",
+                    context=metadata
+                )
+                kb_result = self.dynamic_knowledge_manager.query_knowledge(query)
+                enhanced_context = {
+                    "knowledge_source": kb_result.source,
+                    "knowledge_priority": kb_result.priority_level,
+                    "knowledge_confidence": kb_result.confidence,
+                    "knowledge_content": kb_result.content if kb_result.confidence > 0.5 else None
+                }
+            except Exception as e:
+                print(f"⚠️ Error querying dynamic knowledge: {e}")
+        
+        # Process message normally
+        respuesta = self.procesar_mensaje(texto_procesado, cliente_id, sesion_id)
+        
+        # Calculate confidence and check doubt gate
+        if self.hitl_trainer:
+            confidence = self.hitl_trainer.calculate_confidence_score(
+                texto_procesado,
+                respuesta.mensaje,
+                enhanced_context
+            )
+            
+            # Update confidence
+            respuesta.confianza = min(confidence, respuesta.confianza)
+            
+            # Check doubt gate
+            if self.hitl_trainer.should_trigger_doubt_gate(confidence) and self.hitl_trainer.is_training_mode(cliente_id):
+                respuesta.mensaje = f"⚠️ Verificando con mi base de entrenamiento...\n\n{respuesta.mensaje}\n\n¿Esta información es correcta? Si no lo es, indícamelo con ❌ y dime cuál es la respuesta correcta."
+        
+        # Add multimodal metadata to response
+        if metadata:
+            respuesta.personalizacion.update(metadata)
+        
+        return respuesta
+    
+    def _get_previous_response(self, cliente_id: str, sesion_id: str) -> Optional[str]:
+        """Get the previous bot response from conversation context"""
+        clave_contexto = f"{cliente_id}_{sesion_id}"
+        if clave_contexto in self.conversaciones_activas:
+            contexto = self.conversaciones_activas[clave_contexto]
+            # Get last assistant message
+            for mensaje in reversed(contexto.mensajes_intercambiados):
+                if mensaje.get("tipo") == "asistente":
+                    return mensaje.get("mensaje")
+        return None
 
     def _obtener_contexto_conversacion(
         self, cliente_id: str, sesion_id: str
