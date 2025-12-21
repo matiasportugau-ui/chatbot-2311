@@ -4,9 +4,17 @@ import { getSharedContextService } from '@/lib/shared-context-service'
 import { NextRequest, NextResponse } from 'next/server'
 import { OpenAI } from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization of OpenAI client
+let openai: OpenAI | null = null
+
+function getOpenAIClient() {
+  if (!openai && process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  }
+  return openai
+}
 
 // Use shared context service (with in-memory fallback)
 const sharedService = getSharedContextService()
@@ -242,12 +250,31 @@ async function compressContext(session_id: string) {
 
   // Generar resumen usando OpenAI
   try {
+    const client = getOpenAIClient()
+    if (!client) {
+      // If OpenAI is not configured, use a simple fallback
+      const recentMessages = history.slice(-5)
+      const summary = 'Context compressed (OpenAI not configured)'
+      session.context_summary = summary
+      session.token_count = Math.ceil(summary.length / 4) + 100
+      session.last_activity = new Date().toISOString()
+      messageHistory.set(session_id, recentMessages)
+      sessions.set(session_id, session)
+      return NextResponse.json({
+        action: 'context_compressed',
+        session_id,
+        summary,
+        new_token_count: session.token_count,
+        success: true,
+      })
+    }
+
     const recentMessages = history.slice(-5) // Últimos 5 mensajes
     const contextText = recentMessages
       .map(msg => `${msg.message_type}: ${msg.content}`)
       .join('\n')
 
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
