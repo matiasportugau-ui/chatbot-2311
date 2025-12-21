@@ -376,7 +376,7 @@ async def log_requests(
 @app.get("/health")
 @app.get("/api/health")
 @rate_limit("30/minute")
-async def health_check():
+async def health_check(request: Request):
     """Health check endpoint with dependency checks"""
     health_data = {
         "status": "healthy",
@@ -447,7 +447,7 @@ async def health_check():
 
 @app.get("/api/debug/request/{request_id}")
 @rate_limit("20/minute")
-async def get_request_debug(request_id: str):
+async def get_request_debug(request: Request, request_id: str):
     """
     Retrieve request details by ID for debugging.
 
@@ -487,7 +487,7 @@ async def get_request_debug(request_id: str):
 
 @app.get("/api/monitoring/rate-limits")
 @rate_limit("10/minute")
-async def get_rate_limits():
+async def get_rate_limits(request: Request):
     """
     Get current rate limit status for all providers.
 
@@ -775,7 +775,7 @@ async def login(username: str, password: str):
 
 @app.get("/conversations")
 @rate_limit("20/minute")
-async def get_conversations(limit: int = 50) -> dict[str, Any]:
+async def get_conversations(request: Request, limit: int = 50) -> dict[str, Any]:
     """Obtiene conversaciones recientes desde MongoDB (si está disponible)"""
     try:
         if MONGODB_SERVICE_AVAILABLE:

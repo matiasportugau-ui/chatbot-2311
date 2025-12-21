@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created_at": "2025-12-21T08:30:00Z",
+    "last_updated": "2025-12-21T08:32:03.372198",
+    "description": "Dynamic knowledge base with agent corrections - Priority Level 1",
+    "total_corrections": 2,
+    "total_conflicts": 0
+  },
+  "corrections": {
+    "products": {},
+    "prices": {
+      "isodec_100mm": {
+        "product": "Isodec",
+        "thickness": "100mm",
+        "price_per_m2": 1500.0,
+        "currency": "UYU",
+        "keywords": [
+          "isodec",
+          "precio",
+          "100mm"
+        ],
+        "last_updated": "2025-12-21T08:31:56.162586",
+        "source_agent": "agent_001"
+      }
+    },
+    "technical_specs": {},
+    "procedures": {},
+    "responses": {
+      "agent_001_1766305923.372171": {
+        "original_response": "El precio del Isodec es 1200 UYU por m²",
+        "correction": "El precio del Isodec 100mm es 1500 UYU por m²",
+        "parsed_data": {
+          "type": "general",
+          "content": "El precio del Isodec 100mm es 1500 UYU por m²",
+          "summary": "El precio del Isodec 100mm es 1500 UYU por m²"
+        },
+        "agent_id": "agent_001",
+        "timestamp": "2025-12-21T08:32:03.371748",
+        "keywords": [
+          "precio",
+          "isodec",
+          "100mm",
+          "1500"
+        ],
+        "last_updated": "2025-12-21T08:32:03.372193",
+        "source_agent": "agent_001"
+      }
+    }
+  },
+  "conflicts": [],
+  "learning_history": [
+    {
+      "timestamp": "2025-12-21T08:31:56.162601",
+      "action": "correction_added",
+      "correction_type": "prices",
+      "correction_id": "isodec_100mm",
+      "source_agent": "agent_001"
+    },
+    {
+      "timestamp": "2025-12-21T08:32:03.372202",
+      "action": "correction_added",
+      "correction_type": "responses",
+      "correction_id": "agent_001_1766305923.372171",
+      "source_agent": "agent_001"
+    }
+  ]
+}
