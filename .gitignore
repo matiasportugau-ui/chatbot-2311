@@ -85,6 +85,7 @@ node_modules/
 out/
 build/
 .env.local
+tsconfig.tsbuildinfo
 
 # Vercel
 .vercel/
