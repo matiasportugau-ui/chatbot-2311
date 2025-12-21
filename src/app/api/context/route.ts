@@ -4,9 +4,16 @@ import { getSharedContextService } from '@/lib/shared-context-service'
 import { NextRequest, NextResponse } from 'next/server'
 import { OpenAI } from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization of OpenAI client
+let openai: OpenAI | null = null
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || '',
+    })
+  }
+  return openai
+}
 
 // Use shared context service (with in-memory fallback)
 const sharedService = getSharedContextService()
@@ -247,7 +254,7 @@ async function compressContext(session_id: string) {
       .map(msg => `${msg.message_type}: ${msg.content}`)
       .join('\n')
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
