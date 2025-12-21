@@ -850,6 +850,14 @@ class BaseConocimientoDinamica:
             return valor
         if isinstance(valor, str):
             valor = valor.replace("Z", "")
+            # Handle ISO format with timezone
+            if isinstance(valor, str) and '+' in valor:
+                try:
+                    from datetime import datetime as dt
+                    return dt.fromisoformat(valor.replace('Z', '+00:00'))
+                except Exception:
+                    pass
+            
             formatos = (
                 "%Y-%m-%dT%H:%M:%S.%f",
                 "%Y-%m-%d %H:%M:%S.%f",
