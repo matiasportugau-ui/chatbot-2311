@@ -20,6 +20,16 @@ from human_in_loop_trainer import HumanInTheLoopTrainer, WhatsAppHITLIntegration
 from benchmark_system import BenchmarkSystem
 
 
+def cleanup_test_files(*files):
+    """Helper function to cleanup test files"""
+    for file in files:
+        if file and file.exists():
+            try:
+                file.unlink()
+            except Exception as e:
+                print(f"⚠️  Could not delete {file}: {e}")
+
+
 def test_multimodal_processor():
     """Test del procesador multimodal"""
     print("\n🧪 Test 1: Multimodal Processor")
@@ -88,11 +98,8 @@ def test_dynamic_knowledge_layer():
     print(f"  - Por fuente: {stats['by_source']}")
     print(f"  - Conflictos: {stats['total_conflicts']}")
     
-    # Cleanup
-    if dkl.dynamic_file.exists():
-        dkl.dynamic_file.unlink()
-    if dkl.conflicts_file.exists():
-        dkl.conflicts_file.unlink()
+    # Cleanup using helper
+    cleanup_test_files(dkl.dynamic_file, dkl.conflicts_file)
     
     return True
 
@@ -146,11 +153,8 @@ def test_human_in_loop_trainer():
     print(f"  - Por tipo: {stats['by_type']}")
     print(f"  - Umbral de duda: {stats['doubt_threshold']}")
     
-    # Cleanup
-    if dkl.dynamic_file.exists():
-        dkl.dynamic_file.unlink()
-    if dkl.conflicts_file.exists():
-        dkl.conflicts_file.unlink()
+    # Cleanup using helper
+    cleanup_test_files(dkl.dynamic_file, dkl.conflicts_file)
     
     return True
 
@@ -193,11 +197,8 @@ def test_whatsapp_integration():
     print(f"\n📊 Mensaje de confirmación:")
     print(f"  {response2['message']}")
     
-    # Cleanup
-    if dkl.dynamic_file.exists():
-        dkl.dynamic_file.unlink()
-    if dkl.conflicts_file.exists():
-        dkl.conflicts_file.unlink()
+    # Cleanup using helper
+    cleanup_test_files(dkl.dynamic_file, dkl.conflicts_file)
     
     return True
 
@@ -258,11 +259,8 @@ def test_benchmark_system():
     for insight in report['summary']['key_insights']:
         print(f"  {insight}")
     
-    # Cleanup
-    if benchmark.metrics_file.exists():
-        benchmark.metrics_file.unlink()
-    if benchmark.history_file.exists():
-        benchmark.history_file.unlink()
+    # Cleanup using helper
+    cleanup_test_files(benchmark.metrics_file, benchmark.history_file)
     
     return True
 
@@ -329,11 +327,9 @@ def test_full_integration():
     for insight in report['summary']['key_insights']:
         print(f"  {insight}")
     
-    # Cleanup
-    for file in [dkl.dynamic_file, dkl.conflicts_file, 
-                benchmark.metrics_file, benchmark.history_file]:
-        if file.exists():
-            file.unlink()
+    # Cleanup using helper
+    cleanup_test_files(dkl.dynamic_file, dkl.conflicts_file, 
+                      benchmark.metrics_file, benchmark.history_file)
     
     print(f"\n✅ Integración completa exitosa!")
     return True

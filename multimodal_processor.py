@@ -146,6 +146,7 @@ class MultimodalProcessor:
         
         try:
             # Obtener ruta del archivo
+            audio_path = None
             if isinstance(audio_data, bytes):
                 # Guardar bytes temporalmente
                 import tempfile
@@ -155,31 +156,35 @@ class MultimodalProcessor:
             else:
                 audio_path = str(audio_data)
             
-            # Transcribir con Whisper
-            with open(audio_path, 'rb') as audio_file:
-                transcription = self.openai_client.audio.transcriptions.create(
-                    model="whisper-1",
-                    file=audio_file,
-                    language="es"
+            try:
+                # Transcribir con Whisper
+                with open(audio_path, 'rb') as audio_file:
+                    transcription = self.openai_client.audio.transcriptions.create(
+                        model="whisper-1",
+                        file=audio_file,
+                        language="es"
+                    )
+                
+                notes.append("Transcripción completada exitosamente")
+                
+                return MultimodalInput(
+                    input_type='audio',
+                    content=transcription.text,
+                    metadata={
+                        'transcription_model': 'whisper-1',
+                        'language': 'es'
+                    },
+                    original_file=str(audio_data) if not isinstance(audio_data, bytes) else None,
+                    confidence=0.9,
+                    processing_notes=notes
                 )
-            
-            # Limpiar archivo temporal si se creó
-            if isinstance(audio_data, bytes):
-                os.unlink(audio_path)
-            
-            notes.append("Transcripción completada exitosamente")
-            
-            return MultimodalInput(
-                input_type='audio',
-                content=transcription.text,
-                metadata={
-                    'transcription_model': 'whisper-1',
-                    'language': 'es'
-                },
-                original_file=str(audio_data) if not isinstance(audio_data, bytes) else None,
-                confidence=0.9,
-                processing_notes=notes
-            )
+            finally:
+                # Limpiar archivo temporal si se creó
+                if isinstance(audio_data, bytes) and audio_path and os.path.exists(audio_path):
+                    try:
+                        os.unlink(audio_path)
+                    except Exception as e:
+                        notes.append(f"No se pudo eliminar archivo temporal: {str(e)}")
         
         except Exception as e:
             notes.append(f"Error en transcripción: {str(e)}")
