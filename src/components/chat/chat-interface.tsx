@@ -149,7 +149,7 @@ export function ChatInterface({ userPhone = '+59891234567', className }: ChatInt
         console.error('Failed to restore session:', e)
       }
     }
-  }, [])
+  }, [setMessages])
 
   const handleNewChat = () => {
     setMessages([])
