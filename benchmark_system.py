@@ -232,6 +232,9 @@ class BenchmarkSystem:
         if metrics is None:
             metrics = self.calculate_metrics()
         
+        # Crear directorio si no existe
+        self.history_file.parent.mkdir(parents=True, exist_ok=True)
+        
         # Agregar al historial
         self.history.append(metrics)
         

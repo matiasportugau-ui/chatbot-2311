@@ -102,6 +102,9 @@ class DynamicKnowledgeLayer:
     
     def save(self):
         """Guarda conocimiento dinámico y conflictos"""
+        # Crear directorio si no existe
+        self.dynamic_file.parent.mkdir(parents=True, exist_ok=True)
+        
         # Guardar conocimiento dinámico
         try:
             data = {k: asdict(v) for k, v in self.dynamic_knowledge.items()}

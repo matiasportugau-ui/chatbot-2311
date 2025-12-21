@@ -362,21 +362,25 @@ class WhatsAppHITLIntegration:
         Returns:
             Respuesta para enviar al agente
         """
-        # Verificar si hay sesión de aprendizaje activa
-        if agent_id in self.active_learning_sessions:
+        # Verificar si hay sesión de aprendizaje activa con original_response
+        if agent_id in self.active_learning_sessions and 'original_response' in self.active_learning_sessions[agent_id]:
             return self._handle_learning_session(agent_id, message, message_type)
         
         # Detectar feedback de rechazo
         feedback_type = self.hitl.detect_feedback(message, message_type)
         
         if feedback_type:
+            # Obtener la última respuesta guardada
+            last_response = ''
+            if agent_id in self.active_learning_sessions:
+                last_response = self.active_learning_sessions[agent_id].get('last_response', '')
+            
             # Iniciar sesión de aprendizaje
             session = {
                 'started_at': datetime.now().isoformat(),
                 'feedback_type': feedback_type,
-                'original_response': self.active_learning_sessions.get(
-                    agent_id, {}
-                ).get('last_response', '')
+                'original_response': last_response,
+                'last_response': last_response
             }
             self.active_learning_sessions[agent_id] = session
             
