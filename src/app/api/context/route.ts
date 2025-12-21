@@ -4,6 +4,10 @@ import { getSharedContextService } from '@/lib/shared-context-service'
 import { NextRequest, NextResponse } from 'next/server'
 import { OpenAI } from 'openai'
 
+// Token estimation constants
+const CHARS_PER_TOKEN = 4
+const SUMMARY_TOKEN_OVERHEAD = 100
+
 // Lazy initialization of OpenAI client
 let openai: OpenAI | null = null
 
@@ -159,7 +163,7 @@ async function addMessage(
   }
 
   // Estimar tokens (aproximación simple)
-  const token_count = Math.ceil(message.length / 4)
+  const token_count = Math.ceil(message.length / CHARS_PER_TOKEN)
 
   const messageData = {
     message_type,
@@ -256,7 +260,7 @@ async function compressContext(session_id: string) {
       const recentMessages = history.slice(-5)
       const summary = 'Context compressed (OpenAI not configured)'
       session.context_summary = summary
-      session.token_count = Math.ceil(summary.length / 4) + 100
+      session.token_count = Math.ceil(summary.length / CHARS_PER_TOKEN) + SUMMARY_TOKEN_OVERHEAD
       session.last_activity = new Date().toISOString()
       messageHistory.set(session_id, recentMessages)
       sessions.set(session_id, session)
@@ -296,7 +300,7 @@ async function compressContext(session_id: string) {
 
     // Actualizar sesión con resumen
     session.context_summary = summary
-    session.token_count = Math.ceil(summary.length / 4) + 100 // Resumen + overhead
+    session.token_count = Math.ceil(summary.length / CHARS_PER_TOKEN) + SUMMARY_TOKEN_OVERHEAD // Resumen + overhead
     session.last_activity = new Date().toISOString()
 
     // Mantener solo mensajes recientes
