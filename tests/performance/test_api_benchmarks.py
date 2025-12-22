@@ -65,10 +65,10 @@ class TestAPIBenchmarks:
         assert result is not None
 
 
-@pytest.mark.asyncio
 class TestAsyncPerformance:
     """Async performance tests"""
     
+    @pytest.mark.asyncio
     async def test_concurrent_requests(self):
         """Test concurrent request handling"""
         async with httpx.AsyncClient(base_url="http://localhost:8000", timeout=10.0) as client:

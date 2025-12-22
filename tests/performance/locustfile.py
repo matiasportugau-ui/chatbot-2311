@@ -186,5 +186,9 @@ def on_test_stop(environment, **kwargs):
 
 
 if __name__ == "__main__":
-    import os
-    os.system("locust -f locustfile.py --headless -u 10 -r 2 -t 1m --host http://localhost:8000")
+    import subprocess
+    subprocess.run([
+        "locust", "-f", "locustfile.py",
+        "--headless", "-u", "10", "-r", "2",
+        "-t", "1m", "--host", "http://localhost:8000"
+    ], check=False)
