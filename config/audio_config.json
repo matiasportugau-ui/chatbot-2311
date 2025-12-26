@@ -1,0 +1,97 @@
+{
+  "audio_transcription": {
+    "enabled": true,
+    "default_model": "gpt-4o-mini-transcribe",
+    "models": {
+      "whisper-1": {
+        "description": "Legacy Whisper model, supports all response formats",
+        "max_file_size_mb": 25,
+        "supported_formats": ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"],
+        "response_formats": ["json", "text", "srt", "verbose_json", "vtt"],
+        "supports_timestamps": true,
+        "supports_prompts": true,
+        "supports_diarization": false
+      },
+      "gpt-4o-transcribe": {
+        "description": "High quality transcription with GPT-4o",
+        "max_file_size_mb": 25,
+        "supported_formats": ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"],
+        "response_formats": ["json", "text"],
+        "supports_timestamps": false,
+        "supports_prompts": true,
+        "supports_diarization": false
+      },
+      "gpt-4o-mini-transcribe": {
+        "description": "Fast and cost-effective transcription",
+        "max_file_size_mb": 25,
+        "supported_formats": ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"],
+        "response_formats": ["json", "text"],
+        "supports_timestamps": false,
+        "supports_prompts": true,
+        "supports_diarization": false
+      },
+      "gpt-4o-transcribe-diarize": {
+        "description": "Speaker-aware transcription with diarization",
+        "max_file_size_mb": 25,
+        "supported_formats": ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"],
+        "response_formats": ["json", "text", "diarized_json"],
+        "supports_timestamps": true,
+        "supports_prompts": false,
+        "supports_diarization": true,
+        "requires_chunking": true
+      }
+    },
+    "whatsapp": {
+      "enabled": true,
+      "auto_transcribe": true,
+      "auto_reply": true,
+      "reply_prefix": "🎤 Mensaje de voz recibido:",
+      "model_preference": "gpt-4o-mini-transcribe",
+      "include_confidence": false,
+      "cleanup_after_transcription": true,
+      "max_voice_message_size_mb": 16
+    },
+    "processing": {
+      "temperature": 0.0,
+      "language": null,
+      "enable_prompts": true,
+      "default_prompt": "Transcribe el siguiente mensaje de audio en español",
+      "enable_streaming": false,
+      "include_logprobs": false,
+      "chunk_large_files": true
+    },
+    "storage": {
+      "temp_directory": "/tmp/audio_transcription",
+      "cleanup_after_hours": 24,
+      "keep_original_files": false,
+      "save_transcriptions": true,
+      "transcriptions_directory": "data/transcriptions"
+    },
+    "performance": {
+      "max_concurrent_transcriptions": 5,
+      "request_timeout_seconds": 30,
+      "retry_attempts": 3,
+      "retry_delay_seconds": 2
+    },
+    "logging": {
+      "enabled": true,
+      "log_level": "INFO",
+      "log_file": "logs/audio_transcription.log",
+      "log_transcriptions": true,
+      "log_file_sizes": true
+    }
+  },
+  "translation": {
+    "enabled": true,
+    "model": "whisper-1",
+    "target_language": "en",
+    "enable_for_whatsapp": false
+  },
+  "diarization": {
+    "enabled": false,
+    "model": "gpt-4o-transcribe-diarize",
+    "chunking_strategy": "auto",
+    "max_speakers": 4,
+    "known_speakers": {}
+  }
+}

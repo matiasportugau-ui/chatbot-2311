@@ -1,0 +1,71 @@
+{
+  "default": [
+    {
+      "id": "test_001",
+      "name": "Cotización básica Isodec",
+      "description": "Cliente solicita cotización básica para Isodec",
+      "input_query": "Hola, necesito una cotización para panel Isodec de 100mm, 10m x 5m",
+      "expected_output": "precio, espesor correcto, dimensiones correctas, datos faltantes solicitados",
+      "category": "cotizacion",
+      "difficulty": 2,
+      "tags": [
+        "isodec",
+        "cotizacion",
+        "basico"
+      ]
+    },
+    {
+      "id": "test_002",
+      "name": "Consulta de productos",
+      "description": "Cliente pregunta sobre tipos de productos disponibles",
+      "input_query": "¿Qué tipos de aislantes térmicos tienen disponibles?",
+      "expected_output": "menciona Isodec, Poliestireno, Lana de Roca, características breves",
+      "category": "informacion",
+      "difficulty": 1,
+      "tags": [
+        "productos",
+        "informacion"
+      ]
+    },
+    {
+      "id": "test_003",
+      "name": "Objeción de precio",
+      "description": "Cliente encuentra el precio elevado",
+      "input_query": "El precio me parece muy alto, ¿tienen algo más económico?",
+      "expected_output": "justificación de valor, alternativas, beneficios",
+      "category": "objeciones",
+      "difficulty": 3,
+      "tags": [
+        "precio",
+        "objeciones",
+        "negociacion"
+      ]
+    },
+    {
+      "id": "test_004",
+      "name": "Especificaciones técnicas",
+      "description": "Cliente pregunta detalles técnicos específicos",
+      "input_query": "¿Cuál es la conductividad térmica del Isodec de 100mm?",
+      "expected_output": "datos técnicos correctos, explicación clara",
+      "category": "tecnico",
+      "difficulty": 4,
+      "tags": [
+        "tecnico",
+        "especificaciones"
+      ]
+    },
+    {
+      "id": "test_005",
+      "name": "Datos incompletos",
+      "description": "Cliente da información parcial para cotización",
+      "input_query": "Quiero Isodec",
+      "expected_output": "solicita espesor, dimensiones, datos del cliente",
+      "category": "validacion",
+      "difficulty": 2,
+      "tags": [
+        "validacion",
+        "datos_faltantes"
+      ]
+    }
+  ]
+}
