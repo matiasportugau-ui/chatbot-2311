@@ -60,3 +60,15 @@ gspread>=5.0.0
 google-auth>=2.0.0
 google-auth-oauthlib>=1.0.0
 google-auth-httplib2>=0.1.0
+
+# Para Authentication (Massive Integration)
+pyjwt>=2.8.0
+bcrypt>=4.1.0
+passlib>=1.7.4
+
+# Para Vector Database (Massive Integration)
+qdrant-client>=1.7.0
+
+# Para Structured Logging (Massive Integration)
+python-json-logger>=2.0.7
+structlog>=24.1.0
