@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Complete Quote Request Flow",
+    "phone": "+59891234567",
+    "messages": [
+      "Hola, necesito información sobre Isodec",
+      "Quiero cotizar para mi casa",
+      "10 metros por 5 metros",
+      "100mm de espesor",
+      "Blanco",
+      "Perfecto, me parece bien el precio"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Complete flow from greeting to quote acceptance"
+  },
+  {
+    "name": "Quick Quote Request",
+    "phone": "+59898765432",
+    "messages": [
+      "Quiero cotizar Isodec 10x5 100mm blanco"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Single message with all quote details"
+  },
+  {
+    "name": "Quote with Questions",
+    "phone": "+59891111111",
+    "messages": [
+      "Hola",
+      "Necesito cotizar para un proyecto",
+      "¿Qué productos tienen disponibles?",
+      "Me interesa Isodec",
+      "¿Cuál es la diferencia entre 75mm y 100mm?",
+      "Ok, quiero 100mm entonces",
+      "10 metros x 5 metros",
+      "Blanco"
+    ],
+    "expected_type": "cotizacion",
+    "description": "Quote request with product information questions"
+  }
+]
+

@@ -1,0 +1,270 @@
+{
+  "analysis_date": "2025-12-01T18:14:08.057348",
+  "total_databases": 8,
+  "analyses": [
+    {
+      "db_path": "/Users/matias/Desktop/cursor_workspace_backup_20251201_175806/Application_state.vscdb",
+      "analysis_time": "2025-12-01T18:13:43.685852",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Desktop/cursor_workspace_backup_20251201_175806/Application_state.vscdb",
+        "db_size": 618496,
+        "db_mtime": "2025-12-01T17:58:12.155081",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 331,
+          "cursorDiskKV": 0
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 151,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Desktop/cursor_workspace_backup_20251201_175806/globalStorage_state.vscdb",
+      "analysis_time": "2025-12-01T18:13:43.720397",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Desktop/cursor_workspace_backup_20251201_175806/globalStorage_state.vscdb",
+        "db_size": 1116225536,
+        "db_mtime": "2025-12-01T17:58:15.707134",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 2500,
+          "cursorDiskKV": 33048
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 272516,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Library/Application Support/Cursor/User/globalStorage/state.vscdb",
+      "analysis_time": "2025-12-01T18:13:54.944943",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Library/Application Support/Cursor/User/globalStorage/state.vscdb",
+        "db_size": 1121468416,
+        "db_mtime": "2025-12-01T18:13:52.728923",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 2500,
+          "cursorDiskKV": 33197
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 273810,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/aa1552590356d7d80e6784ebaa60fee5/state.vscdb",
+      "analysis_time": "2025-12-01T18:14:08.025553",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/aa1552590356d7d80e6784ebaa60fee5/state.vscdb",
+        "db_size": 704512,
+        "db_mtime": "2025-12-01T18:13:39.700003",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 631,
+          "cursorDiskKV": 0
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 172,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/8fc4f81b40f881dac28c5de0e243b5b9/state.vscdb",
+      "analysis_time": "2025-12-01T18:14:08.041015",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/8fc4f81b40f881dac28c5de0e243b5b9/state.vscdb",
+        "db_size": 65536,
+        "db_mtime": "2025-12-01T16:02:10.625439",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 77,
+          "cursorDiskKV": 0
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 16,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/1764613578709/state.vscdb",
+      "analysis_time": "2025-12-01T18:14:08.043140",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/1764613578709/state.vscdb",
+        "db_size": 40960,
+        "db_mtime": "2025-12-01T15:26:24.529369",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 50,
+          "cursorDiskKV": 0
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 10,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/1764611965641/state.vscdb",
+      "analysis_time": "2025-12-01T18:14:08.045885",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/1764611965641/state.vscdb",
+        "db_size": 65536,
+        "db_mtime": "2025-12-01T14:59:48.519028",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 88,
+          "cursorDiskKV": 0
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 16,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    },
+    {
+      "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/1764595341452/state.vscdb",
+      "analysis_time": "2025-12-01T18:14:08.051077",
+      "wal_files": {
+        "wal_exists": false,
+        "shm_exists": false,
+        "wal_path": null,
+        "shm_path": null
+      },
+      "journal_files": {
+        "journal_exists": false,
+        "journal_path": null
+      },
+      "structure": {
+        "db_path": "/Users/matias/Library/Application Support/Cursor/User/workspaceStorage/1764595341452/state.vscdb",
+        "db_size": 65536,
+        "db_mtime": "2025-12-01T10:23:21.851902",
+        "tables": [
+          "ItemTable",
+          "cursorDiskKV"
+        ],
+        "row_counts": {
+          "ItemTable": 88,
+          "cursorDiskKV": 0
+        },
+        "anomalies": [],
+        "journal_mode": "delete",
+        "integrity_check": "ok",
+        "page_count": 16,
+        "page_size": 4096
+      },
+      "deleted_patterns": []
+    }
+  ]
+}

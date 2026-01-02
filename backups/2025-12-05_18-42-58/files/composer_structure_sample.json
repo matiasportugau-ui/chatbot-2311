@@ -1,0 +1,176 @@
+{
+  "allComposers": [
+    {
+      "type": "head",
+      "composerId": "e88a325c-b2ea-4d86-93da-ef267d88ddb7",
+      "name": "Automate ai agent deployment",
+      "createdAt": 1763172695656,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "totalLinesAdded": 0,
+      "totalLinesRemoved": 0,
+      "isArchived": false,
+      "isDraft": false,
+      "isWorktree": false,
+      "isSpec": false,
+      "isBestOfNSubcomposer": false,
+      "numSubComposers": 0,
+      "createdFromBackgroundAgent": {
+        "bcId": "bc-e93519d7-9d03-4692-adc1-03a2d3ac109d",
+        "importedWithSummary": false,
+        "shouldStreamMessages": false
+      },
+      "referencedPlans": []
+    },
+    {
+      "type": "head",
+      "composerId": "342c5757-85cc-4162-a440-4b8fb8779c21",
+      "createdAt": 1763172603785,
+      "unifiedMode": "chat",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "totalLinesAdded": 0,
+      "totalLinesRemoved": 0,
+      "isArchived": false,
+      "isDraft": false,
+      "isWorktree": false,
+      "isSpec": false,
+      "isBestOfNSubcomposer": false,
+      "numSubComposers": 0,
+      "referencedPlans": []
+    },
+    {
+      "type": "head",
+      "composerId": "e6f4d722-2e8f-424f-b998-e28d3b9a0ab2",
+      "name": "Automate ai agent deployment",
+      "lastUpdatedAt": 1763168821102,
+      "createdAt": 1763168821102,
+      "unifiedMode": "background",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "totalLinesAdded": 0,
+      "totalLinesRemoved": 0,
+      "subtitle": "Read DEPLOYMENT_SUMMARY.md, improve-deployment-summary.plan.md",
+      "hasBlockingPendingActions": false,
+      "isArchived": false,
+      "isDraft": false,
+      "isWorktree": false,
+      "isSpec": false,
+      "isBestOfNSubcomposer": false,
+      "numSubComposers": 0,
+      "createdFromBackgroundAgent": {
+        "bcId": "bc-e93519d7-9d03-4692-adc1-03a2d3ac109d",
+        "shouldStreamMessages": true
+      },
+      "referencedPlans": [
+        {
+          "type": "composer",
+          "composerId": "7dfb4fce-8a6a-4233-b5cb-e16fe250d257"
+        }
+      ]
+    },
+    {
+      "type": "head",
+      "composerId": "9a043c46-988b-4b53-bfe2-2940ef8dd887",
+      "name": "Analyze matiasportugau-ui deployment candidates",
+      "lastUpdatedAt": 1763153745083,
+      "createdAt": 1763153745083,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "totalLinesAdded": 807,
+      "totalLinesRemoved": 2,
+      "filesChangedCount": 2,
+      "subtitle": "EXECUTIVE_SUMMARY.md, NEXT_STEPS_DEPLOYMENT.md, DEPLOYMENT_ANALYSIS.md",
+      "isArchived": false,
+      "isDraft": false,
+      "isWorktree": false,
+      "isSpec": false,
+      "subagentInfo": {
+        "subagentType": 4,
+        "parentComposerId": "ec99aa8f-78ab-42f0-8c57-346f60bddb96",
+        "conversationLengthAtSpawn": 0,
+        "additionalData": {
+          "originalPlan": ""
+        }
+      },
+      "isBestOfNSubcomposer": true,
+      "numSubComposers": 0,
+      "createdFromBackgroundAgent": {
+        "bcId": "bc-20202a0e-ee61-4ae7-bc75-358aaa48a36e",
+        "shouldStreamMessages": true,
+        "importedWithSummary": false
+      },
+      "referencedPlans": []
+    },
+    {
+      "type": "head",
+      "composerId": "6171f96d-e5c6-4ea6-be70-408ae5e91732",
+      "name": "Analyze matiasportugau-ui deployment candidates",
+      "lastUpdatedAt": 1763153745050,
+      "createdAt": 1763153745050,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "totalLinesAdded": 1071,
+      "totalLinesRemoved": 614,
+      "filesChangedCount": 5,
+      "subtitle": "DEPLOYMENT_STATUS.md, n8n-client.ts, knowledge-base.ts, integrated-system-metrics.tsx, page.tsx",
+      "isArchived": false,
+      "isDraft": false,
+      "isWorktree": false,
+      "isSpec": false,
+      "subagentInfo": {
+        "subagentType": 4,
+        "parentComposerId": "ec99aa8f-78ab-42f0-8c57-346f60bddb96",
+        "conversationLengthAtSpawn": 0,
+        "additionalData": {
+          "originalPlan": ""
+        }
+      },
+      "isBestOfNSubcomposer": true,
+      "numSubComposers": 0,
+      "createdFromBackgroundAgent": {
+        "bcId": "bc-75084723-c822-42c1-a0d6-bb185b593fe4",
+        "shouldStreamMessages": true,
+        "importedWithSummary": false
+      },
+      "referencedPlans": []
+    },
+    {
+      "type": "head",
+      "composerId": "ec99aa8f-78ab-42f0-8c57-346f60bddb96",
+      "name": "Analyze matiasportugau-ui deployment candidates",
+      "lastUpdatedAt": 1763153745045,
+      "createdAt": 1763153745045,
+      "unifiedMode": "background",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "totalLinesAdded": 369,
+      "totalLinesRemoved": 1,
+      "filesChangedCount": 1,
+      "subtitle": "NEXT_STEPS_DEPLOYMENT.md, DEPLOYMENT_ANALYSIS.md",
+      "isArchived": false,
+      "isDraft": false,
+      "isWorktree": false,
+      "isSpec": false,
+      "isBestOfNSubcomposer": false,
+      "numSubComposers": 2,
+      "createdFromBackgroundAgent": {
+        "bcId": "bc-d44a24b6-4bdb-49ff-96b6-a23bae2b6386",
+        "shouldStreamMessages": true
+      },
+      "referencedPlans": [],
+      "hasBlockingPendingActions": false
+    }
+  ],
+  "selectedComposerIds": [
+    "e88a325c-b2ea-4d86-93da-ef267d88ddb7"
+  ],
+  "lastFocusedComposerIds": [
+    "e88a325c-b2ea-4d86-93da-ef267d88ddb7"
+  ],
+  "hasMigratedComposerData": true,
+  "hasMigratedMultipleComposers": true
+}

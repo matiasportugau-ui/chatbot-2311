@@ -1,0 +1,49 @@
+{
+  "session_id": "sim_20251109233146_e3e7175c",
+  "phone": "+59891234567",
+  "started_at": "2025-11-09T23:31:46.375689",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:31:46.375689",
+      "user_message": "Quiero cotizar producto XYZ",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233146_e3e7175c",
+        "timestamp": "2025-11-09T23:31:46.374672"
+      },
+      "session_id": "sim_20251109233146_e3e7175c"
+    },
+    {
+      "timestamp": "2025-11-09T23:32:17.667796",
+      "user_message": "No existe ese producto",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233146_e3e7175c",
+        "timestamp": "2025-11-09T23:32:17.664426"
+      },
+      "session_id": "sim_20251109233146_e3e7175c"
+    },
+    {
+      "timestamp": "2025-11-09T23:32:48.979141",
+      "user_message": "Ok, entonces Isodec",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233146_e3e7175c",
+        "timestamp": "2025-11-09T23:32:48.977799"
+      },
+      "session_id": "sim_20251109233146_e3e7175c"
+    }
+  ]
+}

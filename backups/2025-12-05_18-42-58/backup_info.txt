@@ -1,0 +1,8 @@
+Backup Information
+==================================================
+Timestamp: 2025-12-05_18-42-58
+Workspace: /Users/matias/chatbot2511/chatbot-2311
+Files Copied: 11968
+Files Skipped: 0
+Total Size: 969.76 MB
+Status: success

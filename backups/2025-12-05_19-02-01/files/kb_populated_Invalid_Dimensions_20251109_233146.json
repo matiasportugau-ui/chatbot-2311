@@ -1,0 +1,63 @@
+{
+  "session_id": "sim_20251109232941_e2cff851",
+  "phone": "+59891234567",
+  "started_at": "2025-11-09T23:29:41.376030",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:29:41.376030",
+      "user_message": "Quiero cotizar Isodec",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232941_e2cff851",
+        "timestamp": "2025-11-09T23:29:41.370446"
+      },
+      "session_id": "sim_20251109232941_e2cff851"
+    },
+    {
+      "timestamp": "2025-11-09T23:30:12.609649",
+      "user_message": "0 metros x 0 metros",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232941_e2cff851",
+        "timestamp": "2025-11-09T23:30:12.608395"
+      },
+      "session_id": "sim_20251109232941_e2cff851"
+    },
+    {
+      "timestamp": "2025-11-09T23:30:43.774948",
+      "user_message": "10x5 metros",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232941_e2cff851",
+        "timestamp": "2025-11-09T23:30:43.773081"
+      },
+      "session_id": "sim_20251109232941_e2cff851"
+    },
+    {
+      "timestamp": "2025-11-09T23:31:15.222424",
+      "user_message": "100mm",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232941_e2cff851",
+        "timestamp": "2025-11-09T23:31:15.186303"
+      },
+      "session_id": "sim_20251109232941_e2cff851"
+    }
+  ]
+}

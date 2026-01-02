@@ -1,0 +1,173 @@
+{
+  "backups": [
+    {
+      "timestamp": "2025-12-05_04-14-51",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_04-14-51",
+      "file_count": 11832,
+      "total_size": 1007618250,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_04-32-28",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_04-32-28",
+      "file_count": 11838,
+      "total_size": 1007666177,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_04-51-42",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_04-51-42",
+      "file_count": 11839,
+      "total_size": 1007677926,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_05-10-56",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_05-10-56",
+      "file_count": 11840,
+      "total_size": 1007689987,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_05-31-01",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_05-31-01",
+      "file_count": 11878,
+      "total_size": 1008136477,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_05-49-06",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_05-49-06",
+      "file_count": 11881,
+      "total_size": 1008169843,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_06-08-14",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_06-08-14",
+      "file_count": 11881,
+      "total_size": 1008169843,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_08-04-38",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_08-04-38",
+      "file_count": 11883,
+      "total_size": 1008274948,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_10-41-51",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_10-41-51",
+      "file_count": 11888,
+      "total_size": 1009718545,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_10-57-14",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_10-57-14",
+      "file_count": 11895,
+      "total_size": 1011261508,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_11-13-50",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_11-13-50",
+      "file_count": 11895,
+      "total_size": 1011261095,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_11-29-15",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_11-29-15",
+      "file_count": 11899,
+      "total_size": 1011300761,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_11-45-21",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_11-45-21",
+      "file_count": 11906,
+      "total_size": 1011392876,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_12-00-52",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_12-00-52",
+      "file_count": 11906,
+      "total_size": 1011392876,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_12-16-14",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_12-16-14",
+      "file_count": 11906,
+      "total_size": 1011392876,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_12-31-36",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_12-31-36",
+      "file_count": 11906,
+      "total_size": 1011392876,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_12-47-03",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_12-47-03",
+      "file_count": 11931,
+      "total_size": 1011409033,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_13-07-06",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_13-07-06",
+      "file_count": 11933,
+      "total_size": 1011450785,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_13-22-51",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_13-22-51",
+      "file_count": 11940,
+      "total_size": 1011545836,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_17-38-49",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_17-38-49",
+      "file_count": 11949,
+      "total_size": 1012117383,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_17-55-04",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_17-55-04",
+      "file_count": 11953,
+      "total_size": 1016796602,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_18-10-42",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_18-10-42",
+      "file_count": 11958,
+      "total_size": 1016833866,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_18-26-12",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_18-26-12",
+      "file_count": 11961,
+      "total_size": 1016853457,
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-12-05_18-42-58",
+      "backup_path": "/Users/matias/chatbot2511/chatbot-2311/backups/2025-12-05_18-42-58",
+      "file_count": 11968,
+      "total_size": 1016867928,
+      "status": "success"
+    }
+  ],
+  "last_backup": "2025-12-05_18-42-58"
+}

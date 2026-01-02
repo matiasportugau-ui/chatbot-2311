@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Isodec Information",
+    "phone": "+59891234567",
+    "messages": [
+      "Hola",
+      "¿Qué es Isodec?",
+      "¿Qué espesores tienen?",
+      "¿Cuál es el precio?",
+      "Gracias por la información"
+    ],
+    "expected_type": "informacion",
+    "description": "Product information request for Isodec"
+  },
+  {
+    "name": "Product Comparison",
+    "phone": "+59898765432",
+    "messages": [
+      "Necesito comparar Isodec y Poliestireno",
+      "¿Cuál es mejor para aislamiento térmico?",
+      "¿Y para precio?",
+      "Perfecto, gracias"
+    ],
+    "expected_type": "informacion",
+    "description": "Comparison between different products"
+  },
+  {
+    "name": "Lana de Roca Info",
+    "phone": "+59891111111",
+    "messages": [
+      "Información sobre lana de roca",
+      "¿Es resistente al fuego?",
+      "¿Qué espesores tienen?",
+      "¿Cuál es el precio por m²?"
+    ],
+    "expected_type": "informacion",
+    "description": "Information request about Lana de Roca"
+  }
+]
+

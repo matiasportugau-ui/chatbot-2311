@@ -1,0 +1,3 @@
+stash@{0}: On new-branch: Stashing changes before checkout PR 29
+stash@{1}: On consolidate/workspace-into-main-20251129: Stash uncommitted changes before merge
+stash@{2}: WIP on backup-2025-11-27: a20a7e0 Safety save: All modifications as of 2025-11-27

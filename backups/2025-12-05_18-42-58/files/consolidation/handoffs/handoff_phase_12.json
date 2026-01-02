@@ -1,0 +1,428 @@
+{
+  "execution_id": "84f6801d-2b22-4107-acff-d93c189bd48d",
+  "from_phase": 11,
+  "to_phase": 12,
+  "previous_phase_context": {
+    "inherited_from_phase": 10,
+    "previous_context_summary": {
+      "inherited_from_phase": "int",
+      "previous_context_summary": "dict",
+      "execution_completed": "bool",
+      "execution_duration_seconds": "float",
+      "output_count": "int",
+      "outputs": "list"
+    },
+    "execution_completed": true,
+    "execution_duration_seconds": 0.006292,
+    "output_count": 1,
+    "outputs": [
+      "consolidation/observability/monitoring_setup.json"
+    ]
+  },
+  "dependency_contexts": {
+    "0": {
+      "context": {
+        "execution_completed": true,
+        "execution_duration_seconds": 0.280795,
+        "output_count": 7,
+        "outputs": [
+          "consolidation/discovery/repository_analysis.json",
+          "consolidation/discovery/workspace_analysis.json",
+          "consolidation/discovery/bmc_inventory.json",
+          "consolidation/discovery/integrations_status.json",
+          "consolidation/discovery/quotation_assessment.json",
+          "consolidation/discovery/production_gaps.json",
+          "consolidation/discovery/production_baseline.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/discovery/repository_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.966201"
+        },
+        {
+          "path": "consolidation/discovery/workspace_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.981377"
+        },
+        {
+          "path": "consolidation/discovery/bmc_inventory.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.981794"
+        },
+        {
+          "path": "consolidation/discovery/integrations_status.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.985493"
+        },
+        {
+          "path": "consolidation/discovery/quotation_assessment.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.985914"
+        },
+        {
+          "path": "consolidation/discovery/production_gaps.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.986322"
+        },
+        {
+          "path": "consolidation/discovery/production_baseline.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:32.986690"
+        }
+      ],
+      "artifacts": {}
+    },
+    "1": {
+      "context": {
+        "inherited_from_phase": 0,
+        "previous_context_summary": {
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.023607,
+        "output_count": 2,
+        "outputs": [
+          "consolidation/reports/repository_analysis.json",
+          "consolidation/reports/workspace_analysis.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/reports/repository_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.012651"
+        },
+        {
+          "path": "consolidation/reports/workspace_analysis.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.013126"
+        }
+      ],
+      "artifacts": {}
+    },
+    "2": {
+      "context": {
+        "inherited_from_phase": 1,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.014899,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/reports/component_mapping.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/reports/component_mapping.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.031563"
+        }
+      ],
+      "artifacts": {}
+    },
+    "3": {
+      "context": {
+        "inherited_from_phase": 2,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006602,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/merge_strategy.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/merge_strategy.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.045640"
+        }
+      ],
+      "artifacts": {}
+    },
+    "4": {
+      "context": {
+        "inherited_from_phase": 3,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.008839,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/conflict_resolution.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/conflict_resolution.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.059849"
+        }
+      ],
+      "artifacts": {}
+    },
+    "5": {
+      "context": {
+        "inherited_from_phase": 4,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006311,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/testing_results.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/testing_results.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.074375"
+        }
+      ],
+      "artifacts": {}
+    },
+    "6": {
+      "context": {
+        "inherited_from_phase": 5,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.010418,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/documentation.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/documentation.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.090071"
+        }
+      ],
+      "artifacts": {}
+    },
+    "7": {
+      "context": {
+        "inherited_from_phase": 6,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.004205,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/integration_tests.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/integration_tests.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.099676"
+        }
+      ],
+      "artifacts": {}
+    },
+    "8": {
+      "context": {
+        "inherited_from_phase": 7,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006657,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/repository_consolidation/final_validation.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/repository_consolidation/final_validation.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.114166"
+        }
+      ],
+      "artifacts": {}
+    },
+    "9": {
+      "context": {
+        "inherited_from_phase": 8,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.012083,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/security/security_hardening.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/security/security_hardening.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.131140"
+        }
+      ],
+      "artifacts": {}
+    },
+    "10": {
+      "context": {
+        "inherited_from_phase": 9,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.024034,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/infrastructure/iac_config.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/infrastructure/iac_config.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.159233"
+        }
+      ],
+      "artifacts": {}
+    },
+    "11": {
+      "context": {
+        "inherited_from_phase": 10,
+        "previous_context_summary": {
+          "inherited_from_phase": "int",
+          "previous_context_summary": "dict",
+          "execution_completed": "bool",
+          "execution_duration_seconds": "float",
+          "output_count": "int",
+          "outputs": "list"
+        },
+        "execution_completed": true,
+        "execution_duration_seconds": 0.006292,
+        "output_count": 1,
+        "outputs": [
+          "consolidation/observability/monitoring_setup.json"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "consolidation/observability/monitoring_setup.json",
+          "type": "file",
+          "added_at": "2025-12-02T20:19:33.170034"
+        }
+      ],
+      "artifacts": {}
+    }
+  },
+  "shared_artifacts": {},
+  "global_context": {},
+  "state_summary": {
+    "completed_phases": [
+      -8,
+      -7,
+      -6,
+      -5,
+      -4,
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "current_phase": 12,
+    "overall_status": "in_progress",
+    "progress": 150.0
+  },
+  "handoff_timestamp": "2025-12-02T20:19:33.171968",
+  "execution_instructions": {
+    "phase": 12,
+    "agent_type": "PerformanceAgent",
+    "entry_point": "scripts/orchestrator/phase_executors/phase_12_executor.py",
+    "context_file": "consolidation/execution_context.json",
+    "state_file": "consolidation/execution_state.json"
+  },
+  "phase_config": {
+    "name": "Performance & Load Testing",
+    "dependencies": [
+      11
+    ],
+    "timeout": 3600,
+    "agent": "OrchestratorAgent"
+  }
+}

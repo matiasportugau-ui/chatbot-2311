@@ -1,0 +1,161 @@
+{
+  "session_id": "sim_20251109233453_83651724",
+  "phone": "+59891234567",
+  "started_at": "2025-11-09T23:34:53.550162",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:34:53.550162",
+      "user_message": "Hola",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:34:53.544936"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:35:24.711111",
+      "user_message": "Estoy buscando material de aislamiento",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:35:24.708672"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:35:55.821502",
+      "user_message": "Para mi casa nueva",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:35:55.819158"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:36:27.076076",
+      "user_message": "¿Qué me recomiendan?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:36:27.074928"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:36:57.986714",
+      "user_message": "Me interesa Isodec",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:36:57.985426"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:37:28.850098",
+      "user_message": "¿Cuánto cuesta?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:37:28.848945"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:37:59.936557",
+      "user_message": "Ok, quiero cotizar",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:37:59.935575"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:38:31.180191",
+      "user_message": "10 metros x 5 metros",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:38:31.177320"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:39:02.383872",
+      "user_message": "100mm",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:39:02.382754"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:39:33.857017",
+      "user_message": "Blanco",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:39:33.841494"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    },
+    {
+      "timestamp": "2025-11-09T23:40:05.039843",
+      "user_message": "Perfecto, gracias",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109233453_83651724",
+        "timestamp": "2025-11-09T23:40:05.036336"
+      },
+      "session_id": "sim_20251109233453_83651724"
+    }
+  ]
+}

@@ -1,0 +1,802 @@
+[
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:37.984311",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:37.990606",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:46.577923",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:46.765179",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:46.780015",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:46.784024",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:52.899186",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:53.108248",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:53.122958",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:32:53.131942",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:37.791097",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:38.078400",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:38.083975",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:38.089137",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:47.557989",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:47.824510",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:47.832333",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:33:47.838582",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:04.637815",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:07.890884",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:08.090398",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:08.144591",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:37.304172",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:37.499358",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:37.505794",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:34:37.509524",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:35:01.485235",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:35:01.738351",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:35:01.750888",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:35:01.757624",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:38:51.753768",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:39:08.693327",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:39:08.891761",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:39:08.921978",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:48:06.854084",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:48:27.053111",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:48:27.171111",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T02:48:27.190517",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:45:00.975990",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:45:39.507242",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:45:39.862930",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:45:39.871052",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:56:55.355813",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:56:59.176424",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:56:59.198170",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:56:59.209437",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T03:59:44.850732",
+    "message": "Hola",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T04:00:35.096659",
+    "message": "Información sobre Isodec",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T04:00:35.231689",
+    "message": "Quiero cotizar",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  },
+  {
+    "source": "whatsapp",
+    "session_id": "test_sesion",
+    "phone": "test_cliente",
+    "timestamp": "2025-12-05T04:00:35.257621",
+    "message": "¿Qué productos tienen?",
+    "response": "",
+    "response_type": "text",
+    "confidence": 0.0,
+    "intent": "",
+    "entities": {},
+    "metadata": {
+      "source": "context",
+      "original_id": "692dbc2b52752c18d4a05695"
+    }
+  }
+]

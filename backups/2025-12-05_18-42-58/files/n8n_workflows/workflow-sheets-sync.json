@@ -1,0 +1,243 @@
+{
+  "name": "BMC Google Sheets Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": "1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0",
+        "sheetName": "Admin.",
+        "options": {
+          "range": "A:H"
+        }
+      },
+      "id": "read-admin-sheet",
+      "name": "Read Admin Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Procesar cada fila del Google Sheet\nconst rows = $input.all();\nconst processedRows = [];\n\nfor (const row of rows) {\n  const data = row.json;\n  \n  // Saltar header si existe\n  if (data.A === 'Arg' || !data.A) continue;\n  \n  // Procesar cada fila con Python script\n  const processedRow = {\n    action: \"procesar_fila_sheet\",\n    fila: {\n      arg: data.A,\n      estado: data.B,\n      fecha: data.C,\n      cliente: data.D,\n      origen: data.E,\n      telefono: data.F,\n      direccion: data.G,\n      consulta: data.H\n    }\n  };\n  \n  processedRows.push(processedRow);\n}\n\nreturn processedRows.map(row => ({ json: row }));"
+      },
+      "id": "process-rows",
+      "name": "Process Rows",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python3 n8n_integration.py",
+        "options": {
+          "cwd": "/app"
+        }
+      },
+      "id": "execute-python",
+      "name": "Execute Python Script",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "collection": "cotizaciones",
+        "upsertKey": "arg",
+        "document": "={{ $json.data }}"
+      },
+      "id": "update-mongodb",
+      "name": "Update MongoDB",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Generar resumen de sincronización\nconst results = $input.all();\nlet successCount = 0;\nlet errorCount = 0;\nconst errors = [];\n\nfor (const result of results) {\n  if (result.json.success) {\n    successCount++;\n  } else {\n    errorCount++;\n    errors.push(result.json.error);\n  }\n}\n\nconst summary = {\n  timestamp: new Date().toISOString(),\n  total_processed: results.length,\n  successful: successCount,\n  errors: errorCount,\n  error_details: errors\n};\n\nreturn { json: summary };"
+      },
+      "id": "generate-summary",
+      "name": "Generate Summary",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-errors",
+              "leftValue": "={{ $json.errors }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-errors",
+      "name": "Has Errors?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@bmc-construcciones.com",
+        "toEmail": "admin@bmc-construcciones.com",
+        "subject": "BMC Sheets Sync - Errors Detected",
+        "message": "=Se detectaron {{ $json.errors }} errores en la sincronización de Google Sheets:\\n\\n{{ $json.error_details.join('\\n') }}\\n\\nTimestamp: {{ $json.timestamp }}",
+        "options": {}
+      },
+      "id": "send-error-email",
+      "name": "Send Error Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "sync_logs",
+        "document": "={{ $json }}"
+      },
+      "id": "log-sync",
+      "name": "Log Sync",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [2000, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Admin Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Admin Sheet": {
+      "main": [
+        [
+          {
+            "node": "Process Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Rows": {
+      "main": [
+        [
+          {
+            "node": "Execute Python Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Python Script": {
+      "main": [
+        [
+          {
+            "node": "Update MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update MongoDB": {
+      "main": [
+        [
+          {
+            "node": "Generate Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Summary": {
+      "main": [
+        [
+          {
+            "node": "Has Errors?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Errors?": {
+      "main": [
+        [
+          {
+            "node": "Send Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Email": {
+      "main": [
+        [
+          {
+            "node": "Log Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1",
+  "id": "bmc-sheets-sync-workflow",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {}
+}

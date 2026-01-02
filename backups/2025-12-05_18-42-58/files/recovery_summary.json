@@ -1,0 +1,16 @@
+{
+  "recovery_timestamp": "2025-12-01T16:05:02.408939",
+  "project_root": "/Users/matias/chatbot2511/chatbot-2311",
+  "git_recovery": true,
+  "chat_recovered": true,
+  "chat_records_count": 20,
+  "files_restored": [],
+  "files_restored_count": 0,
+  "missing_files": [],
+  "missing_files_count": 0,
+  "final_score": 70,
+  "crash_window": {
+    "start": "2025-12-01T15:00:00",
+    "end": "2025-12-01T18:00:00"
+  }
+}

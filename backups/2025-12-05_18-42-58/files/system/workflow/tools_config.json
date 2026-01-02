@@ -1,0 +1,13 @@
+{
+  "tools_version": "1.0",
+  "created_at": "2025-01-12",
+  "required_tools": {
+    "git": {"command": "git --version", "required": true},
+    "python": {"command": "python3 --version", "required": true, "min_version": "3.8"}
+  },
+  "optional_tools": {
+    "pre-commit": {"command": "pre-commit --version", "required": false},
+    "black": {"command": "black --version", "required": false},
+    "flake8": {"command": "flake8 --version", "required": false}
+  }
+}

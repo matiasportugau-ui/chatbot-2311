@@ -1,0 +1,29 @@
+========================================
+CONFIGURACION DE OPENAI - INSTRUCCIONES
+========================================
+
+Tu API Key de OpenAI ha sido configurada correctamente.
+
+Para que la configuracion persista, crea un archivo .env en la raiz del proyecto
+con el siguiente contenido:
+
+OPENAI_API_KEY=sk-proj-TU-KEY-AQUI
+OPENAI_MODEL=gpt-4o-mini
+
+UBICACION DEL ARCHIVO:
+C:\Users\usuario\Clone repo coti inteligente\bmc-cotizacion-inteligente\.env
+
+ESTADO ACTUAL:
+- Paquete openai: INSTALADO
+- python-dotenv: INSTALADO
+- API Key: CONFIGURADA (en esta sesion)
+- Modelo: gpt-4o-mini
+
+VERIFICACION:
+Ejecuta: python verificar_openai.py
+
+NOTA IMPORTANTE:
+- La API key configurada en variables de entorno solo funciona en la sesion actual
+- Para que funcione permanentemente, crea el archivo .env
+- El sistema cargara automaticamente el archivo .env si existe
+

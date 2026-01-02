@@ -1,0 +1,16 @@
+======================================================================
+REPORTE DE AUDITORÍA DE PRODUCTOS
+======================================================================
+
+PRODUCTOS ENCONTRADOS POR FUENTE:
+  Sistema de cotizaciones: ['isodec']
+  Matriz de precios: ['isodec', 'lana_roca', 'poliestireno']
+  Archivos de conocimiento: ['isodec', 'lana_roca', 'poliestireno']
+  Escenarios de prueba: []
+
+PRODUCTOS BASE INTEGRADOS:
+  - isodec
+  - poliestireno
+  - lana_roca
+
+✅ No se encontraron productos faltantes

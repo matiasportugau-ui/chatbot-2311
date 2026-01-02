@@ -1,0 +1,13 @@
+{
+  "components_found": 7,
+  "components": [
+    "quotation_engine",
+    "whatsapp_integration",
+    "n8n_workflows",
+    "knowledge_base",
+    "background_agents",
+    "dashboard",
+    "api_server"
+  ],
+  "status": "completed"
+}

@@ -1,0 +1,103 @@
+{
+  "pr_number": 35,
+  "analysis_date": "2025-12-02T19:21:05.117786",
+  "metadata": {
+    "error": "Unknown task type: extract_pr_metadata"
+  },
+  "files_changed": {
+    "error": "Unknown task type: analyze_changed_files"
+  },
+  "purpose": {
+    "primary_objective": "",
+    "description": "Create a comprehensive multi-agent deployment plan and instructions for the BMC Uruguay system to facilitate its production launch.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.sv",
+    "objectives": [
+      ""
+    ],
+    "business_domain": "deployment_orchestration",
+    "related_phases": [],
+    "acceptance_criteria": [],
+    "dependencies": [],
+    "related_issues": []
+  },
+  "dependencies": {
+    "new_dependencies": [],
+    "updated_dependencies": [],
+    "removed_dependencies": [],
+    "conflicts": [],
+    "compatibility": {
+      "python": "3.10+",
+      "compatible": true
+    },
+    "breaking_changes": false,
+    "migration_required": false
+  },
+  "impact_assessment": {
+    "architecture": {
+      "affected_components": [],
+      "service_boundaries": "no_change",
+      "api_contracts": "no_change",
+      "data_models": "no_change",
+      "integration_points": {
+        "whatsapp": "no_impact",
+        "n8n": "no_impact",
+        "qdrant": "no_impact",
+        "chatwoot": "no_impact"
+      },
+      "consolidation_alignment": "high",
+      "architectural_changes_required": false
+    },
+    "consolidation_plan": {
+      "primary_phase": null,
+      "affected_phases": [],
+      "phase_updates_required": [],
+      "new_phase_required": false,
+      "conflicts": [],
+      "dependencies": []
+    },
+    "bmc_domain": {
+      "error": "Unknown task type: assess_bmc_domain_impact"
+    },
+    "security": {
+      "security_impact": "low",
+      "production_readiness_impact": "documentation_only",
+      "security_hardening_required": false,
+      "phase_9_updates": []
+    }
+  },
+  "integration_strategy": {
+    "merge_strategy": {
+      "merge_strategy": "direct_merge",
+      "target_branch": "main",
+      "conflicts_expected": false,
+      "conflict_resolution": "not_required",
+      "pre_merge_testing": [
+        "documentation_review"
+      ],
+      "rollback_plan": "git_revert"
+    },
+    "testing_strategy": {
+      "test_updates_required": false,
+      "integration_testing": {
+        "required": false,
+        "scenarios": []
+      },
+      "bmc_testing": {
+        "required": false,
+        "scenarios": []
+      },
+      "regression_testing": {
+        "required": false,
+        "scope": []
+      },
+      "performance_testing": {
+        "required": false
+      },
+      "uat_required": false
+    },
+    "documentation_updates": {
+      "documentation_updates": [],
+      "new_documentation": [],
+      "diagram_updates": false
+    }
+  }
+}

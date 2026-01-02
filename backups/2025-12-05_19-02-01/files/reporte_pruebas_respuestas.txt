@@ -1,0 +1,49 @@
+======================================================================
+REPORTE DE PRUEBAS DE RESPUESTAS
+======================================================================
+Fecha: 2025-11-19T17:01:10.419275
+
+RESUMEN:
+  Total preguntas: 6
+  Preguntas exitosas: 5
+  Preguntas fallidas: 1
+  Satisfacción promedio: 0.72
+  Tasa de éxito: 83.3%
+
+DETALLES POR PREGUNTA:
+  ✅ saludo: Hola
+     Satisfacción: 0.70
+     Cobertura: 33.3%
+     Confianza: 0.90
+     Fuentes: patrones_respuesta
+
+  ✅ informacion_producto: Información sobre Isodec
+     Satisfacción: 1.00
+     Cobertura: 100.0%
+     Confianza: 0.90
+     Fuentes: base_conocimiento
+
+  ✅ cotizacion: Quiero cotizar
+     Satisfacción: 0.70
+     Cobertura: 33.3%
+     Confianza: 0.90
+     Fuentes: sistema_cotizaciones
+
+  ✅ productos: ¿Qué productos tienen?
+     Satisfacción: 0.70
+     Cobertura: 25.0%
+     Confianza: 0.80
+     Fuentes: base_conocimiento
+
+  ✅ precio: ¿Cuánto cuesta Isodec?
+     Satisfacción: 1.00
+     Cobertura: 66.7%
+     Confianza: 0.80
+     Fuentes: base_conocimiento
+
+  ⚠️ especificaciones: ¿Qué espesores tienen disponibles?
+     Satisfacción: 0.20
+     Cobertura: 0.0%
+     Confianza: 0.70
+     Fuentes: general
+     ⚠️  Respuesta genérica

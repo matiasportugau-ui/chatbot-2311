@@ -1,0 +1,34 @@
+# Cursor Rules - Configuración por Defecto del Proyecto
+
+## Auto-Aprobación SIEMPRE Habilitada
+
+- **Auto-approve:** SIEMPRE `true` para todas las fases
+- **Modo de ejecución:** `automated` (sin confirmaciones manuales)
+- **Require manual approval:** `false`
+
+## Configuración del Orchestrator
+
+- **Max retries:** 3
+- **Retry delay:** 60 segundos
+- **Execution mode:** `automated`
+- **Agent handoff enabled:** `true`
+
+## Comportamiento por Defecto
+
+1. **Todas las fases se auto-aprueban automáticamente**
+2. **No se requieren confirmaciones manuales**
+3. **El sistema continúa automáticamente entre fases**
+4. **Los ejecutores siempre usan auto-aprobación**
+
+## Workspace Defaults
+
+- **Workspace path:** `/Users/matias/chatbot2511/chatbot-2311`
+- **Output directory:** `consolidation/`
+- **Logs directory:** `system/logs/`
+
+## Ejecución
+
+- Siempre usar: `python3 start_autonomous_execution.py`
+- Modo: AUTOMÁTICO
+- Auto-aprobación: HABILITADA
+

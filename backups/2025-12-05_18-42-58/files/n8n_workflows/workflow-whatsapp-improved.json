@@ -1,0 +1,433 @@
+{
+  "name": "BMC WhatsApp Business - Improved",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook/whatsapp",
+        "responseMode": "responseNode",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "webhook-whatsapp",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "bmc-whatsapp-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Enhanced WhatsApp message extraction with validation and safe field access\nconst body = $input.item.json;\n\n// Validate webhook structure safely\nif (!body?.entry?.[0]?.changes?.[0]?.value) {\n  return {\n    json: {\n      error: \"Invalid WhatsApp webhook structure\",\n      success: false,\n      errorCode: \"INVALID_WEBHOOK_STRUCTURE\"\n    }\n  };\n}\n\nconst value = body.entry[0].changes[0].value;\n\n// Validate messages array\nif (!value.messages || !Array.isArray(value.messages) || value.messages.length === 0) {\n  return {\n    json: {\n      error: \"No messages found in webhook\",\n      success: false,\n      errorCode: \"NO_MESSAGES\"\n    }\n  };\n}\n\nconst message = value.messages[0];\nconst contact = value.contacts?.[0] || null;\n\n// Validate required message fields\nif (!message.from || !message.text?.body) {\n  return {\n    json: {\n      error: \"Missing required message fields (from or text.body)\",\n      success: false,\n      errorCode: \"MISSING_REQUIRED_FIELDS\"\n    }\n  };\n}\n\n// Generate robust unique ID with timestamp and random suffix\nconst timestamp = Date.now();\nconst phoneSuffix = (message.from || '').slice(-4) || '0000';\nconst randomSuffix = Math.random().toString(36).substring(2, 6);\nconst sessionId = `wa_${timestamp}_${phoneSuffix}_${randomSuffix}`;\n\n// Log for debugging (masked PII)\nconsole.log(`Processing WhatsApp message: session=${sessionId}, phone=***${phoneSuffix}`);\n\nreturn {\n  json: {\n    action: \"procesar_mensaje\",\n    mensaje: message.text.body || '',\n    telefono: message.from || '',\n    sesion_id: sessionId,\n    message_id: message.id || '',\n    timestamp: message.timestamp || timestamp,\n    contact_name: contact?.profile?.name || \"Usuario\",\n    source: \"whatsapp\",\n    success: true\n  }\n};"
+      },
+      "id": "extract-whatsapp",
+      "name": "Extract WhatsApp Message",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "validation-success",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "validate-extraction",
+      "name": "Validate Extraction",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python3 n8n_integration.py",
+        "options": {
+          "cwd": "/app"
+        }
+      },
+      "id": "execute-python",
+      "name": "Execute Python Script",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-quote",
+              "leftValue": "={{ $json.data?.tipo ?? '' }}",
+              "rightValue": "cotizacion",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-quote",
+      "name": "Is Quote?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": "={{ $json.data?.cotizacion?.codigo ?? 'UNKNOWN' }}",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "A": "={{ $json.data?.cotizacion?.codigo ?? 'UNKNOWN' }}",
+            "B": "Pendiente",
+            "C": "={{ new Date().toISOString() }}",
+            "D": "={{ $json.contact_name ?? 'Usuario' }}",
+            "E": "WA",
+            "F": "={{ $json.telefono ?? '' }}",
+            "G": "A confirmar",
+            "H": "={{ $json.mensaje ?? '' }}",
+            "I": "={{ $json.sesion_id ?? '' }}",
+            "J": "={{ $json.message_id ?? '' }}"
+          }
+        },
+        "options": {
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryDelay": 1000
+          }
+        }
+      },
+      "id": "add-to-sheets",
+      "name": "Add to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1340, 100]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Enhanced quote response formatting with safe field access\nconst data = $input.item.json.data || {};\nconst cotizacion = data.cotizacion || {};\n\nlet response = `🏗️ *COTIZACIÓN BMC*\\n\\n`;\nresponse += `📋 *Código:* ${cotizacion.codigo || 'N/A'}\\n`;\nresponse += `🏠 *Producto:* ${cotizacion.producto || 'N/A'}\\n`;\nresponse += `📐 *Descripción:* ${cotizacion.descripcion || 'N/A'}\\n`;\n\n// Safe number formatting\nconst total = cotizacion.total || 0;\nconst precioM2 = cotizacion.precio_m2 || 0;\nresponse += `💰 *Precio Total:* $${total.toLocaleString()}\\n`;\nresponse += `📊 *Precio por m²:* $${precioM2.toLocaleString()}\\n\\n`;\n\n// Safe recommendations handling\nif (cotizacion.recomendaciones && Array.isArray(cotizacion.recomendaciones) && cotizacion.recomendaciones.length > 0) {\n  response += `💡 *Recomendaciones:*\\n`;\n  cotizacion.recomendaciones.forEach(rec => {\n    response += `• ${rec || ''}\\n`;\n  });\n  response += `\\n`;\n}\n\n// Safe next steps handling\nresponse += `📞 *Próximos pasos:*\\n`;\nif (data.proximos_pasos && Array.isArray(data.proximos_pasos) && data.proximos_pasos.length > 0) {\n  data.proximos_pasos.forEach(paso => {\n    response += `• ${paso || ''}\\n`;\n  });\n} else {\n  response += `• Contactar para más detalles\\n`;\n  response += `• Coordinar visita técnica\\n`;\n  response += `• Confirmar instalación\\n`;\n}\n\n// Log response for debugging\nconsole.log(`Generated quote response for session: ${$('Extract WhatsApp Message').item.json.sesion_id}`);\n\nreturn {\n  json: {\n    to: $('Extract WhatsApp Message').item.json.telefono || '',\n    message: response,\n    type: \"text\",\n    session_id: $('Extract WhatsApp Message').item.json.sesion_id\n  }\n};"
+      },
+      "id": "format-quote-response",
+      "name": "Format Quote Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1560, 100]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Enhanced info response formatting with safe field access\nconst data = $input.item.json.data || {};\n\nlet response = `🤖 *BMC Construcciones*\\n\\n`;\nresponse += `${data.mensaje || 'Gracias por contactarnos'}\\n\\n`;\n\n// Safe products handling\nif (data.productos_sugeridos && Array.isArray(data.productos_sugeridos) && data.productos_sugeridos.length > 0) {\n  response += `🏗️ *Productos disponibles:*\\n`;\n  data.productos_sugeridos.forEach(prod => {\n    const nombre = prod?.nombre || 'Producto';\n    const precio = prod?.precio_estimado || 0;\n    response += `• *${nombre}* - $${precio.toLocaleString()}\\n`;\n  });\n  response += `\\n`;\n}\n\n// Safe FAQ handling\nif (data.preguntas_frecuentes && Array.isArray(data.preguntas_frecuentes) && data.preguntas_frecuentes.length > 0) {\n  response += `❓ *Preguntas frecuentes:*\\n`;\n  data.preguntas_frecuentes.forEach(faq => {\n    const pregunta = faq?.pregunta || '';\n    const respuesta = faq?.respuesta || '';\n    response += `• *${pregunta}*\\n  ${respuesta}\\n\\n`;\n  });\n}\n\nresponse += `💬 *¿Necesitas una cotización?* Escribe: \"Cotizar [producto] para [medidas]\"`;\n\n// Log response for debugging\nconsole.log(`Generated info response for session: ${$('Extract WhatsApp Message').item.json.sesion_id}`);\n\nreturn {\n  json: {\n    to: $('Extract WhatsApp Message').item.json.telefono || '',\n    message: response,\n    type: \"text\",\n    session_id: $('Extract WhatsApp Message').item.json.sesion_id\n  }\n};"
+      },
+      "id": "format-info-response",
+      "name": "Format Info Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "requestMethod": "POST",
+        "url": "=https://graph.facebook.com/v18.0/{{ $json.to }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $credentials.whatsappBusinessApi.accessToken }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "messaging_product",
+              "value": "whatsapp"
+            },
+            {
+              "name": "to",
+              "value": "={{ $json.to }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $json.type }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.message }}"
+            }
+          ]
+        },
+        "options": {
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryDelay": 1000
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"WhatsApp message processed successfully\", \"session_id\": $json.session_id, \"timestamp\": new Date().toISOString() } }}"
+      },
+      "id": "webhook-success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"error\": $json.error || \"Unknown error occurred\", \"errorCode\": $json.errorCode || \"UNKNOWN_ERROR\", \"timestamp\": new Date().toISOString() } }}"
+      },
+      "id": "webhook-error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Error handling and logging\nconst error = $input.item.json;\n\n// Log error for debugging\nconsole.error('Workflow error:', {\n  error: error.error || 'Unknown error',\n  errorCode: error.errorCode || 'UNKNOWN',\n  sessionId: error.session_id || 'unknown',\n  timestamp: new Date().toISOString()\n});\n\n// Return structured error response\nreturn {\n  json: {\n    error: error.error || 'An error occurred while processing the request',\n    errorCode: error.errorCode || 'PROCESSING_ERROR',\n    session_id: error.session_id || 'unknown',\n    timestamp: new Date().toISOString(),\n    success: false\n  }\n};"
+      },
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 500]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Log successful processing\nconst data = $input.item.json;\n\nconsole.log('WhatsApp message processed successfully:', {\n  sessionId: data.session_id || 'unknown',\n  phone: data.telefono ? `***${data.telefono.slice(-4)}` : 'unknown',\n  messageType: data.data?.tipo || 'info',\n  timestamp: new Date().toISOString()\n});\n\nreturn data;"
+      },
+      "id": "log-success",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [2000, 100]
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Extract WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Validate Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Extraction": {
+      "main": [
+        [
+          {
+            "node": "Execute Python Script",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Python Script": {
+      "main": [
+        [
+          {
+            "node": "Is Quote?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Quote?": {
+      "main": [
+        [
+          {
+            "node": "Add to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Info Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Format Quote Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Quote Response": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Info Response": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Success": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Handler": {
+      "main": [
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2",
+  "id": "bmc-whatsapp-workflow-improved",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {}
+}

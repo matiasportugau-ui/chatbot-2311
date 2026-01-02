@@ -1,0 +1,27 @@
+{
+  "workflow_version": "1.0",
+  "created_at": "2025-01-12",
+  "agent_protocols": {
+    "communication": {
+      "method": "event_based",
+      "events": ["phase_started", "phase_completed", "task_completed", "error_occurred", "checkpoint_created"],
+      "format": "json"
+    },
+    "state_sharing": {
+      "method": "context_service",
+      "location": "system/context/context_service.py",
+      "format": "json"
+    }
+  },
+  "work_states": ["pending", "in_progress", "completed", "error", "blocked", "skipped"],
+  "phase_sequence": [
+    {"phase": -8, "name": "Sistema de Trabajo Base", "agent": "WorkspaceSetupAgent", "dependencies": []},
+    {"phase": -7, "name": "Gestión de Estado y Contexto", "agent": "ContextManagerAgent", "dependencies": [-8]},
+    {"phase": -6, "name": "Scripts Base y Utilidades", "agent": "ScriptsAgent", "dependencies": [-8]},
+    {"phase": -3, "name": "Logging y Auditoría", "agent": "LoggingAgent", "dependencies": [-8]},
+    {"phase": -2, "name": "Configuración y Variables", "agent": "ConfigAgent", "dependencies": [-8]},
+    {"phase": -5, "name": "Backup y Recuperación", "agent": "BackupRecoveryAgent", "dependencies": [-7, -6]},
+    {"phase": -4, "name": "Automatización", "agent": "AutomationAgent", "dependencies": [-6]},
+    {"phase": -1, "name": "Validación y Testing Base", "agent": "ValidationAgent", "dependencies": [-2, -6]}
+  ]
+}

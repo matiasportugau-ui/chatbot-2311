@@ -1,0 +1,34 @@
+*   64935fd On new-branch: Stashing changes before checkout PR 29
+|\  
+| * 4062c5f index on new-branch: d7a7c3a feat: Replace word-by-word delay with true streaming
+|/  
+* d7a7c3a feat: Replace word-by-word delay with true streaming
+* 346c560 chore: Update .gitignore with WhatsApp temp directory exclusion
+* 20d15c0 feat: Implement WhatsApp chat sync functionality
+* ef7ab8e docs: Update documentation with recovery improvements
+* db0ad95 docs: Add recovery artifacts and analysis documentation
+* 939a617 feat: Add comprehensive agent instructions and configuration files
+| * 404c632 feat: Add data recovery plan and execution documents
+|/  
+| * 1ecccdf feat: Add data recovery plan and script
+|/  
+| * 8a1b93e feat: Implement Cursor data recovery plan and scripts
+|/  
+| * b5a450e feat: Add Cursor data recovery plan and scripts
+|/  
+| * 63809cf feat: Implement complete backup and recovery system
+|/  
+| * aa02240 feat: Add backup and recovery documentation and prompts
+|/  
+| * eb7d4d2 feat: Add backup and recovery implementation prompts
+|/  
+| * debb289 feat: Implement backup and recovery system prompt
+|/  
+| * 93280d3 Refactor: Update README to reflect chatbot system capabilities
+|/  
+| * 6d0bbb8 Refactor: Update README with project status and architecture
+|/  
+| * f4c5f70 Refactor: Update README with new structure and version
+|/  
+| * 888a01b Refactor: Improve README and project structure
+|/  

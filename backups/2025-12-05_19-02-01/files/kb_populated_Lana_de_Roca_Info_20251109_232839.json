@@ -1,0 +1,63 @@
+{
+  "session_id": "sim_20251109232634_cce8a49a",
+  "phone": "+59891111111",
+  "started_at": "2025-11-09T23:26:35.278362",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:26:35.278362",
+      "user_message": "Información sobre lana de roca",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232634_cce8a49a",
+        "timestamp": "2025-11-09T23:26:35.276636"
+      },
+      "session_id": "sim_20251109232634_cce8a49a"
+    },
+    {
+      "timestamp": "2025-11-09T23:27:06.439106",
+      "user_message": "¿Es resistente al fuego?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232634_cce8a49a",
+        "timestamp": "2025-11-09T23:27:06.436105"
+      },
+      "session_id": "sim_20251109232634_cce8a49a"
+    },
+    {
+      "timestamp": "2025-11-09T23:27:37.510519",
+      "user_message": "¿Qué espesores tienen?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232634_cce8a49a",
+        "timestamp": "2025-11-09T23:27:37.508639"
+      },
+      "session_id": "sim_20251109232634_cce8a49a"
+    },
+    {
+      "timestamp": "2025-11-09T23:28:08.814507",
+      "user_message": "¿Cuál es el precio por m²?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109232634_cce8a49a",
+        "timestamp": "2025-11-09T23:28:08.813218"
+      },
+      "session_id": "sim_20251109232634_cce8a49a"
+    }
+  ]
+}

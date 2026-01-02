@@ -1,0 +1,98 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+/lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+exportaciones/
+backups/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+credentials.json
+credentials-*.json
+*.pem
+*.key
+service-account-*.json
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# n8n
+.n8n/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data files
+*.csv
+*.xlsx
+!matriz_precios.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+node_modules
+
+# Next.js
+.next/
+out/
+build/
+.env.local
+
+# Vercel
+.vercel/
+
+# Cloud Agent
+# (EXPORT_SEAL v1 - cloud-agent-pack)
+# Note: env/ for Python venvs already excluded above (line 25)
+# Note: out/ for Next.js already excluded above (line 84)
+# Additional cloud agent specific exclusions:
+.env.*
+!.env.example
+!.env.unified.example

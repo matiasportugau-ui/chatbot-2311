@@ -1,0 +1,91 @@
+{
+  "session_id": "sim_20251109234035_93f7db37",
+  "phone": "+59898765432",
+  "started_at": "2025-11-09T23:40:35.961238",
+  "messages": [
+    {
+      "timestamp": "2025-11-09T23:40:35.961238",
+      "user_message": "Hola, quiero cotizar Isodec",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234035_93f7db37",
+        "timestamp": "2025-11-09T23:40:35.960133"
+      },
+      "session_id": "sim_20251109234035_93f7db37"
+    },
+    {
+      "timestamp": "2025-11-09T23:41:06.983226",
+      "user_message": "10x5 metros, 100mm, blanco",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234035_93f7db37",
+        "timestamp": "2025-11-09T23:41:06.982126"
+      },
+      "session_id": "sim_20251109234035_93f7db37"
+    },
+    {
+      "timestamp": "2025-11-09T23:41:38.114238",
+      "user_message": "Es muy caro",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234035_93f7db37",
+        "timestamp": "2025-11-09T23:41:38.110662"
+      },
+      "session_id": "sim_20251109234035_93f7db37"
+    },
+    {
+      "timestamp": "2025-11-09T23:42:09.044971",
+      "user_message": "¿Hay descuentos?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234035_93f7db37",
+        "timestamp": "2025-11-09T23:42:09.037591"
+      },
+      "session_id": "sim_20251109234035_93f7db37"
+    },
+    {
+      "timestamp": "2025-11-09T23:42:40.487692",
+      "user_message": "Ok, entiendo. ¿Puedo pagar en cuotas?",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234035_93f7db37",
+        "timestamp": "2025-11-09T23:42:40.447898"
+      },
+      "session_id": "sim_20251109234035_93f7db37"
+    },
+    {
+      "timestamp": "2025-11-09T23:43:11.902222",
+      "user_message": "Gracias, lo pensaré",
+      "bot_response": {
+        "mensaje": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+        "tipo": "informativa",
+        "acciones": [],
+        "confianza": 0.8,
+        "necesita_datos": [],
+        "sesion_id": "sim_20251109234035_93f7db37",
+        "timestamp": "2025-11-09T23:43:11.881029"
+      },
+      "session_id": "sim_20251109234035_93f7db37"
+    }
+  ]
+}

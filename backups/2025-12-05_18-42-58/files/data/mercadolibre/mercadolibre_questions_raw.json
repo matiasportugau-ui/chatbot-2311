@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "source": "/tmp/meli_sample.csv",
+    "generated_at": "2025-11-26T08:29:54.413579+00:00",
+    "total_questions": 2
+  },
+  "questions": [
+    {
+      "id": "1",
+      "date_created": "2024-11-01T10:00:00",
+      "item_id": "ITEM123",
+      "status": "ANSWERED",
+      "text": "¿Tienen stock?",
+      "answer": {
+        "text": "Sí, disponible",
+        "status": "UNANSWERED"
+      },
+      "seller_id": "",
+      "from": {
+        "id": ""
+      }
+    },
+    {
+      "id": "2",
+      "date_created": "2024-11-02T09:30:00",
+      "item_id": "ITEM456",
+      "status": "UNANSWERED",
+      "text": "Precio del de 8cm?",
+      "answer": {
+        "text": "",
+        "status": "UNANSWERED"
+      },
+      "seller_id": "",
+      "from": {
+        "id": ""
+      }
+    }
+  ]
+}

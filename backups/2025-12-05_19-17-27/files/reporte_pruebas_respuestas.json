@@ -1,0 +1,116 @@
+{
+  "fecha_prueba": "2025-11-19T17:01:10.419275",
+  "preguntas": [
+    {
+      "categoria": "saludo",
+      "pregunta": "Hola",
+      "respuesta": "¡Hola! ¿Te interesa cotizar algún producto de aislamiento térmico?",
+      "cobertura": 0.3333333333333333,
+      "palabras_encontradas": [
+        "hola"
+      ],
+      "es_generica": false,
+      "longitud": 66,
+      "confianza": 0.9,
+      "satisfaccion": 0.7,
+      "tipo_respuesta": "informativa",
+      "fuentes": [
+        "patrones_respuesta"
+      ]
+    },
+    {
+      "categoria": "informacion_producto",
+      "pregunta": "Información sobre Isodec",
+      "respuesta": "🏠 **ISODEC - Panel Aislante Térmico**\n\n**Características principales:**\n✅ Núcleo de EPS (Poliestireno Expandido)\n✅ Excelente aislamiento térmico\n✅ Fácil instalación\n✅ Durabilidad superior\n\n**Opciones disponibles:**\n📏 Espesores: 50mm, 75mm, 100mm, 125mm, 150mm\n🎨 Colores: Blanco, Gris, Personalizado\n🔧 Terminaciones: Gotero, Hormigón, Aluminio\n\n💰 **Precio base:** $150/m² (100mm, Blanco)\n\n¿Te interesa cotizar Isodec?",
+      "cobertura": 1.0,
+      "palabras_encontradas": [
+        "isodec",
+        "panel",
+        "aislante",
+        "térmico"
+      ],
+      "es_generica": false,
+      "longitud": 416,
+      "confianza": 0.9,
+      "satisfaccion": 1.0,
+      "tipo_respuesta": "informativa",
+      "fuentes": [
+        "base_conocimiento"
+      ]
+    },
+    {
+      "categoria": "cotizacion",
+      "pregunta": "Quiero cotizar",
+      "respuesta": "¡Perfecto! Vamos a crear tu cotización paso a paso.\n\nNecesito algunos datos:\n1️⃣ ¿Cuál es tu nombre y apellido?\n2️⃣ ¿Cuál es tu teléfono?\n3️⃣ ¿Qué producto te interesa? (Isodec, Poliestireno, Lana de Roca)\n4️⃣ ¿Cuáles son las dimensiones? (largo x ancho en metros)\n5️⃣ ¿Qué espesor necesitas? (50mm, 75mm, 100mm, 125mm, 150mm)",
+      "cobertura": 0.3333333333333333,
+      "palabras_encontradas": [
+        "datos"
+      ],
+      "es_generica": false,
+      "longitud": 326,
+      "confianza": 0.9,
+      "satisfaccion": 0.7,
+      "tipo_respuesta": "pregunta",
+      "fuentes": [
+        "sistema_cotizaciones"
+      ]
+    },
+    {
+      "categoria": "productos",
+      "pregunta": "¿Qué productos tienen?",
+      "respuesta": "¿Sobre qué producto específico te gustaría información?",
+      "cobertura": 0.25,
+      "palabras_encontradas": [
+        "producto"
+      ],
+      "es_generica": false,
+      "longitud": 55,
+      "confianza": 0.8,
+      "satisfaccion": 0.7,
+      "tipo_respuesta": "informativa",
+      "fuentes": [
+        "base_conocimiento"
+      ]
+    },
+    {
+      "categoria": "precio",
+      "pregunta": "¿Cuánto cuesta Isodec?",
+      "respuesta": "🏠 **ISODEC - Panel Aislante Térmico**\n\n**Características principales:**\n✅ Núcleo de EPS (Poliestireno Expandido)\n✅ Excelente aislamiento térmico\n✅ Fácil instalación\n✅ Durabilidad superior\n\n**Opciones disponibles:**\n📏 Espesores: 50mm, 75mm, 100mm, 125mm, 150mm\n🎨 Colores: Blanco, Gris, Personalizado\n🔧 Terminaciones: Gotero, Hormigón, Aluminio\n\n💰 **Precio base:** $150/m² (100mm, Blanco)\n\n¿Te interesa cotizar Isodec?",
+      "cobertura": 0.6666666666666666,
+      "palabras_encontradas": [
+        "precio",
+        "isodec"
+      ],
+      "es_generica": false,
+      "longitud": 416,
+      "confianza": 0.8,
+      "satisfaccion": 1.0,
+      "tipo_respuesta": "informativa",
+      "fuentes": [
+        "base_conocimiento"
+      ]
+    },
+    {
+      "categoria": "especificaciones",
+      "pregunta": "¿Qué espesores tienen disponibles?",
+      "respuesta": "Puedo ayudarte con:\n\n🏠 Información sobre productos de aislamiento\n💰 Cotizaciones personalizadas\n📋 Especificaciones técnicas\n🔧 Consultas sobre instalación\n\n¿En qué te gustaría que te ayude?",
+      "cobertura": 0.0,
+      "palabras_encontradas": [],
+      "es_generica": true,
+      "longitud": 188,
+      "confianza": 0.7,
+      "satisfaccion": 0.2,
+      "tipo_respuesta": "informativa",
+      "fuentes": [
+        "general"
+      ]
+    }
+  ],
+  "resumen": {
+    "total_preguntas": 6,
+    "preguntas_exitosas": 5,
+    "preguntas_fallidas": 1,
+    "satisfaccion_promedio": 0.7166666666666667,
+    "tasa_exito": 0.8333333333333334
+  }
+}

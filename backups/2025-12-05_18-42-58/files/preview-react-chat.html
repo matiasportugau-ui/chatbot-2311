@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: React Chat Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .preview-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .preview-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .preview-wrapper {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Card Styles */
+        .card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+        }
+
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn:hover {
+            background: #f9fafb;
+        }
+
+        .card-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .message.user .message-content {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .message.system .message-content {
+            background: #e5e7eb;
+            color: #6b7280;
+            font-style: italic;
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        .quote-card {
+            margin-top: 12px;
+            padding: 12px;
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+        }
+
+        .quote-card h4 {
+            color: #166534;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quote-card .quote-detail {
+            font-size: 0.875rem;
+            margin: 4px 0;
+            color: #166534;
+        }
+
+        .products-suggested {
+            margin-top: 12px;
+            padding: 12px;
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+        }
+
+        .products-suggested h4 {
+            color: #1e40af;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-item {
+            padding: 8px;
+            background: #eff6ff;
+            border-radius: 6px;
+            margin: 8px 0;
+        }
+
+        .product-item .product-name {
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        .product-item .product-price {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .context-bar {
+            padding: 12px 16px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .context-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #10b981;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.warning {
+            background: #f59e0b;
+        }
+
+        .progress-fill.danger {
+            background: #ef4444;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .send-btn:hover {
+            background: #2563eb;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .description {
+            flex: 1;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .description h3 {
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .description ul {
+            list-style: none;
+        }
+
+        .description li {
+            padding: 6px 0;
+            color: #4b5563;
+        }
+
+        .description li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1 class="preview-title">React Chat Interface Preview</h1>
+        
+        <div class="preview-wrapper">
+            <div style="flex: 2; min-width: 500px;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            💬 Chat BMC - +59891234567
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn">🔄 Comprimir</button>
+                            <button class="btn">➕ Nuevo Chat</button>
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="message bot">
+                            <div class="message-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Asistente BMC</div>
+                                <div>¡Hola! 👋 Soy el asistente de BMC Construcciones.</div>
+                                <div style="margin-top: 8px;">
+                                    Te puedo ayudar con:<br>
+                                    🏗️ <strong>Cotizaciones</strong> - Paneles Isodec, Isoroof, chapas<br>
+                                    ℹ️ <strong>Información</strong> - Sobre nuestros productos<br>
+                                    📞 <strong>Contacto</strong> - Para consultas específicas
+                                </div>
+                                <div class="badge">informacion</div>
+                            </div>
+                        </div>
+
+                        <div class="message user">
+                            <div class="message-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Tú</div>
+                                Necesito cotizar Isodec 100mm para galpón de 50m²
+                            </div>
+                        </div>
+
+                        <div class="message bot">
+                            <div class="message-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Asistente BMC</div>
+                                <div>Perfecto, he generado tu cotización:</div>
+                                <div class="quote-card">
+                                    <h4>💰 Cotización Generada</h4>
+                                    <div class="quote-detail"><strong>Producto:</strong> Isodec 100mm</div>
+                                    <div class="quote-detail"><strong>Descripción:</strong> Panel aislante EPS 100mm</div>
+                                    <div class="quote-detail"><strong>Precio Base:</strong> $1,200/m²</div>
+                                    <div class="quote-detail"><strong>Total:</strong> $60,000</div>
+                                    <div class="quote-detail"><strong>Código:</strong> ISODEC-100</div>
+                                </div>
+                                <div class="badge">cotizacion</div>
+                            </div>
+                        </div>
+
+                        <div class="message system">
+                            <div class="message-content">
+                                💰 Cotización generada con confianza: 92.5%
+                            </div>
+                        </div>
+
+                        <div class="message bot">
+                            <div class="message-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Asistente BMC</div>
+                                <div>También te recomiendo estos productos:</div>
+                                <div class="products-suggested">
+                                    <h4>🏗️ Productos Sugeridos</h4>
+                                    <div class="product-item">
+                                        <div class="product-name">Isoroof</div>
+                                        <div style="color: #6b7280; font-size: 0.875rem;">Panel para techos</div>
+                                        <div class="product-price">$1,500/m²</div>
+                                    </div>
+                                    <div class="product-item">
+                                        <div class="product-name">Isopanel</div>
+                                        <div style="color: #6b7280; font-size: 0.875rem;">Panel estructural</div>
+                                        <div class="product-price">$1,800/m²</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="message system">
+                            <div class="message-content">
+                                🧠 Patrones aplicados: cotizacion_isodec, dimensiones_galpon
+                            </div>
+                        </div>
+
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span>Procesando tu consulta...</span>
+                        </div>
+                    </div>
+
+                    <div class="context-bar">
+                        <div class="context-info">
+                            <span>Uso de Contexto: 2,500/8,000 tokens</span>
+                            <span class="badge">31.3%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 31.3%"></div>
+                        </div>
+                        <div class="input-area">
+                            <input type="text" class="input-field" placeholder="Escribe tu consulta de cotización..." />
+                            <button class="send-btn">📤 Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="description" style="flex: 1; min-width: 300px;">
+                <h3>Enhanced Features:</h3>
+                <ul>
+                    <li>Rich quotation cards with details</li>
+                    <li>Product suggestions with pricing</li>
+                    <li>Context token tracking</li>
+                    <li>Progress bar visualization</li>
+                    <li>System messages for metadata</li>
+                    <li>Badge indicators for message types</li>
+                    <li>Auto-compression when context >50%</li>
+                    <li>New chat functionality</li>
+                    <li>Loading states with spinner</li>
+                    <li>FAQ suggestions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
