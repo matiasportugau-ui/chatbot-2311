@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   const baseUrl = new URL(origin)
 
   if (errorParam) {
-    const redirectTarget = `/dashboard?meli_error=${encodeURIComponent(errorDescription || errorParam)}`
+    const redirectTarget = `/?meli_error=${encodeURIComponent(errorDescription || errorParam)}`
     return NextResponse.redirect(buildRedirectUrl(baseUrl, redirectTarget))
   }
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown Mercado Libre auth error'
     console.error('Mercado Libre callback error:', error)
-    const redirectTarget = `/dashboard?meli_error=${encodeURIComponent(message)}`
+    const redirectTarget = `/?meli_error=${encodeURIComponent(message)}`
     return NextResponse.redirect(buildRedirectUrl(baseUrl, redirectTarget))
   }
 }

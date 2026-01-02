@@ -52,3 +52,54 @@ export async function consumeAuthState(
 
   return authState
 }
+
+// Convenience aliases for client.ts
+export async function saveState(
+  state: string,
+  data: { returnTo?: string; codeVerifier?: string }
+): Promise<void> {
+  const createdAt = new Date()
+  const expiresAt = new Date(createdAt.getTime() + EXPIRATION_MS)
+
+  const record: MercadoLibreAuthState = {
+    state,
+    codeVerifier: data.codeVerifier,
+    returnTo: data.returnTo,
+    createdAt,
+    expiresAt,
+  }
+
+  const db = await connectDB()
+  await db.collection<MercadoLibreAuthState>(COLLECTION).insertOne(record)
+}
+
+export async function getState(
+  state: string
+): Promise<{ returnTo?: string; codeVerifier?: string } | null> {
+  if (!state) return null
+
+  const db = await connectDB()
+  const authState = await db
+    .collection<MercadoLibreAuthState>(COLLECTION)
+    .findOne({ state })
+
+  if (!authState) {
+    return null
+  }
+
+  if (authState.expiresAt.getTime() < Date.now()) {
+    return null
+  }
+
+  return {
+    returnTo: authState.returnTo,
+    codeVerifier: authState.codeVerifier,
+  }
+}
+
+export async function clearState(state: string): Promise<void> {
+  if (!state) return
+
+  const db = await connectDB()
+  await db.collection<MercadoLibreAuthState>(COLLECTION).deleteOne({ state })
+}

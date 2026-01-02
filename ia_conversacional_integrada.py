@@ -1166,3 +1166,25 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Wrapper global para compatibilidad con sistema_completo_integrado.py
+_ia_global_instance = None
+
+def procesar_mensaje_usuario(mensaje: str, sesion_id: str = None) -> str:
+    """
+    Función helper para procesar mensajes desde la API.
+    Mantiene una instancia global de la IA para persistencia en memoria.
+    """
+    global _ia_global_instance
+    if _ia_global_instance is None:
+        _ia_global_instance = IAConversacionalIntegrada()
+    
+    # Usar un ID de cliente genérico o derivado
+    cliente_id = "api_user"
+    
+    try:
+        respuesta = _ia_global_instance.procesar_mensaje(mensaje, cliente_id, sesion_id)
+        return respuesta.mensaje
+    except Exception as e:
+        print(f"Error en procesar_mensaje_usuario: {e}")
+        return "Disculpa, tuve un problema procesando tu mensaje. ¿Podrías reformularlo?"

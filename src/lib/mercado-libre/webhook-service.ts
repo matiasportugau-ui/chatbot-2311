@@ -1,6 +1,8 @@
 import crypto from 'crypto'
 import { connectDB } from '@/lib/mongodb'
 import { syncOrderById } from './orders'
+import { getQuestionById } from './questions'
+import { processQuestionAutoAnswer } from './auto-answer-service'
 
 const COLLECTION = 'mercado_libre_webhook_events'
 
@@ -56,6 +58,12 @@ export async function processWebhookEvent(event: any) {
       const orderId = parseInt(event.resource.split('/').pop() || '', 10)
       if (!isNaN(orderId)) {
         await syncOrderById(orderId)
+      }
+    } else if (event.topic === 'questions' && event.resource) {
+      const questionId = parseInt(event.resource.split('/').pop() || '', 10)
+      if (!isNaN(questionId)) {
+        console.log(`Nueva pregunta recibida de Mercado Libre: ${questionId}`)
+        await processQuestionAutoAnswer(questionId)
       }
     }
   } catch (error) {

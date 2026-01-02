@@ -1,98 +1,47 @@
-# Python
+# Dependencies
+node_modules/
+.venv/
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
+*.pyc
+
+# Build outputs
+.next/
 dist/
-downloads/
-eggs/
-.eggs/
-/lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
+build/
 *.egg-info/
-.installed.cfg
-*.egg
 
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv
+# Environment & Secrets (NEVER COMMIT)
+.env
+.env.local
+.env.production
+.env.*.local
+.env.unified
+.env.backup*
+.env.local.bak*
+secrets.json
+secrets_dump.json
+*.pem
+.meli-oauth-state.json
 
-# IDE
+# IDE & Tools
+.vercel
 .vscode/
-.idea/
-*.swp
-*.swo
-*~
+.cursor/plans/.env
+.cursor/plans/.vscode/
+*.code-workspace
+
+# Logs
+logs/
+*.log
+server.log
+server_v2.log
+tunnel.log
+verification_output.log
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-logs/
-exportaciones/
-backups/
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-.env.production
-credentials.json
-credentials-*.json
-*.pem
-*.key
-service-account-*.json
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# n8n
-.n8n/
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
-# Data files
-*.csv
-*.xlsx
-!matriz_precios.json
-
-# Temporary files
-tmp/
-temp/
-*.tmp
+# Misc
 *.bak
-
-node_modules
-
-# Next.js
-.next/
-out/
-build/
-.env.local
-
-# Vercel
-.vercel/
-
-# Cloud Agent
-# (EXPORT_SEAL v1 - cloud-agent-pack)
-# Note: env/ for Python venvs already excluded above (line 25)
-# Note: out/ for Next.js already excluded above (line 84)
-# Additional cloud agent specific exclusions:
-.env.*
-!.env.example
-!.env.unified.example
+.dockerignore

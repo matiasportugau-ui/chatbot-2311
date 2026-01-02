@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Remove 'standalone' for Vercel deployment
   images: {
     domains: ['localhost'],
   },
@@ -9,6 +9,19 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: false,
+  },
+  // Optimize for Vercel
+  experimental: {
+    outputFileTracingExcludes: {
+      '*': [
+        'node_modules/@swc/core-linux-x64-gnu',
+        'node_modules/@swc/core-linux-x64-musl',
+        'node_modules/@esbuild/linux-x64',
+        '.git/**/*',
+        'backups/**/*',
+        'python-scripts/**/*',
+      ],
+    },
   },
 }
 

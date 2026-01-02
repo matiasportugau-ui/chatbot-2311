@@ -1,0 +1,78 @@
+# Vercel Ignore - Exclude from deployment
+# This reduces the deployment size
+
+# Python files (backend is on Cloud Run)
+*.py
+*.pyc
+__pycache__/
+.venv/
+python-scripts/
+venv/
+*.egg-info/
+requirements.txt
+
+# Backups and old files
+backups/
+old/
+tmp/
+*.bak
+*.old
+nextjs-app/
+.venv/
+venv/
+.mypy_cache/
+.cursor/
+backup_metadata/
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Test files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+__tests__/
+test/
+tests/
+coverage/
+
+# Development files
+.env.local
+.env.development
+*.log
+logs/
+
+# Large data files
+*.csv
+*.xlsx
+*.xls
+*.json.gz
+conocimiento_*.json
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts (will be rebuilt on Vercel)
+.next/
+out/
+build/
+dist/
+
+# Package manager
+node_modules/
+.pnpm-store/
+.yarn/

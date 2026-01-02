@@ -73,4 +73,21 @@ export interface MercadoLibreOrder {
   payments: any[]
   [key: string]: any
 }
-
+export interface MercadoLibreQuestion {
+  id: number
+  seller_id: number
+  text: string
+  status: string // UNANSWERED, ANSWERED, DELETED, BANNED
+  item_id: string
+  date_created: string
+  from: {
+    id: number
+    [key: string]: any
+  }
+  answer?: {
+    text: string
+    status: string
+    date_created: string
+  }
+  [key: string]: any
+}

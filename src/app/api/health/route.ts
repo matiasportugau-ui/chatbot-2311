@@ -7,6 +7,8 @@ import {
 } from '@/lib/simple-initialize'
 import { NextResponse } from 'next/server'
 
+import { getActiveGrant } from '@/lib/mercado-libre/token-store'
+
 /**
  * Health Check Endpoint Simplificado
  * Verifica el estado de todos los servicios del sistema BMC
@@ -37,6 +39,16 @@ export async function GET() {
       } catch (error: any) {
         mongodbStatus = 'error'
         mongodbError = error.message || 'Connection failed'
+      }
+    }
+
+    // Check Mercado Libre
+    let meliGrant = null
+    if (mongodbStatus === 'ready') {
+      try {
+        meliGrant = await getActiveGrant()
+      } catch (e) {
+        console.error('Error checking Meli grant:', e)
       }
     }
 
@@ -79,6 +91,11 @@ export async function GET() {
             ? 'ready'
             : 'optional',
       },
+      mercadoLibre: {
+        configured: !!process.env.MERCADO_LIBRE_APP_ID,
+        status: meliGrant ? 'authenticated' : 'pending_auth',
+        sellerId: meliGrant?.sellerId || null
+      }
     }
 
     const allCriticalServicesReady =

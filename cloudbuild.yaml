@@ -1,0 +1,24 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/bmc-chatbot-api:$BUILD_ID'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/bmc-chatbot-api:latest'
+      - '-f'
+      - 'Dockerfile.cloudrun'
+      - '.'
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/bmc-chatbot-api:latest'
+
+images:
+  - 'gcr.io/$PROJECT_ID/bmc-chatbot-api:latest'
+  - 'gcr.io/$PROJECT_ID/bmc-chatbot-api:$BUILD_ID'
+
+timeout: '1200s'
