@@ -1,0 +1,486 @@
+{
+  "interacciones": [
+    {
+      "id": "ia_20251024041943",
+      "timestamp": "2025-10-24 04:19:43.911934",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Hola, necesito información sobre Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024041945",
+      "timestamp": "2025-10-24 04:19:45.548316",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024041946",
+      "timestamp": "2025-10-24 04:19:46.574467",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Perfecto, me parece bien el precio. ¿Incluye instalación?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024041947",
+      "timestamp": "2025-10-24 04:19:47.582581",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Excelente, procedo con la compra",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "demo_1",
+      "timestamp": "2025-10-24 04:19:48.589232",
+      "cliente_id": "cliente_demo_1",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "El precio de Isodec es muy caro",
+      "respuesta_agente": "Entiendo tu preocupación. Te explico el valor a largo plazo...",
+      "contexto": {
+        "producto": "isodec",
+        "demo": true
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": 5,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "demo_2",
+      "timestamp": "2025-10-24 04:19:48.590193",
+      "cliente_id": "cliente_demo_2",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "Necesito información técnica sobre Isodec",
+      "respuesta_agente": "Isodec es un panel aislante con núcleo EPS...",
+      "contexto": {
+        "producto": "isodec",
+        "demo": true
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": 4,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "demo_3",
+      "timestamp": "2025-10-24 04:19:48.590531",
+      "cliente_id": "cliente_demo_3",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "¿Cuánto tiempo tarda la instalación?",
+      "respuesta_agente": "La instalación tarda entre 1-2 días dependiendo del tamaño...",
+      "contexto": {
+        "producto": "isodec",
+        "demo": true
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": 4,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024035137",
+      "timestamp": "2025-10-24 03:51:37.944602",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Hola, necesito información sobre Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024035138",
+      "timestamp": "2025-10-24 03:51:38.947367",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Quiero cotizar para 10 metros por 5 metros, 100mm, blanco",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024035139",
+      "timestamp": "2025-10-24 03:51:39.952631",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Perfecto, me parece bien el precio. ¿Incluye instalación?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024035140",
+      "timestamp": "2025-10-24 03:51:40.957797",
+      "cliente_id": "cliente_demo",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Excelente, procedo con la compra",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024042753",
+      "timestamp": "2025-10-24 04:27:53.888763",
+      "cliente_id": "demo_cliente",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Hola, necesito información sobre Isodec para mi casa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024042754",
+      "timestamp": "2025-10-24 04:27:54.898374",
+      "cliente_id": "demo_cliente",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "El precio me parece caro, ¿hay descuentos?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "ia_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.904166",
+      "cliente_id": "sistema_sheets",
+      "tipo_interaccion": "consulta_ia",
+      "mensaje_cliente": "Lana de roca 100mm / galpón 9m x 7m x 5m / instalación completa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {},
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "wa_sim_20251024042755",
+      "timestamp": "2025-10-24 04:27:55.903096",
+      "cliente_id": "59899765432",
+      "tipo_interaccion": "whatsapp",
+      "mensaje_cliente": "¿Cuál es el precio de poliestireno 75mm?",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "whatsapp",
+        "cliente_nombre": "María García",
+        "telefono": "59899765432",
+        "message_id": "sim_20251024042755"
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "sheets_RA001",
+      "timestamp": "2025-10-24 04:27:55.903644",
+      "cliente_id": "099123456",
+      "tipo_interaccion": "cotizacion_sheets",
+      "mensaje_cliente": "Isodec 100mm / 8 p de 10 m / paneles blancos / completo + flete",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "google_sheets",
+        "arg": "RA001",
+        "estado": "Pendiente",
+        "cliente": "Juan Pérez",
+        "origen": "WA",
+        "zona": "Montevideo",
+        "informacion_extraida": {
+          "producto": "isodec",
+          "espesor": "100mm",
+          "dimensiones": {
+            "tipo": "paneles",
+            "cantidad": 8,
+            "largo": 10,
+            "unidad": "paneles"
+          },
+          "servicios": {
+            "flete": true,
+            "instalacion": true,
+            "accesorios": false
+          },
+          "color": "blanco",
+          "completo": true,
+          "urgente": false
+        }
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "sheets_MO002",
+      "timestamp": "2025-10-24 04:27:55.903978",
+      "cliente_id": "099765432",
+      "tipo_interaccion": "cotizacion_sheets",
+      "mensaje_cliente": "Poliestireno 75mm / techo de 50 m2 / gris / sin flete",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "google_sheets",
+        "arg": "MO002",
+        "estado": "Adjunto",
+        "cliente": "María García",
+        "origen": "EM",
+        "zona": "Maldonado",
+        "informacion_extraida": {
+          "producto": "poliestireno",
+          "espesor": "75mm",
+          "dimensiones": {
+            "tipo": "area",
+            "area": 50,
+            "unidad": "m2"
+          },
+          "servicios": {
+            "flete": true,
+            "instalacion": false,
+            "accesorios": false
+          },
+          "color": "gris",
+          "completo": false,
+          "urgente": false
+        }
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "sheets_TNT003",
+      "timestamp": "2025-10-24 04:27:55.904448",
+      "cliente_id": "099888999",
+      "tipo_interaccion": "cotizacion_sheets",
+      "mensaje_cliente": "Lana de roca 100mm / galpón 9m x 7m x 5m / instalación completa",
+      "respuesta_agente": "Gracias por tu consulta. Te ayudo con la información que necesitas.",
+      "contexto": {
+        "canal": "google_sheets",
+        "arg": "TNT003",
+        "estado": "Listo",
+        "cliente": "Carlos López",
+        "origen": "LO",
+        "zona": "Rivera",
+        "informacion_extraida": {
+          "producto": "lana de roca",
+          "espesor": "100mm",
+          "dimensiones": {
+            "tipo": "volumen",
+            "largo": 9,
+            "ancho": 7,
+            "alto": 5,
+            "unidad": "m"
+          },
+          "servicios": {
+            "flete": false,
+            "instalacion": true,
+            "accesorios": false
+          },
+          "color": null,
+          "completo": false,
+          "urgente": false
+        }
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "meli_1",
+      "timestamp": "2024-11-01 10:00:00",
+      "cliente_id": "mercadolibre_cliente",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "¿Tienen stock?",
+      "respuesta_agente": "Sí, disponible",
+      "contexto": {
+        "canal": "mercadolibre",
+        "item_id": "ITEM123",
+        "estado_pregunta": "ANSWERED",
+        "estado_respuesta": "UNANSWERED",
+        "seller_id": ""
+      },
+      "resultado": "respondido",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "meli_2",
+      "timestamp": "2024-11-02 09:30:00",
+      "cliente_id": "mercadolibre_cliente",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "Precio del de 8cm?",
+      "respuesta_agente": "",
+      "contexto": {
+        "canal": "mercadolibre",
+        "item_id": "ITEM456",
+        "estado_pregunta": "UNANSWERED",
+        "estado_respuesta": "UNANSWERED",
+        "seller_id": ""
+      },
+      "resultado": "pendiente",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": null,
+      "lecciones_aprendidas": []
+    },
+    {
+      "id": "int_1",
+      "timestamp": "2025-12-21 08:25:23.448704",
+      "cliente_id": "cliente_1",
+      "tipo_interaccion": "consulta",
+      "mensaje_cliente": "Necesito información sobre Isodec para mi casa",
+      "respuesta_agente": "Isodec es un panel aislante térmico con núcleo EPS...",
+      "contexto": {
+        "producto": "isodec",
+        "aplicacion": "residencial"
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": null,
+      "satisfaccion_cliente": 4,
+      "lecciones_aprendidas": null
+    },
+    {
+      "id": "int_2",
+      "timestamp": "2025-12-21 08:25:23.448709",
+      "cliente_id": "cliente_2",
+      "tipo_interaccion": "venta",
+      "mensaje_cliente": "El precio de Isodec es muy caro",
+      "respuesta_agente": "Entiendo tu preocupación. Te explico el valor a largo plazo...",
+      "contexto": {
+        "producto": "isodec",
+        "objecion": "precio"
+      },
+      "resultado": "exitoso",
+      "valor_cotizacion": null,
+      "valor_venta": "5000.00",
+      "satisfaccion_cliente": 5,
+      "lecciones_aprendidas": null
+    }
+  ],
+  "patrones_venta": [],
+  "conocimiento_productos": {
+    "isodec": {
+      "producto_id": "isodec",
+      "nombre": "Isodec",
+      "caracteristicas_base": {
+        "tipo": "Panel aislante térmico",
+        "nucleo": "EPS",
+        "conductividad_termica": "0.035 W/mK",
+        "densidad": "15-20 kg/m³"
+      },
+      "caracteristicas_aprendidas": {},
+      "objeciones_comunes": [],
+      "respuestas_efectivas": [
+        "La instalación tarda entre 1-2 días dependiendo del tamaño...",
+        "Entiendo tu preocupación. Te explico el valor a largo plazo...",
+        "Isodec es un panel aislante con núcleo EPS...",
+        "Isodec es un panel aislante térmico con núcleo EPS..."
+      ],
+      "casos_uso_exitosos": [
+        "Venta exitosa de isodec por $5000.00"
+      ],
+      "precios_competitivos": {},
+      "tendencias_demanda": [],
+      "recomendaciones_venta": [
+        "Estrategia exitosa: Entiendo tu preocupación. Te explico el valor a largo plazo......",
+        "Estrategia exitosa: Isodec es un panel aislante con núcleo EPS......",
+        "Estrategia exitosa: La instalación tarda entre 1-2 días dependiendo del tamaño......",
+        "Estrategia exitosa: Isodec es un panel aislante térmico con núcleo EPS......"
+      ],
+      "fecha_ultima_actualizacion": "2025-12-21 08:25:23.448898"
+    }
+  },
+  "metricas_evolucion": {
+    "fecha_actualizacion": "2025-12-21T08:25:23.448905",
+    "interacciones_hoy": 2,
+    "interacciones_semana": 2,
+    "ventas_hoy": 1,
+    "ventas_semana": 1,
+    "satisfaccion_promedio": 4.4,
+    "total_interacciones": 22,
+    "total_patrones": 1,
+    "total_insights": 2
+  },
+  "insights_automaticos": [
+    {
+      "timestamp": "2025-12-21 08:25:23.448704",
+      "tipo": "interaccion",
+      "descripcion": "Interacción consulta con resultado exitoso",
+      "valor": 0,
+      "satisfaccion": 4,
+      "palabras_clave": [
+        "emocional:necesito"
+      ]
+    },
+    {
+      "timestamp": "2025-12-21 08:25:23.448709",
+      "tipo": "interaccion",
+      "descripcion": "Interacción venta con resultado exitoso",
+      "valor": 5000.0,
+      "satisfaccion": 5,
+      "palabras_clave": [
+        "negocio:precio"
+      ]
+    }
+  ],
+  "fecha_exportacion": "2025-12-21T08:25:23.449266"
+}
