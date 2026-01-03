@@ -1,0 +1,6 @@
+backups/
+node_modules/
+.next/
+out/
+build/
+.venv/
