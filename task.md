@@ -1,20 +1,11 @@
-# Task: Vercel Deployment & MercadoLibre Automation
+# Task: Plan Full User Test
 
-## Vercel Deployment
-
-- [x] Link project to Vercel (`vercel link`)
-- [x] Configure environment variables in Vercel
-- [x] Create `.vercelignore` to exclude large folders (backups, .git, venv)
-- [x] Optimize `next.config.js` (`outputFileTracingExcludes`)
-- [x] Resolve TypeScript build errors (`backups` exclusion in `tsconfig.json`)
-- [x] Configure bmc-cotizacion-inteligente.vercel.app domain and redirect URIs
-- [x] Add Mercado Libre status to Health Check endpoint
-
-## MercadoLibre Integration
-
-- [x] Deploy Python Backend to Cloud Run
-- [x] Verify Backend Health
-- [x] Generate MercadoLibre Auth URL
-- [ ] Complete OAuth flow via authorization link
-- [ ] Run `npm run mercado-auto` in Live Mode (verify with real data)
-- [ ] Finalize Automation (monitor launchd/cron if needed)
+- [x] Analyze codebase to identify testable features <!-- id: 0 -->
+  - [x] Review Mercado Libre status <!-- id: 1 -->
+  - [x] Review Shopify App routes and features <!-- id: 2 -->
+  - [x] Review Simulator and Dashboard features <!-- id: 3 -->
+- [x] Create Test Plan Artifact (`test_plan.md`) <!-- id: 4 -->
+- [ ] Execute Test Scenarios <!-- id: 5 -->
+  - [ ] Run Mercado Libre Automation Script <!-- id: 6 -->
+  - [ ] Verify Shopify App UI <!-- id: 7 -->
+  - [ ] Test Simulator Interaction <!-- id: 8 -->
