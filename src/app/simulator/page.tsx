@@ -75,15 +75,15 @@ export default function SimulatorPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${apiUrl}/chat/process`, {
+      const response = await fetch(`${apiUrl}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          mensaje: userMessage.content,
-          telefono: phone,
-          sesionId: sessionId
+          message: userMessage.content,
+          phone: phone,
+          session_id: sessionId
         }),
       });
 

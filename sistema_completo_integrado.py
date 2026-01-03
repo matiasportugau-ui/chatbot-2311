@@ -72,6 +72,7 @@ class ChatMessage(BaseModel):
     """Chat message model"""
     message: str = Field(..., description="User message")
     session_id: Optional[str] = Field(None, description="Session identifier")
+    phone: Optional[str] = Field(None, description="User phone number")
 
 class ChatResponse(BaseModel):
     """Chat response model"""
@@ -96,7 +97,7 @@ async def startup_event():
     logger.info(f"   Environment: {os.getenv('ENVIRONMENT', 'production')}")
     logger.info(f"   Port: {os.getenv('PORT', '8000')}")
     logger.info(f"   OpenAI Model: {os.getenv('OPENAI_MODEL', 'gpt-4o-mini')}")
-    
+
     # Test MongoDB connection
     try:
         mongodb_uri = os.getenv("MONGODB_URI")
@@ -106,9 +107,9 @@ async def startup_event():
                 log_uri = mongodb_uri.split("@")[-1]
             else:
                 log_uri = "localhost/local_db" if "localhost" in mongodb_uri else "non-credential-uri"
-                
+
             logger.info(f"🔌 Attempting to connect to MongoDB at: {log_uri}")
-            
+
             from pymongo import MongoClient
             client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)
             server_info = client.server_info()
@@ -118,7 +119,7 @@ async def startup_event():
     except Exception as e:
         logger.error(f"❌ MongoDB connection failed: {type(e).__name__}: {e}")
         logger.warning("⚠️  Continuing with in-memory storage")
-    
+
     logger.info("✅ BMC Quote System API started successfully")
 
 @app.on_event("shutdown")
@@ -169,7 +170,7 @@ async def health_check():
 async def chat(message: ChatMessage):
     """
     Process chat messages with AI assistant
-    
+
     The AI assistant can:
     - Answer product questions
     - Create quotes conversationally
@@ -178,21 +179,22 @@ async def chat(message: ChatMessage):
     """
     try:
         logger.info(f"Chat request: {message.message[:50]}...")
-        
+
         # Import chat processing
         try:
             from ia_conversacional_integrada import procesar_mensaje_usuario
-            
+
             response_text = procesar_mensaje_usuario(
                 message.message,
-                message.session_id
+                message.session_id,
+                message.phone
             )
-            
+
             return ChatResponse(
                 response=response_text,
                 session_id=message.session_id or "default"
             )
-            
+
         except ImportError:
             # Fallback response if IA module not available
             logger.warning("IA conversacional module not available, using fallback")
@@ -200,7 +202,7 @@ async def chat(message: ChatMessage):
                 response="Hola! Soy el asistente de BMC Uruguay. ¿En qué puedo ayudarte?",
                 session_id=message.session_id or "default"
             )
-        
+
     except Exception as e:
         logger.error(f"Error in chat endpoint: {e}", exc_info=True)
         raise HTTPException(
@@ -216,7 +218,7 @@ async def chat(message: ChatMessage):
 async def create_quote(quote: QuoteRequest):
     """
     Create a new quote
-    
+
     Calculates pricing based on:
     - Product type
     - Thickness
@@ -225,14 +227,14 @@ async def create_quote(quote: QuoteRequest):
     """
     try:
         logger.info(f"Quote request for: {quote.customer_name} - {quote.product}")
-        
+
         # Import quote system
         from sistema_cotizaciones import SistemaCotizacionesBMC, Cliente, EspecificacionCotizacion
         from decimal import Decimal
-        
+
         # Initialize system
         sistema = SistemaCotizacionesBMC()
-        
+
         # Create customer
         cliente = Cliente(
             nombre=quote.customer_name,
@@ -240,7 +242,7 @@ async def create_quote(quote: QuoteRequest):
             direccion=quote.address or "",
             zona=quote.zone or ""
         )
-        
+
         # Create specifications
         especificaciones = EspecificacionCotizacion(
             producto=quote.product,
@@ -248,19 +250,19 @@ async def create_quote(quote: QuoteRequest):
             largo_metros=Decimal(str(quote.length)),
             ancho_metros=Decimal(str(quote.width))
         )
-        
+
         # Create quote
         cotizacion = sistema.crear_cotizacion(
             cliente=cliente,
             especificaciones=especificaciones,
             observaciones=quote.observations or ""
         )
-        
+
         # Calculate area
         area = float(quote.length * quote.width)
-        
+
         logger.info(f"Quote created: {cotizacion.id} - Total: ${cotizacion.precio_total}")
-        
+
         return QuoteResponse(
             quote_id=cotizacion.id,
             total=float(cotizacion.precio_total),
@@ -268,7 +270,7 @@ async def create_quote(quote: QuoteRequest):
             status="created",
             created_at=cotizacion.fecha.isoformat()
         )
-        
+
     except Exception as e:
         logger.error(f"Error creating quote: {e}", exc_info=True)
         raise HTTPException(
@@ -281,9 +283,9 @@ async def get_quote(quote_id: str):
     """Get quote by ID"""
     try:
         from sistema_cotizaciones import SistemaCotizacionesBMC
-        
+
         sistema = SistemaCotizacionesBMC()
-        
+
         # Find quote
         for cotizacion in sistema.cotizaciones:
             if cotizacion.id == quote_id:
@@ -302,9 +304,9 @@ async def get_quote(quote_id: str):
                     "status": cotizacion.estado,
                     "created_at": cotizacion.fecha.isoformat()
                 }
-        
+
         raise HTTPException(status_code=404, detail="Quote not found")
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -319,25 +321,25 @@ async def get_quote(quote_id: str):
 async def whatsapp_webhook_verify(request: Request):
     """
     WhatsApp webhook verification endpoint
-    
+
     Called by Meta to verify webhook ownership
     """
     try:
         mode = request.query_params.get("hub.mode")
         token = request.query_params.get("hub.verify_token")
         challenge = request.query_params.get("hub.challenge")
-        
+
         verify_token = os.getenv("WHATSAPP_VERIFY_TOKEN", "bmc_verify_token_2024")
-        
+
         logger.info(f"WhatsApp verification attempt - Mode: {mode}, Token match: {token == verify_token}")
-        
+
         if mode == "subscribe" and token == verify_token:
             logger.info("✅ WhatsApp webhook verified successfully")
             return Response(content=challenge, media_type="text/plain")
         else:
             logger.warning("❌ WhatsApp verification failed")
             raise HTTPException(status_code=403, detail="Verification failed")
-            
+
     except Exception as e:
         logger.error(f"Error in WhatsApp verification: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
@@ -346,13 +348,13 @@ async def whatsapp_webhook_verify(request: Request):
 async def whatsapp_webhook(request: Request):
     """
     WhatsApp webhook endpoint for incoming messages
-    
+
     Processes incoming WhatsApp messages and responds with AI
     """
     try:
         data = await request.json()
         logger.info(f"WhatsApp webhook received: {data}")
-        
+
         # Extract message from WhatsApp payload
         if "entry" in data:
             for entry in data["entry"]:
@@ -361,29 +363,29 @@ async def whatsapp_webhook(request: Request):
                         if change.get("field") == "messages":
                             value = change.get("value", {})
                             messages = value.get("messages", [])
-                            
+
                             for message in messages:
                                 # Process text message
                                 if message.get("type") == "text":
                                     from_number = message.get("from")
                                     text = message.get("text", {}).get("body", "")
-                                    
+
                                     logger.info(f"Processing WhatsApp message from {from_number}: {text}")
-                                    
+
                                     # Process with AI
                                     try:
                                         from ia_conversacional_integrada import procesar_mensaje_usuario
                                         response_text = procesar_mensaje_usuario(text, from_number)
-                                        
+
                                         # TODO: Send response back via WhatsApp API
                                         # This requires WhatsApp Business API credentials
                                         logger.info(f"Response generated: {response_text[:100]}...")
-                                        
+
                                     except ImportError:
                                         logger.warning("IA module not available for WhatsApp processing")
-        
+
         return {"status": "received"}
-        
+
     except Exception as e:
         logger.error(f"Error processing WhatsApp webhook: {e}", exc_info=True)
         # Return 200 to avoid webhook retries
@@ -445,7 +447,7 @@ async def get_stats():
     try:
         from sistema_cotizaciones import SistemaCotizacionesBMC
         sistema = SistemaCotizacionesBMC()
-        
+
         return {
             "total_quotes": len(sistema.cotizaciones),
             "total_products": len(sistema.productos),
@@ -492,13 +494,13 @@ async def internal_error_handler(request: Request, exc: Exception):
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     port = int(os.getenv("PORT", 8000))
     host = os.getenv("HOST", "0.0.0.0")
     reload = os.getenv("DEBUG", "false").lower() == "true"
-    
+
     logger.info(f"Starting server on {host}:{port}")
-    
+
     uvicorn.run(
         "sistema_completo_integrado:app",
         host=host,
