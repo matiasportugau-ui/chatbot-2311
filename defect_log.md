@@ -1,4 +1,8 @@
 # Defect Log
 
-| Component | Feature | Issue Description | Severity | Status |
-| :-------- | :------ | :---------------- | :------- | :----- |
+| Component         | Feature | Issue Description                                                                                                                                                                                                                                                 | Severity | Status |
+| :---------------- | :------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :----- |
+| **Shopify App**   | Routing | **Route ID Collision**: `routes/api.chat.ts` and `routes/api.chat.tsx` both exist. This causes build warnings and unpredictable behavior. `api.chat.tsx` appears to be for the Storefront Widget (CORS enabled), while `api.chat.ts` is for Admin (Auth enabled). | **High** | Open   |
+| **Mercado Libre** | OAuth   | `draft-answers-script.ts` and `get-meli-auth-url.js` rely on unverified environment variables (`MERCADO_LIBRE_APP_ID`, `REDIRECT_URI`). Manual `.env` setup validation is required.                                                                               | Medium   | Open   |
+| **Simulator**     | Backend | Simulator explicitly calls `http://localhost:8000` (via default `PY_API_URL`). Verification failed as backend service is not running in this environment.                                                                                                         | Medium   | Open   |
+| **Shopify App**   | Linting | Unused variables detected in `personality.server.ts` and `training.server.ts` (`avatarUrl`, `shop`, `fileBuffer`).                                                                                                                                                | Low      | Open   |
