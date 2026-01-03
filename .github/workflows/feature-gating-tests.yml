@@ -1,0 +1,33 @@
+name: 💰 Feature Gating & Revenue Protection
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/shopify-app/billing/**'
+      - 'apps/chatbot-engine/core/usage/**'
+
+jobs:
+  revenue-protection:
+    name: 🛡️ Revenue Logic Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Test Dependencies
+        run: pip install pytest requests
+
+      - name: 🧪 Test Usage Limits (Mocked)
+        # Ejecuta tests específicos que verifican que el contador
+        # bloquea chats cuando se excede el límite del plan.
+        run: pytest tests/revenue/test_usage_limits.py
+
+      - name: 🧪 Verify Webhook Integrity
+        # Verifica que los webhooks de facturación de Shopify
+        # (app_subscription_update) se procesen correctamente y validen la firma HMAC.
+        run: pytest tests/revenue/test_billing_webhooks.py

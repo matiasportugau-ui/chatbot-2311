@@ -1,0 +1,75 @@
+name: 🚀 Production Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+jobs:
+  # 1. Quality Assurance Gate
+  quality-gate:
+    name: 🛡️ Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Backend QA
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Python Dependencies
+        run: |
+          pip install ruff pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint Backend
+        run: ruff check .
+      - name: Test Backend
+        run: pytest
+
+      # Frontend QA
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Lint Frontend
+        run: npm run lint
+      - name: Test Frontend
+        run: npm run test
+
+  # 2. Build & Deploy
+  deploy:
+    name: 🚀 Deploy to Fly.io
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy Backend (FastAPI)
+        working-directory: ./apps/chatbot-engine
+        run: flyctl deploy --remote-only
+
+      - name: Deploy Frontend (Remix/Shopify)
+        working-directory: ./apps/shopify-app
+        run: flyctl deploy --remote-only
+
+  # 3. Post-Deploy Verification
+  smoke-test:
+    name: 💨 Smoke Test
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Backend Health
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://bmc-chatbot-engine.fly.dev/health)
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Backend Health Check Failed! Status: $STATUS"
+            exit 1
+          fi
+          echo "✅ Backend Healthy"
