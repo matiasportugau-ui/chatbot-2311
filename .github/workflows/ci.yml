@@ -23,6 +23,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
+    - name: Set dummy environment variables
+      run: |
+        echo "MERCADO_LIBRE_APP_ID=dummy_app_id" >> $GITHUB_ENV
+        echo "MERCADO_LIBRE_CLIENT_SECRET=dummy_client_secret" >> $GITHUB_ENV
+        echo "MERCADO_LIBRE_REDIRECT_URI=http://localhost:3000/api/mercado-libre/auth/callback" >> $GITHUB_ENV
+
     - name: Install dependencies
       run: npm ci
 
@@ -32,11 +38,14 @@ jobs:
     - name: Run ESLint
       run: npx eslint . --ext .ts,.tsx
 
-    - name: Run tests
-      run: npm run test
-
     - name: Build application
       run: npm run build
+
+    - name: Run tests with server
+      run: |
+        nohup npm run start &
+        npx wait-on tcp:3000
+        npm run test
 
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3

@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { 
-  Download, 
-  Upload, 
-  FileText, 
-  BarChart3, 
-  Database, 
+import {
+  Download,
+  Upload,
+  FileText,
+  BarChart3,
+  Database,
   Settings,
   CheckCircle,
   AlertTriangle,
@@ -25,10 +25,10 @@ export function ExportImport({ className }: ExportImportProps) {
   const [exportStatus, setExportStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleExport = async (format: string) => {
+  const handleExport = async (_format: string) => {
     setIsExporting(true)
     setExportStatus('idle')
-    
+
     try {
       // Simulate export process
       await new Promise(resolve => setTimeout(resolve, 2000))
@@ -40,10 +40,10 @@ export function ExportImport({ className }: ExportImportProps) {
     }
   }
 
-  const handleImport = async (file: File) => {
+  const handleImport = async (_file: File) => {
     setIsImporting(true)
     setImportStatus('idle')
-    
+
     try {
       // Simulate import process
       await new Promise(resolve => setTimeout(resolve, 2000))
@@ -93,11 +93,11 @@ export function ExportImport({ className }: ExportImportProps) {
             <p className="text-sm text-muted-foreground">
               Export your dashboard data in various formats for analysis and reporting.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {exportFormats.map((format) => {
                 const FormatIcon = format.icon
-                
+
                 return (
                   <div key={format.format} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
@@ -119,7 +119,7 @@ export function ExportImport({ className }: ExportImportProps) {
                 )
               })}
             </div>
-            
+
             {exportStatus !== 'idle' && (
               <div className="flex items-center space-x-2 p-3 bg-muted rounded-lg">
                 {React.createElement(getStatusIcon(exportStatus), {
@@ -147,7 +147,7 @@ export function ExportImport({ className }: ExportImportProps) {
             <p className="text-sm text-muted-foreground">
               Import data from external sources to enhance your dashboard.
             </p>
-            
+
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <input
@@ -171,7 +171,7 @@ export function ExportImport({ className }: ExportImportProps) {
                   Supported formats: .xlsx, .csv, .json
                 </span>
               </div>
-              
+
               {importStatus !== 'idle' && (
                 <div className="flex items-center space-x-2 p-3 bg-muted rounded-lg">
                   {React.createElement(getStatusIcon(importStatus), {
@@ -207,7 +207,7 @@ export function ExportImport({ className }: ExportImportProps) {
                   <option value="pdf">PDF (.pdf)</option>
                 </select>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Date Range</label>
                 <select className="w-full p-2 border rounded-lg">
@@ -218,7 +218,7 @@ export function ExportImport({ className }: ExportImportProps) {
                 </select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Include Data</label>
               <div className="space-y-2">
@@ -236,7 +236,7 @@ export function ExportImport({ className }: ExportImportProps) {
                 ))}
               </div>
             </div>
-            
+
             <Button className="w-full">
               Save Settings
             </Button>

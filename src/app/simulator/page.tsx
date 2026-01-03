@@ -52,7 +52,7 @@ export default function SimulatorPage() {
       }
     } catch (error) {
       // If endpoint doesn't exist, that's ok for simulation mode
-      console.log('Conversations endpoint not available, using local state');
+      // console.log('Conversations endpoint not available, using local state');
     }
   }, [apiUrl]);
 
@@ -107,8 +107,8 @@ export default function SimulatorPage() {
 
       setMessages(prev => [...prev, assistantMessage]);
       await loadConversations();
-    } catch (error) {
-      console.error('Error sending message:', error);
+    } catch (_error) {
+      // console.error('Error sending message:', error);
       const errorMessage: Message = {
         role: 'assistant',
         content: 'Error al procesar el mensaje. Por favor intenta de nuevo.',
@@ -135,8 +135,8 @@ export default function SimulatorPage() {
         setSessionId(sessionId);
         setSelectedConversation(sessionId);
       }
-    } catch (error) {
-      console.error('Error loading conversation:', error);
+    } catch (_error) {
+      // console.error('Error loading conversation:', error);
     }
   };
 
@@ -152,8 +152,8 @@ export default function SimulatorPage() {
       if (response.ok) {
         alert('Parámetros del modelo actualizados');
       }
-    } catch (error) {
-      console.error('Error updating model params:', error);
+    } catch (_error) {
+      // console.error('Error updating model params:', error);
     }
   };
 
