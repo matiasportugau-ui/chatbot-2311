@@ -9,35 +9,35 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Run TypeScript check
       run: npx tsc --noEmit
-    
+
     - name: Run ESLint
       run: npx eslint . --ext .ts,.tsx --max-warnings 0
-    
+
     - name: Run tests
       run: npm run test
-    
+
     - name: Build application
       run: npm run build
-    
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       with:
@@ -48,36 +48,45 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
-    
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Use Node.js 18.x
       uses: actions/setup-node@v4
       with:
         node-version: 18.x
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build application
       run: npm run build
-    
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-files
         path: out/
 
+    - name: Attest Build Provenance
+      uses: actions/attest-build-provenance@v3.1.0
+      with:
+        subject-path: 'out/**'
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Deploy to Vercel
       uses: amondnet/vercel-action@v25
       with:
