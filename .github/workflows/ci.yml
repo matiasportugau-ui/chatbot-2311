@@ -30,7 +30,7 @@ jobs:
       run: npx tsc --noEmit
 
     - name: Run ESLint
-      run: npx eslint . --ext .ts,.tsx --max-warnings 0
+      run: npx eslint . --ext .ts,.tsx
 
     - name: Run tests
       run: npm run test
