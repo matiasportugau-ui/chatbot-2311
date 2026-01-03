@@ -35,7 +35,7 @@ export default function SimulatorPage() {
     model: 'gpt-4o-mini'
   });
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.PY_CHAT_SERVICE_URL || 'http://localhost:8000';
+  const apiUrl = 'http://localhost:8000';
 
 
 
