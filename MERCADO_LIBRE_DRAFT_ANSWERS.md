@@ -3,7 +3,7 @@
 ## Question 123456
 **User:** Hola, ¿tienen stock del producto?
 **Item:** MLA87654321
-**Date:** 2026-01-06T04:39:07.837Z
+**Date:** 2026-01-06T05:04:17.414Z
 
 ### Proposed Answer
 Hola! Soy el asistente de BMC Uruguay. ¿En qué puedo ayudarte?
@@ -13,7 +13,7 @@ Hola! Soy el asistente de BMC Uruguay. ¿En qué puedo ayudarte?
 ## Question 123457
 **User:** ¿Hacen envíos a Cordoba?
 **Item:** MLA87654322
-**Date:** 2026-01-06T04:39:07.848Z
+**Date:** 2026-01-06T05:04:19.168Z
 
 ### Proposed Answer
 Hola! Soy el asistente de BMC Uruguay. ¿En qué puedo ayudarte?
