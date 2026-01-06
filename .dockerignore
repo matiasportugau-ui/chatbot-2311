@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+backups
+logs
+*.log
+.vscode
+.cursor
+*.md
+.gitignore
+docker-compose*.yml
+Dockerfile.python

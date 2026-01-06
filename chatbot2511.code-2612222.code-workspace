@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"codium.codeCompletion.enable": true,
+		"cSpell.blockCheckingWhenTextChunkSizeGreaterThan": 10000
+	}
+}
