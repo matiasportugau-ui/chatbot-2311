@@ -46,6 +46,7 @@ backups/
 # Environment variables
 .env
 .env.local
+.env.unified
 .env.*.local
 .env.production
 credentials.json
@@ -53,6 +54,10 @@ credentials-*.json
 *.pem
 *.key
 service-account-*.json
+secrets.json
+secrets_dump.json
+*.backup*
+*.bak*
 
 # Testing
 .pytest_cache/
