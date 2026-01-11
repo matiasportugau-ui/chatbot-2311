@@ -1,51 +1,59 @@
 # 🔐 Variables de Entorno para Vercel
 # Copia estas variables en Vercel Dashboard → Settings → Environment Variables
 
+# 💡 TIP: Habilita "Automatically expose System Environment Variables" en
+# Vercel Dashboard → Settings → Environment Variables para obtener:
+# - VERCEL_URL (ej: bmc-chatbot.vercel.app)
+# - VERCEL_ENV (production, preview, development)
+# - NEXT_PUBLIC_VERCEL_URL (si lo deseas exponer al cliente)
+
+# System variables (se generan automáticamente, solo añádelas si deseas sobrescribir)
+VERCEL_URL=
+VERCEL_ENV=
+NEXT_PUBLIC_VERCEL_URL=
+
+# Core application settings
+NODE_ENV=production
+# Si habilitas las System Variables de Vercel, esta se puede omitir o usar como fallback
+NEXT_PUBLIC_APP_URL=https://bmc-cotizacion-inteligente.vercel.app
+
 # OpenAI API
-OPENAI_API_KEY=sk-proj-...
+OPENAI_API_KEY=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
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_MAX_TOKENS=4000
+OPENAI_TEMPERATURE=0.1
 
 # Google Sheets API
 GOOGLE_SHEET_ID=1bs467N7FbLSHI7LpNor3wqrPZC9snqPphft8cEPHHl0
-GOOGLE_SERVICE_ACCOUNT_EMAIL=bmc-sheets-service@proyecto.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_SERVICE_ACCOUNT_EMAIL=
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n"
 
 # MongoDB Atlas
-MONGODB_URI=mongodb+srv://bmcadmin:password@cluster.mongodb.net/
-
-# URLs
-NODE_ENV=production
-NEXT_PUBLIC_APP_URL=https://tu-app.vercel.app
+MONGODB_URI=mongodb+srv://matiasportugau_db_user:Metallica123123@cluster0.kek5hdd.mongodb.net/bmc_quotes?retryWrites=true&w=majority
 
 # Mercado Libre OAuth / API
-MERCADO_LIBRE_APP_ID=
-MERCADO_LIBRE_CLIENT_SECRET=
-MERCADO_LIBRE_REDIRECT_URI=https://tu-app.vercel.app/api/mercado-libre/auth/callback
-MERCADO_LIBRE_SELLER_ID=
-MERCADO_LIBRE_WEBHOOK_SECRET=
+MERCADO_LIBRE_APP_ID=742811153438318
+MERCADO_LIBRE_CLIENT_SECRET=L9EGZShXy5xXLHVI9Zm8lKbgvX8bCbK5
+MERCADO_LIBRE_REDIRECT_URI=https://bmc-cotizacion-inteligente.vercel.app/api/mercado-libre/auth/callback
+MERCADO_LIBRE_SELLER_ID=179969104
+MERCADO_LIBRE_WEBHOOK_SECRET=mstJCfT6bpXR9TZigO7uCmyXDJ8vRZeO
 # IMPORTANTE: MERCADO_LIBRE_AUTH_URL debe coincidir con la región donde registraste la app
-# Argentina: https://auth.mercadolibre.com.ar
-# México: https://auth.mercadolibre.com.mx
 # Uruguay: https://auth.mercadolibre.com.uy
-# Brasil: https://auth.mercadolibre.com.br
-# Chile: https://auth.mercadolibre.com.cl
-# Colombia: https://auth.mercadolibre.com.co
-# Perú: https://auth.mercadolibre.com.pe
 MERCADO_LIBRE_AUTH_URL=https://auth.mercadolibre.com.uy
 MERCADO_LIBRE_API_URL=https://api.mercadolibre.com
 MERCADO_LIBRE_SCOPES=offline_access read write
-MERCADO_LIBRE_PKCE_ENABLED=true
-
-# Mercado Libre ingestion helpers
-MELI_ACCESS_TOKEN=
-MELI_REFRESH_TOKEN=
-MELI_SELLER_ID=
-MELI_PAGE_SIZE=250
-RUN_MELI_SYNC=true
+MERCADO_LIBRE_PKCE_ENABLED=false
 
 # WhatsApp Business API (Opcional)
-WHATSAPP_ACCESS_TOKEN=pendiente
-WHATSAPP_PHONE_NUMBER_ID=pendiente
-WHATSAPP_VERIFY_TOKEN=bmc_whatsapp_verify_2024
+WHATSAPP_ACCESS_TOKEN=EAA65WHSlYa0BQIlO5yllnZB2fC8ysd53h2Vo0bmC2MDIXDiYpF24ow7ITkvVsOZBIxZBwYtikn5I7Mi1Y3dWwWBv3TfzY3whioA1K2dc7sYvzvQ3N5GQLDWvzNr1gJCmdcKnY9yMSAHe4hZCKwqWNtZBaG31iuWo7H6OXa0fZB54gBtcvrBSZBPDPliUlbdSITZCWHkdMqFXC975iCOouJADkEtgG9hgR9cA1ZBS44P5RZAJLZAuniIckmR4yWUqJ7YBmR7SxCNTiUOG2Bv17U0KVXzBwZDZD
+WHATSAPP_PHONE_NUMBER_ID=1344290740770002
+WHATSAPP_VERIFY_TOKEN=HdKSFP8OLvS1XpbrCKGfLJf0fO-nxyJI
 
 # N8N Integration (Opcional)
-N8N_WEBHOOK_URL=https://tu-n8n.vercel.app/webhook/whatsapp-message
+N8N_BASE_URL=http://localhost:5678
+N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkODVlMjVjNi1mMzJjLTQ1NWQtODUzOC02ODU3YjMyYzE5NDQiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYyNjczMTQ1fQ.syR-zNunh3r2C6JwE4sNGBsqyaJYqbEzFTpUSMqiwVI
+N8N_WEBHOOK_URL=http://localhost:5678/webhook/whatsapp
+
+# Additional secrets / keys
+CREDENTIALS_ENCRYPTION_KEY=
+API_SECRET_KEY=bmc_int_9e72b4f18a2c03d5

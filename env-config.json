@@ -1,0 +1,17 @@
+{
+  "projects": ["my-project"],
+  "variables": [
+    {
+      "key": "API_KEY",
+      "value": "<encrypted>",
+      "type": "encrypted",
+      "target": ["production", "preview"]
+    },
+    {
+      "key": "DEBUG",
+      "value": "true",
+      "type": "plain",
+      "target": ["development"]
+    }
+  ]
+}

@@ -19,10 +19,14 @@ git push origin main
 6. Click "Deploy"
 
 ### 3. Configurar variables de entorno
-1. En Vercel Dashboard → Settings → Environment Variables
-2. Agrega todas las variables del archivo `vercel-env-template.txt`
-3. **IMPORTANTE**: Para `GOOGLE_PRIVATE_KEY`, escapa los \n correctamente
-4. Click "Save"
+1. Ve a Vercel Dashboard → Settings → Environment Variables.
+2. **IMPORTANTE: Habilitar Variables de Sistema**:
+   - Busca la sección "System Environment Variables".
+   - Marca la casilla **"Automatically expose System Environment Variables"**.
+   - Esto permitirá que la app detecte automáticamente su URL (`VERCEL_URL`) y entorno (`VERCEL_ENV`).
+3. Agrega las variables manuales del archivo `vercel-env-template.txt`.
+4. **TIP**: Para `GOOGLE_PRIVATE_KEY`, asegúrate de que los \n estén presentes literalmente.
+5. Click "Save".
 
 ### 4. Verificar deploy
 1. Ve a tu dominio: https://tu-app.vercel.app

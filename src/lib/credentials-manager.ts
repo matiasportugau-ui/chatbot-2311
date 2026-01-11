@@ -68,12 +68,15 @@ class CredentialsManager {
 
   constructor() {
     // Usar clave de encriptación del sistema o generar una
-    this.encryptionKey = process.env.CREDENTIALS_ENCRYPTION_KEY ||
+    this.encryptionKey =
+      process.env.CREDENTIALS_ENCRYPTION_KEY ||
       'bmc-default-encryption-key-32-chars'
   }
 
   // Cargar credenciales desde archivo JSON encriptado
-  async loadCredentials(credentialsPath: string = './credentials.json'): Promise<void> {
+  async loadCredentials(
+    credentialsPath: string = './credentials.json'
+  ): Promise<void> {
     try {
       let loadedFromFile = false
 
@@ -91,7 +94,9 @@ class CredentialsManager {
           loadedFromFile = true
         } catch (fileError: any) {
           if (fileError?.code === 'ENOENT') {
-            console.warn('⚠️ credentials.json no encontrado, usando variables de entorno')
+            console.warn(
+              '⚠️ credentials.json no encontrado, usando variables de entorno'
+            )
             this.loadFromEnvironment()
           } else {
             throw fileError
@@ -115,18 +120,26 @@ class CredentialsManager {
 
   // Cargar credenciales desde variables de entorno
   private loadFromEnvironment(): void {
+    const env = process.env.VERCEL_ENV || process.env.NODE_ENV || 'development'
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      (process.env.NEXT_PUBLIC_VERCEL_URL
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        : '') ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+
     this.credentials = {
       openai: {
         api_key: process.env.OPENAI_API_KEY || '',
         model: process.env.OPENAI_MODEL || 'gpt-4',
         max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS || '4000'),
-        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.1')
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.1'),
       },
       google_sheets: {
         sheet_id: process.env.GOOGLE_SHEET_ID || '',
         service_account_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
         private_key: process.env.GOOGLE_PRIVATE_KEY || '',
-        scopes: ['https://www.googleapis.com/auth/spreadsheets']
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       },
       mongodb: {
         uri: process.env.MONGODB_URI || '',
@@ -135,47 +148,73 @@ class CredentialsManager {
           quotes: process.env.MONGODB_QUOTES_COLLECTION || 'quotes',
           sessions: process.env.MONGODB_SESSIONS_COLLECTION || 'sessions',
           context: process.env.MONGODB_CONTEXT_COLLECTION || 'context',
-          analytics: process.env.MONGODB_ANALYTICS_COLLECTION || 'analytics'
-        }
+          analytics: process.env.MONGODB_ANALYTICS_COLLECTION || 'analytics',
+        },
       },
       whatsapp: {
         access_token: process.env.WHATSAPP_ACCESS_TOKEN || '',
         phone_number_id: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
-        verify_token: process.env.WHATSAPP_VERIFY_TOKEN || 'bmc_whatsapp_verify_2024',
-        webhook_url: process.env.WHATSAPP_WEBHOOK_URL || ''
+        verify_token:
+          process.env.WHATSAPP_VERIFY_TOKEN || 'bmc_whatsapp_verify_2024',
+        webhook_url:
+          process.env.WHATSAPP_WEBHOOK_URL ||
+          (appUrl ? `${appUrl}/api/whatsapp/webhook` : ''),
       },
       n8n: {
-        webhook_url: process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/bmc-quotes',
+        webhook_url:
+          process.env.N8N_WEBHOOK_URL ||
+          'http://localhost:5678/webhook/bmc-quotes',
         api_key: process.env.N8N_API_KEY || '',
-        base_url: process.env.N8N_BASE_URL || 'http://localhost:5678'
+        base_url: process.env.N8N_BASE_URL || 'http://localhost:5678',
       },
       mercado_libre: {
-        app_id: process.env.MERCADO_LIBRE_APP_ID || process.env.MELI_APP_ID || '',
-        client_secret: process.env.MERCADO_LIBRE_CLIENT_SECRET || process.env.MELI_CLIENT_SECRET || '',
-        redirect_uri: process.env.MERCADO_LIBRE_REDIRECT_URI || process.env.MELI_REDIRECT_URI || '',
-        seller_id: process.env.MERCADO_LIBRE_SELLER_ID || process.env.MELI_SELLER_ID || '',
+        app_id:
+          process.env.MERCADO_LIBRE_APP_ID || process.env.MELI_APP_ID || '',
+        client_secret:
+          process.env.MERCADO_LIBRE_CLIENT_SECRET ||
+          process.env.MELI_CLIENT_SECRET ||
+          '',
+        redirect_uri:
+          process.env.MERCADO_LIBRE_REDIRECT_URI ||
+          process.env.MELI_REDIRECT_URI ||
+          (appUrl ? `${appUrl}/api/mercado-libre/auth/callback` : ''),
+        seller_id:
+          process.env.MERCADO_LIBRE_SELLER_ID ||
+          process.env.MELI_SELLER_ID ||
+          '',
         webhook_secret: process.env.MERCADO_LIBRE_WEBHOOK_SECRET || '',
-        auth_base_url: process.env.MERCADO_LIBRE_AUTH_URL || 'https://auth.mercadolibre.com.ar',
-        api_base_url: process.env.MERCADO_LIBRE_API_URL || 'https://api.mercadolibre.com',
-        scopes: (process.env.MERCADO_LIBRE_SCOPES || 'offline_access read write')
+        auth_base_url:
+          process.env.MERCADO_LIBRE_AUTH_URL ||
+          'https://auth.mercadolibre.com.ar',
+        api_base_url:
+          process.env.MERCADO_LIBRE_API_URL || 'https://api.mercadolibre.com',
+        scopes: (
+          process.env.MERCADO_LIBRE_SCOPES || 'offline_access read write'
+        )
           .split(/[ ,]+/)
           .filter(Boolean),
-        pkce_enabled: (process.env.MERCADO_LIBRE_PKCE_ENABLED || 'true').toLowerCase() !== 'false'
+        pkce_enabled:
+          (process.env.MERCADO_LIBRE_PKCE_ENABLED || 'true').toLowerCase() !==
+          'false',
       },
       dropbox: {
         app_key: process.env.DROPBOX_APP_KEY || '',
         app_secret: process.env.DROPBOX_APP_SECRET || '',
         access_token: process.env.DROPBOX_ACCESS_TOKEN || '',
-        refresh_token: process.env.DROPBOX_REFRESH_TOKEN || ''
+        refresh_token: process.env.DROPBOX_REFRESH_TOKEN || '',
       },
       system: {
-        environment: process.env.NODE_ENV || 'development',
+        environment: env,
         max_context_tokens: parseInt(process.env.MAX_CONTEXT_TOKENS || '8000'),
-        max_messages_per_session: parseInt(process.env.MAX_MESSAGES_PER_SESSION || '20'),
-        inactivity_timeout_minutes: parseInt(process.env.INACTIVITY_TIMEOUT_MINUTES || '30'),
+        max_messages_per_session: parseInt(
+          process.env.MAX_MESSAGES_PER_SESSION || '20'
+        ),
+        inactivity_timeout_minutes: parseInt(
+          process.env.INACTIVITY_TIMEOUT_MINUTES || '30'
+        ),
         default_zone: process.env.DEFAULT_ZONE || 'montevideo',
-        encryption_key: this.encryptionKey
-      }
+        encryption_key: this.encryptionKey,
+      },
     }
   }
 
@@ -232,7 +271,8 @@ class CredentialsManager {
 
     // Verificar Google Sheets
     if (!creds.google_sheets.sheet_id) missing.push('GOOGLE_SHEET_ID')
-    if (!creds.google_sheets.service_account_email) missing.push('GOOGLE_SERVICE_ACCOUNT_EMAIL')
+    if (!creds.google_sheets.service_account_email)
+      missing.push('GOOGLE_SERVICE_ACCOUNT_EMAIL')
     if (!creds.google_sheets.private_key) missing.push('GOOGLE_PRIVATE_KEY')
 
     // Verificar MongoDB
@@ -240,17 +280,20 @@ class CredentialsManager {
 
     // Verificar WhatsApp (opcional)
     if (!creds.whatsapp.access_token) missing.push('WHATSAPP_ACCESS_TOKEN')
-    if (!creds.whatsapp.phone_number_id) missing.push('WHATSAPP_PHONE_NUMBER_ID')
+    if (!creds.whatsapp.phone_number_id)
+      missing.push('WHATSAPP_PHONE_NUMBER_ID')
 
     // Verificar Mercado Libre
     if (!creds.mercado_libre.app_id) missing.push('MERCADO_LIBRE_APP_ID')
-    if (!creds.mercado_libre.client_secret) missing.push('MERCADO_LIBRE_CLIENT_SECRET')
-    if (!creds.mercado_libre.redirect_uri) missing.push('MERCADO_LIBRE_REDIRECT_URI')
+    if (!creds.mercado_libre.client_secret)
+      missing.push('MERCADO_LIBRE_CLIENT_SECRET')
+    if (!creds.mercado_libre.redirect_uri)
+      missing.push('MERCADO_LIBRE_REDIRECT_URI')
     if (!creds.mercado_libre.seller_id) missing.push('MERCADO_LIBRE_SELLER_ID')
 
     return {
       isValid: missing.length === 0,
-      missing
+      missing,
     }
   }
 
@@ -273,7 +316,9 @@ class CredentialsManager {
   // Verificar que las credenciales estén cargadas
   private ensureLoaded(): void {
     if (!this.isLoaded || !this.credentials) {
-      throw new Error('Las credenciales no han sido cargadas. Llama a loadCredentials() primero.')
+      throw new Error(
+        'Las credenciales no han sido cargadas. Llama a loadCredentials() primero.'
+      )
     }
   }
 
@@ -285,39 +330,48 @@ class CredentialsManager {
       openai: {
         model: this.credentials!.openai.model,
         max_tokens: this.credentials!.openai.max_tokens,
-        has_api_key: !!this.credentials!.openai.api_key
+        has_api_key: !!this.credentials!.openai.api_key,
       },
       google_sheets: {
         sheet_id: this.credentials!.google_sheets.sheet_id,
-        has_credentials: !!(this.credentials!.google_sheets.service_account_email && this.credentials!.google_sheets.private_key)
+        has_credentials: !!(
+          this.credentials!.google_sheets.service_account_email &&
+          this.credentials!.google_sheets.private_key
+        ),
       },
       mongodb: {
         database: this.credentials!.mongodb.database,
-        has_uri: !!this.credentials!.mongodb.uri
+        has_uri: !!this.credentials!.mongodb.uri,
       },
       whatsapp: {
-        has_credentials: !!(this.credentials!.whatsapp.access_token && this.credentials!.whatsapp.phone_number_id)
+        has_credentials: !!(
+          this.credentials!.whatsapp.access_token &&
+          this.credentials!.whatsapp.phone_number_id
+        ),
       },
       mercado_libre: {
         app_id: this.credentials!.mercado_libre.app_id,
         has_secret: !!this.credentials!.mercado_libre.client_secret,
         seller_id: this.credentials!.mercado_libre.seller_id,
         pkce_enabled: this.credentials!.mercado_libre.pkce_enabled,
-        scopes: this.credentials!.mercado_libre.scopes
+        scopes: this.credentials!.mercado_libre.scopes,
       },
       dropbox: {
         has_app_key: !!this.credentials!.dropbox.app_key,
         has_app_secret: !!this.credentials!.dropbox.app_secret,
-        has_tokens: !!(this.credentials!.dropbox.access_token || this.credentials!.dropbox.refresh_token)
+        has_tokens: !!(
+          this.credentials!.dropbox.access_token ||
+          this.credentials!.dropbox.refresh_token
+        ),
       },
       n8n: {
         webhook_url: this.credentials!.n8n.webhook_url,
-        has_api_key: !!this.credentials!.n8n.api_key
+        has_api_key: !!this.credentials!.n8n.api_key,
       },
       system: {
         environment: this.credentials!.system.environment,
-        max_context_tokens: this.credentials!.system.max_context_tokens
-      }
+        max_context_tokens: this.credentials!.system.max_context_tokens,
+      },
     }
   }
 }
@@ -326,7 +380,9 @@ class CredentialsManager {
 export const credentialsManager = new CredentialsManager()
 
 // Función de conveniencia para inicializar credenciales
-export async function initializeCredentials(credentialsPath?: string): Promise<void> {
+export async function initializeCredentials(
+  credentialsPath?: string
+): Promise<void> {
   await credentialsManager.loadCredentials(credentialsPath)
 
   const validation = credentialsManager.validateCredentials()
