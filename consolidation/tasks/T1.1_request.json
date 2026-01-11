@@ -6,50 +6,118 @@
     "type": "extract_pr_metadata",
     "pr_data": {
       "author": {
-        "id": "U_kgDODacm5g",
-        "is_bot": false,
-        "login": "matiasportugau-ui",
-        "name": ""
+        "is_bot": true,
+        "login": "app/copilot-swe-agent"
       },
       "baseRefName": "new-branch",
-      "body": "Create a comprehensive multi-agent deployment plan and instructions for the BMC Uruguay system to facilitate its production launch.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-3809132f-2b9c-455a-a8f0-d5fdd0db9e2d\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n## Summary by Sourcery\n\nAdd a comprehensive multi-agent deployment and orchestration playbook for the BMC Uruguay system, including roles, phases, timelines, and coordination workflows for taking the platform to production.\n\nDocumentation:\n- Introduce a detailed Agent Deployment Plan & Team Instructions document covering system overview, agent roles, phased rollout, workflows, risk management, and success metrics.\n- Add an Orchestrator Kickoff Guide that gives an hour-by-hour Day 1 plan and ongoing routines for the technical lead to run the deployment.\n- Provide a Deployment Package Summary that explains the documentation set, roles, phases, milestones, and how different stakeholders should use the materials.\n- Create an Agent Task Matrix with phase-by-phase, day-by-day tasks, checklists, and progress tracking structures for each agent role.\n- Add a Start Here deployment index to route orchestrators, agents, and stakeholders to the appropriate deployment documents.",
-      "createdAt": "2025-12-02T17:02:54Z",
+      "body": "Adds production-ready training system enabling real-time bot improvement through emoji-triggered corrections (\u270f\ufe0f, \ud83d\udd27), response reformulation with reasoning, and automated benchmarking. Addresses need for collaborative pre-production refinement with knowledge persistence.\n\n## Core Implementation\n\n**Training System** (`training_evaluation_system.py`)\n- Dual mode operation (Training/Production) with session management\n- Correction detection via emojis or text triggers\n- AI-powered response reformulation with explicit reasoning and change tracking\n- Approval/rejection workflow before knowledge base updates\n- JSON-based persistence for corrections, sessions, and updates\n\n**Benchmark Framework** (`benchmark_system.py`)\n- 5 pre-configured test scenarios covering quotations, product info, objections\n- Automated scoring (0-100) with category-based evaluation\n- Before/after comparison analysis with statistical reporting\n- Actionable recommendations based on performance metrics\n\n**Integration Layer** (`training_integrated_bot.py`)\n- CLI interface with command processing\n- Message flow handling with training awareness\n- Mock system for standalone testing\n- WhatsApp-ready architecture\n\n## Usage Example\n\n```python\nfrom training_integrated_bot import TrainingIntegratedBot\n\nbot = TrainingIntegratedBot()\n\n# Activate training mode\nbot.process_message(\"session_001\", \"agent_001\", \"MODO ENTRENAMIENTO\")\n\n# Get response, then correct it\nbot.process_message(\"session_001\", \"agent_001\", \"\u00bfPrecio de Isodec?\")\nresponse = bot.process_message(\n    \"session_001\", \n    \"agent_001\", \n    \"\u270f\ufe0f Incluir precios espec\u00edficos por espesor\"\n)\n# Returns reformulated response with reasoning and change list\n\n# Approve to persist knowledge\nbot.process_message(\"session_001\", \"agent_001\", \"APROBAR\")\n```\n\n## Data Structure\n\n```\ndata/\n\u251c\u2500\u2500 training/\n\u2502   \u251c\u2500\u2500 corrections.json          # Correction requests and reformulations\n\u2502   \u251c\u2500\u2500 knowledge_updates.json    # Approved updates\n\u2502   \u251c\u2500\u2500 training_sessions.json    # Session history\n\u2502   \u2514\u2500\u2500 pending_updates.jsonl     # Queue for knowledge base integration\n\u2514\u2500\u2500 benchmarks/\n    \u251c\u2500\u2500 test_suites.json          # Test definitions\n    \u251c\u2500\u2500 test_results.json         # Historical results\n    \u2514\u2500\u2500 report_*.json             # Generated reports\n```\n\n## Testing\n\nComprehensive test suite validates all components (16/16 passing):\n- Training mode activation and correction workflow\n- Benchmark execution and reporting\n- Data persistence and session management\n\n## Documentation\n\n- `TRAINING_SYSTEM_GUIDE.md` - Architecture and usage\n- `IMPLEMENTATION_PLAN_AGENTS.md` - Deployment steps\n- `QUICK_REFERENCE_TRAINING.md` - Command reference\n\n## Fixes\n\n- Added missing `os` import in `base_conocimiento_dinamica.py`\n- Extracted approval rate calculation to helper method\n- Fixed statistics structure for backward compatibility\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<!-- START COPILOT ORIGINAL PROMPT -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> Anotaci\u00f3n, necesito poder realizar un sistema de evaluaci\u00f3n del Chat Bot, pr\u00e1cticamente en estado de producci\u00f3n. La forma que identifico que va a ser la m\u00e1s correcta para poder probarlo, es tener una charla por WhatsApp con \u00e9l en la cual le identifiquemos que estamos en modalidad entrenamiento o modalidad producci\u00f3n Estamos de entrenamiento. El Bot va a tener que responder como si fuera producci\u00f3n, salvo que yo le hago una correcci\u00f3n y indique con alg\u00fan icono o alguna car\u00e1cter o alguna clave, quiz\u00e1s alg\u00fan tipo de emoji le indique que viene una correcci\u00f3n a lo que hay que hacer, y tiene que corregirlo Repensarla, reformularla pedirme mostrarme el nuevo razonamiento m\u00e1s a la correcci\u00f3n para que yo lo pruebe y luego incorporar en su base de conocimiento para que quede persistente esta forma ser una f\u00f3rmula cual podremos y tanto yo como mis agentes en forma din\u00e1mica, hacerle aportes de consultas de otros clientes, ya utilizarlo como referencia para cotizar y para devolver respuestas, pero a su vez ir, afin\u00e1ndolo previo a la etapa de producci\u00f3n y de contacto directo a los clientes para esa tarea. Quiero que desarrolle un sistema Benchmark que eval\u00fae es una buena t\u00e9cnica para poder realizarlo, me sugieras c\u00f3mo implementarlo, generes un plan de implementaci\u00f3n para que lo puedan hacer agentes automatizados. Este evalualos los los medios que hemos hemos estado trabajando en nuestro de nuestro repo, cu\u00e1les son l\u00f3bulos las modelos que han estado aportando y para cada etapa de lo que se viene con esta aplicaci\u00f3n, quiero que definas quiz\u00e1s la forma de hacer un nuevo brunch o una nueva un nuevo rico, quiz\u00e1s no eso creo que lo definas y implementes la mejor t\u00e9cnica para esto, devu\u00e9lveme todo un proceso de c\u00f3mo se realizar\u00eda esto, para luego Comenzar con los trabajos. Antes de responder esa pregunta res\u00famela, organ\u00edzala, genera un pronto para hacer esta pregunta nuevamente organizada genera la pregunta realizada una vez expropiada y es porque especial y ah\u00ed ejec\u00fatala\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac We'd love your input! Share your thoughts on Copilot coding agent in our [2 minute survey](https://gh.io/copilot-coding-agent-survey).\n",
+      "createdAt": "2025-12-17T19:52:26Z",
       "files": [
         {
-          "path": "AGENT_DEPLOYMENT_PLAN_TEAM_INSTRUCTIONS.md",
-          "additions": 1405,
+          "path": "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+          "additions": 313,
           "deletions": 0
         },
         {
-          "path": "AGENT_TASK_MATRIX.md",
-          "additions": 433,
+          "path": "IMPLEMENTATION_PLAN_AGENTS.md",
+          "additions": 716,
           "deletions": 0
         },
         {
-          "path": "DEPLOYMENT_PACKAGE_SUMMARY.md",
-          "additions": 571,
+          "path": "QUICK_REFERENCE_TRAINING.md",
+          "additions": 287,
           "deletions": 0
         },
         {
-          "path": "ORCHESTRATOR_KICKOFF_GUIDE.md",
-          "additions": 857,
+          "path": "TRAINING_SYSTEM_GUIDE.md",
+          "additions": 581,
           "deletions": 0
         },
         {
-          "path": "START_HERE_DEPLOYMENT.md",
-          "additions": 235,
+          "path": "base_conocimiento_dinamica.py",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "benchmark_system.py",
+          "additions": 625,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/report_23a8aac084df.json",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/report_29537e591b55.json",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/report_c05d50ad5128.json",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/report_cf7b04ae38fa.json",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/report_ea78fef82c1f.json",
+          "additions": 25,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/test_results.json",
+          "additions": 3,
+          "deletions": 0
+        },
+        {
+          "path": "data/benchmarks/test_suites.json",
+          "additions": 71,
+          "deletions": 0
+        },
+        {
+          "path": "data/training/corrections.json",
+          "additions": 16,
+          "deletions": 0
+        },
+        {
+          "path": "data/training/knowledge_updates.json",
+          "additions": 3,
+          "deletions": 0
+        },
+        {
+          "path": "data/training/training_sessions.json",
+          "additions": 79,
+          "deletions": 0
+        },
+        {
+          "path": "test_training_system.py",
+          "additions": 315,
+          "deletions": 0
+        },
+        {
+          "path": "training_evaluation_system.py",
+          "additions": 639,
+          "deletions": 0
+        },
+        {
+          "path": "training_integrated_bot.py",
+          "additions": 397,
           "deletions": 0
         }
       ],
-      "headRefName": "cursor/plan-agent-deployment-and-team-instructions-claude-4.5-sonnet-thinking-56b8",
+      "headRefName": "copilot/create-evaluation-system-chatbot",
       "labels": [],
-      "mergedAt": "2025-12-02T19:43:06Z",
-      "number": 35,
-      "state": "MERGED",
-      "title": "Plan agent deployment and team instructions",
-      "updatedAt": "2025-12-02T19:43:50Z"
+      "mergedAt": null,
+      "number": 87,
+      "state": "OPEN",
+      "title": "Implement training/evaluation system with emoji-based corrections and benchmark framework",
+      "updatedAt": "2025-12-18T01:08:04Z"
     }
   },
-  "created_at": "2025-12-02T19:21:05.109257",
+  "created_at": "2025-12-18T01:14:34.824914",
   "status": "pending"
 }
