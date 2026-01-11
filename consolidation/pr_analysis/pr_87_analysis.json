@@ -1,0 +1,293 @@
+{
+  "pr_number": 87,
+  "title": "Implement training/evaluation system with emoji-based corrections and benchmark framework",
+  "description": "Adds production-ready training system enabling real-time bot improvement through emoji-triggered corrections (✏️, 🔧), response reformulation with reasoning, and automated benchmarking. Addresses need for collaborative pre-production refinement with knowledge persistence.\n\n## Core Implementation\n\n**Training System** (`training_evaluation_system.py`)\n- Dual mode operation (Training/Production) with session management\n- Correction detection via emojis or text triggers\n- AI-powered response reformulation with explicit reasoning and change tracking\n- Approval/rejection workflow before knowledge base updates\n- JSON-based persistence for corrections, sessions, and updates\n\n**Benchmark Framework** (`benchmark_system.py`)\n- 5 pre-configured test scenarios covering quotations, product info, objections\n- Automated scoring (0-100) with category-based evaluation\n- Before/after comparison analysis with statistical reporting\n- Actionable recommendations based on performance metrics\n\n**Integration Layer** (`training_integrated_bot.py`)\n- CLI interface with command processing\n- Message flow handling with training awareness\n- Mock system for standalone testing\n- WhatsApp-ready architecture\n\n## Usage Example\n\n```python\nfrom training_integrated_bot import TrainingIntegratedBot\n\nbot = TrainingIntegratedBot()\n\n# Activate training mode\nbot.process_message(\"session_001\", \"agent_001\", \"MODO ENTRENAMIENTO\")\n\n# Get response, then correct it\nbot.process_message(\"session_001\", \"agent_001\", \"¿Precio de Isodec?\")\nresponse = bot.process_message(\n    \"session_001\", \n    \"agent_001\", \n    \"✏️ Incluir precios específicos por espesor\"\n)\n# Returns reformulated response with reasoning and change list\n\n# Approve to persist knowledge\nbot.process_message(\"session_001\", \"agent_001\", \"APROBAR\")\n```\n\n## Data Structure\n\n```\ndata/\n├── training/\n│   ├── corrections.json          # Correction requests and reformulations\n│   ├── knowledge_updates.json    # Approved updates\n│   ├── training_sessions.json    # Session history\n│   └── pending_updates.jsonl     # Queue for knowledge base integration\n└── benchmarks/\n    ├── test_suites.json          # Test definitions\n    ├── test_results.json         # Historical results\n    └── report_*.json             # Generated reports\n```\n\n## Testing\n\nComprehensive test suite validates all components (16/16 passing):\n- Training mode activation and correction workflow\n- Benchmark execution and reporting\n- Data persistence and session management\n\n## Documentation\n\n- `TRAINING_SYSTEM_GUIDE.md` - Architecture and usage\n- `IMPLEMENTATION_PLAN_AGENTS.md` - Deployment steps\n- `QUICK_REFERENCE_TRAINING.md` - Command reference\n\n## Fixes\n\n- Added missing `os` import in `base_conocimiento_dinamica.py`\n- Extracted approval rate calculation to helper method\n- Fixed statistics structure for backward compatibility\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<!-- START COPILOT ORIGINAL PROMPT -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> Anotación, necesito poder realizar un sistema de evaluación del Chat Bot, prácticamente en estado de producción. La forma que identifico que va a ser la más correcta para poder probarlo, es tener una charla por WhatsApp con él en la cual le identifiquemos que estamos en modalidad entrenamiento o modalidad producción Estamos de entrenamiento. El Bot va a tener que responder como si fuera producción, salvo que yo le hago una corrección y indique con algún icono o alguna carácter o alguna clave, quizás algún tipo de emoji le indique que viene una corrección a lo que hay que hacer, y tiene que corregirlo Repensarla, reformularla pedirme mostrarme el nuevo razonamiento más a la corrección para que yo lo pruebe y luego incorporar en su base de conocimiento para que quede persistente esta forma ser una fórmula cual podremos y tanto yo como mis agentes en forma dinámica, hacerle aportes de consultas de otros clientes, ya utilizarlo como referencia para cotizar y para devolver respuestas, pero a su vez ir, afinándolo previo a la etapa de producción y de contacto directo a los clientes para esa tarea. Quiero que desarrolle un sistema Benchmark que evalúe es una buena técnica para poder realizarlo, me sugieras cómo implementarlo, generes un plan de implementación para que lo puedan hacer agentes automatizados. Este evalualos los los medios que hemos hemos estado trabajando en nuestro de nuestro repo, cuáles son lóbulos las modelos que han estado aportando y para cada etapa de lo que se viene con esta aplicación, quiero que definas quizás la forma de hacer un nuevo brunch o una nueva un nuevo rico, quizás no eso creo que lo definas y implementes la mejor técnica para esto, devuélveme todo un proceso de cómo se realizaría esto, para luego Comenzar con los trabajos. Antes de responder esa pregunta resúmela, organízala, genera un pronto para hacer esta pregunta nuevamente organizada genera la pregunta realizada una vez expropiada y es porque especial y ahí ejecútala\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n💬 We'd love your input! Share your thoughts on Copilot coding agent in our [2 minute survey](https://gh.io/copilot-coding-agent-survey).\n",
+  "author": "app/copilot-swe-agent",
+  "status": "open",
+  "files_changed": [
+    {
+      "path": "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+      "additions": 313,
+      "deletions": 0
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN_AGENTS.md",
+      "additions": 716,
+      "deletions": 0
+    },
+    {
+      "path": "QUICK_REFERENCE_TRAINING.md",
+      "additions": 287,
+      "deletions": 0
+    },
+    {
+      "path": "TRAINING_SYSTEM_GUIDE.md",
+      "additions": 581,
+      "deletions": 0
+    },
+    {
+      "path": "base_conocimiento_dinamica.py",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "path": "benchmark_system.py",
+      "additions": 625,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_23a8aac084df.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_29537e591b55.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_c05d50ad5128.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_cf7b04ae38fa.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/report_ea78fef82c1f.json",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/test_results.json",
+      "additions": 3,
+      "deletions": 0
+    },
+    {
+      "path": "data/benchmarks/test_suites.json",
+      "additions": 71,
+      "deletions": 0
+    },
+    {
+      "path": "data/training/corrections.json",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "path": "data/training/knowledge_updates.json",
+      "additions": 3,
+      "deletions": 0
+    },
+    {
+      "path": "data/training/training_sessions.json",
+      "additions": 79,
+      "deletions": 0
+    },
+    {
+      "path": "test_training_system.py",
+      "additions": 315,
+      "deletions": 0
+    },
+    {
+      "path": "training_evaluation_system.py",
+      "additions": 639,
+      "deletions": 0
+    },
+    {
+      "path": "training_integrated_bot.py",
+      "additions": 397,
+      "deletions": 0
+    }
+  ],
+  "additions": 4171,
+  "deletions": 0,
+  "affected_phases": [
+    6,
+    7,
+    10,
+    12
+  ],
+  "affected_agents": [
+    "CICDAgent",
+    "DiscoveryAgent",
+    "PerformanceAgent",
+    "ValidationAgent",
+    "GravityAgent"
+  ],
+  "affected_components": [
+    "knowledge_base",
+    "benchmark_system",
+    "training_system"
+  ],
+  "tasks_generated": [
+    {
+      "id": "PR0_P6_T1",
+      "title": "[Phase 6] Implement training/evaluation system with emoji-based corrections and benchmark framework",
+      "description": "Implement changes from PR #0 in Knowledge Base",
+      "task_type": "feature",
+      "priority": "P1",
+      "phase": 6,
+      "agent": "CICDAgent",
+      "status": "not_started",
+      "dependencies": [],
+      "files_affected": [
+        "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+        "IMPLEMENTATION_PLAN_AGENTS.md",
+        "QUICK_REFERENCE_TRAINING.md",
+        "TRAINING_SYSTEM_GUIDE.md",
+        "base_conocimiento_dinamica.py"
+      ],
+      "estimated_duration": "2-4 hours",
+      "actual_duration": "",
+      "context": {
+        "pr_number": 0,
+        "additions": 4171,
+        "deletions": 0
+      },
+      "created_at": "2025-12-18T01:18:28.568431",
+      "updated_at": "2025-12-18T01:18:28.568438"
+    },
+    {
+      "id": "PR0_P7_T2",
+      "title": "[Phase 7] Implement training/evaluation system with emoji-based corrections and benchmark framework",
+      "description": "Implement changes from PR #0 in Testing Framework",
+      "task_type": "feature",
+      "priority": "P1",
+      "phase": 7,
+      "agent": "DiscoveryAgent",
+      "status": "not_started",
+      "dependencies": [],
+      "files_affected": [
+        "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+        "IMPLEMENTATION_PLAN_AGENTS.md",
+        "QUICK_REFERENCE_TRAINING.md",
+        "TRAINING_SYSTEM_GUIDE.md",
+        "base_conocimiento_dinamica.py"
+      ],
+      "estimated_duration": "2-4 hours",
+      "actual_duration": "",
+      "context": {
+        "pr_number": 0,
+        "additions": 4171,
+        "deletions": 0
+      },
+      "created_at": "2025-12-18T01:18:28.568448",
+      "updated_at": "2025-12-18T01:18:28.568449"
+    },
+    {
+      "id": "PR0_P10_T3",
+      "title": "[Phase 10] Implement training/evaluation system with emoji-based corrections and benchmark framework",
+      "description": "Implement changes from PR #0 in Performance Optimization",
+      "task_type": "feature",
+      "priority": "P1",
+      "phase": 10,
+      "agent": "PerformanceAgent",
+      "status": "not_started",
+      "dependencies": [],
+      "files_affected": [
+        "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+        "IMPLEMENTATION_PLAN_AGENTS.md",
+        "QUICK_REFERENCE_TRAINING.md",
+        "TRAINING_SYSTEM_GUIDE.md",
+        "base_conocimiento_dinamica.py"
+      ],
+      "estimated_duration": "2-4 hours",
+      "actual_duration": "",
+      "context": {
+        "pr_number": 0,
+        "additions": 4171,
+        "deletions": 0
+      },
+      "created_at": "2025-12-18T01:18:28.568453",
+      "updated_at": "2025-12-18T01:18:28.568454"
+    },
+    {
+      "id": "PR0_P12_T4",
+      "title": "[Phase 12] Implement training/evaluation system with emoji-based corrections and benchmark framework",
+      "description": "Implement changes from PR #0 in CI/CD Pipeline",
+      "task_type": "feature",
+      "priority": "P1",
+      "phase": 12,
+      "agent": "ValidationAgent",
+      "status": "not_started",
+      "dependencies": [],
+      "files_affected": [
+        "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+        "IMPLEMENTATION_PLAN_AGENTS.md",
+        "QUICK_REFERENCE_TRAINING.md",
+        "TRAINING_SYSTEM_GUIDE.md",
+        "base_conocimiento_dinamica.py"
+      ],
+      "estimated_duration": "2-4 hours",
+      "actual_duration": "",
+      "context": {
+        "pr_number": 0,
+        "additions": 4171,
+        "deletions": 0
+      },
+      "created_at": "2025-12-18T01:18:28.568457",
+      "updated_at": "2025-12-18T01:18:28.568458"
+    },
+    {
+      "id": "PR0_INTEGRATION",
+      "title": "[Integration] Integrate PR #0 changes",
+      "description": "Integrate all phase changes and validate system coherence",
+      "task_type": "integration",
+      "priority": "P0",
+      "phase": 12,
+      "agent": "IntegrationAgent",
+      "status": "not_started",
+      "dependencies": [
+        "PR0_P6_T1",
+        "PR0_P7_T2",
+        "PR0_P10_T3",
+        "PR0_P12_T4"
+      ],
+      "files_affected": [],
+      "estimated_duration": "1-2 hours",
+      "actual_duration": "",
+      "context": {},
+      "created_at": "2025-12-18T01:18:28.568463",
+      "updated_at": "2025-12-18T01:18:28.568464"
+    },
+    {
+      "id": "PR0_VALIDATION",
+      "title": "[Validation] Validate PR #0 implementation",
+      "description": "Run tests and validate implementation quality",
+      "task_type": "test",
+      "priority": "P1",
+      "phase": 7,
+      "agent": "ValidationAgent",
+      "status": "not_started",
+      "dependencies": [
+        "PR0_INTEGRATION"
+      ],
+      "files_affected": [],
+      "estimated_duration": "30 minutes",
+      "actual_duration": "",
+      "context": {},
+      "created_at": "2025-12-18T01:18:28.568467",
+      "updated_at": "2025-12-18T01:18:28.568467"
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Large change size",
+      "probability": "medium",
+      "impact": "high",
+      "mitigation": "Break into smaller changes, thorough review",
+      "owner": "GravityAgent"
+    }
+  ],
+  "recommendations": [
+    "Consider splitting this PR into smaller, focused changes",
+    "High-impact risks detected - implement comprehensive testing",
+    "Run benchmark tests before and after changes",
+    "Update documentation for all affected components",
+    "Validate WhatsApp integration if affected",
+    "Run security scan before deployment"
+  ],
+  "analyzed_at": "2025-12-18T01:18:28.568478"
+}
