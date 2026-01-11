@@ -1,0 +1,1227 @@
+{
+  "plan_id": "plan_20251218_011806",
+  "name": "Orchestration for PR #87",
+  "description": "Orquestar desarrollo automatizado del proyecto",
+  "phases": {
+    "0": [
+      {
+        "id": "T0.1",
+        "title": "Análisis de estructura del repositorio",
+        "description": "Fase 0 - Discovery & Foundation: Análisis de estructura del repositorio",
+        "phase": 0,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "DiscoveryAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863656",
+        "completed_at": "2025-12-18T01:18:06.864901"
+      },
+      {
+        "id": "T0.2",
+        "title": "Identificación de componentes principales",
+        "description": "Fase 0 - Discovery & Foundation: Identificación de componentes principales",
+        "phase": 0,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "DiscoveryAgent",
+        "dependencies": [
+          "T0.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863662",
+        "completed_at": "2025-12-18T01:18:06.864906"
+      },
+      {
+        "id": "T0.3",
+        "title": "Documentación de dependencias",
+        "description": "Fase 0 - Discovery & Foundation: Documentación de dependencias",
+        "phase": 0,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "DiscoveryAgent",
+        "dependencies": [
+          "T0.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863666",
+        "completed_at": "2025-12-18T01:18:06.864909"
+      },
+      {
+        "id": "T0.1",
+        "title": "Integrar cambios de training en Fase 0",
+        "description": "PR #87: Integrar cambios de training en Fase 0",
+        "phase": 0,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "DiscoveryAgent",
+        "dependencies": [],
+        "files": [
+          "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+          "QUICK_REFERENCE_TRAINING.md",
+          "TRAINING_SYSTEM_GUIDE.md",
+          "benchmark_system.py",
+          "data/benchmarks/report_23a8aac084df.json",
+          "data/benchmarks/report_29537e591b55.json",
+          "data/benchmarks/report_c05d50ad5128.json",
+          "data/benchmarks/report_cf7b04ae38fa.json",
+          "data/benchmarks/report_ea78fef82c1f.json",
+          "data/benchmarks/test_results.json",
+          "data/benchmarks/test_suites.json",
+          "data/training/corrections.json",
+          "data/training/knowledge_updates.json",
+          "data/training/training_sessions.json",
+          "test_training_system.py",
+          "training_evaluation_system.py",
+          "training_integrated_bot.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863672",
+        "completed_at": "2025-12-18T01:18:06.864911"
+      },
+      {
+        "id": "T0.2",
+        "title": "Integrar cambios de core en Fase 0",
+        "description": "PR #87: Integrar cambios de core en Fase 0",
+        "phase": 0,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "DiscoveryAgent",
+        "dependencies": [],
+        "files": [
+          "base_conocimiento_dinamica.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863675",
+        "completed_at": "2025-12-18T01:18:06.864912"
+      },
+      {
+        "id": "T0.3",
+        "title": "Integrar cambios de agents en Fase 0",
+        "description": "PR #87: Integrar cambios de agents en Fase 0",
+        "phase": 0,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "DiscoveryAgent",
+        "dependencies": [],
+        "files": [
+          "IMPLEMENTATION_PLAN_AGENTS.md"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863678",
+        "completed_at": "2025-12-18T01:18:06.864914"
+      }
+    ],
+    "1": [
+      {
+        "id": "T1.1",
+        "title": "Unificación de estructura de directorios",
+        "description": "Fase 1 - Repository Consolidation: Unificación de estructura de directorios",
+        "phase": 1,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "RepositoryAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863685",
+        "completed_at": "2025-12-18T01:18:06.864918"
+      },
+      {
+        "id": "T1.2",
+        "title": "Consolidación de configuraciones",
+        "description": "Fase 1 - Repository Consolidation: Consolidación de configuraciones",
+        "phase": 1,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "RepositoryAgent",
+        "dependencies": [
+          "T1.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863687",
+        "completed_at": "2025-12-18T01:18:06.864920"
+      },
+      {
+        "id": "T1.3",
+        "title": "Limpieza de archivos obsoletos",
+        "description": "Fase 1 - Repository Consolidation: Limpieza de archivos obsoletos",
+        "phase": 1,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "RepositoryAgent",
+        "dependencies": [
+          "T1.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863689",
+        "completed_at": "2025-12-18T01:18:06.864923"
+      },
+      {
+        "id": "T1.4",
+        "title": "Integrar cambios de training en Fase 1",
+        "description": "PR #87: Integrar cambios de training en Fase 1",
+        "phase": 1,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "RepositoryAgent",
+        "dependencies": [],
+        "files": [
+          "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+          "QUICK_REFERENCE_TRAINING.md",
+          "TRAINING_SYSTEM_GUIDE.md",
+          "benchmark_system.py",
+          "data/benchmarks/report_23a8aac084df.json",
+          "data/benchmarks/report_29537e591b55.json",
+          "data/benchmarks/report_c05d50ad5128.json",
+          "data/benchmarks/report_cf7b04ae38fa.json",
+          "data/benchmarks/report_ea78fef82c1f.json",
+          "data/benchmarks/test_results.json",
+          "data/benchmarks/test_suites.json",
+          "data/training/corrections.json",
+          "data/training/knowledge_updates.json",
+          "data/training/training_sessions.json",
+          "test_training_system.py",
+          "training_evaluation_system.py",
+          "training_integrated_bot.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863693",
+        "completed_at": "2025-12-18T01:18:06.864924"
+      },
+      {
+        "id": "T1.5",
+        "title": "Integrar cambios de core en Fase 1",
+        "description": "PR #87: Integrar cambios de core en Fase 1",
+        "phase": 1,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "RepositoryAgent",
+        "dependencies": [],
+        "files": [
+          "base_conocimiento_dinamica.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863695",
+        "completed_at": "2025-12-18T01:18:06.864926"
+      },
+      {
+        "id": "T1.6",
+        "title": "Integrar cambios de agents en Fase 1",
+        "description": "PR #87: Integrar cambios de agents en Fase 1",
+        "phase": 1,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "RepositoryAgent",
+        "dependencies": [],
+        "files": [
+          "IMPLEMENTATION_PLAN_AGENTS.md"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863698",
+        "completed_at": "2025-12-18T01:18:06.864927"
+      }
+    ],
+    "2": [
+      {
+        "id": "T2.1",
+        "title": "Integración de módulos core",
+        "description": "Fase 2 - Core Integration: Integración de módulos core",
+        "phase": 2,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "MergeAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863703",
+        "completed_at": "2025-12-18T01:18:06.864930"
+      },
+      {
+        "id": "T2.2",
+        "title": "Resolución de conflictos",
+        "description": "Fase 2 - Core Integration: Resolución de conflictos",
+        "phase": 2,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "MergeAgent",
+        "dependencies": [
+          "T2.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863705",
+        "completed_at": "2025-12-18T01:18:06.864932"
+      },
+      {
+        "id": "T2.3",
+        "title": "Validación de imports",
+        "description": "Fase 2 - Core Integration: Validación de imports",
+        "phase": 2,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "MergeAgent",
+        "dependencies": [
+          "T2.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863706",
+        "completed_at": "2025-12-18T01:18:06.864933"
+      },
+      {
+        "id": "T2.7",
+        "title": "Integrar cambios de training en Fase 2",
+        "description": "PR #87: Integrar cambios de training en Fase 2",
+        "phase": 2,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "MergeAgent",
+        "dependencies": [],
+        "files": [
+          "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+          "QUICK_REFERENCE_TRAINING.md",
+          "TRAINING_SYSTEM_GUIDE.md",
+          "benchmark_system.py",
+          "data/benchmarks/report_23a8aac084df.json",
+          "data/benchmarks/report_29537e591b55.json",
+          "data/benchmarks/report_c05d50ad5128.json",
+          "data/benchmarks/report_cf7b04ae38fa.json",
+          "data/benchmarks/report_ea78fef82c1f.json",
+          "data/benchmarks/test_results.json",
+          "data/benchmarks/test_suites.json",
+          "data/training/corrections.json",
+          "data/training/knowledge_updates.json",
+          "data/training/training_sessions.json",
+          "test_training_system.py",
+          "training_evaluation_system.py",
+          "training_integrated_bot.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863709",
+        "completed_at": "2025-12-18T01:18:06.864935"
+      },
+      {
+        "id": "T2.8",
+        "title": "Integrar cambios de core en Fase 2",
+        "description": "PR #87: Integrar cambios de core en Fase 2",
+        "phase": 2,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "MergeAgent",
+        "dependencies": [],
+        "files": [
+          "base_conocimiento_dinamica.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863711",
+        "completed_at": "2025-12-18T01:18:06.864936"
+      },
+      {
+        "id": "T2.9",
+        "title": "Integrar cambios de agents en Fase 2",
+        "description": "PR #87: Integrar cambios de agents en Fase 2",
+        "phase": 2,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "MergeAgent",
+        "dependencies": [],
+        "files": [
+          "IMPLEMENTATION_PLAN_AGENTS.md"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863713",
+        "completed_at": "2025-12-18T01:18:06.864938"
+      }
+    ],
+    "3": [
+      {
+        "id": "T3.1",
+        "title": "Configuración de MongoDB",
+        "description": "Fase 3 - Database Layer: Configuración de MongoDB",
+        "phase": 3,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863718",
+        "completed_at": "2025-12-18T01:18:06.864940"
+      },
+      {
+        "id": "T3.2",
+        "title": "Migraciones de datos",
+        "description": "Fase 3 - Database Layer: Migraciones de datos",
+        "phase": 3,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T3.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863720",
+        "completed_at": "2025-12-18T01:18:06.864942"
+      },
+      {
+        "id": "T3.3",
+        "title": "Validación de esquemas",
+        "description": "Fase 3 - Database Layer: Validación de esquemas",
+        "phase": 3,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T3.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863722",
+        "completed_at": "2025-12-18T01:18:06.864943"
+      }
+    ],
+    "4": [
+      {
+        "id": "T4.1",
+        "title": "Implementación de endpoints",
+        "description": "Fase 4 - API Development: Implementación de endpoints",
+        "phase": 4,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863726",
+        "completed_at": "2025-12-18T01:18:06.864945"
+      },
+      {
+        "id": "T4.2",
+        "title": "Validación de contratos",
+        "description": "Fase 4 - API Development: Validación de contratos",
+        "phase": 4,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T4.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863728",
+        "completed_at": "2025-12-18T01:18:06.864947"
+      },
+      {
+        "id": "T4.3",
+        "title": "Documentación de API",
+        "description": "Fase 4 - API Development: Documentación de API",
+        "phase": 4,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T4.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863730",
+        "completed_at": "2025-12-18T01:18:06.864948"
+      }
+    ],
+    "5": [
+      {
+        "id": "T5.1",
+        "title": "Configuración de WhatsApp Business API",
+        "description": "Fase 5 - WhatsApp Integration: Configuración de WhatsApp Business API",
+        "phase": 5,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863734",
+        "completed_at": "2025-12-18T01:18:06.864951"
+      },
+      {
+        "id": "T5.2",
+        "title": "Implementación de webhooks",
+        "description": "Fase 5 - WhatsApp Integration: Implementación de webhooks",
+        "phase": 5,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T5.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863735",
+        "completed_at": "2025-12-18T01:18:06.864952"
+      },
+      {
+        "id": "T5.3",
+        "title": "Testing de mensajería",
+        "description": "Fase 5 - WhatsApp Integration: Testing de mensajería",
+        "phase": 5,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T5.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863738",
+        "completed_at": "2025-12-18T01:18:06.864954"
+      }
+    ],
+    "6": [
+      {
+        "id": "T6.1",
+        "title": "Integración con n8n workflows",
+        "description": "Fase 6 - External Integrations: Integración con n8n workflows",
+        "phase": 6,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863743",
+        "completed_at": "2025-12-18T01:18:06.864956"
+      },
+      {
+        "id": "T6.2",
+        "title": "Configuración de Qdrant",
+        "description": "Fase 6 - External Integrations: Configuración de Qdrant",
+        "phase": 6,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T6.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863745",
+        "completed_at": "2025-12-18T01:18:06.864963"
+      },
+      {
+        "id": "T6.3",
+        "title": "Setup de Chatwoot",
+        "description": "Fase 6 - External Integrations: Setup de Chatwoot",
+        "phase": 6,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "IntegrationAgent",
+        "dependencies": [
+          "T6.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863747",
+        "completed_at": "2025-12-18T01:18:06.864965"
+      }
+    ],
+    "7": [
+      {
+        "id": "T7.1",
+        "title": "Configuración de modelos NLU",
+        "description": "Fase 7 - AI/ML Components: Configuración de modelos NLU",
+        "phase": 7,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "NLUAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863752",
+        "completed_at": "2025-12-18T01:18:06.864967"
+      },
+      {
+        "id": "T7.2",
+        "title": "Setup de embeddings",
+        "description": "Fase 7 - AI/ML Components: Setup de embeddings",
+        "phase": 7,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "NLUAgent",
+        "dependencies": [
+          "T7.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863755",
+        "completed_at": "2025-12-18T01:18:06.864969"
+      },
+      {
+        "id": "T7.3",
+        "title": "Optimización de prompts",
+        "description": "Fase 7 - AI/ML Components: Optimización de prompts",
+        "phase": 7,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "NLUAgent",
+        "dependencies": [
+          "T7.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863757",
+        "completed_at": "2025-12-18T01:18:06.864970"
+      },
+      {
+        "id": "T7.10",
+        "title": "Integrar cambios de training en Fase 7",
+        "description": "PR #87: Integrar cambios de training en Fase 7",
+        "phase": 7,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "NLUAgent",
+        "dependencies": [],
+        "files": [
+          "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+          "QUICK_REFERENCE_TRAINING.md",
+          "TRAINING_SYSTEM_GUIDE.md",
+          "benchmark_system.py",
+          "data/benchmarks/report_23a8aac084df.json",
+          "data/benchmarks/report_29537e591b55.json",
+          "data/benchmarks/report_c05d50ad5128.json",
+          "data/benchmarks/report_cf7b04ae38fa.json",
+          "data/benchmarks/report_ea78fef82c1f.json",
+          "data/benchmarks/test_results.json",
+          "data/benchmarks/test_suites.json",
+          "data/training/corrections.json",
+          "data/training/knowledge_updates.json",
+          "data/training/training_sessions.json",
+          "test_training_system.py",
+          "training_evaluation_system.py",
+          "training_integrated_bot.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863759",
+        "completed_at": "2025-12-18T01:18:06.864972"
+      },
+      {
+        "id": "T7.11",
+        "title": "Integrar cambios de core en Fase 7",
+        "description": "PR #87: Integrar cambios de core en Fase 7",
+        "phase": 7,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "NLUAgent",
+        "dependencies": [],
+        "files": [
+          "base_conocimiento_dinamica.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863762",
+        "completed_at": "2025-12-18T01:18:06.864974"
+      },
+      {
+        "id": "T7.12",
+        "title": "Integrar cambios de agents en Fase 7",
+        "description": "PR #87: Integrar cambios de agents en Fase 7",
+        "phase": 7,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "NLUAgent",
+        "dependencies": [],
+        "files": [
+          "IMPLEMENTATION_PLAN_AGENTS.md"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863764",
+        "completed_at": "2025-12-18T01:18:06.864975"
+      }
+    ],
+    "8": [
+      {
+        "id": "T8.1",
+        "title": "Implementación de sistema de entrenamiento",
+        "description": "Fase 8 - Training System: Implementación de sistema de entrenamiento",
+        "phase": 8,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863768",
+        "completed_at": "2025-12-18T01:18:06.864977"
+      },
+      {
+        "id": "T8.2",
+        "title": "Setup de benchmarks",
+        "description": "Fase 8 - Training System: Setup de benchmarks",
+        "phase": 8,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [
+          "T8.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863770",
+        "completed_at": "2025-12-18T01:18:06.864979"
+      },
+      {
+        "id": "T8.3",
+        "title": "Validación de correcciones",
+        "description": "Fase 8 - Training System: Validación de correcciones",
+        "phase": 8,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [
+          "T8.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863771",
+        "completed_at": "2025-12-18T01:18:06.864980"
+      },
+      {
+        "id": "T8.13",
+        "title": "Integrar cambios de training en Fase 8",
+        "description": "PR #87: Integrar cambios de training en Fase 8",
+        "phase": 8,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [],
+        "files": [
+          "EXECUTIVE_SUMMARY_TRAINING_SYSTEM.md",
+          "QUICK_REFERENCE_TRAINING.md",
+          "TRAINING_SYSTEM_GUIDE.md",
+          "benchmark_system.py",
+          "data/benchmarks/report_23a8aac084df.json",
+          "data/benchmarks/report_29537e591b55.json",
+          "data/benchmarks/report_c05d50ad5128.json",
+          "data/benchmarks/report_cf7b04ae38fa.json",
+          "data/benchmarks/report_ea78fef82c1f.json",
+          "data/benchmarks/test_results.json",
+          "data/benchmarks/test_suites.json",
+          "data/training/corrections.json",
+          "data/training/knowledge_updates.json",
+          "data/training/training_sessions.json",
+          "test_training_system.py",
+          "training_evaluation_system.py",
+          "training_integrated_bot.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863774",
+        "completed_at": "2025-12-18T01:18:06.864982"
+      },
+      {
+        "id": "T8.14",
+        "title": "Integrar cambios de core en Fase 8",
+        "description": "PR #87: Integrar cambios de core en Fase 8",
+        "phase": 8,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [],
+        "files": [
+          "base_conocimiento_dinamica.py"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863776",
+        "completed_at": "2025-12-18T01:18:06.864983"
+      },
+      {
+        "id": "T8.15",
+        "title": "Integrar cambios de agents en Fase 8",
+        "description": "PR #87: Integrar cambios de agents en Fase 8",
+        "phase": 8,
+        "priority": "P1",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [],
+        "files": [
+          "IMPLEMENTATION_PLAN_AGENTS.md"
+        ],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863778",
+        "completed_at": "2025-12-18T01:18:06.864985"
+      }
+    ],
+    "9": [
+      {
+        "id": "T9.1",
+        "title": "Auditoría de seguridad",
+        "description": "Fase 9 - Security Hardening: Auditoría de seguridad",
+        "phase": 9,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "SecurityAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863782",
+        "completed_at": "2025-12-18T01:18:06.864988"
+      },
+      {
+        "id": "T9.2",
+        "title": "Implementación de autenticación",
+        "description": "Fase 9 - Security Hardening: Implementación de autenticación",
+        "phase": 9,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "SecurityAgent",
+        "dependencies": [
+          "T9.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863784",
+        "completed_at": "2025-12-18T01:18:06.864989"
+      },
+      {
+        "id": "T9.3",
+        "title": "Gestión de secretos",
+        "description": "Fase 9 - Security Hardening: Gestión de secretos",
+        "phase": 9,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "SecurityAgent",
+        "dependencies": [
+          "T9.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863785",
+        "completed_at": "2025-12-18T01:18:06.864991"
+      }
+    ],
+    "10": [
+      {
+        "id": "T10.1",
+        "title": "Configuración de Docker",
+        "description": "Fase 10 - Infrastructure Setup: Configuración de Docker",
+        "phase": 10,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "InfrastructureAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863790",
+        "completed_at": "2025-12-18T01:18:06.864993"
+      },
+      {
+        "id": "T10.2",
+        "title": "Setup de Kubernetes",
+        "description": "Fase 10 - Infrastructure Setup: Setup de Kubernetes",
+        "phase": 10,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "InfrastructureAgent",
+        "dependencies": [
+          "T10.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863792",
+        "completed_at": "2025-12-18T01:18:06.864995"
+      },
+      {
+        "id": "T10.3",
+        "title": "Definición de IaC",
+        "description": "Fase 10 - Infrastructure Setup: Definición de IaC",
+        "phase": 10,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "InfrastructureAgent",
+        "dependencies": [
+          "T10.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863793",
+        "completed_at": "2025-12-18T01:18:06.864996"
+      }
+    ],
+    "11": [
+      {
+        "id": "T11.1",
+        "title": "Ejecución de tests unitarios",
+        "description": "Fase 11 - Testing & QA: Ejecución de tests unitarios",
+        "phase": 11,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863798",
+        "completed_at": "2025-12-18T01:18:06.864998"
+      },
+      {
+        "id": "T11.2",
+        "title": "Tests de integración",
+        "description": "Fase 11 - Testing & QA: Tests de integración",
+        "phase": 11,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [
+          "T11.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863799",
+        "completed_at": "2025-12-18T01:18:06.865000"
+      },
+      {
+        "id": "T11.3",
+        "title": "Validación E2E",
+        "description": "Fase 11 - Testing & QA: Validación E2E",
+        "phase": 11,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ValidationAgent",
+        "dependencies": [
+          "T11.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863801",
+        "completed_at": "2025-12-18T01:18:06.865001"
+      }
+    ],
+    "12": [
+      {
+        "id": "T12.1",
+        "title": "Setup de dashboard",
+        "description": "Fase 12 - Dashboard & Monitoring: Setup de dashboard",
+        "phase": 12,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ObservabilityAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863805",
+        "completed_at": "2025-12-18T01:18:06.865004"
+      },
+      {
+        "id": "T12.2",
+        "title": "Configuración de métricas",
+        "description": "Fase 12 - Dashboard & Monitoring: Configuración de métricas",
+        "phase": 12,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ObservabilityAgent",
+        "dependencies": [
+          "T12.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863807",
+        "completed_at": "2025-12-18T01:18:06.865005"
+      },
+      {
+        "id": "T12.3",
+        "title": "Alertas y notificaciones",
+        "description": "Fase 12 - Dashboard & Monitoring: Alertas y notificaciones",
+        "phase": 12,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "ObservabilityAgent",
+        "dependencies": [
+          "T12.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863809",
+        "completed_at": "2025-12-18T01:18:06.865007"
+      }
+    ],
+    "13": [
+      {
+        "id": "T13.1",
+        "title": "Configuración de GitHub Actions",
+        "description": "Fase 13 - CI/CD Pipeline: Configuración de GitHub Actions",
+        "phase": 13,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "CICDAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863814",
+        "completed_at": "2025-12-18T01:18:06.865009"
+      },
+      {
+        "id": "T13.2",
+        "title": "Pipeline de deployment",
+        "description": "Fase 13 - CI/CD Pipeline: Pipeline de deployment",
+        "phase": 13,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "CICDAgent",
+        "dependencies": [
+          "T13.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863816",
+        "completed_at": "2025-12-18T01:18:06.865010"
+      },
+      {
+        "id": "T13.3",
+        "title": "Validación automática",
+        "description": "Fase 13 - CI/CD Pipeline: Validación automática",
+        "phase": 13,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "CICDAgent",
+        "dependencies": [
+          "T13.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863817",
+        "completed_at": "2025-12-18T01:18:06.865012"
+      }
+    ],
+    "14": [
+      {
+        "id": "T14.1",
+        "title": "Análisis de rendimiento",
+        "description": "Fase 14 - Performance Optimization: Análisis de rendimiento",
+        "phase": 14,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "PerformanceAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863821",
+        "completed_at": "2025-12-18T01:18:06.865014"
+      },
+      {
+        "id": "T14.2",
+        "title": "Optimización de queries",
+        "description": "Fase 14 - Performance Optimization: Optimización de queries",
+        "phase": 14,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "PerformanceAgent",
+        "dependencies": [
+          "T14.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863823",
+        "completed_at": "2025-12-18T01:18:06.865016"
+      },
+      {
+        "id": "T14.3",
+        "title": "Load testing",
+        "description": "Fase 14 - Performance Optimization: Load testing",
+        "phase": 14,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "PerformanceAgent",
+        "dependencies": [
+          "T14.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863825",
+        "completed_at": "2025-12-18T01:18:06.865017"
+      }
+    ],
+    "15": [
+      {
+        "id": "T15.1",
+        "title": "Deployment a producción",
+        "description": "Fase 15 - Production Deployment: Deployment a producción",
+        "phase": 15,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "DisasterRecoveryAgent",
+        "dependencies": [],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863830",
+        "completed_at": "2025-12-18T01:18:06.865019"
+      },
+      {
+        "id": "T15.2",
+        "title": "Validación final",
+        "description": "Fase 15 - Production Deployment: Validación final",
+        "phase": 15,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "DisasterRecoveryAgent",
+        "dependencies": [
+          "T15.1"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863831",
+        "completed_at": "2025-12-18T01:18:06.865021"
+      },
+      {
+        "id": "T15.3",
+        "title": "Documentación de operaciones",
+        "description": "Fase 15 - Production Deployment: Documentación de operaciones",
+        "phase": 15,
+        "priority": "P2",
+        "status": "completed",
+        "assigned_agent": "DisasterRecoveryAgent",
+        "dependencies": [
+          "T15.2"
+        ],
+        "files": [],
+        "estimated_duration": "2-4 hours",
+        "bmc_context": null,
+        "output_location": null,
+        "created_at": "2025-12-18T01:18:06.863833",
+        "completed_at": "2025-12-18T01:18:06.865022"
+      }
+    ]
+  },
+  "current_phase": 0,
+  "total_tasks": 63,
+  "completed_tasks": 63,
+  "status": "completed",
+  "created_at": "2025-12-18T01:18:06.863841",
+  "updated_at": "2025-12-18T01:18:06.865024"
+}

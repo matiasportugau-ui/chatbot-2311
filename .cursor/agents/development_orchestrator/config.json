@@ -1,0 +1,151 @@
+{
+  "agent": {
+    "id": "development-orchestrator-agent",
+    "name": "Development Orchestrator Agent",
+    "version": "1.0.0",
+    "mode": "gravity-agent-mode"
+  },
+  "execution": {
+    "auto_approve": true,
+    "require_manual_approval": false,
+    "execution_mode": "automated",
+    "max_retries": 3,
+    "retry_delay_seconds": 60
+  },
+  "phases": {
+    "start_phase": 0,
+    "end_phase": 15,
+    "skip_phases": []
+  },
+  "directories": {
+    "workspace_root": "/workspace",
+    "consolidation_output": "consolidation/",
+    "pr_analysis_output": "consolidation/pr_analysis/",
+    "orchestration_output": "consolidation/orchestration/",
+    "logs_directory": "system/logs/"
+  },
+  "components": {
+    "orchestrator": ["orchestrator", "phase_executor"],
+    "whatsapp": ["whatsapp", "wa_", "webhook"],
+    "n8n": ["n8n", "workflow"],
+    "qdrant": ["qdrant", "vector", "embedding"],
+    "chatwoot": ["chatwoot"],
+    "quotation": ["quotation", "pricing", "catalog", "cotiza"],
+    "training": ["training", "benchmark", "evaluation"],
+    "agents": ["agent", "ai_agent"],
+    "dashboard": ["dashboard", "analytics"],
+    "api": ["api", "endpoint", "route"],
+    "database": ["mongo", "database", "db_"],
+    "testing": ["test_", "tests/", "_test.py"],
+    "documentation": [".md", "docs/", "readme"],
+    "deployment": ["deploy", "docker", "k8s", "kubernetes"],
+    "security": ["security", "auth", "token", "secret"]
+  },
+  "phase_mapping": {
+    "0": {
+      "name": "Discovery & Foundation",
+      "agent": "DiscoveryAgent",
+      "components": ["orchestrator", "documentation", "agents"]
+    },
+    "1": {
+      "name": "Repository Consolidation",
+      "agent": "RepositoryAgent",
+      "components": ["core"]
+    },
+    "2": {
+      "name": "Core Integration",
+      "agent": "MergeAgent",
+      "components": ["core", "quotation"]
+    },
+    "3": {
+      "name": "Database Layer",
+      "agent": "IntegrationAgent",
+      "components": ["database", "api", "quotation"]
+    },
+    "4": {
+      "name": "API Development",
+      "agent": "IntegrationAgent",
+      "components": ["api", "whatsapp"]
+    },
+    "5": {
+      "name": "WhatsApp Integration",
+      "agent": "IntegrationAgent",
+      "components": ["whatsapp", "n8n"]
+    },
+    "6": {
+      "name": "External Integrations",
+      "agent": "IntegrationAgent",
+      "components": ["n8n", "qdrant", "chatwoot", "database"]
+    },
+    "7": {
+      "name": "AI/ML Components",
+      "agent": "NLUAgent",
+      "components": ["qdrant", "training"]
+    },
+    "8": {
+      "name": "Training System",
+      "agent": "ValidationAgent",
+      "components": ["training"]
+    },
+    "9": {
+      "name": "Security Hardening",
+      "agent": "SecurityAgent",
+      "components": ["security", "deployment"]
+    },
+    "10": {
+      "name": "Infrastructure Setup",
+      "agent": "InfrastructureAgent",
+      "components": ["deployment"]
+    },
+    "11": {
+      "name": "Testing & QA",
+      "agent": "ValidationAgent",
+      "components": ["testing"]
+    },
+    "12": {
+      "name": "Dashboard & Monitoring",
+      "agent": "ObservabilityAgent",
+      "components": ["dashboard"]
+    },
+    "13": {
+      "name": "CI/CD Pipeline",
+      "agent": "CICDAgent",
+      "components": ["orchestrator", "deployment"]
+    },
+    "14": {
+      "name": "Performance Optimization",
+      "agent": "PerformanceAgent",
+      "components": ["testing"]
+    },
+    "15": {
+      "name": "Production Deployment",
+      "agent": "DisasterRecoveryAgent",
+      "components": ["documentation", "deployment"]
+    }
+  },
+  "react_pattern": {
+    "max_iterations": 5,
+    "phases": ["think", "act", "observe"],
+    "think": {
+      "actions": ["analyze_situation", "identify_goals", "evaluate_risks", "generate_hypotheses"]
+    },
+    "act": {
+      "actions": ["create_plan", "execute_tasks", "apply_changes"]
+    },
+    "observe": {
+      "actions": ["monitor_results", "evaluate_success", "adjust_strategy", "document_learnings"]
+    }
+  },
+  "impact_thresholds": {
+    "critical_changes": 1000,
+    "high_changes": 500,
+    "medium_changes": 100,
+    "critical_components": ["security", "database", "api", "deployment"]
+  },
+  "export_seal": {
+    "project": "chatbot-2311",
+    "agent_id": "development-orchestrator-agent",
+    "version": "1.0.0",
+    "created_at": "2025-12-18T00:00:00Z"
+  }
+}
