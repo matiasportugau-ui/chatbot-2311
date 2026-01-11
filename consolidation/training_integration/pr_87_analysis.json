@@ -1,0 +1,155 @@
+{
+  "pr_number": 87,
+  "analysis": {
+    "phase": 1,
+    "task_1.1": {
+      "error": "Unknown task type: extract_pr_metadata"
+    },
+    "task_1.2": {
+      "error": "Unknown task type: analyze_changed_files"
+    },
+    "task_1.3": {
+      "primary_objective": "",
+      "description": "",
+      "objectives": [
+        ""
+      ],
+      "business_domain": "general",
+      "related_phases": [],
+      "acceptance_criteria": [],
+      "dependencies": [],
+      "related_issues": []
+    },
+    "task_1.4": {
+      "new_dependencies": [],
+      "updated_dependencies": [],
+      "removed_dependencies": [],
+      "conflicts": [],
+      "compatibility": {
+        "python": "3.10+",
+        "compatible": true
+      },
+      "breaking_changes": false,
+      "migration_required": false
+    },
+    "analysis_complete": true
+  },
+  "impact": {
+    "phase": 2,
+    "task_2.1": {
+      "affected_components": [],
+      "service_boundaries": "no_change",
+      "api_contracts": "no_change",
+      "data_models": "no_change",
+      "integration_points": {
+        "whatsapp": "no_impact",
+        "n8n": "no_impact",
+        "qdrant": "no_impact",
+        "chatwoot": "no_impact"
+      },
+      "consolidation_alignment": "high",
+      "architectural_changes_required": false
+    },
+    "task_2.2": {
+      "primary_phase": null,
+      "affected_phases": [],
+      "phase_updates_required": [],
+      "new_phase_required": false,
+      "conflicts": [],
+      "dependencies": []
+    },
+    "task_2.3": {
+      "error": "Unknown task type: assess_bmc_domain_impact"
+    },
+    "task_2.4": {
+      "security_impact": "low",
+      "production_readiness_impact": "documentation_only",
+      "security_hardening_required": false,
+      "phase_9_updates": []
+    },
+    "assessment_complete": true
+  },
+  "strategy": {
+    "phase": 3,
+    "task_3.1": {
+      "merge_strategy": "direct_merge",
+      "target_branch": "main",
+      "conflicts_expected": false,
+      "conflict_resolution": "not_required",
+      "pre_merge_testing": [
+        "documentation_review"
+      ],
+      "rollback_plan": "git_revert"
+    },
+    "task_3.2": {
+      "test_updates_required": false,
+      "integration_testing": {
+        "required": false,
+        "scenarios": []
+      },
+      "bmc_testing": {
+        "required": false,
+        "scenarios": []
+      },
+      "regression_testing": {
+        "required": false,
+        "scope": []
+      },
+      "performance_testing": {
+        "required": false
+      },
+      "uat_required": false
+    },
+    "task_3.3": {
+      "documentation_updates": [],
+      "new_documentation": [],
+      "diagram_updates": false
+    },
+    "strategy_complete": true
+  },
+  "plan": {
+    "phase": 4,
+    "task_4.1": [],
+    "task_4.2": {
+      "tasks_by_phase": {},
+      "phase_executor_updates": [],
+      "new_phase_required": false,
+      "orchestrator_config_updates": []
+    },
+    "task_4.3": {
+      "total_estimated_duration": "0 hours",
+      "critical_path": [],
+      "parallel_opportunities": [],
+      "milestones": [
+        {
+          "milestone": "Documentation Review Complete",
+          "tasks": [],
+          "estimated_completion": "0 hours"
+        }
+      ],
+      "dependencies_resolved": true,
+      "buffer_time": "30 minutes"
+    },
+    "task_4.4": {
+      "risks": [],
+      "blockers": [],
+      "assumptions": [
+        "PR changes are documentation-only",
+        "No code changes required"
+      ],
+      "constraints": [
+        "Must maintain compatibility with existing orchestrator system"
+      ],
+      "rollback_procedures": [
+        "Revert documentation changes if conflicts arise"
+      ]
+    },
+    "plan_complete": true
+  },
+  "outputs": {
+    "analysis_report": "consolidation/pr_analysis/pr_87_analysis.json",
+    "task_list": "consolidation/pr_analysis/pr_87_tasks.md",
+    "integration_checklist": "consolidation/pr_analysis/pr_87_integration_checklist.md"
+  },
+  "status": "completed"
+}
