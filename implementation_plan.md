@@ -1,50 +1,41 @@
-# Implementation Plan: Flexible Conversational Bot & CRM Integration
+# Implementation Plan: Vercel System Environment Variables Integration
 
-## Goal Description
-Transform the current rigid, state-machine-based sales bot (`estado_cotizacion` loop) into a fluid, LLM-driven "Agentic" system. This system will use dynamic slot filling to gather information naturally and integrate directly with CRM tools (simulated or real) to manage leads, replacing the need for "robotic" questionnaires.
+This plan outlines the steps to leverage Vercel's System Environment Variables in the BMC Chatbot project, improving deployment flexibility and automation.
 
-## User Review Required
-> [!IMPORTANT]
-> **Paradigm Shift:** We are moving from *Deterministic* logic (strict if/else states) to *Probabilistic* logic (LLM decides what to ask). This increases flexibility but requires robust "Guardrails" to ensure the bot effectively gathers required data.
+## Objectives
+
+1.  **Simplify URL Management**: Use `VERCEL_URL` and `VERCEL_ENV` to automatically determine the application's base URL and environment.
+2.  **Enhance Deployment Experience**: Update documentation and preparation scripts to include the "Automatically expose System Environment Variables" feature.
+3.  **Improve Reliability**: Reduce manual configuration of `NEXT_PUBLIC_APP_URL` and related redirection URIs.
 
 ## Proposed Changes
 
-### 1. Architecture Refactor: From State Machine to Tools (`ia_conversacional_integrada.py`)
-*   **Remove State Loops:** Delete the rigid `_manejar_cotizacion` state machine logic.
-*   **Implement "Agentic" Loop**:
-    *   Instead of hardcoded responses, the `procesar_mensaje` workflow will:
-        1.  Receive user message.
-        2.  LLM analyzes context + available *Tools*.
-        3.  LLM decides to call a Tool (e.g., `update_lead_info`) OR respond to user.
-        4.  If Tool is called, execute it and feed result back to LLM.
-        5.  LLM generates final natural response.
+### 1. Update `prepare-vercel.js`
 
-### 2. Tool Definitions (`tools_crm.py` - [NEW])
-*   Create a new module defining available actions for the LLM:
-    *   `save_lead_info(phone, name, requirement)`: Upsert data to CRM.
-    *   `calculate_quote(product, area, options)`: Dynamic calculator.
-    *   `check_stock(product)`: Inventory check.
-    *   `search_knowledge_base(query)`: RAG lookup (existing functionality wrapped as a tool).
+- Modify `createEnvTemplate()` to include instructions about enabling the "Automatically expose System Environment Variables" feature in Vercel settings.
+- Update the template to suggest using `NEXT_PUBLIC_VERCEL_URL` as a fallback.
 
-### 3. Model Integrator Update (`model_integrator.py`)
-*   Enhance `UnifiedModelIntegrator` to support **Function Calling** (or simulated JSON-based tool use for models that don't support native function calling).
-*   Ensure `system_prompt` injection logic supports defining these tools.
+### 2. Update `VERCEL_DEPLOY_GUIDE.md`
 
-### 4. System Prompt Overhaul (`ia_conversacional_integrada.py` & `prompts.py`)
-*   Inject the **"Expert Sales Persona"**: Friendly, concise, proactive.
-*   Add **"Chain of Thought"** instructions: "Analyze what info you have, what is missing, and ask *one* relevant question at a time."
+- Add a section about Vercel System Environment Variables.
+- Include a screenshot-like description of where to find the setting in Vercel Dashboard.
+
+### 3. Update `src/lib/credentials-manager.ts`
+
+- Modify `loadFromEnvironment()` to dynamically set the environment based on `VERCEL_ENV`.
+- Add support for `NEXT_PUBLIC_VERCEL_URL` if `NEXT_PUBLIC_APP_URL` is missing.
+
+### 4. Update `config.py` (Python)
+
+- Detect if running on Vercel or similar (via `VERCEL` env var).
+- Use `VERCEL_URL` to set `base_url` if applicable.
 
 ## Verification Plan
 
-### Automated Tests
-*   **Conversation Simulation**: Create a test script `test_flexible_flow.py` that simulates a user providing data in random order (e.g., "I need a roof, 50m2" -> "My name is John") and verifies that:
-    1.  The bot acknowledges the data.
-    2.  The bot asks for the *missing* data (Phone number).
-    3.  The bot eventually produces a quote without crashing.
-*   **Tool Execution**: Unit tests for `tools_crm.py` to ensure they correctly process inputs.
+1.  Run `node prepare-vercel.js` and verify output files.
+2.  Perform a test build locally setting `VERCEL=1` and `VERCEL_URL=test.vercel.app` to see if logic picks it up.
+3.  Ensure no regressions in existing environment variable loading.
 
-### Manual Verification
-*   **Chat Interface**: Use the existing `chat-interface.html` to have a free-form conversation.
-    *   *Scenario 1*: Give all info in one massive paragraph. Bot should generate quote immediately.
-    *   *Scenario 2*: Be vague ("I need insulation"). Bot should guide the user naturally.
-    *   *Scenario 3*: Interrupt the flow ("Wait, is it fireproof?"). Bot should answer and then gently return to the sales process.
+## User Notification Required
+
+- [ ] Notify user about the new "Automatically expose System Environment Variables" setting requirement in Vercel.
