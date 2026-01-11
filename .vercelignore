@@ -18,20 +18,28 @@ utils/
 docs/
 
 # Data & Large Files
+.agent/
+.git/
 data/
 *.zip
 *.log
 *.tmp
+*.ods
+*.xlsx
 quotes.zip
 analisis_completo_ingesta.json
 module_analysis_results.json
 storage_cleanup_report_*.json
 recovery_*.json
+recovery_*.txt
+recovery_*.md
 repo_analysis_report_*.json
 github_analysis_results.json
 conocimiento_*.json
 local_execution_*.json
 backend_*.json
+*.txt
+!requirements.txt
 
 # Configs & Docs
 Dockerfile*
