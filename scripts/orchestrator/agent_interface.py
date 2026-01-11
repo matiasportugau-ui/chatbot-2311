@@ -191,6 +191,272 @@ class QuotationAgent(AgentInterface):
         }
 
 
+class OrchestratorAgent(AgentInterface):
+    """
+    Orchestrator Agent (Gravity-mode)
+    Master coordinator for interpreting changes and orchestrating automated development.
+
+    Focused on:
+    - Mapping PR intent to the unified consolidation plan (Task 2.2)
+    - Generating actionable task breakdowns (Task 4.1)
+    - Integrating tasks to phases (Task 4.2)
+    - Timeline estimation (Task 4.3)
+    - Risk assessment (Task 4.4)
+    """
+
+    def __init__(self):
+        super().__init__("OrchestratorAgent", "OrchestratorAgent")
+
+    def execute_task(self, task_id: str, task_config: Dict[str, Any]) -> Dict[str, Any]:
+        task_type = task_config.get("type")
+
+        if task_type == "assess_plan_alignment":
+            return self._assess_plan_alignment(task_config)
+        if task_type == "create_task_breakdown":
+            return self._create_task_breakdown(task_config)
+        if task_type == "integrate_phases":
+            return self._integrate_phases(task_config)
+        if task_type == "estimate_timeline":
+            return self._estimate_timeline(task_config)
+        if task_type == "assess_risks":
+            return self._assess_risks(task_config)
+
+        return {"error": f"Unknown task type: {task_type}"}
+
+    def _assess_plan_alignment(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        related_phases = config.get("related_phases") or []
+        consolidation_plan = config.get("consolidation_plan") or {}
+
+        phases = consolidation_plan.get("phases") or {}
+        existing_phase_nums = set()
+        for k in phases.keys():
+            try:
+                existing_phase_nums.add(int(k))
+            except Exception:
+                pass
+
+        affected = []
+        for p in related_phases:
+            try:
+                p_int = int(p)
+            except Exception:
+                continue
+            if not existing_phase_nums or p_int in existing_phase_nums:
+                affected.append(p_int)
+
+        affected = sorted(set(affected))
+
+        return {
+            "primary_phase": affected[0] if affected else None,
+            "affected_phases": affected,
+            "phase_updates_required": [
+                {"phase": phase, "update_type": "documentation", "tasks_to_add": []}
+                for phase in affected
+            ],
+            "new_phase_required": False,
+            "conflicts": [],
+            "dependencies": []
+        }
+
+    def _create_task_breakdown(self, config: Dict[str, Any]) -> List[Dict[str, Any]]:
+        analysis = config.get("analysis") or {}
+        impact = config.get("impact") or {}
+        strategy = config.get("strategy") or {}
+
+        files_analysis = (analysis.get("task_1.2") or {})
+        categories = files_analysis.get("categories") or {}
+
+        tasks: List[Dict[str, Any]] = []
+
+        # Docs-centric tasks
+        doc_files = categories.get("documentation") or []
+        if doc_files:
+            tasks.append({
+                "task_id": "T0.8",
+                "task_name": "Revisar e integrar documentación del cambio",
+                "script": "scripts/orchestrator/planning_agent.py",
+                "action": "Revisar documentación agregada/modificada y vincularla a la fase correspondiente del plan.",
+                "files": [f.get("path") for f in doc_files if isinstance(f, dict)],
+                "dependencies": [],
+                "output": "consolidation/pr_analysis/",
+                "priority": "P1",
+                "agent": "DiscoveryAgent",
+                "estimated_duration": "2 hours",
+                "bmc_context": "Asegurar consistencia con el Plan Unificado y con el modo automático/auto-aprobación."
+            })
+
+        # Code-centric tasks
+        src_files = categories.get("source_code") or []
+        if src_files:
+            tasks.append({
+                "task_id": "T15.1",
+                "task_name": "Validación rápida de regresión (tests/lint)",
+                "script": "scripts/orchestrator/run_automated_execution.py",
+                "action": "Ejecutar suite de pruebas relevante y validar que no se introduzcan regresiones.",
+                "files": [f.get("path") for f in src_files if isinstance(f, dict)],
+                "dependencies": [],
+                "output": "consolidation/reports/",
+                "priority": "P0",
+                "agent": "ValidationAgent",
+                "estimated_duration": "1.5 hours",
+                "bmc_context": "Priorizar flujos críticos: cotizaciones, integraciones, training/benchmark si aplica."
+            })
+
+        # Config/deps tasks
+        dep_files = categories.get("dependencies") or []
+        cfg_files = categories.get("configuration") or []
+        if dep_files or cfg_files:
+            tasks.append({
+                "task_id": "T1.9",
+                "task_name": "Verificar dependencias/config y compatibilidad de entorno",
+                "script": "scripts/orchestrator/verify_implementation.py",
+                "action": "Validar cambios en dependencias/configuración y compatibilidad con el stack actual.",
+                "files": [f.get("path") for f in (dep_files + cfg_files) if isinstance(f, dict)],
+                "dependencies": [],
+                "output": "consolidation/reports/",
+                "priority": "P1",
+                "agent": "RepositoryAgent",
+                "estimated_duration": "1 hour",
+                "bmc_context": "Mantener coherencia con secrets/env y configuración del orchestrator."
+            })
+
+        # If strategy suggests docs, include them
+        doc_updates = (strategy.get("task_3.3") or {}).get("new_documentation") or []
+        for idx, doc in enumerate(doc_updates, start=1):
+            file_path = doc.get("file") if isinstance(doc, dict) else None
+            if not file_path:
+                continue
+            tasks.append({
+                "task_id": f"T0.8.{idx}",
+                "task_name": f"Validar documento: {Path(file_path).name}",
+                "script": None,
+                "action": "Revisar consistencia, links, comandos y alineación al plan.",
+                "files": [file_path],
+                "dependencies": ["T0.8"] if doc_files else [],
+                "output": None,
+                "priority": "P2",
+                "agent": "DiscoveryAgent",
+                "estimated_duration": "0.5 hours",
+                "bmc_context": "Mantener estilo y convenciones del repo."
+            })
+
+        return tasks
+
+    def _integrate_phases(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        tasks = config.get("tasks") or []
+        impact = config.get("impact") or {}
+        plan_alignment = impact.get("task_2.2") or {}
+        affected_phases = plan_alignment.get("affected_phases") or [0]
+
+        tasks_by_phase: Dict[str, List[Dict[str, Any]]] = {str(p): [] for p in affected_phases}
+
+        for task in tasks:
+            task_id = (task or {}).get("task_id", "")
+            phase_key = None
+            if isinstance(task_id, str) and task_id.startswith("T"):
+                try:
+                    phase_key = task_id.split(".")[0][1:]
+                except Exception:
+                    phase_key = None
+            if phase_key and phase_key.isdigit():
+                tasks_by_phase.setdefault(phase_key, []).append(task)
+            else:
+                tasks_by_phase.setdefault(str(affected_phases[0]), []).append(task)
+
+        return {
+            "tasks_by_phase": tasks_by_phase,
+            "phase_executor_updates": [],
+            "new_phase_required": False,
+            "orchestrator_config_updates": []
+        }
+
+    def _estimate_timeline(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        tasks = config.get("tasks") or []
+
+        def _parse_hours(duration: str) -> float:
+            if not duration:
+                return 0.0
+            parts = duration.strip().split()
+            if not parts:
+                return 0.0
+            try:
+                value = float(parts[0])
+            except Exception:
+                return 0.0
+            unit = parts[1].lower() if len(parts) > 1 else "hours"
+            if unit.startswith("day"):
+                return value * 8.0
+            return value
+
+        total_hours = 0.0
+        for t in tasks:
+            total_hours += _parse_hours((t or {}).get("estimated_duration", ""))
+
+        total_estimated_duration = f"{round(total_hours, 1)} hours"
+
+        return {
+            "total_estimated_duration": total_estimated_duration,
+            "critical_path": [(t or {}).get("task_id") for t in tasks if (t or {}).get("task_id")],
+            "parallel_opportunities": [],
+            "milestones": [
+                {
+                    "milestone": "Plan ejecutable validado",
+                    "tasks": [(t or {}).get("task_id") for t in tasks if (t or {}).get("task_id")],
+                    "estimated_completion": total_estimated_duration
+                }
+            ],
+            "dependencies_resolved": True,
+            "buffer_time": "30 minutes"
+        }
+
+    def _assess_risks(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        analysis = config.get("analysis") or {}
+        files_analysis = (analysis.get("task_1.2") or {})
+        categories = files_analysis.get("categories") or {}
+
+        risks = []
+        if categories.get("dependencies"):
+            risks.append({
+                "risk": "Cambios en dependencias pueden romper compatibilidad o builds",
+                "probability": "medium",
+                "impact": "high",
+                "mitigation": "Validar instalación y ejecutar tests mínimos de smoke",
+                "owner": "RepositoryAgent"
+            })
+        if categories.get("source_code"):
+            risks.append({
+                "risk": "Cambios de código pueden introducir regresiones en flujos críticos",
+                "probability": "medium",
+                "impact": "high",
+                "mitigation": "Ejecutar tests y revisar paths críticos (cotizaciones, integraciones, training/benchmark)",
+                "owner": "ValidationAgent"
+            })
+        if categories.get("configuration"):
+            risks.append({
+                "risk": "Cambios de configuración/secrets pueden romper despliegues",
+                "probability": "low",
+                "impact": "high",
+                "mitigation": "Validar env template y secretos requeridos; no hardcodear credenciales",
+                "owner": "SecurityAgent"
+            })
+
+        return {
+            "risks": risks,
+            "blockers": [],
+            "assumptions": [
+                "El orchestrator y el plan unificado son la fuente de verdad para fases (0-15).",
+                "Auto-aprobación y modo automated se mantienen como default."
+            ],
+            "constraints": [
+                "No introducir credenciales en el repo",
+                "Mantener compatibilidad con el orchestrator existente"
+            ],
+            "rollback_procedures": [
+                "Revertir cambios puntuales y re-ejecutar validaciones"
+            ]
+        }
+
+
 class PlanningAgent(AgentInterface):
     """Planning Agent - Analyzes PRs and generates implementation plans"""
 
@@ -227,6 +493,7 @@ class AgentCoordinator:
             "RepositoryAgent": RepositoryAgent(),
             "IntegrationAgent": IntegrationAgent(),
             "QuotationAgent": QuotationAgent(),
+            "OrchestratorAgent": OrchestratorAgent(),
             "PlanningAgent": PlanningAgent()
         }
         self.task_dir = Path("consolidation/tasks")

@@ -1,0 +1,16 @@
+{
+  "pr_number": 87,
+  "created_at": "2025-12-18T01:17:17.097934Z",
+  "summary": "Orquestación automatizada basada en análisis de PR y plan unificado.",
+  "recommended_commands": [
+    "python3 scripts/orchestrator/verify_implementation.py",
+    "python3 scripts/orchestrator/run_planning_agent.py --pr 87",
+    "python3 scripts/orchestrator/run_automated_execution.py --mode automated"
+  ],
+  "artifacts": [
+    "consolidation/execution_state.json",
+    "consolidation/pr_analysis/",
+    "consolidation/reports/"
+  ],
+  "notes": []
+}
