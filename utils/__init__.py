@@ -33,6 +33,25 @@ from utils.debugging import (
     format_error_with_context,
 )
 
+from utils.audio_to_text import (
+    AudioToText,
+    TranscriptionModel,
+    ResponseFormat,
+    TimestampGranularity,
+    ChunkingStrategy,
+    TranscriptionResult,
+    TranscriptionSegment,
+    TranscriptionWord,
+    StreamEvent,
+    KnownSpeaker,
+    get_audio_processor,
+    transcribe,
+    translate,
+    transcribe_with_speakers,
+    OPENAI_AVAILABLE as AUDIO_OPENAI_AVAILABLE,
+    PYDUB_AVAILABLE,
+)
+
 __all__ = [
     # Request tracking
     'get_request_tracker',
@@ -55,5 +74,22 @@ __all__ = [
     'generate_debugging_report',
     'extract_openai_headers',
     'format_error_with_context',
+    # Audio to Text
+    'AudioToText',
+    'TranscriptionModel',
+    'ResponseFormat',
+    'TimestampGranularity',
+    'ChunkingStrategy',
+    'TranscriptionResult',
+    'TranscriptionSegment',
+    'TranscriptionWord',
+    'StreamEvent',
+    'KnownSpeaker',
+    'get_audio_processor',
+    'transcribe',
+    'translate',
+    'transcribe_with_speakers',
+    'AUDIO_OPENAI_AVAILABLE',
+    'PYDUB_AVAILABLE',
 ]
 
