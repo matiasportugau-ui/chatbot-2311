@@ -1,0 +1,62 @@
+{
+  "agent_name": "GravityAgent",
+  "agent_type": "GravityAgent",
+  "description": "Especialista en Interpretación y Orquestación del Desarrollo Automatizado",
+  
+  "execution": {
+    "auto_approve": true,
+    "execution_mode": "automated",
+    "max_retries": 3,
+    "retry_delay": 60,
+    "parallel_execution": true,
+    "monitor_interval": 30
+  },
+  
+  "github": {
+    "enabled": true,
+    "repo": "chatbot-2311",
+    "owner": "matiasportugau-ui",
+    "token_env": "GITHUB_TOKEN"
+  },
+  
+  "agents": {
+    "planning": {
+      "enabled": true,
+      "priority": 1
+    },
+    "repository": {
+      "enabled": true,
+      "priority": 2
+    },
+    "integration": {
+      "enabled": true,
+      "priority": 3
+    },
+    "quotation": {
+      "enabled": true,
+      "priority": 4
+    }
+  },
+  
+  "orchestration": {
+    "start_phase": -8,
+    "end_phase": 15,
+    "auto_advance": true,
+    "dependency_check": true,
+    "failure_handling": "retry"
+  },
+  
+  "monitoring": {
+    "enabled": true,
+    "check_interval": 30,
+    "alert_on_blockers": true,
+    "alert_on_failures": true
+  },
+  
+  "output": {
+    "directory": "consolidation/gravity_agent",
+    "save_state": true,
+    "save_reports": true,
+    "save_logs": true
+  }
+}
