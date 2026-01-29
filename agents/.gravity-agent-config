@@ -1,0 +1,37 @@
+# Gravity Agent Configuration
+# Este archivo puede ser usado por Gravity para configurar el agente
+
+AGENT_NAME=GravityOrchestratorAgent
+AGENT_DESCRIPTION=Agente especialista en interpretar y orquestar el desarrollo automatizado del proyecto
+AGENT_VERSION=1.0.0
+
+# Modo de operación por defecto
+# Opciones: interpret, orchestrate, hybrid
+DEFAULT_MODE=hybrid
+
+# Auto-aprobación por defecto
+AUTO_APPROVE=true
+
+# Fases por defecto
+DEFAULT_START_PHASE=null
+DEFAULT_END_PHASE=15
+
+# Configuración de ejecución
+MAX_RETRIES=3
+RETRY_DELAY=60
+
+# Rutas de configuración
+ORCHESTRATOR_CONFIG=scripts/orchestrator/config/orchestrator_config.json
+STATE_FILE=consolidation/execution_state.json
+REPORTS_DIR=consolidation/reports
+
+# Comando de ejecución
+ENTRY_POINT=agents/gravity_orchestrator_agent.py
+
+# Capacidades del agente
+CAPABILITIES=interpret,orchestrate,monitor,plan,execute
+
+# Integración con Gravity
+GRAVITY_MODE=agent
+GRAVITY_AUTO_START=false
+GRAVITY_WATCH_FILES=true

@@ -1,0 +1,83 @@
+{
+  "agent_name": "GravityOrchestratorAgent",
+  "description": "Agente especialista en interpretar y orquestar el desarrollo automatizado del proyecto",
+  "version": "1.0.0",
+  
+  "modes": {
+    "interpret": {
+      "description": "Solo interpreta y analiza el estado del proyecto",
+      "capabilities": [
+        "Analizar estado actual",
+        "Identificar bloqueadores",
+        "Recomendar próximas acciones"
+      ]
+    },
+    "orchestrate": {
+      "description": "Solo orquesta la ejecución automatizada",
+      "capabilities": [
+        "Ejecutar fases automáticamente",
+        "Gestionar dependencias",
+        "Monitorear progreso"
+      ]
+    },
+    "hybrid": {
+      "description": "Interpreta y orquesta (modo por defecto)",
+      "capabilities": [
+        "Análisis completo del estado",
+        "Planificación inteligente",
+        "Ejecución automatizada",
+        "Monitoreo continuo"
+      ]
+    }
+  },
+  
+  "default_settings": {
+    "mode": "hybrid",
+    "auto_approve": true,
+    "start_phase": null,
+    "end_phase": 15,
+    "max_retries": 3,
+    "retry_delay": 60
+  },
+  
+  "integration": {
+    "orchestrator_config": "scripts/orchestrator/config/orchestrator_config.json",
+    "state_file": "consolidation/execution_state.json",
+    "reports_directory": "consolidation/reports"
+  },
+  
+  "phases": {
+    "preliminary": {
+      "range": [-8, -1],
+      "description": "Fases preliminares de preparación"
+    },
+    "main": {
+      "range": [0, 15],
+      "description": "Fases principales de ejecución"
+    }
+  },
+  
+  "capabilities": [
+    "Interpretación del estado del proyecto",
+    "Análisis de fases y dependencias",
+    "Identificación de bloqueadores",
+    "Planificación de ejecución",
+    "Orquestación automatizada",
+    "Monitoreo de progreso",
+    "Generación de reportes",
+    "Toma de decisiones automatizada"
+  ],
+  
+  "outputs": {
+    "reports": {
+      "format": "json",
+      "location": "consolidation/gravity_agent_report_*.json",
+      "includes": [
+        "project_state",
+        "orchestration_plan",
+        "execution_history",
+        "status_summary"
+      ]
+    }
+  }
+}
