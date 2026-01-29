@@ -2,6 +2,12 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server'
 import { processAndRespondToWhatsApp, WhatsAppMessage } from '@/lib/whatsapp-to-sheets'
+import { getWhatsAppMediaUrl, downloadWhatsAppMedia } from '@/lib/whatsapp-media'
+import { transcribeAudio } from '@/lib/openai-audio'
+import { initializeSecureConfig, secureConfig } from '@/lib/secure-config'
+import { writeFile, unlink } from 'fs/promises'
+import path from 'path'
+import os from 'os'
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'bmc_whatsapp_verify_2024'
 
@@ -24,6 +30,11 @@ export async function GET(request: NextRequest) {
 // Procesar mensajes entrantes de WhatsApp
 export async function POST(request: NextRequest) {
   try {
+    // Ensure secure config is initialized
+    if (!secureConfig.isReady()) {
+      await initializeSecureConfig()
+    }
+
     const body = await request.json()
     
     // Verificar que es un evento de WhatsApp
@@ -57,17 +68,54 @@ async function processMessages(value: any) {
       const contact = contacts.find((c: any) => c.wa_id === message.from)
       const contactName = contact?.profile?.name || 'Usuario'
       
+      let messageBody = '';
+
+      if (message.type === 'text') {
+        messageBody = message.text?.body || '';
+      } else if (message.type === 'audio') {
+        // Handle audio
+        try {
+             const mediaId = message.audio?.id;
+             if (mediaId) {
+                console.log(`Processing audio message ${mediaId} from ${message.from}`);
+                
+                const mediaUrl = await getWhatsAppMediaUrl(mediaId);
+                const audioBuffer = await downloadWhatsAppMedia(mediaUrl);
+                
+                // Create temp file
+                const tempFilePath = path.join(os.tmpdir(), `whatsapp_audio_${message.id}.ogg`);
+                await writeFile(tempFilePath, audioBuffer);
+                
+                // Transcribe
+                console.log(`Transcribing audio file: ${tempFilePath}`);
+                messageBody = await transcribeAudio(tempFilePath);
+                console.log(`Transcribed audio: "${messageBody}"`);
+                
+                // Cleanup
+                await unlink(tempFilePath).catch(e => console.error('Error deleting temp file:', e));
+             }
+        } catch (audioError) {
+            console.error('Error processing audio message:', audioError);
+            // Notify user about the error
+             await sendWhatsAppMessage(
+                message.from, 
+                'Lo siento, tuve problemas para escuchar tu audio. ¿Podrías escribirlo o intentar de nuevo?'
+             )
+             continue; // Skip further processing for this message
+        }
+      }
+
       // Preparar mensaje para procesamiento
       const whatsappMessage: WhatsAppMessage = {
         from: message.from,
         name: contactName,
-        text: message.text?.body || '',
+        text: messageBody,
         timestamp: new Date().toISOString(),
         messageId: message.id
       }
       
-      // Solo procesar mensajes de texto
-      if (message.type === 'text' && whatsappMessage.text.trim()) {
+      // Procesar si hay texto (ya sea original o transcrito)
+      if (whatsappMessage.text && whatsappMessage.text.trim()) {
         console.log(`Processing WhatsApp message from ${whatsappMessage.from}: ${whatsappMessage.text}`)
         
         // Procesar y responder automáticamente
