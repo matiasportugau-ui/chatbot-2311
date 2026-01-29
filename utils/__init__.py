@@ -33,6 +33,15 @@ from utils.debugging import (
     format_error_with_context,
 )
 
+from utils.speech_to_text import (
+    SpeechToTextClient,
+    TranscriptionModel,
+    ResponseFormat,
+    ChunkingStrategy,
+    transcribe_audio,
+    translate_audio,
+)
+
 __all__ = [
     # Request tracking
     'get_request_tracker',
@@ -55,5 +64,12 @@ __all__ = [
     'generate_debugging_report',
     'extract_openai_headers',
     'format_error_with_context',
+    # Speech-to-text
+    'SpeechToTextClient',
+    'TranscriptionModel',
+    'ResponseFormat',
+    'ChunkingStrategy',
+    'transcribe_audio',
+    'translate_audio',
 ]
 
