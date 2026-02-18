@@ -13,6 +13,9 @@ on:
       - 'mapeador_productos_web.py'
       - 'sistema_cotizaciones.py'
 
+permissions:
+  contents: write
+
 jobs:
   update-products:
     runs-on: ubuntu-latest
